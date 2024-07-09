@@ -8,35 +8,53 @@ const Carousel = ({ images }: { images: string[] }) => {
     // useEffect(() => {
     //     console.log('current image', imageIndex , images.length, images[imageIndex]);
     // }, [imageIndex]);
+    const renderDots = () => {
+        return images.map((_, index) => (
+            <View
+                key={index}
+                style={[
+                    styles.dot,
+                    { backgroundColor: index === imageIndex ? 'black' : 'lightgrey' },
+                ]}
+            />
+        ));
+    };
 
     return (
-        <View style={styles.container}>
-            <Image source={{ uri: images[imageIndex] }} style={styles.image} />
+        <>
+            <View style={styles.container}>
+                <Image source={{ uri: images[imageIndex] }} style={styles.image} />
 
-            <TouchableOpacity
-                activeOpacity={1}
-                style={styles.leftButton}
-                onPress={() => {
-                    if (imageIndex === 0) {
-                        setImageIndex(images.length - 1);
-                        return;
-                    }
-                    setImageIndex(imageIndex - 1);
-                }}
-            />
+                <TouchableOpacity
+                    activeOpacity={1}
+                    style={styles.leftButton}
+                    onPress={() => {
+                        if (imageIndex === 0) {
+                            setImageIndex(images.length - 1);
+                            return;
+                        }
+                        setImageIndex(imageIndex - 1);
+                    }}
+                />
 
-            <TouchableOpacity
-                activeOpacity={1}
-                style={styles.rightButton}
-                onPress={() => {
-                    if (imageIndex >= images.length - 1) {
-                        setImageIndex(0);
-                        return;
-                    }
-                    setImageIndex(imageIndex + 1);
-                }}
-            />
-        </View>
+                <TouchableOpacity
+                    activeOpacity={1}
+                    style={styles.rightButton}
+                    onPress={() => {
+                        if (imageIndex >= images.length - 1) {
+                            setImageIndex(0);
+                            return;
+                        }
+                        setImageIndex(imageIndex + 1);
+                    }}
+                />
+            </View>
+            {images.length > 1 &&
+                <View style={styles.dotsContainer}>
+                    {renderDots()}
+                </View>
+            }
+        </>
     );
 };
 
@@ -70,6 +88,20 @@ const styles = StyleSheet.create({
     },
     image: {
         flex: 1,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+    },
+    dotsContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    dot: {
+        width: 10,
+        height: 10,
+        borderRadius: 5,
+        margin: 5,
     },
 });
 
