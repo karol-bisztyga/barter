@@ -5,7 +5,6 @@ import {
   View,
   StyleSheet,
   Text,
-  Image,
   Dimensions,
   ScrollView,
   TouchableOpacity,
@@ -18,6 +17,7 @@ import Animated, {
   runOnJS,
 } from 'react-native-reanimated';
 import { Card } from '../../app/index';
+import Carousel from './Carousel';
 
 const { width, height } = Dimensions.get('window');
 const SWIPE_THRESHOLD = 0.25 * width;
@@ -83,7 +83,7 @@ const SwipeableCard = ({
             console.log('press', e.nativeEvent.locationX);
           }}
         >
-          <Image source={{ uri: card.images[0] }} style={styles.image} />
+          <Carousel images={card.images} />
         </TouchableOpacity>
         <View style={styles.nameWrapper}>
           <Text style={styles.name}>{card.name}</Text>
@@ -112,12 +112,6 @@ const styles = StyleSheet.create({
   imageWrapper: {
     width: '100%',
     height: '75%',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-  },
-  image: {
-    flex: 1,
-    margin: 5,
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
   },

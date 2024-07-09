@@ -1,0 +1,76 @@
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
+
+
+const Carousel = ({ images }: { images: string[] }) => {
+    const [imageIndex, setImageIndex] = useState<number>(0);
+
+    // useEffect(() => {
+    //     console.log('current image', imageIndex , images.length, images[imageIndex]);
+    // }, [imageIndex]);
+
+    return (
+        <View style={styles.container}>
+            <Image source={{ uri: images[imageIndex] }} style={styles.image} />
+
+            <TouchableOpacity
+                activeOpacity={1}
+                style={styles.leftButton}
+                onPress={() => {
+                    if (imageIndex === 0) {
+                        setImageIndex(images.length - 1);
+                        return;
+                    }
+                    setImageIndex(imageIndex - 1);
+                }}
+            />
+
+            <TouchableOpacity
+                activeOpacity={1}
+                style={styles.rightButton}
+                onPress={() => {
+                    if (imageIndex >= images.length - 1) {
+                        setImageIndex(0);
+                        return;
+                    }
+                    setImageIndex(imageIndex + 1);
+                }}
+            />
+        </View>
+    );
+};
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        position: 'relative',
+        margin: 5,
+        borderTopLeftRadius: 20,
+        borderTopRightRadius: 20,
+    },
+    leftButton: {
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        bottom: 0,
+        width: '50%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderTopLeftRadius: 20,
+    },
+    rightButton: {
+        position: 'absolute',
+        right: 0,
+        top: 0,
+        bottom: 0,
+        width: '50%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderTopRightRadius: 20,
+    },
+    image: {
+        flex: 1,
+    },
+});
+
+export default Carousel;
