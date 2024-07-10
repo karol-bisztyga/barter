@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 
 const Carousel = ({ images }: { images: string[] }) => {
+  const [loading, setLoading] = useState(false);
   const [imageIndex, setImageIndex] = useState<number>(0);
 
   const renderDots = () => {
@@ -16,7 +17,15 @@ const Carousel = ({ images }: { images: string[] }) => {
   return (
     <>
       <View style={styles.container}>
-        <Image source={{ uri: images[imageIndex] }} style={styles.image} />
+        {loading && (
+          <ActivityIndicator style={StyleSheet.absoluteFill} size="large" color="#0000ff" />
+        )}
+        <Image
+          source={{ uri: images[imageIndex] }}
+          style={[styles.image, { opacity: loading ? 0 : 1 }]}
+          onLoadEnd={() => setLoading(false)}
+          onError={() => setLoading(false)}
+        />
 
         {images.length > 1 && <View style={styles.dotsContainer}>{renderDots()}</View>}
 
@@ -24,11 +33,11 @@ const Carousel = ({ images }: { images: string[] }) => {
           activeOpacity={1}
           style={styles.leftButton}
           onPress={() => {
-            if (imageIndex === 0) {
-              setImageIndex(images.length - 1);
+            if (images.length <= 1) {
               return;
             }
-            setImageIndex(imageIndex - 1);
+            setLoading(true);
+            setImageIndex(imageIndex === 0 ? images.length - 1 : imageIndex - 1);
           }}
         />
 
@@ -36,11 +45,11 @@ const Carousel = ({ images }: { images: string[] }) => {
           activeOpacity={1}
           style={styles.rightButton}
           onPress={() => {
-            if (imageIndex >= images.length - 1) {
-              setImageIndex(0);
+            if (images.length <= 1) {
               return;
             }
-            setImageIndex(imageIndex + 1);
+            setLoading(true);
+            setImageIndex(imageIndex >= images.length - 1 ? 0 : imageIndex + 1);
           }}
         />
       </View>
