@@ -1,13 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
 
 const Carousel = ({ images }: { images: string[] }) => {
     const [imageIndex, setImageIndex] = useState<number>(0);
 
-    // useEffect(() => {
-    //     console.log('current image', imageIndex , images.length, images[imageIndex]);
-    // }, [imageIndex]);
     const renderDots = () => {
         return images.map((_, index) => (
             <View
@@ -24,6 +21,12 @@ const Carousel = ({ images }: { images: string[] }) => {
         <>
             <View style={styles.container}>
                 <Image source={{ uri: images[imageIndex] }} style={styles.image} />
+
+                {images.length > 1 &&
+                    <View style={styles.dotsContainer}>
+                        {renderDots()}
+                    </View>
+                }
 
                 <TouchableOpacity
                     activeOpacity={1}
@@ -49,11 +52,6 @@ const Carousel = ({ images }: { images: string[] }) => {
                     }}
                 />
             </View>
-            {images.length > 1 &&
-                <View style={styles.dotsContainer}>
-                    {renderDots()}
-                </View>
-            }
         </>
     );
 };
@@ -92,10 +90,12 @@ const styles = StyleSheet.create({
         borderTopRightRadius: 20,
     },
     dotsContainer: {
+        position: 'absolute',
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 20,
+        bottom: 20,
+        width: '100%',
     },
     dot: {
         width: 10,
