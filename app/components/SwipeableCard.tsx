@@ -1,5 +1,3 @@
-// SwipeableCard.js
-
 import React from 'react';
 import { View, StyleSheet, Text, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';

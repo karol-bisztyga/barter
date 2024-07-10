@@ -1,5 +1,3 @@
-// my-app/app/profile.js
-
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 

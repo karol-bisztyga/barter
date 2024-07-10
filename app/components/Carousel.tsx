@@ -23,6 +23,7 @@ const Carousel = ({ images }: { images: string[] }) => {
         <Image
           source={{ uri: images[imageIndex] }}
           style={[styles.image, { opacity: loading ? 0 : 1 }]}
+          onLoadStart={() => setLoading(true)}
           onLoadEnd={() => setLoading(false)}
           onError={() => setLoading(false)}
         />

@@ -1,9 +1,7 @@
-// my-app/app/settings.js
-
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-export default function Settings() {
+export default function Chats() {
   return (
     <View style={styles.container}>
       <Text style={styles.text}>This is the Chats Screen</Text>

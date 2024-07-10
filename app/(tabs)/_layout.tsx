@@ -1,14 +1,37 @@
-// my-app/app/_layout.js
-
 import React from 'react';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Tabs } from 'expo-router';
 
-export default function Layout() {
+export default function TabLayout() {
   return (
-    <Tabs initialRouteName='swipe' screenOptions={{ headerShown: false }}>
-      <Tabs.Screen name="profile" options={{ headerShown: false }} />
-      <Tabs.Screen name="swipe" options={{ headerShown: false }} />
-      <Tabs.Screen name="chats" options={{ headerShown: false }} />
+    <Tabs initialRouteName="swipe" screenOptions={{ tabBarActiveTintColor: 'blue' }}>
+      <Tabs.Screen
+        name="index"
+        options={{
+          href: null,
+        }}
+      />
+      <Tabs.Screen
+        name="profile"
+        options={{
+          title: 'Profile',
+          tabBarIcon: ({ color }) => <FontAwesome size={28} name="user" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="swipe"
+        options={{
+          title: 'Swipe',
+          tabBarIcon: ({ color }) => <FontAwesome size={28} name="eye" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="chats"
+        options={{
+          title: 'Chats',
+          tabBarIcon: ({ color }) => <FontAwesome size={28} name="comment" color={color} />,
+        }}
+      />
     </Tabs>
   );
 }

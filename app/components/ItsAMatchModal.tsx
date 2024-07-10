@@ -1,5 +1,14 @@
 import React, { useRef } from 'react';
-import { View, Modal, StyleSheet, TouchableOpacity, Text, Dimensions, PanResponder, Animated } from 'react-native';
+import {
+  View,
+  Modal,
+  StyleSheet,
+  TouchableOpacity,
+  Text,
+  Dimensions,
+  PanResponder,
+  Animated,
+} from 'react-native';
 
 const { height } = Dimensions.get('window');
 
