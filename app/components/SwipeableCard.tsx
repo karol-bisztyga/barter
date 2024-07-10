@@ -12,7 +12,7 @@ import Animated, {
   withTiming,
   SharedValue,
 } from 'react-native-reanimated';
-import { Card } from '../../app/index';
+import { Card } from '../(tabs)/swipe/index';
 import Carousel from './Carousel';
 
 const { width, height } = Dimensions.get('window');

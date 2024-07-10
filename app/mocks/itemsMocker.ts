@@ -1,4 +1,4 @@
-import { Card } from '../../app/index';
+import { Card } from '../(tabs)/swipe/index';
 
 const generateId = (id?: number) => {
   if (id !== undefined) {

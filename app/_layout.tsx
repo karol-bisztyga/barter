@@ -1,14 +1,9 @@
-// my-app/app/_layout.js
-
-import React from 'react';
-import { Tabs } from 'expo-router';
+import { Stack } from 'expo-router/stack';
 
 export default function Layout() {
   return (
-    <Tabs>
-      <Tabs.Screen name="profile" options={{ title: 'Profile' }} />
-      <Tabs.Screen name="index" options={{ title: 'Swipe' }} />
-      <Tabs.Screen name="chats" options={{ title: 'Chats' }} />
-    </Tabs>
+    <Stack>
+      <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+    </Stack>
   );
 }
