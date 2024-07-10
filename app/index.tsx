@@ -5,6 +5,7 @@ import { StyleSheet, View } from 'react-native';
 import SwipeableCard from '../src/components/SwipeableCard';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { generateItem } from '../src/mocks/itemsMocker';
+import { useSharedValue } from 'react-native-reanimated';
 
 export type Card = {
   id: string;
@@ -18,6 +19,7 @@ const LOADED_ITEMS_CAPACITY = 5;
 export default function App() {
   const [cards, setCards] = useState<Card[]>([]);
   const [currentId, setCurrentId] = useState<number>(0);
+  const lockGesture = useSharedValue<boolean>(false);
 
   const printCards = () => {
     console.log(
@@ -58,11 +60,13 @@ export default function App() {
   const handleSwipeRight = () => {
     const swipedCard = popAndLoadCard();
     console.log('Swiped Right:', swipedCard?.name);
+    lockGesture.value = false;
   };
 
   const handleSwipeLeft = () => {
     const swipedCard = popAndLoadCard();
     console.log('Swiped Left:', swipedCard?.name);
+    lockGesture.value = false;
   };
 
   return (
@@ -74,6 +78,7 @@ export default function App() {
             card={card}
             onSwipeRight={handleSwipeRight}
             onSwipeLeft={handleSwipeLeft}
+            lockGesture={lockGesture}
           />
         ))}
       </View>

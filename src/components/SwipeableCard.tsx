@@ -9,6 +9,8 @@ import Animated, {
   withSpring,
   runOnJS,
   useDerivedValue,
+  withTiming,
+  SharedValue,
 } from 'react-native-reanimated';
 import { Card } from '../../app/index';
 import Carousel from './Carousel';
@@ -16,15 +18,18 @@ import Carousel from './Carousel';
 const { width, height } = Dimensions.get('window');
 const SWIPE_THRESHOLD = 0.25 * width;
 const MAX_RADIUS = 30;
+const END_ANIMATION_DURATION = 200;
 
 const SwipeableCard = ({
   card,
   onSwipeRight,
   onSwipeLeft,
+  lockGesture,
 }: {
   card: Card;
   onSwipeRight: () => void;
   onSwipeLeft: () => void;
+  lockGesture: SharedValue<boolean>;
 }) => {
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
@@ -40,6 +45,9 @@ const SwipeableCard = ({
       rotate.value = '0deg';
     })
     .onUpdate((event) => {
+      if (lockGesture.value) {
+        return;
+      }
       dragging.value = true;
       translateX.value = event.translationX;
 
@@ -54,9 +62,15 @@ const SwipeableCard = ({
       dragging.value = false;
       console.log('VX', velocityX.value);
       if (translateX.value > SWIPE_THRESHOLD) {
-        runOnJS(onSwipeRight)();
+        lockGesture.value = true;
+        translateX.value = withTiming(width * 2, { duration: END_ANIMATION_DURATION }, () => {
+          runOnJS(onSwipeRight)();
+        });
       } else if (translateX.value < -SWIPE_THRESHOLD) {
-        runOnJS(onSwipeLeft)();
+        lockGesture.value = true;
+        translateX.value = withTiming(-(width * 2), { duration: END_ANIMATION_DURATION }, () => {
+          runOnJS(onSwipeLeft)();
+        });
       } else {
         translateX.value = withSpring(0);
         translateY.value = withSpring(0);
