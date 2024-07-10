@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
 
 const Carousel = ({ images }: { images: string[] }) => {
   const [loading, setLoading] = useState(false);
@@ -15,46 +15,47 @@ const Carousel = ({ images }: { images: string[] }) => {
   };
 
   return (
-    <>
-      <View style={styles.container}>
-        {loading && (
+    <View style={styles.container}>
+      {/*
+            here there was a problem with flickering indicator as the list get rerendered when it's modified
+            so this can go on without indicator at least for now
+        */}
+      {/* {loading && (
           <ActivityIndicator style={StyleSheet.absoluteFill} size="large" color="#0000ff" />
-        )}
-        <Image
-          source={{ uri: images[imageIndex] }}
-          style={[styles.image, { opacity: loading ? 0 : 1 }]}
-          onLoadStart={() => setLoading(true)}
-          onLoadEnd={() => setLoading(false)}
-          onError={() => setLoading(false)}
-        />
+        )} */}
+      <Image
+        source={{ uri: images[imageIndex] }}
+        style={[styles.image, { opacity: loading ? 0 : 1 }]}
+        onLoadEnd={() => setLoading(false)}
+        onError={() => setLoading(false)}
+      />
 
-        {images.length > 1 && <View style={styles.dotsContainer}>{renderDots()}</View>}
+      {images.length > 1 && <View style={styles.dotsContainer}>{renderDots()}</View>}
 
-        <TouchableOpacity
-          activeOpacity={1}
-          style={styles.leftButton}
-          onPress={() => {
-            if (images.length <= 1) {
-              return;
-            }
-            setLoading(true);
-            setImageIndex(imageIndex === 0 ? images.length - 1 : imageIndex - 1);
-          }}
-        />
+      <TouchableOpacity
+        activeOpacity={1}
+        style={styles.leftButton}
+        onPress={() => {
+          if (images.length <= 1) {
+            return;
+          }
+          setLoading(true);
+          setImageIndex(imageIndex === 0 ? images.length - 1 : imageIndex - 1);
+        }}
+      />
 
-        <TouchableOpacity
-          activeOpacity={1}
-          style={styles.rightButton}
-          onPress={() => {
-            if (images.length <= 1) {
-              return;
-            }
-            setLoading(true);
-            setImageIndex(imageIndex >= images.length - 1 ? 0 : imageIndex + 1);
-          }}
-        />
-      </View>
-    </>
+      <TouchableOpacity
+        activeOpacity={1}
+        style={styles.rightButton}
+        onPress={() => {
+          if (images.length <= 1) {
+            return;
+          }
+          setLoading(true);
+          setImageIndex(imageIndex >= images.length - 1 ? 0 : imageIndex + 1);
+        }}
+      />
+    </View>
   );
 };
 

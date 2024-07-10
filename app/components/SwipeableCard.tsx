@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Text, Dimensions, ScrollView, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, Dimensions, ScrollView } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
@@ -49,8 +49,6 @@ const SwipeableCard = ({
       dragging.value = true;
       translateX.value = event.translationX;
 
-      console.log('drag', translateX.value);
-
       translateY.value = event.translationY;
       velocityX.value = event.velocityX;
       velocityY.value = event.velocityY;
@@ -58,7 +56,6 @@ const SwipeableCard = ({
     })
     .onEnd(() => {
       dragging.value = false;
-      console.log('VX', velocityX.value);
       if (translateX.value > SWIPE_THRESHOLD) {
         lockGesture.value = true;
         translateX.value = withTiming(width * 2, { duration: END_ANIMATION_DURATION }, () => {
@@ -106,15 +103,9 @@ const SwipeableCard = ({
   return (
     <GestureDetector gesture={gesture}>
       <Animated.View style={[styles.card, animatedStyle]}>
-        <TouchableOpacity
-          activeOpacity={1}
-          style={styles.imageWrapper}
-          onPress={(e) => {
-            console.log('press', e.nativeEvent.locationX);
-          }}
-        >
+        <View style={styles.imageWrapper}>
           <Carousel images={card.images} />
-        </TouchableOpacity>
+        </View>
         <View style={styles.nameWrapper}>
           <Text style={styles.name}>{card.name}</Text>
         </View>
