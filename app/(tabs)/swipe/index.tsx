@@ -4,6 +4,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSharedValue } from 'react-native-reanimated';
 import { generateItem } from '../../mocks/itemsMocker';
 import SwipeableCard from '../../components/SwipeableCard';
+import { router } from 'expo-router';
 
 export type Card = {
   id: string;
@@ -59,6 +60,16 @@ export default function App() {
     const swipedCard = popAndLoadCard();
     console.log('Swiped Right:', swipedCard?.name);
     lockGesture.value = false;
+    // todo condition here
+    router.push({
+      pathname: 'swipe/match',
+      params: {
+        matchedItemId: swipedCard?.id,
+        matchedItemName: swipedCard?.name,
+        matchedItemImages: swipedCard?.images,
+        matchedItemDescription: swipedCard?.description,
+      },
+    });
   };
 
   const handleSwipeLeft = () => {

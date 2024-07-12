@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet, Text, Dimensions, ScrollView } from 'react-native';
+import { StyleSheet, Dimensions } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
@@ -11,7 +11,7 @@ import Animated, {
   SharedValue,
 } from 'react-native-reanimated';
 import { Card } from '../(tabs)/swipe/index';
-import Carousel from './Carousel';
+import Item from './Item';
 
 const { width, height } = Dimensions.get('window');
 const SWIPE_THRESHOLD = 0.25 * width;
@@ -103,15 +103,7 @@ const SwipeableCard = ({
   return (
     <GestureDetector gesture={gesture}>
       <Animated.View style={[styles.card, animatedStyle]}>
-        <View style={styles.imageWrapper}>
-          <Carousel images={card.images} />
-        </View>
-        <View style={styles.nameWrapper}>
-          <Text style={styles.name}>{card.name}</Text>
-        </View>
-        <ScrollView style={styles.descriptionWrapper}>
-          <Text style={styles.description}>{card.description}</Text>
-        </ScrollView>
+        <Item card={card} />
       </Animated.View>
     </GestureDetector>
   );
@@ -127,30 +119,7 @@ const styles = StyleSheet.create({
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 0.8,
-    // shadowRadius: 5,
     elevation: 5,
-  },
-  imageWrapper: {
-    width: '100%',
-    height: '75%',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-  },
-  nameWrapper: {
-    paddingLeft: 20,
-    paddingRight: 20,
-    paddingTop: 20,
-  },
-  descriptionWrapper: {
-    margin: 10,
-  },
-  name: {
-    fontSize: 30,
-    fontWeight: 'bold',
-  },
-  description: {
-    fontSize: 20,
-    color: 'gray',
   },
 });
 

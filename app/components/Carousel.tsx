@@ -1,11 +1,23 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { ItemBorderRadius } from './Item';
 
-const Carousel = ({ images }: { images: string[] }) => {
+const Carousel = ({
+  images,
+  borderRadius = ItemBorderRadius['up-only'],
+  active = true,
+}: {
+  images: string[];
+  borderRadius?: ItemBorderRadius;
+  active?: boolean;
+}) => {
   const [loading, setLoading] = useState(false);
   const [imageIndex, setImageIndex] = useState<number>(0);
 
   const renderDots = () => {
+    if (!active) {
+      return null;
+    }
     return images.map((_, index) => (
       <View
         key={index}
@@ -25,7 +37,15 @@ const Carousel = ({ images }: { images: string[] }) => {
         )} */}
       <Image
         source={{ uri: images[imageIndex] }}
-        style={[styles.image, { opacity: loading ? 0 : 1 }]}
+        style={[
+          styles.image,
+          {
+            opacity: loading ? 0 : 1,
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+            borderRadius: borderRadius === ItemBorderRadius['all'] ? 20 : 0,
+          },
+        ]}
         onLoadEnd={() => setLoading(false)}
         onError={() => setLoading(false)}
       />
@@ -36,6 +56,9 @@ const Carousel = ({ images }: { images: string[] }) => {
         activeOpacity={1}
         style={styles.leftButton}
         onPress={() => {
+          if (!active) {
+            return;
+          }
           if (images.length <= 1) {
             return;
           }
@@ -48,6 +71,9 @@ const Carousel = ({ images }: { images: string[] }) => {
         activeOpacity={1}
         style={styles.rightButton}
         onPress={() => {
+          if (!active) {
+            return;
+          }
           if (images.length <= 1) {
             return;
           }
@@ -64,8 +90,6 @@ const styles = StyleSheet.create({
     flex: 1,
     position: 'relative',
     margin: 5,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
   },
   leftButton: {
     position: 'absolute',
@@ -89,8 +113,6 @@ const styles = StyleSheet.create({
   },
   image: {
     flex: 1,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
   },
   dotsContainer: {
     position: 'absolute',
