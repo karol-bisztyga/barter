@@ -2,9 +2,10 @@ import React, { useState } from 'react';
 import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import Item from '../components/Item';
-import { generateItem } from '../mocks/itemsMocker';
-import { ItemBorderRadius } from '../types';
+import Item from '../../components/Item';
+import { generateItem } from '../../mocks/itemsMocker';
+import { ItemBorderRadius } from '../../types';
+import { router } from 'expo-router';
 
 const SEPARATOR_HEIGHT = 1;
 const ITEMS_PER_SCREEN = 4;
@@ -63,12 +64,16 @@ export default function Chats() {
         <FlatList
           data={items}
           renderItem={({ item, index }) => {
-            item; // suppress error
             return (
               <>
                 <TouchableOpacity
                   onPress={() => {
-                    console.log('go to chat');
+                    console.log('go to chat', item);
+
+                    router.push({
+                      pathname: 'chats/chat',
+                      params: {},
+                    });
                   }}
                   activeOpacity={1}
                 >
