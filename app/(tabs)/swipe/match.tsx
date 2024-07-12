@@ -23,7 +23,7 @@ const MatchModal = () => {
     <View style={styles.container}>
       <Text style={styles.matchedLabel}>Items matched!</Text>
       <View style={[styles.itemsWrapper, { height: width }]}>
-        <View style={styles.leftItem}>
+        <View style={styles.usersItem}>
           <Item
             card={usersItem}
             borderRadius={ItemBorderRadius.all}
@@ -31,7 +31,7 @@ const MatchModal = () => {
             showDescription={false}
           />
         </View>
-        <View style={styles.rightItem}>
+        <View style={styles.matchedItem}>
           <Item
             card={matchedItem}
             borderRadius={ItemBorderRadius.all}
@@ -54,10 +54,10 @@ const styles = StyleSheet.create({
   itemsWrapper: {
     flexDirection: 'row',
   },
-  leftItem: {
+  usersItem: {
     flex: 1,
   },
-  rightItem: {
+  matchedItem: {
     flex: 1,
   },
   matchedLabel: {

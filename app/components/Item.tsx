@@ -6,11 +6,13 @@ import { Card, ItemBorderRadius } from '../types';
 export default function Item({
   card,
   showDescription = true,
+  showName = true,
   borderRadius = ItemBorderRadius['up-only'],
   carouselActive = true,
 }: {
   card: Card;
   showDescription?: boolean;
+  showName?: boolean;
   borderRadius?: ItemBorderRadius;
   carouselActive?: boolean;
 }) {
@@ -28,9 +30,11 @@ export default function Item({
       >
         <Carousel images={card.images} borderRadius={borderRadius} active={carouselActive} />
       </View>
-      <View style={styles.nameWrapper}>
-        <Text style={styles.name}>{card.name}</Text>
-      </View>
+      {showName && (
+        <View style={styles.nameWrapper}>
+          <Text style={styles.name}>{card.name}</Text>
+        </View>
+      )}
       {showDescription && (
         <ScrollView style={styles.descriptionWrapper}>
           <Text style={styles.description}>{card.description}</Text>
