@@ -1,12 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import Carousel from './Carousel';
-import { Card } from '../(tabs)/swipe';
-
-export enum ItemBorderRadius {
-  'all',
-  'up-only',
-}
+import { Card, ItemBorderRadius } from '../types';
 
 export default function Item({
   card,

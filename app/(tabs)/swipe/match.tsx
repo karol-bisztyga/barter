@@ -1,9 +1,9 @@
 import React from 'react';
 import { View, StyleSheet, Text, Dimensions, Button } from 'react-native';
-import { Card } from '.';
 import { generateItem } from '../../mocks/itemsMocker';
-import Item, { ItemBorderRadius } from '../../components/Item';
+import Item from '../../components/Item';
 import { router, useLocalSearchParams } from 'expo-router';
+import { Card, ItemBorderRadius } from '../../types';
 
 const { width } = Dimensions.get('window');
 

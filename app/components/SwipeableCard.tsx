@@ -10,8 +10,8 @@ import Animated, {
   withTiming,
   SharedValue,
 } from 'react-native-reanimated';
-import { Card } from '../(tabs)/swipe/index';
 import Item from './Item';
+import { Card } from '../types';
 
 const { width, height } = Dimensions.get('window');
 const SWIPE_THRESHOLD = 0.25 * width;

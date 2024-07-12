@@ -6,13 +6,6 @@ import { generateItem } from '../../mocks/itemsMocker';
 import SwipeableCard from '../../components/SwipeableCard';
 import { router } from 'expo-router';
 
-export type Card = {
-  id: string;
-  name: string;
-  images: string[];
-  description: string;
-};
-
 const LOADED_ITEMS_CAPACITY = 5;
 
 export default function App() {

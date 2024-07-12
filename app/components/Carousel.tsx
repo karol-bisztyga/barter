@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { ItemBorderRadius } from './Item';
+import { ItemBorderRadius } from '../types';
 
 const Carousel = ({
   images,
