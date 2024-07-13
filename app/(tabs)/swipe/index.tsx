@@ -5,13 +5,16 @@ import { useSharedValue } from 'react-native-reanimated';
 import { generateItem } from '../../mocks/itemsMocker';
 import SwipeableCard from '../../components/SwipeableCard';
 import { router } from 'expo-router';
+import { Card } from '../../types';
+import { useItemsContext } from '../../context/ItemsContext';
 
 const LOADED_ITEMS_CAPACITY = 5;
 
-export default function App() {
+export default function Swipe() {
   const [cards, setCards] = useState<Card[]>([]);
   const [currentId, setCurrentId] = useState<number>(0);
   const lockGesture = useSharedValue<boolean>(false);
+  const itemsContext = useItemsContext();
 
   const printCards = () => {
     console.log(
@@ -54,15 +57,8 @@ export default function App() {
     console.log('Swiped Right:', swipedCard?.name);
     lockGesture.value = false;
     // todo condition here
-    router.push({
-      pathname: 'swipe/match',
-      params: {
-        matchedItemId: swipedCard?.id,
-        matchedItemName: swipedCard?.name,
-        matchedItemImages: swipedCard?.images,
-        matchedItemDescription: swipedCard?.description,
-      },
-    });
+    itemsContext.setOthersItem(swipedCard);
+    router.push('swipe/match');
   };
 
   const handleSwipeLeft = () => {

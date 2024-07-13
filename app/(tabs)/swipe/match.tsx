@@ -2,22 +2,21 @@ import React from 'react';
 import { View, StyleSheet, Text, Dimensions, Button } from 'react-native';
 import { generateItem } from '../../mocks/itemsMocker';
 import Item from '../../components/Item';
-import { router, useLocalSearchParams } from 'expo-router';
+import { router } from 'expo-router';
 import { Card, ItemBorderRadius } from '../../types';
+import { useItemsContext } from '../../context/ItemsContext';
 
 const { width } = Dimensions.get('window');
 
 const MatchModal = () => {
   const usersItem: Card = generateItem();
+  const itemsContext = useItemsContext();
 
-  const { matchedItemId, matchedItemName, matchedItemImages, matchedItemDescription } =
-    useLocalSearchParams();
-  const matchedItem: Card = {
-    id: matchedItemId as string,
-    name: matchedItemName as string,
-    images: (matchedItemImages as string).split(','),
-    description: matchedItemDescription as string,
-  };
+  const othersItem = itemsContext.othersItem;
+  if (!othersItem) {
+    router.back();
+    return null;
+  }
 
   return (
     <View style={styles.container}>
@@ -33,7 +32,7 @@ const MatchModal = () => {
         </View>
         <View style={styles.matchedItem}>
           <Item
-            card={matchedItem}
+            card={othersItem}
             borderRadius={ItemBorderRadius.all}
             carouselActive={false}
             showDescription={false}
@@ -58,6 +57,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   matchedItem: {
+    backgroundColor: 'red',
     flex: 1,
   },
   matchedLabel: {
