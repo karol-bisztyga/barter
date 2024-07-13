@@ -21,25 +21,39 @@ const MatchModal = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.matchedLabel}>Items matched!</Text>
-      <View style={[styles.itemsWrapper, { height: width }]}>
-        <View style={styles.usersItem}>
-          <Item
-            card={usersItem}
-            borderRadius={ItemBorderRadius.all}
-            carouselActive={false}
-            showDescription={false}
-          />
+      <View style={[styles.itemsWrapper, { height: width, width: width }]}>
+        <View style={[styles.itemsImagesWrapper, { height: width }]}>
+          <View style={styles.usersItem}>
+            <Item
+              card={usersItem}
+              borderRadius={ItemBorderRadius.all}
+              carouselActive={false}
+              showDescription={false}
+              showName={false}
+            />
+          </View>
+          <View style={styles.matchedItem}>
+            <Item
+              card={othersItem}
+              borderRadius={ItemBorderRadius.all}
+              carouselActive={false}
+              showDescription={false}
+              showName={false}
+            />
+          </View>
         </View>
-        <View style={styles.matchedItem}>
-          <Item
-            card={othersItem}
-            borderRadius={ItemBorderRadius.all}
-            carouselActive={false}
-            showDescription={false}
-          />
+        <View style={styles.itemsLabelsWrapper}>
+          <View style={styles.usersItem}>
+            <Text style={styles.itemsLabel}>{usersItem.name}</Text>
+          </View>
+          <View style={styles.matchedItem}>
+            <Text style={styles.itemsLabel}>{othersItem.name}</Text>
+          </View>
+        </View>
+        <View style={{ position: 'absolute', width: '100%', bottom: 50 }}>
+          <Button title="Cool!" onPress={() => router.back()} />
         </View>
       </View>
-      <Button title="Cool!" onPress={() => router.back()} />
     </View>
   );
 };
@@ -49,19 +63,34 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    paddingTop: 100,
   },
   itemsWrapper: {
+    flex: 1,
+    flexDirection: 'column',
+  },
+  itemsImagesWrapper: {
+    flex: 1,
+    height: 200,
     flexDirection: 'row',
   },
   usersItem: {
     flex: 1,
   },
   matchedItem: {
-    backgroundColor: 'red',
     flex: 1,
+  },
+  itemsLabelsWrapper: {
+    flex: 1,
+    flexDirection: 'row',
+  },
+  itemsLabel: {
+    fontSize: 30,
+    textAlign: 'center',
   },
   matchedLabel: {
     fontSize: 50,
+    textAlign: 'center',
   },
 });
 
