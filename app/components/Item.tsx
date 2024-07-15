@@ -9,12 +9,14 @@ export default function Item({
   showName = true,
   borderRadius = ItemBorderRadius['up-only'],
   carouselActive = true,
+  onPress,
 }: {
   card: Card;
   showDescription?: boolean;
   showName?: boolean;
   borderRadius?: ItemBorderRadius;
   carouselActive?: boolean;
+  onPress?: () => void;
 }) {
   return (
     <View style={styles.container}>
@@ -28,7 +30,12 @@ export default function Item({
           },
         ]}
       >
-        <Carousel images={card.images} borderRadius={borderRadius} active={carouselActive} />
+        <Carousel
+          images={card.images}
+          borderRadius={borderRadius}
+          active={carouselActive}
+          onPress={onPress}
+        />
       </View>
       {showName && (
         <View style={styles.nameWrapper}>

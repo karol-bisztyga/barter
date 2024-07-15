@@ -172,3 +172,11 @@ export const generateItem = (id?: number): Card => {
     description: generateLoremIpsum(),
   };
 };
+
+export const generateChatItems = (count: number): Array<[Card, Card]> => {
+  const items: Array<[Card, Card]> = [];
+  for (let i = 0; i < count; i++) {
+    items.push([generateItem(), generateItem()]);
+  }
+  return items;
+};

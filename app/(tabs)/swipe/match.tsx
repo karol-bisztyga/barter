@@ -44,10 +44,10 @@ const MatchModal = () => {
         </View>
         <View style={styles.itemsLabelsWrapper}>
           <View style={styles.usersItem}>
-            <Text style={styles.itemsLabel}>{usersItem.name}</Text>
+            <Text style={[styles.itemsLabel, { paddingRight: 10 }]}>{usersItem.name}</Text>
           </View>
           <View style={styles.matchedItem}>
-            <Text style={styles.itemsLabel}>{othersItem.name}</Text>
+            <Text style={[styles.itemsLabel, { paddingLeft: 10 }]}>{othersItem.name}</Text>
           </View>
         </View>
         <View style={{ position: 'absolute', width: '100%', bottom: 50 }}>

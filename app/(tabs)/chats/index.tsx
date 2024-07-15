@@ -3,17 +3,23 @@ import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Item from '../../components/Item';
-import { generateItem } from '../../mocks/itemsMocker';
-import { ItemBorderRadius } from '../../types';
+import { generateChatItems } from '../../mocks/itemsMocker';
+import { Card, ItemBorderRadius } from '../../types';
 import { router } from 'expo-router';
+import { useItemsContext } from '../../context/ItemsContext';
+import Separator, { SEPARATOR_HEIGHT } from '../../components/Separator';
 
-const SEPARATOR_HEIGHT = 1;
 const ITEMS_PER_SCREEN = 4;
 
-const ListItem = ({ height }: { height: number }) => {
-  const usersItem = generateItem();
-  const matchedItem = generateItem();
-
+const ListItem = ({
+  height,
+  usersItem,
+  othersItem,
+}: {
+  height: number;
+  usersItem: Card;
+  othersItem: Card;
+}) => {
   return (
     <View
       style={[
@@ -36,7 +42,7 @@ const ListItem = ({ height }: { height: number }) => {
         </View>
         <View style={styles.matchedItem}>
           <Item
-            card={matchedItem}
+            card={othersItem}
             showName={false}
             showDescription={false}
             borderRadius={ItemBorderRadius.all}
@@ -49,7 +55,8 @@ const ListItem = ({ height }: { height: number }) => {
 };
 
 export default function Chats() {
-  const items = new Array(10).fill(0);
+  const itemsContext = useItemsContext();
+  const items: Array<[Card, Card]> = generateChatItems(10);
 
   const [containerHeight, setContainerHeight] = useState<number>(0);
 
@@ -68,18 +75,21 @@ export default function Chats() {
               <>
                 <TouchableOpacity
                   onPress={() => {
-                    console.log('go to chat', item);
-
-                    router.push({
-                      pathname: 'chats/chat',
-                      params: {},
-                    });
+                    const [usersItem, othersItem] = item;
+                    itemsContext.usersItem = usersItem;
+                    itemsContext.othersItem = othersItem;
+                    console.log(
+                      'go to chat',
+                      itemsContext.usersItem.name,
+                      itemsContext.othersItem.name
+                    );
+                    router.push('chats/chat');
                   }}
                   activeOpacity={1}
                 >
-                  <ListItem height={containerHeight} />
+                  <ListItem height={containerHeight} usersItem={item[0]} othersItem={item[1]} />
                 </TouchableOpacity>
-                {index < items.length - 1 && <View style={styles.separator} />}
+                {index < items.length - 1 && <Separator />}
               </>
             );
           }}
@@ -119,12 +129,5 @@ const styles = StyleSheet.create({
   },
   matchedItem: {
     flex: 1,
-  },
-  separator: {
-    flex: 1,
-    height: SEPARATOR_HEIGHT,
-    backgroundColor: 'black',
-    marginRight: 20,
-    marginLeft: 20,
   },
 });

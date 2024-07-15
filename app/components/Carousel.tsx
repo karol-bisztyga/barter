@@ -6,10 +6,12 @@ const Carousel = ({
   images,
   borderRadius = ItemBorderRadius['up-only'],
   active = true,
+  onPress,
 }: {
   images: string[];
   borderRadius?: ItemBorderRadius;
   active?: boolean;
+  onPress?: () => void;
 }) => {
   const [loading, setLoading] = useState(false);
   const [imageIndex, setImageIndex] = useState<number>(0);
@@ -53,9 +55,14 @@ const Carousel = ({
       {images.length > 1 && <View style={styles.dotsContainer}>{renderDots()}</View>}
 
       <TouchableOpacity
+        disabled={!active}
         activeOpacity={1}
         style={styles.leftButton}
         onPress={() => {
+          if (onPress) {
+            onPress();
+            return;
+          }
           if (!active) {
             return;
           }
@@ -68,9 +75,14 @@ const Carousel = ({
       />
 
       <TouchableOpacity
+        disabled={!active}
         activeOpacity={1}
         style={styles.rightButton}
         onPress={() => {
+          if (onPress) {
+            onPress();
+            return;
+          }
           if (!active) {
             return;
           }
