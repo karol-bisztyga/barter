@@ -5,7 +5,12 @@ export default function Layout() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
-      <Stack.Screen name="chat" options={{ presentation: 'modal' }} />
+      <Stack.Screen
+        name="chat"
+        options={{
+          headerShown: true,
+        }}
+      />
     </Stack>
   );
 }

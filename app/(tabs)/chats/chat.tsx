@@ -1,68 +1,120 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
-import { ItemBorderRadius } from '../../types';
-import Item from '../../components/Item';
-import { useItemsContext } from '../../context/ItemsContext';
-import { router } from 'expo-router';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  SafeAreaView,
+  TextInput,
+  View,
+  StyleSheet,
+  Text,
+  Keyboard,
+  Platform,
+  FlatList,
+  Button,
+} from 'react-native';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
+import { generateMessages } from '../../mocks/messagesMocker';
 import Separator from '../../components/Separator';
+import { router } from 'expo-router';
 
-const ChatModal = () => {
-  const itemsContext = useItemsContext();
+const INPUT_WRAPPER_HEIGHT = 70;
 
-  const [text, setText] = useState('');
+const App = () => {
+  const keyboardHeight = useSharedValue(0);
+  const inputWrapperPosition = useSharedValue<number>(0);
+  const [messages, setMessages] = useState<string[]>([]);
+  const [initialScrollPerformed, setInitialScrollPerformed] = useState(false);
 
-  const { usersItem, othersItem } = itemsContext;
-  if (usersItem === null || othersItem === null) {
-    console.error('at least one of the items has not been set, redirecting back');
-    router.back();
-    return null;
-  }
+  const flatListRef = useRef<FlatList>(null);
+
+  const scrollMessagesToNewest = () => {
+    flatListRef?.current?.scrollToIndex({ index: 0, animated: false });
+  };
+
+  useEffect(() => {
+    setMessages(generateMessages(Math.floor(Math.random() * 30) + 20));
+  }, []);
+
+  useEffect(() => {
+    const keyboardWillShowListener = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
+      (event) => {
+        keyboardHeight.value = withTiming(event.endCoordinates.height, {
+          duration: event.duration / 5,
+        });
+      }
+    );
+
+    const keyboardWillHideListener = Keyboard.addListener(
+      Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
+      (event) => {
+        keyboardHeight.value = withTiming(0, { duration: event.duration / 5 });
+      }
+    );
+
+    return () => {
+      keyboardWillShowListener.remove();
+      keyboardWillHideListener.remove();
+    };
+  }, [keyboardHeight]);
+
+  const messageListAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      height: inputWrapperPosition.value,
+    };
+  }, [keyboardHeight]);
+
+  const inputWrapperAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      bottom: keyboardHeight.value ? keyboardHeight.value - INPUT_WRAPPER_HEIGHT : 0,
+    };
+  }, [keyboardHeight]);
 
   return (
-    <View style={styles.container}>
-      <View style={styles.itemsWrapper}>
-        <View style={styles.itemWrapper}>
-          <View style={styles.usersItem}>
-            <Item
-              card={usersItem}
-              onPress={() => {
-                console.log('open item modal');
-              }}
-              showDescription={false}
-              carouselActive={false}
-              showName={false}
-              borderRadius={ItemBorderRadius.all}
-            />
-          </View>
-          <View style={styles.otherItem}>
-            <Item
-              card={othersItem}
-              onPress={() => {
-                console.log('open item modal');
-              }}
-              showDescription={false}
-              carouselActive={false}
-              showName={false}
-              borderRadius={ItemBorderRadius.all}
-            />
-          </View>
-        </View>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.scrollViewContent}>
+        <Animated.View style={[styles.messageList, messageListAnimatedStyle]}>
+          <FlatList
+            ref={flatListRef}
+            data={messages}
+            inverted={true}
+            onContentSizeChange={() => {
+              if (initialScrollPerformed) {
+                return;
+              }
+              scrollMessagesToNewest();
+              setInitialScrollPerformed(true);
+            }}
+            renderItem={({ item }) => (
+              <View>
+                <Text style={{ margin: 20 }}>{item}</Text>
+                <Separator />
+              </View>
+            )}
+            keyExtractor={(item, index) => index.toString()}
+          />
+        </Animated.View>
+        <Animated.View
+          style={[styles.inputContainer, inputWrapperAnimatedStyle]}
+          onLayout={(e) => {
+            inputWrapperPosition.value = e.nativeEvent.layout.y;
+          }}
+        >
+          <TextInput
+            style={styles.input}
+            placeholder="Type a message"
+            blurOnSubmit={false}
+            onFocus={() => {
+              scrollMessagesToNewest();
+            }}
+          />
+          <Button
+            title="Send"
+            onPress={() => {
+              router.back();
+            }}
+          />
+        </Animated.View>
       </View>
-      <Separator />
-      <View style={{ flex: 7, marginTop: 20, marginBottom: 20, backgroundColor: 'red' }}></View>
-      <Separator />
-      <View style={styles.inputContainer}>
-        <TextInput
-          style={styles.input}
-          value={text}
-          onChangeText={setText}
-          placeholder="Type a message"
-        />
-        <TouchableOpacity style={styles.sendButton} onPress={() => {}}>
-          <Text style={styles.sendButtonText}>Send</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -70,48 +122,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  text: {
-    fontSize: 24,
-  },
-  itemsWrapper: {
-    paddingLeft: 20,
-    paddingRight: 20,
-    height: 200,
-  },
-  itemWrapper: {
-    flex: 1,
-    flexDirection: 'row',
-  },
-  touchableOpacityItem: {
-    flex: 1,
-  },
-  usersItem: {
-    flex: 1,
-  },
-  iconWrapper: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  messagesList: {
+  scrollViewContent: {
     flexGrow: 1,
     justifyContent: 'flex-end',
   },
-  messageContainer: {
-    padding: 10,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 5,
-    marginVertical: 5,
-    marginHorizontal: 10,
-  },
-  messageText: {
-    fontSize: 16,
+  messageList: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    position: 'absolute',
+    top: 0,
+    width: '100%',
+    height: 200,
   },
   inputContainer: {
     flexDirection: 'row',
     padding: 10,
-    borderTopWidth: 1,
-    borderColor: '#ccc',
+    alignItems: 'center',
+    height: INPUT_WRAPPER_HEIGHT,
+    position: 'absolute',
+    width: '100%',
   },
   input: {
     flex: 1,
@@ -119,27 +148,9 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 20,
     paddingHorizontal: 10,
-    fontSize: 16,
-  },
-  icon: {
-    fontSize: 50,
-  },
-  otherItem: {
-    flex: 1,
-  },
-  sendButton: {
-    marginLeft: 10,
-    backgroundColor: '#007bff',
-    borderRadius: 20,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-  },
-  sendButtonText: {
-    color: '#fff',
-    fontSize: 16,
+    fontSize: 30,
+    height: 40,
   },
 });
 
-export default ChatModal;
+export default App;
