@@ -33,7 +33,7 @@ const App = () => {
 
   const loadMessages = () => {
     setTimeout(() => {
-      const olderMessages = generateMessages(20);
+      const olderMessages: ChatMessage[] = generateMessages(20);
       setMessages([...messages, ...olderMessages]);
     }, 2000);
   };
@@ -51,6 +51,21 @@ const App = () => {
     setNewMessage('');
     scrollMessagesToNewest();
   };
+
+  const loadNewMessages = () => {
+    const numberOfNewMessages = Math.floor(Math.random() * 2);
+    const newMessages = generateMessages(numberOfNewMessages, 'other');
+
+    setMessages([...newMessages, ...messages]);
+  };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      loadNewMessages();
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [messages]);
 
   useEffect(() => {
     loadMessages();
