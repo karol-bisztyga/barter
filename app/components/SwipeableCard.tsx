@@ -85,7 +85,6 @@ const SwipeableCard = ({
     if (!dragging.value) {
       return 'black';
     }
-    console.log('here', translateX.value);
     return translateX.value > 0 ? 'green' : 'red';
   });
 

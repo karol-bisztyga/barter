@@ -14,9 +14,13 @@ import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-na
 import { generateMessages } from '../../mocks/messagesMocker';
 import { ChatMessage } from '../../types';
 import ChatMessageComponent from '../../components/ChatMessageComponent';
+import { useItemsContext } from '../../context/ItemsContext';
+import { router } from 'expo-router';
+import ChatHeader from './components/ChatHeader';
 
 const INPUT_WRAPPER_HEIGHT = 70;
-const MESSAGES_ON_SCREEN_LIMIT = 30;
+// const MESSAGES_ON_SCREEN_LIMIT = 30;
+const ITEMS_WRPPER_HEIGHT = 200;
 
 const App = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -27,6 +31,14 @@ const App = () => {
   const inputWrapperPosition = useSharedValue<number>(0);
 
   const flatListRef = useRef<FlatList>(null);
+
+  const itemsContext = useItemsContext();
+  const { usersItem, othersItem } = itemsContext;
+  if (!usersItem || !othersItem) {
+    console.error('at least on of the items has not been set');
+    router.back();
+    return null;
+  }
 
   const scrollMessagesToNewest = () => {
     flatListRef?.current?.scrollToIndex({ index: 0, animated: false });
@@ -75,11 +87,12 @@ const App = () => {
     loadMessages();
   }, []);
 
-  useEffect(() => {
-    if (messages.length > MESSAGES_ON_SCREEN_LIMIT) {
-      setMessages(messages.slice(0, MESSAGES_ON_SCREEN_LIMIT));
-    }
-  }, [messages]);
+  // todo, for now do not check the limit...
+  // useEffect(() => {
+  //   if (messages.length > MESSAGES_ON_SCREEN_LIMIT) {
+  //     setMessages(messages.slice(0, MESSAGES_ON_SCREEN_LIMIT));
+  //   }
+  // }, [messages]);
 
   useEffect(() => {
     const keyboardWillShowListener = Keyboard.addListener(
@@ -106,7 +119,7 @@ const App = () => {
 
   const messageListAnimatedStyle = useAnimatedStyle(() => {
     return {
-      height: inputWrapperPosition.value,
+      height: inputWrapperPosition.value - ITEMS_WRPPER_HEIGHT,
     };
   }, [keyboardHeight]);
 
@@ -123,6 +136,7 @@ const App = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.scrollViewContent}>
+        <ChatHeader />
         <Animated.View style={[styles.messageList, messageListAnimatedStyle]}>
           <FlatList
             ref={flatListRef}
@@ -130,6 +144,10 @@ const App = () => {
             inverted={true}
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
+            maintainVisibleContentPosition={{
+              minIndexForVisible: 0,
+              autoscrollToTopThreshold: 0,
+            }}
             onContentSizeChange={() => {
               if (messages.length === 0 || initialScrollPerformed) {
                 return;
@@ -189,7 +207,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
     position: 'absolute',
-    top: 0,
+    top: 200,
     width: '100%',
   },
   inputContainer: {

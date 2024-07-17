@@ -14,6 +14,7 @@ const MatchModal = () => {
 
   const othersItem = itemsContext.othersItem;
   if (!othersItem) {
+    console.error('at least on of the items has not been set');
     router.back();
     return null;
   }
@@ -27,7 +28,8 @@ const MatchModal = () => {
             <Item
               card={usersItem}
               borderRadius={ItemBorderRadius.all}
-              carouselActive={false}
+              carouselDotsVisible={false}
+              carouselPressEnabled={false}
               showDescription={false}
               showName={false}
             />
@@ -36,7 +38,8 @@ const MatchModal = () => {
             <Item
               card={othersItem}
               borderRadius={ItemBorderRadius.all}
-              carouselActive={false}
+              carouselDotsVisible={false}
+              carouselPressEnabled={false}
               showDescription={false}
               showName={false}
             />

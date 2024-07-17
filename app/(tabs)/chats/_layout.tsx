@@ -20,6 +20,19 @@ export default function Layout() {
           ),
         }}
       />
+      <Stack.Screen
+        name="item"
+        options={{
+          headerShown: true,
+          headerTitle: () => <></>,
+          headerBackVisible: false,
+          headerLeft: () => (
+            <TouchableOpacity activeOpacity={1} onPress={() => router.back()}>
+              <FontAwesome size={28} name="arrow-left" />
+            </TouchableOpacity>
+          ),
+        }}
+      />
     </Stack>
   );
 }

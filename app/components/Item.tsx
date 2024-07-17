@@ -1,25 +1,31 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Dimensions } from 'react-native';
 import Carousel from './Carousel';
 import { Card, ItemBorderRadius } from '../types';
+
+const { height } = Dimensions.get('window');
 
 export default function Item({
   card,
   showDescription = true,
   showName = true,
   borderRadius = ItemBorderRadius['up-only'],
-  carouselActive = true,
+  carouselDotsVisible = true,
+  carouselPressEnabled = true,
+  showFull = false,
   onPress,
 }: {
   card: Card;
   showDescription?: boolean;
   showName?: boolean;
   borderRadius?: ItemBorderRadius;
-  carouselActive?: boolean;
+  carouselDotsVisible?: boolean;
+  carouselPressEnabled?: boolean;
+  showFull?: boolean;
   onPress?: () => void;
 }) {
-  return (
-    <View style={styles.container}>
+  const InnerContents = () => (
+    <>
       <View
         style={[
           styles.imageWrapper,
@@ -27,13 +33,15 @@ export default function Item({
             borderTopLeftRadius: 20,
             borderTopRightRadius: 20,
             borderRadius: borderRadius === ItemBorderRadius['all'] ? 20 : 0,
+            height: showFull ? height / 2 : '75%',
           },
         ]}
       >
         <Carousel
           images={card.images}
           borderRadius={borderRadius}
-          active={carouselActive}
+          dotsVisible={carouselDotsVisible}
+          pressEnabled={carouselPressEnabled}
           onPress={onPress}
         />
       </View>
@@ -43,10 +51,26 @@ export default function Item({
         </View>
       )}
       {showDescription && (
-        <ScrollView style={styles.descriptionWrapper}>
-          <Text style={styles.description}>{card.description}</Text>
-        </ScrollView>
+        <View style={styles.descriptionWrapper}>
+          <Text style={styles.description} numberOfLines={showFull ? 0 : 2}>
+            {card.description}
+          </Text>
+        </View>
       )}
+    </>
+  );
+  if (showFull) {
+    return (
+      <View style={styles.container}>
+        <ScrollView>
+          <InnerContents />
+        </ScrollView>
+      </View>
+    );
+  }
+  return (
+    <View style={styles.container}>
+      <InnerContents />
     </View>
   );
 }
@@ -75,7 +99,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   description: {
-    fontSize: 20,
+    fontSize: 25,
     color: 'gray',
   },
 });

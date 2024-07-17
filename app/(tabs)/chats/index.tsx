@@ -34,7 +34,8 @@ const ListItem = ({
             showName={false}
             showDescription={false}
             borderRadius={ItemBorderRadius.all}
-            carouselActive={false}
+            carouselDotsVisible={false}
+            carouselPressEnabled={false}
           />
         </View>
         <View style={styles.iconWrapper}>
@@ -46,7 +47,8 @@ const ListItem = ({
             showName={false}
             showDescription={false}
             borderRadius={ItemBorderRadius.all}
-            carouselActive={false}
+            carouselDotsVisible={false}
+            carouselPressEnabled={false}
           />
         </View>
       </View>
@@ -78,11 +80,6 @@ export default function Chats() {
                     const [usersItem, othersItem] = item;
                     itemsContext.usersItem = usersItem;
                     itemsContext.othersItem = othersItem;
-                    console.log(
-                      'go to chat',
-                      itemsContext.usersItem.name,
-                      itemsContext.othersItem.name
-                    );
                     router.push('chats/chat');
                   }}
                   activeOpacity={1}

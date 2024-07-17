@@ -87,7 +87,7 @@ export const generateItem = (id?: number): Card => {
     id: generateId(id),
     name: generateRandomHouseholdObjectName(),
     images: generateMockedImageUrls(),
-    description: generateLoremIpsum(),
+    description: generateLoremIpsum(200),
   };
 };
 
