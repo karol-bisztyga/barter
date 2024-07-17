@@ -85,6 +85,7 @@ const SwipeableCard = ({
     if (!dragging.value) {
       return 'black';
     }
+    console.log('here', translateX.value);
     return translateX.value > 0 ? 'green' : 'red';
   });
 
@@ -118,8 +119,9 @@ const styles = StyleSheet.create({
     position: 'absolute',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    elevation: 5,
+    shadowOpacity: 1,
+    shadowRadius: 10,
+    elevation: 30,
   },
 });
 

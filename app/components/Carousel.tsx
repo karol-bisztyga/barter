@@ -79,6 +79,7 @@ const Carousel = ({
         activeOpacity={1}
         style={styles.rightButton}
         onPress={() => {
+          console.log('asd');
           if (onPress) {
             onPress();
             return;

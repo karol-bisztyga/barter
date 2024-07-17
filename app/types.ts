@@ -9,3 +9,9 @@ export enum ItemBorderRadius {
   'all',
   'up-only',
 }
+
+export type ChatMessage = {
+  id: string;
+  content: string;
+  user: 'self' | 'other';
+};

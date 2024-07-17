@@ -4,7 +4,6 @@ import {
   TextInput,
   View,
   StyleSheet,
-  Text,
   Keyboard,
   Platform,
   FlatList,
@@ -12,16 +11,17 @@ import {
 } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { generateMessages } from '../../mocks/messagesMocker';
-import Separator from '../../components/Separator';
-import { router } from 'expo-router';
+import { ChatMessage } from '../../types';
+import ChatMessageComponent from '../../components/ChatMessageComponent';
 
 const INPUT_WRAPPER_HEIGHT = 70;
 
 const App = () => {
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [initialScrollPerformed, setInitialScrollPerformed] = useState(false);
+
   const keyboardHeight = useSharedValue(0);
   const inputWrapperPosition = useSharedValue<number>(0);
-  const [messages, setMessages] = useState<string[]>([]);
-  const [initialScrollPerformed, setInitialScrollPerformed] = useState(false);
 
   const flatListRef = useRef<FlatList>(null);
 
@@ -63,8 +63,12 @@ const App = () => {
   }, [keyboardHeight]);
 
   const inputWrapperAnimatedStyle = useAnimatedStyle(() => {
+    let bottom: number = 0;
+    if (Platform.OS === 'ios') {
+      bottom = keyboardHeight.value ? keyboardHeight.value - INPUT_WRAPPER_HEIGHT : 0;
+    }
     return {
-      bottom: keyboardHeight.value ? keyboardHeight.value - INPUT_WRAPPER_HEIGHT : 0,
+      bottom,
     };
   }, [keyboardHeight]);
 
@@ -76,6 +80,8 @@ const App = () => {
             ref={flatListRef}
             data={messages}
             inverted={true}
+            showsHorizontalScrollIndicator={false}
+            showsVerticalScrollIndicator={false}
             onContentSizeChange={() => {
               if (initialScrollPerformed) {
                 return;
@@ -83,13 +89,8 @@ const App = () => {
               scrollMessagesToNewest();
               setInitialScrollPerformed(true);
             }}
-            renderItem={({ item }) => (
-              <View>
-                <Text style={{ margin: 20 }}>{item}</Text>
-                <Separator />
-              </View>
-            )}
-            keyExtractor={(item, index) => index.toString()}
+            renderItem={({ item }) => <ChatMessageComponent message={item} />}
+            keyExtractor={(message: ChatMessage) => message.id}
           />
         </Animated.View>
         <Animated.View
@@ -98,20 +99,8 @@ const App = () => {
             inputWrapperPosition.value = e.nativeEvent.layout.y;
           }}
         >
-          <TextInput
-            style={styles.input}
-            placeholder="Type a message"
-            blurOnSubmit={false}
-            onFocus={() => {
-              scrollMessagesToNewest();
-            }}
-          />
-          <Button
-            title="Send"
-            onPress={() => {
-              router.back();
-            }}
-          />
+          <TextInput style={styles.input} placeholder="Type a message" blurOnSubmit={false} />
+          <Button title="Send" onPress={() => {}} />
         </Animated.View>
       </View>
     </SafeAreaView>
@@ -132,7 +121,6 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     width: '100%',
-    height: 200,
   },
   inputContainer: {
     flexDirection: 'row',
