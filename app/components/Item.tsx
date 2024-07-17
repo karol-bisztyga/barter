@@ -13,6 +13,7 @@ export default function Item({
   carouselDotsVisible = true,
   carouselPressEnabled = true,
   showFull = false,
+  centerVertically = true,
   onPress,
 }: {
   card: Card;
@@ -22,6 +23,7 @@ export default function Item({
   carouselDotsVisible?: boolean;
   carouselPressEnabled?: boolean;
   showFull?: boolean;
+  centerVertically?: boolean;
   onPress?: () => void;
 }) {
   const InnerContents = () => (
@@ -61,7 +63,14 @@ export default function Item({
   );
   if (showFull) {
     return (
-      <View style={styles.container}>
+      <View
+        style={[
+          styles.container,
+          {
+            justifyContent: centerVertically ? 'center' : 'flex-start',
+          },
+        ]}
+      >
         <ScrollView>
           <InnerContents />
         </ScrollView>
@@ -69,7 +78,14 @@ export default function Item({
     );
   }
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        {
+          justifyContent: centerVertically ? 'center' : 'flex-start',
+        },
+      ]}
+    >
       <InnerContents />
     </View>
   );
@@ -78,8 +94,6 @@ export default function Item({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   imageWrapper: {
     width: '100%',

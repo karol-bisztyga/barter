@@ -103,7 +103,7 @@ const SwipeableCard = ({
   return (
     <GestureDetector gesture={gesture}>
       <Animated.View style={[styles.card, animatedStyle]}>
-        <Item card={card} />
+        <Item card={card} centerVertically={false} />
       </Animated.View>
     </GestureDetector>
   );
