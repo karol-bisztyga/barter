@@ -16,6 +16,7 @@ import { ChatMessage } from '../../types';
 import ChatMessageComponent from '../../components/ChatMessageComponent';
 
 const INPUT_WRAPPER_HEIGHT = 70;
+const MESSAGES_ON_SCREEN_LIMIT = 30;
 
 const App = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -53,7 +54,7 @@ const App = () => {
   };
 
   const loadNewMessages = () => {
-    const numberOfNewMessages = Math.floor(Math.random() * 2);
+    const numberOfNewMessages = Math.floor(Math.random() * 3);
     const newMessages = generateMessages(numberOfNewMessages, 'other');
 
     setMessages([...newMessages, ...messages]);
@@ -61,6 +62,9 @@ const App = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
+      if (!messages.length) {
+        return;
+      }
       loadNewMessages();
     }, 5000);
 
@@ -70,6 +74,12 @@ const App = () => {
   useEffect(() => {
     loadMessages();
   }, []);
+
+  useEffect(() => {
+    if (messages.length > MESSAGES_ON_SCREEN_LIMIT) {
+      setMessages(messages.slice(0, MESSAGES_ON_SCREEN_LIMIT));
+    }
+  }, [messages]);
 
   useEffect(() => {
     const keyboardWillShowListener = Keyboard.addListener(
