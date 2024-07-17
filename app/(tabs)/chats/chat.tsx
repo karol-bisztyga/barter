@@ -8,6 +8,7 @@ import {
   Platform,
   FlatList,
   Button,
+  ActivityIndicator,
 } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { generateMessages } from '../../mocks/messagesMocker';
@@ -19,6 +20,7 @@ const INPUT_WRAPPER_HEIGHT = 70;
 const App = () => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [initialScrollPerformed, setInitialScrollPerformed] = useState(false);
+  const [newMessage, setNewMessage] = useState('');
 
   const keyboardHeight = useSharedValue(0);
   const inputWrapperPosition = useSharedValue<number>(0);
@@ -29,8 +31,29 @@ const App = () => {
     flatListRef?.current?.scrollToIndex({ index: 0, animated: false });
   };
 
+  const loadMessages = () => {
+    setTimeout(() => {
+      const olderMessages = generateMessages(20);
+      setMessages([...messages, ...olderMessages]);
+    }, 2000);
+  };
+
+  const sendNewMessage = () => {
+    if (newMessage.length === 0) {
+      return;
+    }
+    const newMessageObject: ChatMessage = {
+      id: messages.length.toString(),
+      content: newMessage,
+      user: 'self',
+    };
+    setMessages([newMessageObject, ...messages]);
+    setNewMessage('');
+    scrollMessagesToNewest();
+  };
+
   useEffect(() => {
-    setMessages(generateMessages(Math.floor(Math.random() * 30) + 20));
+    loadMessages();
   }, []);
 
   useEffect(() => {
@@ -83,7 +106,7 @@ const App = () => {
             showsHorizontalScrollIndicator={false}
             showsVerticalScrollIndicator={false}
             onContentSizeChange={() => {
-              if (initialScrollPerformed) {
+              if (messages.length === 0 || initialScrollPerformed) {
                 return;
               }
               scrollMessagesToNewest();
@@ -91,6 +114,17 @@ const App = () => {
             }}
             renderItem={({ item }) => <ChatMessageComponent message={item} />}
             keyExtractor={(message: ChatMessage) => message.id}
+            onEndReached={() => {
+              loadMessages();
+            }}
+            onEndReachedThreshold={0.1}
+            ListFooterComponent={() => {
+              return (
+                <View style={styles.loaderWrapper}>
+                  <ActivityIndicator size="large" />
+                </View>
+              );
+            }}
           />
         </Animated.View>
         <Animated.View
@@ -99,8 +133,19 @@ const App = () => {
             inputWrapperPosition.value = e.nativeEvent.layout.y;
           }}
         >
-          <TextInput style={styles.input} placeholder="Type a message" blurOnSubmit={false} />
-          <Button title="Send" onPress={() => {}} />
+          <TextInput
+            style={styles.input}
+            placeholder="Type a message"
+            blurOnSubmit={false}
+            value={newMessage}
+            onChangeText={setNewMessage}
+          />
+          <Button
+            title="Send"
+            onPress={() => {
+              sendNewMessage();
+            }}
+          />
         </Animated.View>
       </View>
     </SafeAreaView>
@@ -138,6 +183,9 @@ const styles = StyleSheet.create({
     paddingHorizontal: 10,
     fontSize: 30,
     height: 40,
+  },
+  loaderWrapper: {
+    margin: 20,
   },
 });
 
