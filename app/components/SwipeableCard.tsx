@@ -23,10 +23,12 @@ const SwipeableCard = ({
   onSwipeRight,
   onSwipeLeft,
   lockGesture,
+  onPressMore,
 }: {
   card: Card;
   onSwipeRight: () => void;
   onSwipeLeft: () => void;
+  onPressMore: () => void;
   lockGesture: SharedValue<boolean>;
 }) => {
   const translateX = useSharedValue(0);
@@ -103,7 +105,7 @@ const SwipeableCard = ({
   return (
     <GestureDetector gesture={gesture}>
       <Animated.View style={[styles.card, animatedStyle]}>
-        <Item card={card} centerVertically={false} />
+        <Item card={card} centerVertically={false} onPressMore={onPressMore} />
       </Animated.View>
     </GestureDetector>
   );
@@ -112,7 +114,7 @@ const SwipeableCard = ({
 const styles = StyleSheet.create({
   card: {
     width: width * 0.9,
-    height: height * 0.7,
+    height: height * 0.8,
     borderRadius: 20,
     backgroundColor: '#fff',
     position: 'absolute',

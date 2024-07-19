@@ -77,6 +77,10 @@ export default function Swipe() {
             onSwipeRight={handleSwipeRight}
             onSwipeLeft={handleSwipeLeft}
             lockGesture={lockGesture}
+            onPressMore={() => {
+              itemsContext.setOthersItem(card);
+              router.push({ pathname: 'swipe/item', params: { whosItem: 'other' } });
+            }}
           />
         ))}
       </View>

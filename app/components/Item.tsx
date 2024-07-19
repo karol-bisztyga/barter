@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Dimensions } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Dimensions, Button } from 'react-native';
 import Carousel from './Carousel';
 import { Card, ItemBorderRadius } from '../types';
 
@@ -14,6 +14,7 @@ export default function Item({
   carouselPressEnabled = true,
   showFull = false,
   centerVertically = true,
+  onPressMore = () => {},
   onPress,
 }: {
   card: Card;
@@ -24,6 +25,7 @@ export default function Item({
   carouselPressEnabled?: boolean;
   showFull?: boolean;
   centerVertically?: boolean;
+  onPressMore?: () => void;
   onPress?: () => void;
 }) {
   const InnerContents = () => (
@@ -57,6 +59,11 @@ export default function Item({
           <Text style={styles.description} numberOfLines={showFull ? 0 : 2}>
             {card.description}
           </Text>
+          {!showFull && (
+            <View style={{ padding: 10 }}>
+              <Button title="more" onPress={onPressMore} />
+            </View>
+          )}
         </View>
       )}
     </>
@@ -95,10 +102,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  imageWrapper: {
-    width: '100%',
-    height: '75%',
-  },
+  imageWrapper: {},
   nameWrapper: {
     paddingLeft: 20,
     paddingRight: 20,
