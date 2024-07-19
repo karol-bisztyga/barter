@@ -1,4 +1,5 @@
 import { Card } from '../types';
+import { generateImage } from './imageMocker';
 import { generateLoremIpsum } from './textMocker';
 
 const generateId = (id?: number) => {
@@ -72,11 +73,7 @@ const generateMockedImageUrls = (count?: number) => {
   const urls = [];
 
   for (let i = 0; i < count; i++) {
-    // Using `https://picsum.photos` to generate random image URLs
-    const width = 200 + i * 50; // Slightly vary the size to ensure distinct images
-    const height = 200 + i * 50;
-    const url = `https://picsum.photos/${width}/${height}?random=${Math.random()}`;
-    urls.push(url);
+    urls.push(generateImage());
   }
 
   return urls;
@@ -98,3 +95,5 @@ export const generateChatItems = (count: number): Array<[Card, Card]> => {
   }
   return items;
 };
+
+export const MAX_ITEMS_SLOTS = 5;

@@ -64,7 +64,6 @@ const App = () => {
     setNewMessage('');
     scrollMessagesToNewest();
   };
-
   const loadNewMessages = () => {
     const numberOfNewMessages = Math.floor(Math.random() * 3);
     const newMessages = generateMessages(numberOfNewMessages, 'other');
@@ -78,7 +77,7 @@ const App = () => {
         return;
       }
       loadNewMessages();
-    }, 5000);
+    }, 1000);
 
     return () => clearInterval(interval);
   }, [messages]);

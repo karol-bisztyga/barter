@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Dimensions, Button } from 'react-native';
 import Carousel from './Carousel';
-import { Card, ItemBorderRadius } from '../types';
+import { Card, ItemBorderRadius, ItemNamePlacement } from '../types';
 
 const { height } = Dimensions.get('window');
 
@@ -9,6 +9,7 @@ export default function Item({
   card,
   showDescription = true,
   showName = true,
+  namePlacement = ItemNamePlacement['below'],
   borderRadius = ItemBorderRadius['up-only'],
   carouselDotsVisible = true,
   carouselPressEnabled = true,
@@ -20,6 +21,7 @@ export default function Item({
   card: Card;
   showDescription?: boolean;
   showName?: boolean;
+  namePlacement?: ItemNamePlacement;
   borderRadius?: ItemBorderRadius;
   carouselDotsVisible?: boolean;
   carouselPressEnabled?: boolean;
@@ -30,6 +32,11 @@ export default function Item({
 }) {
   const InnerContents = () => (
     <>
+      {showName && namePlacement === ItemNamePlacement.above && (
+        <View style={styles.nameWrapper}>
+          <Text style={styles.name}>{card.name}</Text>
+        </View>
+      )}
       <View
         style={[
           styles.imageWrapper,
@@ -49,7 +56,7 @@ export default function Item({
           onPress={onPress}
         />
       </View>
-      {showName && (
+      {showName && namePlacement === ItemNamePlacement.below && (
         <View style={styles.nameWrapper}>
           <Text style={styles.name}>{card.name}</Text>
         </View>
