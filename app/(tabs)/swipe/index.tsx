@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { SafeAreaView, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSharedValue } from 'react-native-reanimated';
 import { generateItem } from '../../mocks/itemsMocker';
@@ -68,23 +68,25 @@ export default function Swipe() {
   };
 
   return (
-    <GestureHandlerRootView>
-      <View style={styles.container}>
-        {cards.map((card, index) => (
-          <SwipeableCard
-            key={`${card.id}-${index}`}
-            card={card}
-            onSwipeRight={handleSwipeRight}
-            onSwipeLeft={handleSwipeLeft}
-            lockGesture={lockGesture}
-            onPressMore={() => {
-              itemsContext.setOthersItem(card);
-              router.push({ pathname: 'swipe/item', params: { whosItem: 'other' } });
-            }}
-          />
-        ))}
-      </View>
-    </GestureHandlerRootView>
+    <SafeAreaView style={styles.container}>
+      <GestureHandlerRootView>
+        <View style={styles.container}>
+          {cards.map((card, index) => (
+            <SwipeableCard
+              key={`${card.id}-${index}`}
+              card={card}
+              onSwipeRight={handleSwipeRight}
+              onSwipeLeft={handleSwipeLeft}
+              lockGesture={lockGesture}
+              onPressMore={() => {
+                itemsContext.setOthersItem(card);
+                router.push({ pathname: 'swipe/item', params: { whosItem: 'other' } });
+              }}
+            />
+          ))}
+        </View>
+      </GestureHandlerRootView>
+    </SafeAreaView>
   );
 }
 

@@ -1,11 +1,12 @@
 import React, { useRef, useState } from 'react';
-import { View, StyleSheet, Text, Image, ActivityIndicator } from 'react-native';
+import { View, StyleSheet, Text, Image, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Separator from '../../components/Separator';
 import Contact from './components/Contact';
 import { generateImage } from '../../mocks/imageMocker';
 import Items from './components/Items';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 export default function Profile() {
   const [imageLoading, setImageLoading] = useState<boolean>(true);
@@ -18,18 +19,29 @@ export default function Profile() {
       <View style={{ flex: 1 }}>
         <KeyboardAwareScrollView ref={scrollViewRef}>
           <View style={styles.profileImageWrapper}>
-            <Image
-              style={styles.profileImage}
-              source={{ uri: profileImageUrl }}
-              onLoadEnd={() => {
-                setImageLoading(false);
-              }}
-            />
-            {imageLoading && (
-              <View style={styles.profileImageLoader}>
-                <ActivityIndicator size="large" color="black" />
-              </View>
-            )}
+            <View style={styles.profileImageInnerWrapper}>
+              <Image
+                style={styles.profileImage}
+                source={{ uri: profileImageUrl }}
+                onLoadEnd={() => {
+                  setImageLoading(false);
+                }}
+              />
+              {imageLoading && (
+                <View style={styles.profileImageLoader}>
+                  <ActivityIndicator size="large" color="black" />
+                </View>
+              )}
+              <TouchableOpacity
+                style={styles.editProfileImageWrapper}
+                activeOpacity={1}
+                onPress={() => {
+                  console.log('edit profile picture');
+                }}
+              >
+                <FontAwesome size={20} name="pencil" />
+              </TouchableOpacity>
+            </View>
           </View>
           <Separator style={styles.separator} />
           <View style={styles.titleWrapper}>
@@ -67,6 +79,21 @@ const styles = StyleSheet.create({
     shadowRadius: 13.16,
 
     elevation: 20,
+  },
+  profileImageInnerWrapper: {
+    width: 200,
+    height: 200,
+  },
+  editProfileImageWrapper: {
+    position: 'absolute',
+    width: 40,
+    height: 40,
+    backgroundColor: 'white',
+    bottom: 0,
+    right: 0,
+    borderRadius: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   separator: {
     marginTop: 50,
