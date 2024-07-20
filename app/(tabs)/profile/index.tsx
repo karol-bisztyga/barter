@@ -25,7 +25,7 @@ export default function Profile() {
             />
             {imageLoading && (
               <View style={styles.profileImageLoader}>
-                <ActivityIndicator size="large" color="#0000ff" />
+                <ActivityIndicator size="large" color="black" />
               </View>
             )}
           </View>
