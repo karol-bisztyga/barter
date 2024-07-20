@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, Alert, TextInput } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import * as Clipboard from 'expo-clipboard';
@@ -94,10 +94,12 @@ const PersonalDataItem = ({
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(initialValue);
   const [editingValue, setEditingValue] = useState(value);
+  const inputRef = useRef<TextInput>(null);
 
   useEffect(() => {
     if (editing) {
       setEditingValue(value);
+      inputRef.current?.focus();
     }
   }, [editing]);
 
@@ -106,6 +108,7 @@ const PersonalDataItem = ({
       <Text style={styles.constactItemTitle}>{name}</Text>
       {editing ? (
         <TextInput
+          ref={inputRef}
           value={editingValue}
           onChangeText={setEditingValue}
           style={[styles.constactItemValue, styles.editingTextInput]}
@@ -114,12 +117,7 @@ const PersonalDataItem = ({
         <Text style={styles.constactItemValue}>{value}</Text>
       )}
       {editing ? (
-        <EditingTools
-          value={value}
-          editingValue={editingValue}
-          setValue={setValue}
-          setEditing={setEditing}
-        />
+        <EditingTools editingValue={editingValue} setValue={setValue} setEditing={setEditing} />
       ) : (
         <StandardTools value={value} setEditing={setEditing} />
       )}

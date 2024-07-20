@@ -1,20 +1,22 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Text, Image, ScrollView, ActivityIndicator } from 'react-native';
+import React, { useRef, useState } from 'react';
+import { View, StyleSheet, Text, Image, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Separator from '../../components/Separator';
 import Contact from './components/Contact';
 import { generateImage } from '../../mocks/imageMocker';
 import Items from './components/Items';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 
 export default function Profile() {
   const [imageLoading, setImageLoading] = useState<boolean>(true);
+  const scrollViewRef = useRef(null);
 
   const profileImageUrl = generateImage();
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ flex: 1 }}>
-        <ScrollView>
+        <KeyboardAwareScrollView ref={scrollViewRef}>
           <View style={styles.profileImageWrapper}>
             <Image
               style={styles.profileImage}
@@ -40,7 +42,7 @@ export default function Profile() {
           </View>
           <Items />
           <Separator style={styles.separator} />
-        </ScrollView>
+        </KeyboardAwareScrollView>
       </View>
     </SafeAreaView>
   );
