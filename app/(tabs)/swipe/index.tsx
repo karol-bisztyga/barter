@@ -7,6 +7,9 @@ import SwipeableCard from '../../components/SwipeableCard';
 import { router } from 'expo-router';
 import { Card } from '../../types';
 import { useItemsContext } from '../../context/ItemsContext';
+import { useUserContext } from '../../context/UserContext';
+import { generateUserData } from '../../mocks/userMocker';
+import { generateImage } from '../../mocks/imageMocker';
 
 const LOADED_ITEMS_CAPACITY = 5;
 
@@ -15,6 +18,13 @@ export default function Swipe() {
   const [currentId, setCurrentId] = useState<number>(0);
   const lockGesture = useSharedValue<boolean>(false);
   const itemsContext = useItemsContext();
+  const userContext = useUserContext();
+
+  useEffect(() => {
+    // TODO this should be done on login
+    userContext.setData(generateUserData());
+    userContext.setProfilePic(generateImage());
+  }, []);
 
   const printCards = () => {
     console.log(

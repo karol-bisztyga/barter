@@ -1,22 +1,18 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { View, StyleSheet, Text, Image, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Separator from '../../components/Separator';
 import Contact from './components/Contact';
-import { generateImage } from '../../mocks/imageMocker';
 import Items from './components/Items';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
+import { useUserContext } from '../../context/UserContext';
 
 export default function Profile() {
   const [imageLoading, setImageLoading] = useState<boolean>(true);
   const scrollViewRef = useRef(null);
-  const [profileImageUrl, setProfileImageUrl] = useState('');
-
-  useEffect(() => {
-    setProfileImageUrl(generateImage());
-  }, []);
+  const userContext = useUserContext();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -24,10 +20,10 @@ export default function Profile() {
         <KeyboardAwareScrollView ref={scrollViewRef}>
           <View style={styles.profileImageWrapper}>
             <View style={styles.profileImageInnerWrapper}>
-              {profileImageUrl && (
+              {userContext.profilePic && (
                 <Image
                   style={styles.profileImage}
-                  source={{ uri: profileImageUrl }}
+                  source={{ uri: userContext.profilePic }}
                   onLoadEnd={() => {
                     setImageLoading(false);
                   }}

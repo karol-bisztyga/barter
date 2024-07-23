@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, Alert, TextInput } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import * as Clipboard from 'expo-clipboard';
+import { useUserContext } from '../../../context/UserContext';
+import { UserData } from '../../../types';
 
 const validateValue = (/*value: string*/) => {
   // todo handle this
@@ -96,6 +98,14 @@ const PersonalDataItem = ({
   const [value, setValue] = useState(initialValue);
   const [editingValue, setEditingValue] = useState(value);
   const inputRef = useRef<TextInput>(null);
+  const userContext = useUserContext();
+
+  const setValueWrapper = (newValue: string) => {
+    const obj: Partial<UserData> = {};
+    obj[name as keyof UserData] = newValue;
+    setValue(newValue);
+    userContext.setData({ ...userContext.data, ...obj } as UserData);
+  };
 
   useEffect(() => {
     if (editing) {
@@ -127,7 +137,11 @@ const PersonalDataItem = ({
         </Text>
       )}
       {editing ? (
-        <EditingTools editingValue={editingValue} setValue={setValue} setEditing={setEditing} />
+        <EditingTools
+          editingValue={editingValue}
+          setValue={setValueWrapper}
+          setEditing={setEditing}
+        />
       ) : (
         <StandardTools value={value} setEditing={setEditing} />
       )}

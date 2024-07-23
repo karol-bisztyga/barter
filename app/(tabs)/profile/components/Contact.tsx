@@ -1,24 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { generateUserData } from '../../../mocks/userMocker';
 import { UserData } from '../../../types';
 import PersonalDataItem from './PersonalDataItem';
+import { useUserContext } from '../../../context/UserContext';
 
 const Contact = () => {
-  const [userData, setUserData] = useState<UserData | null>(null);
-
-  useEffect(() => {
-    const newUserData = generateUserData();
-    setUserData(newUserData);
-  }, []);
-
-  console.log('user data', userData);
+  const userContext = useUserContext();
+  console.log('user data', userContext.data);
 
   return (
     <View style={styles.container}>
-      {userData &&
-        Object.keys(userData).map((name, index) => {
-          const value = userData && userData[name as keyof UserData];
+      {userContext.data &&
+        Object.keys(userContext.data).map((name, index) => {
+          const value = userContext.data && userContext.data[name as keyof UserData];
           return (
             <PersonalDataItem name={name} initialValue={value || ''} index={index} key={index} />
           );
