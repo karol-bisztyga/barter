@@ -35,7 +35,8 @@ const Items = () => {
                 borderRadius={ItemBorderRadius.all}
                 namePlacement={ItemNamePlacement.above}
                 onPress={() => {
-                  router.push('profile/addItem');
+                  itemsContext.setUsersItem(null);
+                  router.push('profile/editItem');
                   console.log('add new item');
                 }}
               />
@@ -51,10 +52,10 @@ const Items = () => {
               borderRadius={ItemBorderRadius.all}
               namePlacement={ItemNamePlacement.above}
               onPress={() => {
-                console.log('details');
+                console.log('edit item');
 
                 itemsContext.setUsersItem(item);
-                router.push({ pathname: 'profile/item', params: { whosItem: 'self' } });
+                router.push('profile/editItem');
               }}
             />
           </View>

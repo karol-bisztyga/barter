@@ -77,7 +77,7 @@ const App = () => {
         return;
       }
       loadNewMessages();
-    }, 1000);
+    }, 3000);
 
     return () => clearInterval(interval);
   }, [messages]);

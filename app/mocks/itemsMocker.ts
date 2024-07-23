@@ -1,3 +1,4 @@
+import { MAX_ITEM_PICTURES } from '../constants';
 import { Card } from '../types';
 import { generateImage } from './imageMocker';
 import { generateLoremIpsum } from './textMocker';
@@ -64,10 +65,10 @@ const generateRandomHouseholdObjectName = () => {
 
 const generateMockedImageUrls = (count?: number) => {
   if (count === undefined) {
-    count = Math.floor(Math.random() * 5) + 1;
+    count = Math.floor(Math.random() * MAX_ITEM_PICTURES) + 1;
   }
-  if (count < 1 || count > 5) {
-    throw new Error('Count must be between 1 and 5.');
+  if (count < 1 || count > MAX_ITEM_PICTURES) {
+    throw new Error(`Count must be between 1 and ${MAX_ITEM_PICTURES}.`);
   }
 
   const urls = [];

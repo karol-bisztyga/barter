@@ -1,8 +1,8 @@
 import React from 'react';
-import Item from '../../components/Item';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useItemsContext } from '../../context/ItemsContext';
 import { Card } from '../../types';
+import EditableItem from '../../components/EditableItem';
 
 const ItemModal = () => {
   const itemsContext = useItemsContext();
@@ -20,7 +20,7 @@ const ItemModal = () => {
     return null;
   }
 
-  return <Item card={item} showFull={true} />;
+  return <EditableItem card={item} showFull={true} />;
 };
 
 export default ItemModal;

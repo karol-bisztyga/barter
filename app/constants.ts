@@ -1,1 +1,1 @@
-export const MAX_ITEM_PICTURES = 3;
+export const MAX_ITEM_PICTURES = 5;
