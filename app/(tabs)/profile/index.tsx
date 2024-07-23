@@ -7,6 +7,7 @@ import { generateImage } from '../../mocks/imageMocker';
 import Items from './components/Items';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { router } from 'expo-router';
 
 export default function Profile() {
   const [imageLoading, setImageLoading] = useState<boolean>(true);
@@ -42,6 +43,7 @@ export default function Profile() {
                 activeOpacity={1}
                 onPress={() => {
                   console.log('edit profile picture');
+                  router.push('profile/addPicture');
                 }}
               >
                 <FontAwesome size={20} name="pencil" />

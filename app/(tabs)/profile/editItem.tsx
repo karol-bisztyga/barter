@@ -15,6 +15,7 @@ import { ItemBorderRadius } from '../../types';
 import { useItemsContext } from '../../context/ItemsContext';
 import { MAX_ITEM_PICTURES } from '../../constants';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { router } from 'expo-router';
 
 const { width } = Dimensions.get('window');
 
@@ -68,6 +69,7 @@ const AddItem = () => {
                       activeOpacity={1}
                       onPress={() => {
                         console.log('edit picture');
+                        router.push('profile/addPicture');
                       }}
                     >
                       <FontAwesome size={30} name="pencil" />
@@ -77,6 +79,7 @@ const AddItem = () => {
                   <AddButton
                     onPress={() => {
                       console.log('add picture');
+                      router.push('profile/addPicture');
                     }}
                     borderRadius={ItemBorderRadius.all}
                   />
@@ -89,7 +92,14 @@ const AddItem = () => {
           <Button
             title="Save"
             onPress={() => {
-              console.log('add item');
+              console.log('save item');
+            }}
+          />
+          <Button
+            color="red"
+            title="Remove Item"
+            onPress={() => {
+              console.log('remove item');
             }}
           />
         </View>

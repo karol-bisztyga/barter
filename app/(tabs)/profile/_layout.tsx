@@ -8,6 +8,7 @@ export default function Layout() {
       <Stack.Screen name="index" options={{ title: '' }} />
       <Stack.Screen name="item" options={headerBackButtonOptions} />
       <Stack.Screen name="editItem" options={headerBackButtonOptions} />
+      <Stack.Screen name="addPicture" options={headerBackButtonOptions} />
     </Stack>
   );
 }
