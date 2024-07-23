@@ -1,13 +1,19 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { ItemBorderRadius, ItemNamePlacement } from '../types';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import AddButton from './AddButton';
+
+const EmptySlotLabel = () => (
+  <View style={styles.nameWrapper}>
+    <Text style={styles.name}>Empty slot</Text>
+  </View>
+);
 
 export default function EmptyItem({
   namePlacement = ItemNamePlacement['below'],
   borderRadius = ItemBorderRadius['up-only'],
   centerVertically = true,
-  onPress,
+  onPress = () => {},
 }: {
   namePlacement?: ItemNamePlacement;
   borderRadius?: ItemBorderRadius;
@@ -23,31 +29,9 @@ export default function EmptyItem({
         },
       ]}
     >
-      {namePlacement === ItemNamePlacement.above && (
-        <View style={styles.nameWrapper}>
-          <Text style={styles.name}>Empty slot</Text>
-        </View>
-      )}
-      <TouchableOpacity
-        style={[
-          styles.imageWrapper,
-          {
-            borderTopLeftRadius: 20,
-            borderTopRightRadius: 20,
-            borderRadius: borderRadius === ItemBorderRadius['all'] ? 20 : 0,
-            height: '75%',
-          },
-        ]}
-        activeOpacity={1}
-        onPress={onPress}
-      >
-        <FontAwesome size={50} name="plus" />
-      </TouchableOpacity>
-      {namePlacement === ItemNamePlacement.below && (
-        <View style={styles.nameWrapper}>
-          <Text style={styles.name}>Empty slot</Text>
-        </View>
-      )}
+      {namePlacement === ItemNamePlacement.above && <EmptySlotLabel />}
+      <AddButton onPress={onPress} borderRadius={borderRadius} />
+      {namePlacement === ItemNamePlacement.below && <EmptySlotLabel />}
     </View>
   );
 }

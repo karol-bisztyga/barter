@@ -28,13 +28,14 @@ const Items = () => {
   return (
     <View style={styles.container}>
       {items.map((item: Card | null, index: number) => {
-        if (item === null) {
+        if (!item) {
           return (
             <View key={index} style={styles.itemWrapper}>
               <EmptyItem
                 borderRadius={ItemBorderRadius.all}
                 namePlacement={ItemNamePlacement.above}
                 onPress={() => {
+                  router.push('profile/addItem');
                   console.log('add new item');
                 }}
               />
@@ -43,22 +44,19 @@ const Items = () => {
         }
         return (
           <View style={styles.itemWrapper} key={index}>
-            {item && (
-              <Item
-                card={item}
-                showDescription={false}
-                carouselDotsVisible={false}
-                borderRadius={ItemBorderRadius.all}
-                namePlacement={ItemNamePlacement.above}
-                // carouselPressEnabled={false}
-                onPress={() => {
-                  console.log('details');
+            <Item
+              card={item}
+              showDescription={false}
+              carouselDotsVisible={false}
+              borderRadius={ItemBorderRadius.all}
+              namePlacement={ItemNamePlacement.above}
+              onPress={() => {
+                console.log('details');
 
-                  itemsContext.setUsersItem(item);
-                  router.push({ pathname: 'profile/item', params: { whosItem: 'self' } });
-                }}
-              />
-            )}
+                itemsContext.setUsersItem(item);
+                router.push({ pathname: 'profile/item', params: { whosItem: 'self' } });
+              }}
+            />
           </View>
         );
       })}

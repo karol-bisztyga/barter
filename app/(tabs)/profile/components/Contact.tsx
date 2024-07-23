@@ -19,10 +19,9 @@ const Contact = () => {
       {userData &&
         Object.keys(userData).map((name, index) => {
           const value = userData && userData[name as keyof UserData];
-          if (!value) {
-            return null;
-          }
-          return <PersonalDataItem name={name} initialValue={value} index={index} key={index} />;
+          return (
+            <PersonalDataItem name={name} initialValue={value || ''} index={index} key={index} />
+          );
         })}
     </View>
   );

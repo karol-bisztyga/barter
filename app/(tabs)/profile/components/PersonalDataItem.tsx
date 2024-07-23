@@ -3,10 +3,11 @@ import { View, StyleSheet, TouchableOpacity, Text, Alert, TextInput } from 'reac
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import * as Clipboard from 'expo-clipboard';
 
-const validateValue = (value: string) => {
-  if (!value) {
-    return false;
-  }
+const validateValue = (/*value: string*/) => {
+  // todo handle this
+  // if (!value) {
+  //   return false;
+  // }
   return true;
 };
 
@@ -59,7 +60,7 @@ const EditingTools = ({
         activeOpacity={1}
         onPress={() => {
           // todo validation
-          if (!validateValue(editingValue)) {
+          if (!validateValue()) {
             return;
           }
           setEditing(false);
@@ -114,7 +115,16 @@ const PersonalDataItem = ({
           style={[styles.constactItemValue, styles.editingTextInput]}
         />
       ) : (
-        <Text style={styles.constactItemValue}>{value}</Text>
+        <Text
+          style={[
+            styles.constactItemValue,
+            {
+              backgroundColor: value ? 'transparent' : 'gray',
+            },
+          ]}
+        >
+          {value}
+        </Text>
       )}
       {editing ? (
         <EditingTools editingValue={editingValue} setValue={setValue} setEditing={setEditing} />
