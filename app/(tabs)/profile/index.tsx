@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, Text, Image, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Separator from '../../components/Separator';
@@ -11,8 +11,11 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 export default function Profile() {
   const [imageLoading, setImageLoading] = useState<boolean>(true);
   const scrollViewRef = useRef(null);
+  const [profileImageUrl, setProfileImageUrl] = useState('');
 
-  const profileImageUrl = generateImage();
+  useEffect(() => {
+    setProfileImageUrl(generateImage());
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -20,13 +23,15 @@ export default function Profile() {
         <KeyboardAwareScrollView ref={scrollViewRef}>
           <View style={styles.profileImageWrapper}>
             <View style={styles.profileImageInnerWrapper}>
-              <Image
-                style={styles.profileImage}
-                source={{ uri: profileImageUrl }}
-                onLoadEnd={() => {
-                  setImageLoading(false);
-                }}
-              />
+              {profileImageUrl && (
+                <Image
+                  style={styles.profileImage}
+                  source={{ uri: profileImageUrl }}
+                  onLoadEnd={() => {
+                    setImageLoading(false);
+                  }}
+                />
+              )}
               {imageLoading && (
                 <View style={styles.profileImageLoader}>
                   <ActivityIndicator size="large" color="black" />
@@ -53,7 +58,6 @@ export default function Profile() {
             <Text style={styles.title}>Items</Text>
           </View>
           <Items />
-          <Separator style={styles.separator} />
         </KeyboardAwareScrollView>
       </View>
     </SafeAreaView>
