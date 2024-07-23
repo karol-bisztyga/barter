@@ -78,8 +78,8 @@ export default function Swipe() {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <GestureHandlerRootView>
+    <GestureHandlerRootView>
+      <SafeAreaView style={styles.container}>
         <View style={styles.container}>
           {cards.map((card, index) => (
             <SwipeableCard
@@ -95,8 +95,8 @@ export default function Swipe() {
             />
           ))}
         </View>
-      </GestureHandlerRootView>
-    </SafeAreaView>
+      </SafeAreaView>
+    </GestureHandlerRootView>
   );
 }
 
