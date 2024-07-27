@@ -11,31 +11,33 @@ import {
   View,
 } from 'react-native';
 import AddButton from '../../components/AddButton';
-import { ItemBorderRadius } from '../../types';
+import { EditImagePurpose, EditImageType, ItemBorderRadius } from '../../types';
 import { useItemsContext } from '../../context/ItemsContext';
 import { MAX_ITEM_PICTURES } from '../../constants';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
+import { useEditImageContext } from '../../context/EditImageContext';
+import { useUserContext } from '../../context/UserContext';
 
 const { width } = Dimensions.get('window');
 
 const AddItem = () => {
-  const { usersItem } = useItemsContext();
+  const imageSize = (width * 3) / 4;
+
+  const { usersItemId } = useItemsContext();
 
   const [name, setName] = useState<string>('');
   const [description, setDescription] = useState<string>('');
-  const [pictures, setPictures] = useState<Array<string | null>>([]);
+  const [pictures, setPictures] = useState<Array<string>>([]);
+
+  const editImageContext = useEditImageContext();
+  const userContext = useUserContext();
+  const usersItem = userContext.findItemById(usersItemId);
 
   useEffect(() => {
-    setName(usersItem?.name ?? '');
-    setDescription(usersItem?.description ?? '');
-
-    const pics: Array<string | null> = usersItem?.images ?? [];
-    for (let i = pics.length - 1; i < MAX_ITEM_PICTURES - 1; ++i) {
-      pics.push(null);
-    }
-
-    setPictures(pics);
+    setName(usersItem?.item.name ?? '');
+    setDescription(usersItem?.item.description ?? '');
+    setPictures(usersItem?.item.images ?? []);
   }, []);
 
   return (
@@ -56,37 +58,47 @@ const AddItem = () => {
         />
         <Text style={styles.sectionTitle}>Pictures</Text>
         <View style={styles.imageSlotsWrapper}>
-          {pictures.map((item, index) => {
-            const imageSize = (width * 3) / 4;
+          {pictures.map((picture, index) => {
             return (
               <View style={[styles.imageSlot, { width: imageSize, height: imageSize }]} key={index}>
-                {item ? (
-                  <>
-                    <Image source={{ uri: item }} style={styles.imageSlot} />
+                <Image source={{ uri: picture }} style={styles.imageSlot} />
 
-                    <TouchableOpacity
-                      style={styles.editImageWrapper}
-                      activeOpacity={1}
-                      onPress={() => {
-                        console.log('edit picture');
-                        router.push('profile/addPicture');
-                      }}
-                    >
-                      <FontAwesome size={30} name="pencil" />
-                    </TouchableOpacity>
-                  </>
-                ) : (
-                  <AddButton
-                    onPress={() => {
-                      console.log('add picture');
-                      router.push('profile/addPicture');
-                    }}
-                    borderRadius={ItemBorderRadius.all}
-                  />
-                )}
+                <TouchableOpacity
+                  style={styles.editImageWrapper}
+                  activeOpacity={1}
+                  onPress={() => {
+                    console.log('remove picture');
+                    if (!usersItem) {
+                      throw new Error('trying to remove non-existing item');
+                    }
+
+                    console.log('removing item', index);
+                    userContext.items[usersItem.index].images.splice(index, 1);
+                    setPictures([...usersItem.item.images]);
+                  }}
+                >
+                  <FontAwesome size={30} name="trash" />
+                </TouchableOpacity>
               </View>
             );
           })}
+          {pictures.length < MAX_ITEM_PICTURES && (
+            <View style={[styles.imageSlot, { width: imageSize, height: imageSize }]}>
+              <AddButton
+                onPress={() => {
+                  if (!usersItem) {
+                    throw new Error('trying to edit non-existing item');
+                  }
+                  console.log('add picture');
+                  editImageContext.setImageType(EditImageType.item);
+                  editImageContext.setPurpose(EditImagePurpose.addNew);
+                  editImageContext.setItemId(usersItem.item.id);
+                  router.push('profile/addPicture');
+                }}
+                borderRadius={ItemBorderRadius.all}
+              />
+            </View>
+          )}
         </View>
         <View style={styles.addButton}>
           <Button

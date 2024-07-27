@@ -2,12 +2,11 @@ import { MAX_ITEM_PICTURES } from '../constants';
 import { Card } from '../types';
 import { generateImage } from './imageMocker';
 import { generateLoremIpsum } from './textMocker';
+import uuid from 'react-native-uuid';
 
-const generateId = (id?: number) => {
-  if (id !== undefined) {
-    return `item-${id}`;
-  }
-  return `item-${Date.now()}`;
+const generateId = (maybeId?: number) => {
+  const id = maybeId || uuid.v4();
+  return `item-${id}`;
 };
 
 const generateRandomHouseholdObjectName = () => {
@@ -89,12 +88,11 @@ export const generateItem = (id?: number): Card => {
   };
 };
 
-export const generateChatItems = (count: number): Array<[Card, Card]> => {
+export const generateChatItems = (count: number, userItems: Array<Card>): Array<[Card, Card]> => {
   const items: Array<[Card, Card]> = [];
   for (let i = 0; i < count; i++) {
-    items.push([generateItem(), generateItem()]);
+    const randomUserItem = userItems[Math.floor(Math.random() * userItems.length)];
+    items.push([randomUserItem, generateItem()]);
   }
   return items;
 };
-
-export const MAX_ITEMS_SLOTS = 5;

@@ -30,3 +30,13 @@ export type UserData = {
   instagram?: string;
   facebook?: string;
 };
+
+export enum EditImageType {
+  'profile',
+  'item',
+}
+
+export enum EditImagePurpose {
+  addNew,
+  replace,
+}

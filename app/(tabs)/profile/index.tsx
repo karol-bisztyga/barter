@@ -8,11 +8,14 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
 import { useUserContext } from '../../context/UserContext';
+import { useEditImageContext } from '../../context/EditImageContext';
+import { EditImageType } from '../../types';
 
 export default function Profile() {
   const [imageLoading, setImageLoading] = useState<boolean>(true);
   const scrollViewRef = useRef(null);
   const userContext = useUserContext();
+  const editImageContext = useEditImageContext();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -29,9 +32,15 @@ export default function Profile() {
                   }}
                 />
               )}
-              {imageLoading && (
-                <View style={styles.profileImageLoader}>
-                  <ActivityIndicator size="large" color="black" />
+              {userContext.profilePic ? (
+                imageLoading && (
+                  <View style={styles.profileImageLoader}>
+                    <ActivityIndicator size="large" color="black" />
+                  </View>
+                )
+              ) : (
+                <View style={styles.noProfilePictureWrapper}>
+                  <Text style={styles.noProfilePictureLabel}>No profile picture</Text>
                 </View>
               )}
               <TouchableOpacity
@@ -39,6 +48,7 @@ export default function Profile() {
                 activeOpacity={1}
                 onPress={() => {
                   console.log('edit profile picture');
+                  editImageContext.setImageType(EditImageType.profile);
                   router.push('profile/addPicture');
                 }}
               >
@@ -122,7 +132,6 @@ const styles = StyleSheet.create({
     lineHeight: 70,
     textAlign: 'center',
   },
-  //
   itemsWrapper: {
     height: 100,
     padding: 10,
@@ -131,4 +140,12 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
   },
+  noProfilePictureWrapper: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, .05)',
+    borderRadius: 200,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  noProfilePictureLabel: {},
 });

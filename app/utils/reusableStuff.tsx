@@ -13,3 +13,9 @@ export const headerBackButtonOptions = {
     </TouchableOpacity>
   ),
 };
+
+export const handleUnauthorizedAccess = (condition: boolean) => {
+  if (!condition) {
+    throw new Error('Unauthorized access (todo redirect to login)');
+  }
+};

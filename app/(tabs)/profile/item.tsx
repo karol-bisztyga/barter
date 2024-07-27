@@ -3,14 +3,16 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useItemsContext } from '../../context/ItemsContext';
 import { Card } from '../../types';
 import EditableItem from '../../components/EditableItem';
+import { useUserContext } from '../../context/UserContext';
 
 const ItemModal = () => {
   const itemsContext = useItemsContext();
+  const userContext = useUserContext();
   const { whosItem } = useLocalSearchParams();
 
   let item: Card | null = null;
   if (whosItem === 'self') {
-    item = itemsContext.usersItem;
+    item = userContext.findItemById(itemsContext.usersItemId)?.item || null;
   } else if (whosItem === 'other') {
     item = itemsContext.othersItem;
   }

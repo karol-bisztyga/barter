@@ -33,8 +33,8 @@ const App = () => {
   const flatListRef = useRef<FlatList>(null);
 
   const itemsContext = useItemsContext();
-  const { usersItem, othersItem } = itemsContext;
-  if (!usersItem || !othersItem) {
+  const { usersItemId, othersItem } = itemsContext;
+  if (!usersItemId || !othersItem) {
     console.error('at least on of the items has not been set');
     router.back();
     return null;

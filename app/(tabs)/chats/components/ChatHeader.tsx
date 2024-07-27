@@ -5,19 +5,24 @@ import { useItemsContext } from '../../../context/ItemsContext';
 import Item from '../../../components/Item';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
+import { useUserContext } from '../../../context/UserContext';
 
 const ChatHeader = () => {
+  const userContext = useUserContext();
   const itemsContext = useItemsContext();
-  const { usersItem, othersItem } = itemsContext;
+  const { usersItemId, othersItem } = itemsContext;
 
-  if (usersItem === null || othersItem === null) {
+  const usersItem = userContext.findItemById(usersItemId);
+
+  if (!usersItem || !othersItem) {
+    console.log('ERR', usersItemId, usersItem);
     throw new Error('at least one of the items has not been set');
   }
 
   return (
     <View style={styles.itemsWrapper}>
       <Item
-        card={usersItem}
+        card={usersItem.item}
         carouselDotsVisible={false}
         showDescription={false}
         showName={false}

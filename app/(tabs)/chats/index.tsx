@@ -8,6 +8,7 @@ import { Card, ItemBorderRadius } from '../../types';
 import { router } from 'expo-router';
 import { useItemsContext } from '../../context/ItemsContext';
 import Separator, { SEPARATOR_HEIGHT } from '../../components/Separator';
+import { useUserContext } from '../../context/UserContext';
 
 const ITEMS_PER_SCREEN = 4;
 
@@ -58,7 +59,8 @@ const ListItem = ({
 
 export default function Chats() {
   const itemsContext = useItemsContext();
-  const items: Array<[Card, Card]> = generateChatItems(10);
+  const userContext = useUserContext();
+  const items: Array<[Card, Card]> = generateChatItems(10, userContext.items);
 
   const [containerHeight, setContainerHeight] = useState<number>(0);
 
@@ -78,7 +80,7 @@ export default function Chats() {
                 <TouchableOpacity
                   onPress={() => {
                     const [usersItem, othersItem] = item;
-                    itemsContext.usersItem = usersItem;
+                    itemsContext.usersItemId = usersItem.id;
                     itemsContext.othersItem = othersItem;
                     router.push('chats/chat');
                   }}

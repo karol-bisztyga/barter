@@ -2,14 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { SafeAreaView, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSharedValue } from 'react-native-reanimated';
-import { generateItem } from '../../mocks/itemsMocker';
 import SwipeableCard from '../../components/SwipeableCard';
 import { router } from 'expo-router';
 import { Card } from '../../types';
 import { useItemsContext } from '../../context/ItemsContext';
 import { useUserContext } from '../../context/UserContext';
 import { generateUserData } from '../../mocks/userMocker';
-import { generateImage } from '../../mocks/imageMocker';
+import { MAX_ITEMS_SLOTS } from '../../constants';
+import { generateItem } from '../../mocks/itemsMocker';
 
 const LOADED_ITEMS_CAPACITY = 5;
 
@@ -23,7 +23,17 @@ export default function Swipe() {
   useEffect(() => {
     // TODO this should be done on login
     userContext.setData(generateUserData());
-    userContext.setProfilePic(generateImage());
+    userContext.setProfilePic('');
+
+    const userItemsAmount = Math.floor(Math.random() * (MAX_ITEMS_SLOTS - 1) + 1);
+    const loadedItems: Card[] = [];
+    for (let i = 0; i < MAX_ITEMS_SLOTS; ++i) {
+      if (i >= userItemsAmount) {
+        break;
+      }
+      loadedItems[i] = generateItem();
+    }
+    userContext.setItems(loadedItems);
   }, []);
 
   const printCards = () => {

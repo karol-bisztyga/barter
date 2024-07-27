@@ -5,7 +5,7 @@ import AddButton from './AddButton';
 
 const EmptySlotLabel = () => (
   <View style={styles.nameWrapper}>
-    <Text style={styles.name}>Empty slot</Text>
+    <Text style={styles.name}>Add Item</Text>
   </View>
 );
 
