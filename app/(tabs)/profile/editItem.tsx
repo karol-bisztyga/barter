@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
+  Alert,
   Button,
   Dimensions,
   Image,
@@ -127,8 +128,33 @@ const EditItem = () => {
             <Button
               color="red"
               title="Remove Item"
-              onPress={() => {
+              onPress={async () => {
                 console.log('remove item');
+                const remove: boolean = await new Promise((resolve) => {
+                  Alert.alert(
+                    'Do you really want to remove this item?',
+                    '',
+                    [
+                      { text: 'Keep it', onPress: () => resolve(false) },
+                      {
+                        text: 'Yes, remove it',
+                        onPress: () => resolve(true),
+                        style: 'destructive',
+                      },
+                    ],
+                    { cancelable: false }
+                  );
+                });
+                console.log('remove decision', remove);
+                if (remove) {
+                  if (!usersItem) {
+                    throw new Error('trying to remove non-existing item');
+                  }
+                  const newItems = [...userContext.items];
+                  newItems.splice(usersItem.index, 1);
+                  userContext.setItems(newItems);
+                  router.back();
+                }
               }}
             />
           )}
