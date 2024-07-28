@@ -1,22 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { Button, Dimensions, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import * as ImagePicker from 'expo-image-picker';
 import { useEditImageContext } from '../../context/EditImageContext';
-import { EditImagePurpose, EditImageType } from '../../types';
+import { EditImageType } from '../../types';
 import { useUserContext } from '../../context/UserContext';
 import { router } from 'expo-router';
-import { MAX_ITEM_PICTURES } from '../../constants';
 
 const { width } = Dimensions.get('window');
 
 const AddPicture = () => {
-  const { imageType, itemId, purpose, previousImage } = useEditImageContext();
+  const { imageType, itemId, tempImage, setTempImage } = useEditImageContext();
   const userContext = useUserContext();
+  if (tempImage) {
+    throw new Error('temp image has not been cleared properly');
+  }
 
   const [image, setImage] = useState<string>('');
 
-  console.log('editImageContext', imageType, purpose, previousImage);
+  console.log('editImageContext', imageType);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -36,16 +38,11 @@ const AddPicture = () => {
 
   console.log('>>> CHECK', userContext.findItemById(itemId)?.item.images.length);
 
-  useEffect(() => {}, []);
-
   const confirm = () => {
     if (!image) {
       throw new Error('no image detected');
     }
-    console.log(
-      'confirming image',
-      userContext.items.map((item) => item.id)
-    );
+    console.log('confirming image', imageType, image);
     switch (imageType) {
       case EditImageType.profile: {
         userContext.setProfilePic(image);
@@ -53,35 +50,8 @@ const AddPicture = () => {
         break;
       }
       case EditImageType.item: {
-        let targetItemIndex = null;
-        const targetItem = userContext.items.find((item, index) => {
-          if (item.id === itemId) {
-            targetItemIndex = index;
-            return true;
-          }
-        });
-        if (!targetItem || targetItemIndex === null) {
-          throw new Error(`item with id ${itemId} not found`);
-        }
-        if (purpose === EditImagePurpose.addNew) {
-          //... itemId etc
-          // also todo powinno byc tylko 1 source of truth, item context jako user item powinno trzymac
-          // tylko id i reszta danych powinna leciec z user context
-          if (targetItem.images.length >= MAX_ITEM_PICTURES) {
-            console.log('>>>', targetItem.images);
-            throw new Error(
-              `cannot add more pictures to the item ${itemId} / ${targetItem.images.length} / ${MAX_ITEM_PICTURES}`
-            );
-          }
-          console.log('im about to add new image to item', targetItemIndex, image);
-
-          const newItems = userContext.items;
-          newItems[targetItemIndex].images.push(image);
-          userContext.setItems(newItems);
-          router.back();
-        } else if (purpose === EditImagePurpose.replace) {
-          throw new Error('todo implement this');
-        }
+        setTempImage(image);
+        router.back();
         break;
       }
     }
@@ -111,7 +81,7 @@ const AddPicture = () => {
       {image && (
         <View style={styles.imageWrapper}>
           <Image style={styles.image} source={{ uri: image }} />
-          <Button title="Save" onPress={confirm} />
+          <Button title="Add" onPress={confirm} />
         </View>
       )}
     </View>

@@ -11,17 +11,18 @@ import {
   View,
 } from 'react-native';
 import AddButton from '../../components/AddButton';
-import { EditImagePurpose, EditImageType, ItemBorderRadius } from '../../types';
+import { EditImageType, ItemBorderRadius } from '../../types';
 import { useItemsContext } from '../../context/ItemsContext';
-import { MAX_ITEM_PICTURES } from '../../constants';
+import { MAX_ITEM_PICTURES, MAX_ITEMS_SLOTS } from '../../constants';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
 import { useEditImageContext } from '../../context/EditImageContext';
 import { useUserContext } from '../../context/UserContext';
+import { generateItemId } from '../../mocks/itemsMocker';
 
 const { width } = Dimensions.get('window');
 
-const AddItem = () => {
+const EditItem = () => {
   const imageSize = (width * 3) / 4;
 
   const { usersItemId } = useItemsContext();
@@ -41,10 +42,18 @@ const AddItem = () => {
   }, []);
 
   useEffect(() => {
-    if (pictures.length !== (usersItem?.item.images.length || 0)) {
-      setPictures(usersItem?.item.images ?? []);
+    if (editImageContext.tempImage) {
+      setPictures([...pictures, editImageContext.tempImage]);
+      editImageContext.setTempImage(null);
     }
   });
+
+  const validateForm = () => {
+    if (!name || !description || !pictures.length) {
+      return false;
+    }
+    return true;
+  };
 
   return (
     <View style={styles.container}>
@@ -68,23 +77,25 @@ const AddItem = () => {
             return (
               <View style={[styles.imageSlot, { width: imageSize, height: imageSize }]} key={index}>
                 <Image source={{ uri: picture }} style={styles.imageSlot} />
+                {pictures.length > 1 && (
+                  <TouchableOpacity
+                    style={styles.editImageWrapper}
+                    activeOpacity={1}
+                    onPress={() => {
+                      console.log('remove picture');
+                      if (!usersItem) {
+                        throw new Error('trying to remove non-existing item');
+                      }
 
-                <TouchableOpacity
-                  style={styles.editImageWrapper}
-                  activeOpacity={1}
-                  onPress={() => {
-                    console.log('remove picture');
-                    if (!usersItem) {
-                      throw new Error('trying to remove non-existing item');
-                    }
-
-                    console.log('removing item', index);
-                    userContext.items[usersItem.index].images.splice(index, 1);
-                    setPictures([...usersItem.item.images]);
-                  }}
-                >
-                  <FontAwesome size={30} name="trash" />
-                </TouchableOpacity>
+                      console.log('removing items picture', index);
+                      const newPictures = [...pictures];
+                      newPictures.splice(index, 1);
+                      setPictures(newPictures);
+                    }}
+                  >
+                    <FontAwesome size={30} name="trash" />
+                  </TouchableOpacity>
+                )}
               </View>
             );
           })}
@@ -92,13 +103,9 @@ const AddItem = () => {
             <View style={[styles.imageSlot, { width: imageSize, height: imageSize }]}>
               <AddButton
                 onPress={() => {
-                  if (!usersItem) {
-                    throw new Error('trying to edit non-existing item');
-                  }
                   console.log('add picture');
                   editImageContext.setImageType(EditImageType.item);
-                  editImageContext.setPurpose(EditImagePurpose.addNew);
-                  editImageContext.setItemId(usersItem.item.id);
+                  editImageContext.setItemId(usersItem?.item.id || null);
                   router.push('profile/addPicture');
                 }}
                 borderRadius={ItemBorderRadius.all}
@@ -107,17 +114,49 @@ const AddItem = () => {
           )}
         </View>
         <View style={styles.addButton}>
+          {usersItemId && (
+            <Button
+              color="red"
+              title="Remove Item"
+              onPress={() => {
+                console.log('remove item');
+              }}
+            />
+          )}
           <Button
             title="Save"
+            disabled={!validateForm()}
             onPress={() => {
-              console.log('save item');
-            }}
-          />
-          <Button
-            color="red"
-            title="Remove Item"
-            onPress={() => {
-              console.log('remove item');
+              console.log('save item', usersItemId);
+              if (!validateForm()) {
+                throw new Error('form invalid');
+              }
+              if (usersItem) {
+                // update item
+                const newItems = [...userContext.items];
+                newItems[usersItem.index] = {
+                  ...usersItem.item,
+                  name,
+                  images: pictures,
+                  description,
+                };
+                userContext.setItems(newItems);
+                router.back();
+              } else {
+                // add new item
+                if (userContext.items.length + 1 > MAX_ITEMS_SLOTS) {
+                  throw new Error('cannot add more items');
+                }
+                const newItems = [...userContext.items];
+                newItems.push({
+                  id: generateItemId(),
+                  name,
+                  images: pictures,
+                  description,
+                });
+                userContext.setItems(newItems);
+                router.back();
+              }
             }}
           />
         </View>
@@ -176,4 +215,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AddItem;
+export default EditItem;

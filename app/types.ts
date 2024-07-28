@@ -35,8 +35,3 @@ export enum EditImageType {
   'profile',
   'item',
 }
-
-export enum EditImagePurpose {
-  addNew,
-  replace,
-}

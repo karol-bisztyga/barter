@@ -1,15 +1,13 @@
 import React, { createContext, useState, ReactNode, FC, useContext } from 'react';
-import { EditImagePurpose, EditImageType } from '../types';
+import { EditImageType } from '../types';
 
 interface EditImageContextState {
   imageType: EditImageType | null;
   setImageType: React.Dispatch<React.SetStateAction<EditImageType | null>>;
   itemId: string | null;
   setItemId: React.Dispatch<React.SetStateAction<string | null>>;
-  purpose: EditImagePurpose | null;
-  setPurpose: React.Dispatch<React.SetStateAction<EditImagePurpose | null>>;
-  previousImage: string | null;
-  setPreviousImage: React.Dispatch<React.SetStateAction<string | null>>;
+  tempImage: string | null;
+  setTempImage: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 const initialState: EditImageContextState = {
@@ -17,10 +15,8 @@ const initialState: EditImageContextState = {
   setImageType: () => {},
   itemId: null,
   setItemId: () => {},
-  purpose: null,
-  setPurpose: () => {},
-  previousImage: null,
-  setPreviousImage: () => {},
+  tempImage: null,
+  setTempImage: () => {},
 };
 
 export const EditImageContext = createContext<EditImageContextState | null>(initialState);
@@ -36,8 +32,7 @@ export const useEditImageContext = () => {
 export const EditImageContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [imageType, setImageType] = useState<EditImageType | null>(null);
   const [itemId, setItemId] = useState<string | null>(null);
-  const [purpose, setPurpose] = useState<EditImagePurpose | null>(null);
-  const [previousImage, setPreviousImage] = useState<string | null>(null);
+  const [tempImage, setTempImage] = useState<string | null>(null);
 
   return (
     <EditImageContext.Provider
@@ -46,10 +41,8 @@ export const EditImageContextProvider: FC<{ children: ReactNode }> = ({ children
         setImageType,
         itemId,
         setItemId,
-        purpose,
-        setPurpose,
-        previousImage,
-        setPreviousImage,
+        tempImage,
+        setTempImage,
       }}
     >
       {children}

@@ -4,7 +4,7 @@ import { generateImage } from './imageMocker';
 import { generateLoremIpsum } from './textMocker';
 import uuid from 'react-native-uuid';
 
-const generateId = (maybeId?: number) => {
+export const generateItemId = (maybeId?: number) => {
   const id = maybeId || uuid.v4();
   return `item-${id}`;
 };
@@ -81,7 +81,7 @@ const generateMockedImageUrls = (count?: number) => {
 
 export const generateItem = (id?: number): Card => {
   return {
-    id: generateId(id),
+    id: generateItemId(id),
     name: generateRandomHouseholdObjectName(),
     images: generateMockedImageUrls(),
     description: generateLoremIpsum(200),
