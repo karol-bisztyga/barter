@@ -40,6 +40,12 @@ const AddItem = () => {
     setPictures(usersItem?.item.images ?? []);
   }, []);
 
+  useEffect(() => {
+    if (pictures.length !== (usersItem?.item.images.length || 0)) {
+      setPictures(usersItem?.item.images ?? []);
+    }
+  });
+
   return (
     <View style={styles.container}>
       <ScrollView>

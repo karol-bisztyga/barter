@@ -75,7 +75,9 @@ const AddPicture = () => {
           }
           console.log('im about to add new image to item', targetItemIndex, image);
 
-          userContext.items[targetItemIndex].images.push(image);
+          const newItems = userContext.items;
+          newItems[targetItemIndex].images.push(image);
+          userContext.setItems(newItems);
           router.back();
         } else if (purpose === EditImagePurpose.replace) {
           throw new Error('todo implement this');
