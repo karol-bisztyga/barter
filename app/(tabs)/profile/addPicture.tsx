@@ -2,23 +2,21 @@ import React, { useState } from 'react';
 import { Button, Dimensions, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import * as ImagePicker from 'expo-image-picker';
-import { useEditImageContext } from '../../context/EditImageContext';
 import { EditImageType } from '../../types';
 import { useUserContext } from '../../context/UserContext';
 import { router } from 'expo-router';
+import { useEditItemContext } from '../../context/EditItemContext';
 
 const { width } = Dimensions.get('window');
 
 const AddPicture = () => {
-  const { imageType, itemId, tempImage, setTempImage } = useEditImageContext();
+  const { imageType, tempImage, setTempImage } = useEditItemContext();
   const userContext = useUserContext();
   if (tempImage) {
     throw new Error('temp image has not been cleared properly');
   }
 
   const [image, setImage] = useState<string>('');
-
-  console.log('editImageContext', imageType);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -29,14 +27,10 @@ const AddPicture = () => {
       quality: 1,
     });
 
-    console.log(result);
-
     if (!result.canceled) {
       setImage(result.assets[0].uri);
     }
   };
-
-  console.log('>>> CHECK', userContext.findItemById(itemId)?.item.images.length);
 
   const confirm = () => {
     if (!image) {

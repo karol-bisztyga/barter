@@ -8,14 +8,14 @@ import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
 import { useUserContext } from '../../context/UserContext';
-import { useEditImageContext } from '../../context/EditImageContext';
+import { useEditItemContext } from '../../context/EditItemContext';
 import { EditImageType } from '../../types';
 
 export default function Profile() {
   const [imageLoading, setImageLoading] = useState<boolean>(true);
   const scrollViewRef = useRef(null);
   const userContext = useUserContext();
-  const editImageContext = useEditImageContext();
+  const editItemContext = useEditItemContext();
 
   return (
     <SafeAreaView style={styles.container}>
@@ -48,7 +48,7 @@ export default function Profile() {
                 activeOpacity={1}
                 onPress={() => {
                   console.log('edit profile picture');
-                  editImageContext.setImageType(EditImageType.profile);
+                  editItemContext.setImageType(EditImageType.profile);
                   router.push('profile/addPicture');
                 }}
               >

@@ -16,9 +16,9 @@ import { useItemsContext } from '../../context/ItemsContext';
 import { MAX_ITEM_PICTURES, MAX_ITEMS_SLOTS } from '../../constants';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
-import { useEditImageContext } from '../../context/EditImageContext';
 import { useUserContext } from '../../context/UserContext';
 import { generateItemId } from '../../mocks/itemsMocker';
+import { useEditItemContext } from '../../context/EditItemContext';
 
 const { width } = Dimensions.get('window');
 
@@ -27,26 +27,35 @@ const EditItem = () => {
 
   const { usersItemId } = useItemsContext();
 
-  const [name, setName] = useState<string>('');
-  const [description, setDescription] = useState<string>('');
-  const [pictures, setPictures] = useState<Array<string>>([]);
-
-  const editImageContext = useEditImageContext();
+  const editItemContext = useEditItemContext();
   const userContext = useUserContext();
   const usersItem = userContext.findItemById(usersItemId);
 
-  useEffect(() => {
-    setName(usersItem?.item.name ?? '');
-    setDescription(usersItem?.item.description ?? '');
-    setPictures(usersItem?.item.images ?? []);
-  }, []);
+  const [name, setName] = useState<string>(usersItem?.item.name ?? '');
+  const [description, setDescription] = useState<string>(usersItem?.item.description ?? '');
+  const [pictures, setPictures] = useState<Array<string>>(usersItem?.item.images ?? []);
 
   useEffect(() => {
-    if (editImageContext.tempImage) {
-      setPictures([...pictures, editImageContext.tempImage]);
-      editImageContext.setTempImage(null);
+    if (editItemContext.tempImage) {
+      setPictures([...pictures, editItemContext.tempImage]);
+      editItemContext.setTempImage(null);
     }
   });
+
+  const checkIfItemEdited = () => {
+    if (!usersItem) {
+      return !!(name || description || pictures.length);
+    }
+    return (
+      usersItem.item.name !== name ||
+      usersItem.item.description !== description ||
+      usersItem.item.images !== pictures
+    );
+  };
+
+  useEffect(() => {
+    editItemContext.setEdited(checkIfItemEdited());
+  }, [name, description, pictures]);
 
   const validateForm = () => {
     if (!name || !description || !pictures.length) {
@@ -104,8 +113,8 @@ const EditItem = () => {
               <AddButton
                 onPress={() => {
                   console.log('add picture');
-                  editImageContext.setImageType(EditImageType.item);
-                  editImageContext.setItemId(usersItem?.item.id || null);
+                  editItemContext.setImageType(EditImageType.item);
+                  editItemContext.setItemId(usersItem?.item.id || null);
                   router.push('profile/addPicture');
                 }}
                 borderRadius={ItemBorderRadius.all}
@@ -131,32 +140,30 @@ const EditItem = () => {
               if (!validateForm()) {
                 throw new Error('form invalid');
               }
+              const newItems = [...userContext.items];
               if (usersItem) {
                 // update item
-                const newItems = [...userContext.items];
+
                 newItems[usersItem.index] = {
                   ...usersItem.item,
                   name,
                   images: pictures,
                   description,
                 };
-                userContext.setItems(newItems);
-                router.back();
               } else {
                 // add new item
                 if (userContext.items.length + 1 > MAX_ITEMS_SLOTS) {
                   throw new Error('cannot add more items');
                 }
-                const newItems = [...userContext.items];
                 newItems.push({
                   id: generateItemId(),
                   name,
                   images: pictures,
                   description,
                 });
-                userContext.setItems(newItems);
-                router.back();
               }
+              userContext.setItems(newItems);
+              router.back();
             }}
           />
         </View>

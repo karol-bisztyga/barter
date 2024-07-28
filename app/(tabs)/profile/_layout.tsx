@@ -1,17 +1,52 @@
 import React from 'react';
 import { Stack } from 'expo-router';
 import { headerBackButtonOptions } from '../../utils/reusableStuff';
-import { EditImageContextProvider } from '../../context/EditImageContext';
+import { Alert } from 'react-native';
+import { EditItemContextProvider, useEditItemContext } from '../../context/EditItemContext';
 
-export default function Layout() {
+export default function Wrapper() {
   return (
-    <EditImageContextProvider>
-      <Stack screenOptions={{ headerShown: false }}>
-        <Stack.Screen name="index" options={{ title: '' }} />
-        <Stack.Screen name="item" options={headerBackButtonOptions} />
-        <Stack.Screen name="editItem" options={headerBackButtonOptions} />
-        <Stack.Screen name="addPicture" options={headerBackButtonOptions} />
-      </Stack>
-    </EditImageContextProvider>
+    <EditItemContextProvider>
+      <Layout />
+    </EditItemContextProvider>
+  );
+}
+
+function Layout() {
+  const editItemContext = useEditItemContext();
+
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="index" options={{ title: '' }} />
+      <Stack.Screen name="item" options={headerBackButtonOptions()} />
+      <Stack.Screen
+        name="editItem"
+        options={headerBackButtonOptions(async (): Promise<boolean> => {
+          if (!editItemContext.edited) {
+            return true;
+          }
+          const discard: boolean = await new Promise((resolve) => {
+            Alert.alert(
+              'Do you want to discard unsaved changes?',
+              '',
+              [
+                { text: 'Stay', onPress: () => resolve(false) },
+                {
+                  text: 'Discard',
+                  onPress: () => resolve(true),
+                  style: 'destructive',
+                },
+              ],
+              { cancelable: false }
+            );
+          });
+          if (discard) {
+            editItemContext.setEdited(false);
+          }
+          return discard;
+        })}
+      />
+      <Stack.Screen name="addPicture" options={headerBackButtonOptions()} />
+    </Stack>
   );
 }
