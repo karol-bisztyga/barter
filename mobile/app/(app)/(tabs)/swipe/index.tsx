@@ -40,7 +40,7 @@ export default function Swipe() {
   const printCards = () => {
     console.log(
       '> cards',
-      cards.map((card) => card.name)
+      cards.map((card) => [card.name, card.images])
     );
   };
 

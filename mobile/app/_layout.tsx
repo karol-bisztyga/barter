@@ -1,16 +1,12 @@
 import React from 'react';
-import { Stack } from 'expo-router/stack';
-import { ItemsContextProvider } from './context/ItemsContext';
-import { UserContextProvider } from './context/UserContext';
+import { Slot } from 'expo-router';
+import { SessionContextProvider } from './SessionContext';
 
-export default function Layout() {
+export default function Root() {
+  // Set up the auth context and render our layout inside of it.
   return (
-    <UserContextProvider>
-      <ItemsContextProvider>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        </Stack>
-      </ItemsContextProvider>
-    </UserContextProvider>
+    <SessionContextProvider>
+      <Slot />
+    </SessionContextProvider>
   );
 }

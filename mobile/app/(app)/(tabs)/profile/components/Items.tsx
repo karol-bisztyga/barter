@@ -4,9 +4,9 @@ import { Card, ItemBorderRadius, ItemNamePlacement } from '../../../types';
 import Item from '../../../components/Item';
 import EmptyItem from '../../../components/EmptyItem';
 import { router } from 'expo-router';
+import { MAX_ITEMS_SLOTS } from '../../../constants';
 import { useItemsContext } from '../../../context/ItemsContext';
 import { useUserContext } from '../../../context/UserContext';
-import { MAX_ITEMS_SLOTS } from '../../../constants';
 
 const Items = () => {
   const itemsContext = useItemsContext();

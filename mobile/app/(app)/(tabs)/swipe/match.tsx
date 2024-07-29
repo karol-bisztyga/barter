@@ -12,7 +12,7 @@ const MatchModal = () => {
   const usersItem: Card = generateItem();
   const itemsContext = useItemsContext();
 
-  const othersItem = itemsContext.othersItem;
+  const { othersItem } = itemsContext;
   if (!othersItem) {
     console.error('at least on of the items has not been set');
     router.back();

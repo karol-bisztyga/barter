@@ -1,11 +1,11 @@
 import React from 'react';
 import { ItemBorderRadius } from '../../../types';
 import { StyleSheet, View } from 'react-native';
-import { useItemsContext } from '../../../context/ItemsContext';
 import Item from '../../../components/Item';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
 import { useUserContext } from '../../../context/UserContext';
+import { useItemsContext } from '../../../context/ItemsContext';
 
 const ChatHeader = () => {
   const userContext = useUserContext();
@@ -13,10 +13,10 @@ const ChatHeader = () => {
   const { usersItemId, othersItem } = itemsContext;
 
   const usersItem = userContext.findItemById(usersItemId);
-
   if (!usersItem || !othersItem) {
-    console.log('ERR', usersItemId, usersItem);
-    throw new Error('at least one of the items has not been set');
+    console.log('>>> ERR', usersItemId, usersItem);
+    return null;
+    // throw new Error('at least one of the items has not been set');
   }
 
   return (

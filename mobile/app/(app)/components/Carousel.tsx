@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Image, ImageSourcePropType } from 'react-native';
 import { ItemBorderRadius } from '../types';
 import { useAssets } from 'expo-asset';
 
@@ -31,7 +31,8 @@ const Carousel = ({
     ));
   };
 
-  const [noImageAsset, error] = useAssets([require('../../assets/noImg.jpg')]);
+  const [noImageAsset, error] = useAssets([require('../../../assets/noImg.jpg')]);
+
   if (error) {
     throw error;
   }
@@ -48,7 +49,7 @@ const Carousel = ({
           <ActivityIndicator style={StyleSheet.absoluteFill} size="large" color="#0000ff" />
         )} */}
       <Image
-        source={frontImageSource}
+        source={frontImageSource as ImageSourcePropType}
         style={[
           styles.image,
           {

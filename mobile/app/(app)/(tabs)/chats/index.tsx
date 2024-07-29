@@ -6,8 +6,8 @@ import Item from '../../components/Item';
 import { generateChatItems } from '../../mocks/itemsMocker';
 import { Card, ItemBorderRadius } from '../../types';
 import { router } from 'expo-router';
-import { useItemsContext } from '../../context/ItemsContext';
 import Separator, { SEPARATOR_HEIGHT } from '../../components/Separator';
+import { useItemsContext } from '../../context/ItemsContext';
 import { useUserContext } from '../../context/UserContext';
 
 const ITEMS_PER_SCREEN = 4;
@@ -81,8 +81,8 @@ export default function Chats() {
                 <TouchableOpacity
                   onPress={() => {
                     const [usersItem, othersItem] = item;
-                    itemsContext.usersItemId = usersItem.id;
-                    itemsContext.othersItem = othersItem;
+                    itemsContext.setUsersItemId(usersItem.id);
+                    itemsContext.setOthersItem(othersItem);
                     router.push('chats/chat');
                   }}
                   activeOpacity={1}

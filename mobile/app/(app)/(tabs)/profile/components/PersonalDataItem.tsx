@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Text, Alert, TextInput } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import * as Clipboard from 'expo-clipboard';
-import { useUserContext } from '../../../context/UserContext';
 import { UserData } from '../../../types';
+import { useUserContext } from '../../../context/UserContext';
 
 const validateValue = (/*value: string*/) => {
   // todo handle this

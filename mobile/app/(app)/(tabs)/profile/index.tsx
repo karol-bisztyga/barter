@@ -7,9 +7,10 @@ import Items from './components/Items';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
+import { EditImageType } from '../../types';
 import { useUserContext } from '../../context/UserContext';
 import { useEditItemContext } from '../../context/EditItemContext';
-import { EditImageType } from '../../types';
+import Actions from './components/Actions';
 
 export default function Profile() {
   const [imageLoading, setImageLoading] = useState<boolean>(true);
@@ -66,6 +67,8 @@ export default function Profile() {
             <Text style={styles.title}>Items</Text>
           </View>
           <Items />
+          <Separator style={styles.separator} />
+          <Actions />
         </KeyboardAwareScrollView>
       </View>
     </SafeAreaView>

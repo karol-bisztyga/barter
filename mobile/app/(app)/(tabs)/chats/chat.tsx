@@ -14,9 +14,9 @@ import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-na
 import { generateMessages } from '../../mocks/messagesMocker';
 import { ChatMessage } from '../../types';
 import ChatMessageComponent from '../../components/ChatMessageComponent';
-import { useItemsContext } from '../../context/ItemsContext';
 import { router } from 'expo-router';
 import ChatHeader from './components/ChatHeader';
+import { useItemsContext } from '../../context/ItemsContext';
 
 const INPUT_WRAPPER_HEIGHT = 70;
 // const MESSAGES_ON_SCREEN_LIMIT = 30;
