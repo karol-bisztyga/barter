@@ -133,7 +133,7 @@ const EditItem = () => {
                 const remove: boolean = await new Promise((resolve) => {
                   Alert.alert(
                     'Do you really want to remove this item?',
-                    '',
+                    'All chats related to this item will be removed as well',
                     [
                       { text: 'Keep it', onPress: () => resolve(false) },
                       {
@@ -150,6 +150,7 @@ const EditItem = () => {
                   if (!usersItem) {
                     throw new Error('trying to remove non-existing item');
                   }
+                  // todo remove chats related to this item
                   const newItems = [...userContext.items];
                   newItems.splice(usersItem.index, 1);
                   userContext.setItems(newItems);

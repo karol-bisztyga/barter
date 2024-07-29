@@ -10,6 +10,7 @@ import { useUserContext } from '../../context/UserContext';
 import { generateUserData } from '../../mocks/userMocker';
 import { MAX_ITEMS_SLOTS } from '../../constants';
 import { generateItem } from '../../mocks/itemsMocker';
+import { generateImage } from '../../mocks/imageMocker';
 
 const LOADED_ITEMS_CAPACITY = 5;
 
@@ -23,7 +24,7 @@ export default function Swipe() {
   useEffect(() => {
     // TODO this should be done on login
     userContext.setData(generateUserData());
-    userContext.setProfilePic('');
+    userContext.setProfilePic(generateImage());
 
     const userItemsAmount = Math.floor(Math.random() * (MAX_ITEMS_SLOTS - 1) + 1);
     const loadedItems: Card[] = [];

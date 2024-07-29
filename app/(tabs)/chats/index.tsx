@@ -60,6 +60,7 @@ const ListItem = ({
 export default function Chats() {
   const itemsContext = useItemsContext();
   const userContext = useUserContext();
+  // todo maybe put this in a context so when an item is removed, the chats with this item will be removed
   const items: Array<[Card, Card]> = generateChatItems(10, userContext.items);
 
   const [containerHeight, setContainerHeight] = useState<number>(0);
