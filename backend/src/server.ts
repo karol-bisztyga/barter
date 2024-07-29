@@ -10,8 +10,8 @@ app.use(bodyParser.json());
 app.use("/api/auth", authRoutes);
 app.use("/api", itemRoutes);
 
-const PORT = process.env.PORT || 3000;
+const { SERVER_PORT } = process.env;
 
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
+app.listen(SERVER_PORT, () => {
+  console.log(`Server is running on port ${SERVER_PORT}`);
 });

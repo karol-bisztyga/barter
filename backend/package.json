@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
-    "reset_database": "node dist/database/reset_database.js"
+    "reset_database": "node scripts/reset_database.js"
   },
   "keywords": [],
   "author": "",
