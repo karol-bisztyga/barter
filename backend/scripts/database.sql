@@ -6,7 +6,11 @@ DROP TABLE IF EXISTS users;
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
+    name VARCHAR(50) NOT NULL UNIQUE,
+    email VARCHAR(50) NOT NULL UNIQUE,
+    phone VARCHAR(50),
+    facebook VARCHAR(50),
+    instagram VARCHAR(50),
     password VARCHAR(100) NOT NULL
 );
 
