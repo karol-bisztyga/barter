@@ -38,17 +38,17 @@ const insertSampleUsers = async (amount = 10) => {
     }
 
     for (let user of users) {
-      const { name, email, phone, facebook, instagram, password } = user;
+      const { name, email, phone, facebook, instagram, profilePicture, password } = user;
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
       console.log(
-        `> inserting: [${name}][${email}][${phone}][${facebook}][${instagram}][${hashedPassword}]`
+        `> inserting: [${name}][${email}][${phone}][${facebook}][${instagram}][${profilePicture}][${hashedPassword}]`
       );
 
       await client.query(
-        'INSERT INTO users (name, email, phone, facebook, instagram, password) VALUES ($1, $2, $3, $4, $5, $6)',
-        [name, email, phone, facebook, instagram, hashedPassword]
+        'INSERT INTO users (name, email, phone, facebook, instagram, profile_picture, password) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+        [name, email, phone, facebook, instagram, profilePicture, hashedPassword]
       );
     }
     console.log();

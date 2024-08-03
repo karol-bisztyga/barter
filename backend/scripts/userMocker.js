@@ -1,3 +1,5 @@
+const { generateImage } = require('./imageMocker');
+
 const firstNames = [
   'John',
   'Jane',
@@ -190,6 +192,7 @@ const generateUserData = () => {
     phone: maybeGetValue(generateRandomPhoneNumber),
     facebook: maybeGetValue(generateRandomUsername, 'fb'),
     instagram: maybeGetValue(generateRandomUsername, 'insta'),
+    profilePicture: maybeGetValue(generateImage),
     password: generateRandomPassword(Math.floor(Math.random() * 12) + 8),
   };
 };

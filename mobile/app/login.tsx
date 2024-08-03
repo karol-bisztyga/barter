@@ -10,8 +10,8 @@ export default function SignIn() {
   const { signIn } = useSessionContext();
   const userContext = useUserContext();
   // todo remove default values
-  const [email, setEmail] = useState('mia.martin@yahoo.com');
-  const [password, setPassword] = useState('ISvd5Y81tScSN');
+  const [email, setEmail] = useState('robert.smith@gmail.com');
+  const [password, setPassword] = useState('cHPCZT3Uop6r3Ev8');
 
   const signInEnabled = () => {
     if (!email || !password) {
@@ -44,6 +44,7 @@ export default function SignIn() {
                 if (!userData) {
                   throw new Error('user data is missing');
                 }
+                console.log('>>>>>>>>> setting user data', userData);
                 userContext.setData(userData);
                 router.replace('/');
               } catch (e) {

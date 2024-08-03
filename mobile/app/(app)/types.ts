@@ -29,6 +29,7 @@ export type UserData = {
   phone?: string;
   instagram?: string;
   facebook?: string;
+  profilePicture?: string;
 };
 
 export enum EditImageType {

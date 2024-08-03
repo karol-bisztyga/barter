@@ -2,7 +2,6 @@ import React, { useRef, useState } from 'react';
 import { View, StyleSheet, Text, Image, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Separator from '../../components/Separator';
-import Contact from './components/Contact';
 import Items from './components/Items';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -11,6 +10,7 @@ import { EditImageType } from '../../types';
 import { useUserContext } from '../../context/UserContext';
 import { useEditItemContext } from '../../context/EditItemContext';
 import Actions from './components/Actions';
+import PersonalData from './components/PersonalData';
 
 export default function Profile() {
   const [imageLoading, setImageLoading] = useState<boolean>(true);
@@ -24,16 +24,16 @@ export default function Profile() {
         <KeyboardAwareScrollView ref={scrollViewRef}>
           <View style={styles.profileImageWrapper}>
             <View style={styles.profileImageInnerWrapper}>
-              {userContext.profilePic && (
+              {userContext.data?.profilePicture && (
                 <Image
                   style={styles.profileImage}
-                  source={{ uri: userContext.profilePic }}
+                  source={{ uri: userContext.data.profilePicture }}
                   onLoadEnd={() => {
                     setImageLoading(false);
                   }}
                 />
               )}
-              {userContext.profilePic ? (
+              {userContext.data?.profilePicture ? (
                 imageLoading && (
                   <View style={styles.profileImageLoader}>
                     <ActivityIndicator size="large" color="black" />
@@ -61,7 +61,7 @@ export default function Profile() {
           <View style={styles.titleWrapper}>
             <Text style={styles.title}>Personal Data</Text>
           </View>
-          <Contact />
+          <PersonalData />
           <Separator style={styles.separator} />
           <View style={styles.titleWrapper}>
             <Text style={styles.title}>Items</Text>

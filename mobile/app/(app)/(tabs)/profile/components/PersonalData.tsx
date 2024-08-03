@@ -4,7 +4,7 @@ import { UserData } from '../../../types';
 import PersonalDataItem from './PersonalDataItem';
 import { useUserContext } from '../../../context/UserContext';
 
-const Contact = () => {
+const PersonalData = () => {
   const userContext = useUserContext();
   console.log('user data', userContext.data);
 
@@ -25,4 +25,4 @@ const styles = StyleSheet.create({
   container: {},
 });
 
-export default Contact;
+export default PersonalData;

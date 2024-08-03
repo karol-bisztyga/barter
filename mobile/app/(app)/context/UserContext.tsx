@@ -4,8 +4,6 @@ import { Card, UserData } from '../types';
 interface UserContextState {
   data: UserData | null;
   setData: React.Dispatch<React.SetStateAction<UserData | null>>;
-  profilePic: string;
-  setProfilePic: React.Dispatch<React.SetStateAction<string>>;
   items: Array<Card>;
   setItems: React.Dispatch<React.SetStateAction<Array<Card>>>;
   findItemById: (id: string | null) => { item: Card; index: number } | null;
@@ -14,8 +12,6 @@ interface UserContextState {
 const initialState: UserContextState = {
   data: null,
   setData: () => {},
-  profilePic: '',
-  setProfilePic: () => {},
   items: [],
   setItems: () => {},
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -36,7 +32,6 @@ export const useUserContext = () => {
 
 export const UserContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [data, setData] = useState<UserData | null>(null);
-  const [profilePic, setProfilePic] = useState<string>('');
   const [items, setItems] = useState<Array<Card>>([]);
 
   const findItemById = (id: string | null): { item: Card; index: number } | null => {
@@ -60,9 +55,7 @@ export const UserContextProvider: FC<{ children: ReactNode }> = ({ children }) =
   };
 
   return (
-    <UserContext.Provider
-      value={{ data, setData, profilePic, setProfilePic, items, setItems, findItemById }}
-    >
+    <UserContext.Provider value={{ data, setData, items, setItems, findItemById }}>
       {children}
     </UserContext.Provider>
   );

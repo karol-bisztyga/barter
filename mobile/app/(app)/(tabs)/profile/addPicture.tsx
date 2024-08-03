@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { Button, Dimensions, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import * as ImagePicker from 'expo-image-picker';
-import { EditImageType } from '../../types';
-import { useUserContext } from '../../context/UserContext';
+import { EditImageType, UserData } from '../../types';
 import { router } from 'expo-router';
+import { useUserContext } from '../../context/UserContext';
 import { useEditItemContext } from '../../context/EditItemContext';
 
 const { width } = Dimensions.get('window');
@@ -39,7 +39,10 @@ const AddPicture = () => {
     console.log('confirming image', imageType, image);
     switch (imageType) {
       case EditImageType.profile: {
-        userContext.setProfilePic(image);
+        userContext.setData({
+          ...userContext.data,
+          profilePicture: image,
+        } as UserData);
         router.back();
         break;
       }

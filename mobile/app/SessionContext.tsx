@@ -44,7 +44,6 @@ export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }
 
     const response = await executeQuery('auth/login', 'POST', { email, password });
 
-    console.log('---response2', response.status, response.ok, response.data);
     if (response.ok) {
       if (!response.data.token) {
         throw new Error('token is missing');
@@ -58,7 +57,9 @@ export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }
         phone: response.data.user.phone,
         facebook: response.data.user.facebook,
         instagram: response.data.user.instagram,
+        profilePicture: response.data.user.profile_picture,
       };
+      console.log('---user data 123', userData, response.data.user);
 
       return userData;
     } else {

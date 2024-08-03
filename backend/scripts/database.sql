@@ -11,6 +11,7 @@ CREATE TABLE users (
     phone VARCHAR(50),
     facebook VARCHAR(50),
     instagram VARCHAR(50),
+    profile_picture VARCHAR(100),
     password VARCHAR(100) NOT NULL
 );
 
