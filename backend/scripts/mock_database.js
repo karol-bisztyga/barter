@@ -4,6 +4,7 @@ const { generateUserData } = require('./userMocker');
 require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
+const { generateItem } = require('./itemsMocker');
 
 const { DB_HOST, DB_USER, DB_NAME, DB_PASSWORD, DB_PORT } = process.env;
 
@@ -15,10 +16,8 @@ const pool = new Pool({
   port: DB_PORT,
 });
 
-const insertSampleUsers = async (amount = 10) => {
+const insertSampleUsers = async (client, amount = 10) => {
   try {
-    const client = await pool.connect();
-
     const users = [];
 
     for (let i = 0; i < amount; ++i) {
@@ -31,6 +30,7 @@ const insertSampleUsers = async (amount = 10) => {
           console.log('rerolling...', i, rollCount, newUser.name, newUser.email);
         }
         newUser = generateUserData();
+        console.log('> generated user', newUser);
         isDuplicate = users.some(
           (user) => user.email === newUser.email || user.name === newUser.name
         );
@@ -39,8 +39,8 @@ const insertSampleUsers = async (amount = 10) => {
       users.push(newUser);
     }
 
-    for (let user of users) {
-      const { name, email, phone, facebook, instagram, profilePicture, password } = user;
+    for (let i = 0; i < users.length; ++i) {
+      const { name, email, phone, facebook, instagram, profilePicture, password } = users[i];
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -48,35 +48,87 @@ const insertSampleUsers = async (amount = 10) => {
         `> inserting: [${name}][${email}][${phone}][${facebook}][${instagram}][${profilePicture}][${hashedPassword}]`
       );
 
-      await client.query(
-        'INSERT INTO users (name, email, phone, facebook, instagram, profile_picture, password) VALUES ($1, $2, $3, $4, $5, $6, $7)',
+      const result = await client.query(
+        'INSERT INTO users (name, email, phone, facebook, instagram, profile_picture, password) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
         [name, email, phone, facebook, instagram, profilePicture, hashedPassword]
       );
+      users[i] = { ...users[i], id: result.rows[0].id };
     }
     console.log('Sample users inserted successfully!');
-
-    // write them to this file
-    (() => {
-      const filePath = '../mobile/app/(app)/mocks/sampleUsers.json';
-      const data = JSON.stringify(users);
-
-      console.log('Writing users to file', filePath);
-
-      fs.writeFile(filePath, data, 'utf8', (err) => {
-        if (err) {
-          console.error('Error writing to file', err);
-        } else {
-          console.log('File written successfully', filePath);
-        }
-      });
-    })();
-
-    client.release();
+    return users;
   } catch (err) {
-    console.error('Error inserting sample users:', err);
-  } finally {
-    await pool.end();
+    throw new Error('Error inserting sample users: [' + err + ']');
   }
 };
 
-insertSampleUsers();
+const writeDataToFile = async (filePath, data) => {
+  return new Promise((resolve, reject) => {
+    console.log('Writing data to file', filePath);
+
+    fs.writeFile(filePath, data, 'utf8', (err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve('File written successfully');
+      }
+    });
+  });
+};
+
+const insertSampleItems = async (client, users, itemsCount = 10) => {
+  const items = [];
+
+  for (let i = 0; i < itemsCount; ++i) {
+    const user = users[Math.floor(Math.random() * users.length)];
+    const item = generateItem(user.id);
+    items.push(item);
+  }
+
+  // TODO REMOVE: ensure every user has at least one item
+  users.forEach((user) => {
+    if (!items.some((item) => item.userId === user.id)) {
+      const item = generateItem(user.id);
+      items.push(item);
+    }
+  });
+
+  // insert items
+  for (let i = 0; i < items.length; ++i) {
+    try {
+      const { userId, name, description } = items[i];
+
+      console.log(`> inserting: [${userId}][${name}][${description}]`);
+
+      const result = await client.query(
+        'INSERT INTO items (user_id, name, description) VALUES ($1, $2, $3) RETURNING id',
+        [userId, name, description]
+      );
+
+      items[i] = {
+        ...items[i],
+        id: result.rows[0].id,
+      };
+
+      console.log('Sample items inserted successfully!');
+      return items;
+    } catch (err) {
+      throw new Error('Error inserting sample items: [' + err + ']');
+    }
+  }
+
+  console.log(items);
+};
+
+(async () => {
+  const client = await pool.connect();
+
+  const users = await insertSampleUsers(client);
+  console.log('users', users);
+  await writeDataToFile('../mobile/app/(app)/mocks/sampleUsers.json', JSON.stringify(users));
+
+  const items = await insertSampleItems(client, users);
+  console.log('items', items);
+
+  await client.release();
+  await pool.end();
+})();

@@ -44,6 +44,11 @@
 
 
 nestepne rzeczy do zrobienia
-- zmockowani userzy do bazy danych + umieszczanie danych w bazie po resecie bazy
-- przy logowaniu na mobilce zapytanie do bazki
-- ostatecznie logowanie przy pomocy zmockowanych kont z bazy danych
+- [x] zmockowani userzy do bazy danych + umieszczanie danych w bazie po resecie bazy
+- [x] przy logowaniu na mobilce zapytanie do bazki
+- [x] ostatecznie logowanie przy pomocy zmockowanych kont z bazy danych
+- [ ] mockowanie user itemow
+- [ ] odczytywanie user itemow z bazy
+- [ ] modyfikacja user data & user items w bazie
+- [ ] 
+- [ ] 
