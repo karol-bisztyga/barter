@@ -2,6 +2,8 @@ const { Pool } = require('pg');
 const bcrypt = require('bcrypt');
 const { generateUserData } = require('./userMocker');
 require('dotenv').config();
+const fs = require('fs');
+const path = require('path');
 
 const { DB_HOST, DB_USER, DB_NAME, DB_PASSWORD, DB_PORT } = process.env;
 
@@ -51,11 +53,23 @@ const insertSampleUsers = async (amount = 10) => {
         [name, email, phone, facebook, instagram, profilePicture, hashedPassword]
       );
     }
-    console.log();
-    console.log('Sample users inserted successfully:');
-    for (let user of users) {
-      console.log(user.email, user.password);
-    }
+    console.log('Sample users inserted successfully!');
+
+    // write them to this file
+    (() => {
+      const filePath = '../mobile/app/(app)/mocks/sampleUsers.json';
+      const data = JSON.stringify(users);
+
+      console.log('Writing users to file', filePath);
+
+      fs.writeFile(filePath, data, 'utf8', (err) => {
+        if (err) {
+          console.error('Error writing to file', err);
+        } else {
+          console.log('File written successfully', filePath);
+        }
+      });
+    })();
 
     client.release();
   } catch (err) {

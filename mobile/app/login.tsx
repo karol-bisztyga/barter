@@ -6,12 +6,15 @@ import { useState } from 'react';
 import { router } from 'expo-router';
 import { useUserContext } from './(app)/context/UserContext';
 
+import sampleUsers from './(app)/mocks/sampleUsers.json';
+
 export default function SignIn() {
   const { signIn } = useSessionContext();
   const userContext = useUserContext();
   // todo remove default values
-  const [email, setEmail] = useState('robert.smith@gmail.com');
-  const [password, setPassword] = useState('cHPCZT3Uop6r3Ev8');
+
+  const [email, setEmail] = useState(sampleUsers[0].email);
+  const [password, setPassword] = useState(sampleUsers[0].password);
 
   const signInEnabled = () => {
     if (!email || !password) {
