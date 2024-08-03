@@ -1,6 +1,7 @@
 import React, { createContext, ReactNode, FC, useContext } from 'react';
 import { useStorageState } from './useStorageState';
 import { executeQuery } from './(app)/utils/databaseUtils';
+import { UserData } from './(app)/types';
 
 /**
  * this context is for storing current target items mainly for navigation
@@ -9,7 +10,7 @@ import { executeQuery } from './(app)/utils/databaseUtils';
  */
 
 interface SessionContextState {
-  signIn: (email: string, password: string) => Promise<void>;
+  signIn: (email: string, password: string) => Promise<UserData | null>;
   signOut: () => void;
   session?: string | null;
   isLoading: boolean;
@@ -41,12 +42,6 @@ export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }
       throw new Error('email or password is missing');
     }
 
-    console.log(
-      '---sign in',
-      process.env.EXPO_PUBLIC_SERVER_HOST,
-      process.env.EXPO_PUBLIC_SERVER_PORT
-    );
-
     const response = await executeQuery('auth/login', 'POST', { email, password });
 
     console.log('---response2', response.status, response.ok, response.data);
@@ -56,6 +51,16 @@ export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }
       }
       console.log('setting session', response.data.token);
       setSession(response.data.token);
+
+      const userData: UserData = {
+        email: response.data.user.email,
+        name: response.data.user.name,
+        phone: response.data.user.phone,
+        facebook: response.data.user.facebook,
+        instagram: response.data.user.instagram,
+      };
+
+      return userData;
     } else {
       throw new Error('login error: ' + response.data.message);
     }

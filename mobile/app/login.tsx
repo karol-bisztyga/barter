@@ -4,12 +4,14 @@ import { Button, StyleSheet, TextInput, View } from 'react-native';
 import { useSessionContext } from './SessionContext';
 import { useState } from 'react';
 import { router } from 'expo-router';
+import { useUserContext } from './(app)/context/UserContext';
 
 export default function SignIn() {
   const { signIn } = useSessionContext();
+  const userContext = useUserContext();
   // todo remove default values
-  const [email, setEmail] = useState('jane.brown@gmail.com');
-  const [password, setPassword] = useState('ar9kYUnQ');
+  const [email, setEmail] = useState('mia.martin@yahoo.com');
+  const [password, setPassword] = useState('ISvd5Y81tScSN');
 
   const signInEnabled = () => {
     if (!email || !password) {
@@ -38,7 +40,11 @@ export default function SignIn() {
             onPress={async () => {
               // todo handle sign in
               try {
-                await signIn(email, password);
+                const userData = await signIn(email, password);
+                if (!userData) {
+                  throw new Error('user data is missing');
+                }
+                userContext.setData(userData);
                 router.replace('/');
               } catch (e) {
                 // todo show error message
