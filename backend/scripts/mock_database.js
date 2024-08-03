@@ -1,7 +1,7 @@
-const { Pool } = require("pg");
-const bcrypt = require("bcrypt");
-const { generateUserData } = require("./userMocker");
-require("dotenv").config();
+const { Pool } = require('pg');
+const bcrypt = require('bcrypt');
+const { generateUserData } = require('./userMocker');
+require('dotenv').config();
 
 const { DB_HOST, DB_USER, DB_NAME, DB_PASSWORD, DB_PORT } = process.env;
 
@@ -26,13 +26,7 @@ const insertSampleUsers = async (amount = 10) => {
       // name and email have to be unique, check this and reroll if necessary
       while (!newUser || isDuplicate) {
         if (rollCount) {
-          console.log(
-            "rerolling...",
-            i,
-            rollCount,
-            newUser.name,
-            newUser.email
-          );
+          console.log('rerolling...', i, rollCount, newUser.name, newUser.email);
         }
         newUser = generateUserData();
         isDuplicate = users.some(
@@ -53,19 +47,19 @@ const insertSampleUsers = async (amount = 10) => {
       );
 
       await client.query(
-        "INSERT INTO users (name, email, phone, facebook, instagram, password) VALUES ($1, $2, $3, $4, $5, $6)",
+        'INSERT INTO users (name, email, phone, facebook, instagram, password) VALUES ($1, $2, $3, $4, $5, $6)',
         [name, email, phone, facebook, instagram, hashedPassword]
       );
     }
     console.log();
-    console.log("Sample users inserted successfully:");
+    console.log('Sample users inserted successfully:');
     for (let user of users) {
       console.log(user.email, user.password);
     }
 
     client.release();
   } catch (err) {
-    console.error("Error inserting sample users:", err);
+    console.error('Error inserting sample users:', err);
   } finally {
     await pool.end();
   }

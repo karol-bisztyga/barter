@@ -1,9 +1,9 @@
-import { Request, Response } from "express";
-import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
-import pool from "../db";
-import { User } from "../models/User";
-import { jwtSecret } from "../config";
+import { Request, Response } from 'express';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import pool from '../db';
+import { User } from '../models/User';
+import { jwtSecret } from '../config';
 
 export const register = async (req: Request, res: Response) => {
   const { username, password } = req.body;
@@ -14,44 +14,40 @@ export const register = async (req: Request, res: Response) => {
 
   try {
     const result = await pool.query(
-      "INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *",
+      'INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *',
       [newUser.username, newUser.password]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
-    res.status(500).send("Server error");
+    res.status(500).send({ message: 'Server error' });
   }
 };
 
 export const login = async (req: Request, res: Response) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
+  console.log('>>> login', req.body);
 
   try {
-    const result = await pool.query("SELECT * FROM users WHERE username = $1", [
-      username,
-    ]);
+    const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     const user = result.rows[0];
+    console.log('>>res', user);
 
     if (!user) {
-      return res.status(400).send("Invalid username or password");
+      return res.status(400).send({ message: 'no user found for this email: ' + email });
     }
 
     const validPassword = await bcrypt.compare(password, user.password);
 
     if (!validPassword) {
-      return res.status(400).send("Invalid username or password");
+      return res.status(400).send({ message: 'password incorrect for user with email: ' + email });
     }
 
-    const token = jwt.sign(
-      { id: user.id, username: user.username },
-      jwtSecret,
-      {
-        expiresIn: "1h",
-      }
-    );
+    const token = jwt.sign({ id: user.id, username: user.username }, jwtSecret, {
+      expiresIn: '1h',
+    });
 
     res.json({ token });
   } catch (err) {
-    res.status(500).send("Server error");
+    res.status(500).send({ message: 'Server error: ' + err });
   }
 };

@@ -1,101 +1,95 @@
 const firstNames = [
-  "John",
-  "Jane",
-  "Alex",
-  "Emily",
-  "Michael",
-  "Sarah",
-  "David",
-  "Laura",
-  "Robert",
-  "Emma",
-  "Daniel",
-  "Olivia",
-  "James",
-  "Sophia",
-  "Joseph",
-  "Isabella",
-  "Thomas",
-  "Mia",
-  "Charles",
-  "Ava",
+  'John',
+  'Jane',
+  'Alex',
+  'Emily',
+  'Michael',
+  'Sarah',
+  'David',
+  'Laura',
+  'Robert',
+  'Emma',
+  'Daniel',
+  'Olivia',
+  'James',
+  'Sophia',
+  'Joseph',
+  'Isabella',
+  'Thomas',
+  'Mia',
+  'Charles',
+  'Ava',
 ];
 
 const lastNames = [
-  "Smith",
-  "Johnson",
-  "Brown",
-  "Taylor",
-  "Anderson",
-  "Thomas",
-  "Jackson",
-  "White",
-  "Harris",
-  "Martin",
-  "Thompson",
-  "Garcia",
-  "Martinez",
-  "Robinson",
-  "Clark",
-  "Rodriguez",
-  "Lewis",
-  "Lee",
-  "Walker",
-  "Hall",
+  'Smith',
+  'Johnson',
+  'Brown',
+  'Taylor',
+  'Anderson',
+  'Thomas',
+  'Jackson',
+  'White',
+  'Harris',
+  'Martin',
+  'Thompson',
+  'Garcia',
+  'Martinez',
+  'Robinson',
+  'Clark',
+  'Rodriguez',
+  'Lewis',
+  'Lee',
+  'Walker',
+  'Hall',
 ];
 const adjectives = [
-  "Cool",
-  "Happy",
-  "Bright",
-  "Quick",
-  "Lively",
-  "Brave",
-  "Calm",
-  "Charming",
-  "Cheerful",
-  "Clever",
-  "Creative",
-  "Daring",
-  "Elegant",
-  "Funky",
-  "Gentle",
-  "Graceful",
-  "Jolly",
-  "Joyful",
-  "Lucky",
-  "Magical",
+  'Cool',
+  'Happy',
+  'Bright',
+  'Quick',
+  'Lively',
+  'Brave',
+  'Calm',
+  'Charming',
+  'Cheerful',
+  'Clever',
+  'Creative',
+  'Daring',
+  'Elegant',
+  'Funky',
+  'Gentle',
+  'Graceful',
+  'Jolly',
+  'Joyful',
+  'Lucky',
+  'Magical',
 ];
 
 const nouns = [
-  "Lion",
-  "Tiger",
-  "Panther",
-  "Eagle",
-  "Hawk",
-  "Wolf",
-  "Fox",
-  "Bear",
-  "Shark",
-  "Dolphin",
-  "Phoenix",
-  "Dragon",
-  "Unicorn",
-  "Wizard",
-  "Knight",
-  "Samurai",
-  "Ninja",
-  "Pirate",
-  "Alien",
-  "Robot",
+  'Lion',
+  'Tiger',
+  'Panther',
+  'Eagle',
+  'Hawk',
+  'Wolf',
+  'Fox',
+  'Bear',
+  'Shark',
+  'Dolphin',
+  'Phoenix',
+  'Dragon',
+  'Unicorn',
+  'Wizard',
+  'Knight',
+  'Samurai',
+  'Ninja',
+  'Pirate',
+  'Alien',
+  'Robot',
 ];
 
-const emailDomains = [
-  "gmail.com",
-  "yahoo.com",
-  "outlook.com",
-  "hotmail.com",
-  "aol.com",
-];
+const emailDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'aol.com'];
 
 const getRandomElement = (array) => {
   const randomIndex = Math.floor(Math.random() * array.length);
@@ -114,8 +108,8 @@ const generateRandomFullName = () => {
 
 const generateEmailFromFullName = (fullName) => {
   const lowerCaseName = fullName.toLowerCase();
-  const nameParts = lowerCaseName.split(" ");
-  const localPart = nameParts.join(".");
+  const nameParts = lowerCaseName.split(' ');
+  const localPart = nameParts.join('.');
   const domain = getRandomElement(emailDomains);
   return `${localPart}@${domain}`;
 };
@@ -128,12 +122,12 @@ const generateRandomPhoneNumber = () => {
   return `(${areaCode}) ${centralOfficeCode}-${lineNumber}`;
 };
 
-const generateRandomUsername = (platform = "fb") => {
+const generateRandomUsername = (platform = 'fb') => {
   const adjective = getRandomElement(adjectives);
   const noun = getRandomElement(nouns);
   const number = Math.floor(Math.random() * 1000);
 
-  if (platform === "insta") {
+  if (platform === 'insta') {
     // Instagram nicknames often use underscores
     return `${adjective}_${noun}_${number}`;
   }
@@ -156,23 +150,19 @@ const maybeGetValue = (callback, ...args) => {
 };
 
 function generateRandomPassword(length = 12) {
-  const uppercaseLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-  const lowercaseLetters = "abcdefghijklmnopqrstuvwxyz";
-  const numbers = "0123456789";
+  const uppercaseLetters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  const lowercaseLetters = 'abcdefghijklmnopqrstuvwxyz';
+  const numbers = '0123456789';
   // const specialCharacters = "!@#$%^&*()_+[]{}|;:,.<>?";
 
   // Combine all character sets
   const allCharacters = uppercaseLetters + lowercaseLetters + numbers; // + specialCharacters;
 
-  let password = "";
+  let password = '';
 
   // Ensure the password contains at least one character from each set
-  password += uppercaseLetters.charAt(
-    Math.floor(Math.random() * uppercaseLetters.length)
-  );
-  password += lowercaseLetters.charAt(
-    Math.floor(Math.random() * lowercaseLetters.length)
-  );
+  password += uppercaseLetters.charAt(Math.floor(Math.random() * uppercaseLetters.length));
+  password += lowercaseLetters.charAt(Math.floor(Math.random() * lowercaseLetters.length));
   password += numbers.charAt(Math.floor(Math.random() * numbers.length));
   // password += specialCharacters.charAt(
   //   Math.floor(Math.random() * specialCharacters.length)
@@ -180,16 +170,14 @@ function generateRandomPassword(length = 12) {
 
   // Fill the rest of the password length with random characters from all sets
   for (let i = 4; i < length; i++) {
-    password += allCharacters.charAt(
-      Math.floor(Math.random() * allCharacters.length)
-    );
+    password += allCharacters.charAt(Math.floor(Math.random() * allCharacters.length));
   }
 
   // Shuffle the password to ensure randomness
   password = password
-    .split("")
+    .split('')
     .sort(() => 0.5 - Math.random())
-    .join("");
+    .join('');
 
   return password;
 }
@@ -200,8 +188,8 @@ const generateUserData = () => {
     name,
     email: generateEmailFromFullName(name),
     phone: maybeGetValue(generateRandomPhoneNumber),
-    facebook: maybeGetValue(generateRandomUsername, "fb"),
-    instagram: maybeGetValue(generateRandomUsername, "insta"),
+    facebook: maybeGetValue(generateRandomUsername, 'fb'),
+    instagram: maybeGetValue(generateRandomUsername, 'insta'),
     password: generateRandomPassword(Math.floor(Math.random() * 12) + 8),
   };
 };

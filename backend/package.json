@@ -7,7 +7,12 @@
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
     "reset_database": "node scripts/reset_database.js",
-    "mock_database": "node scripts/mock_database.js"
+    "mock_database": "node scripts/mock_database.js",
+    "lint": "eslint .",
+    "lintFixAll": "eslint './**/*.{js,jsx,ts,tsx}'",
+    "prettierFixAll": "prettier --write './**/*.{js,jsx,ts,tsx}'",
+    "fix:lintPrettier": "npm run prettierFixAll && npm run lintFixAll",
+    "refreshEnv": "node scripts/refresh_env.js"
   },
   "keywords": [],
   "author": "",
@@ -27,6 +32,14 @@
     "@types/node": "^22.0.0",
     "@types/pg": "^8.11.6",
     "ts-node-dev": "^2.0.0",
-    "typescript": "^5.5.4"
+    "typescript": "^5.5.4",
+    "@eslint/js": "^9.6.0",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-react": "^7.34.3",
+    "eslint-plugin-react-native": "^4.1.0",
+    "globals": "^15.8.0",
+    "prettier": "^3.3.2",
+    "typescript-eslint": "^7.15.0"
   }
 }

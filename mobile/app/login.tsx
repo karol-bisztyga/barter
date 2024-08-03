@@ -8,14 +8,24 @@ import { router } from 'expo-router';
 export default function SignIn() {
   const { signIn } = useSessionContext();
   // todo remove default values
-  const [userName, setUserName] = useState('qwe123');
-  const [password, setPassword] = useState('qwe123');
+  const [email, setEmail] = useState('jane.brown@gmail.com');
+  const [password, setPassword] = useState('ar9kYUnQ');
+
+  const signInEnabled = () => {
+    if (!email || !password) {
+      return false;
+    }
+    // todo validate email
+    // todo validate password
+    return true;
+  };
 
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
       <View style={styles.inputContainer}>
-        <TextInput value={userName} onChangeText={setUserName} style={styles.input} />
+        <TextInput placeholder="email" value={email} onChangeText={setEmail} style={styles.input} />
         <TextInput
+          placeholder="password"
           secureTextEntry={true}
           value={password}
           onChangeText={setPassword}
@@ -24,10 +34,16 @@ export default function SignIn() {
         <View style={styles.buttonWrapper}>
           <Button
             title="Sign in"
-            onPress={() => {
+            disabled={!signInEnabled()}
+            onPress={async () => {
               // todo handle sign in
-              signIn();
-              router.replace('/');
+              try {
+                await signIn(email, password);
+                router.replace('/');
+              } catch (e) {
+                // todo show error message
+                console.error('sign in failed', e);
+              }
             }}
           />
         </View>

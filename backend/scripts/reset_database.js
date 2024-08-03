@@ -1,21 +1,14 @@
-require("dotenv").config();
-const { execSync } = require("child_process");
-const path = require("path");
+require('dotenv').config();
+const { execSync } = require('child_process');
+const path = require('path');
 
-const {
-  DOCKER_CONTAINER_NAME,
-  DB_USER,
-  DB_NAME,
-  DB_PASSWORD,
-  DB_PORT,
-  SQL_FILE,
-} = process.env;
+const { DOCKER_CONTAINER_NAME, DB_USER, DB_NAME, DB_PASSWORD, DB_PORT, SQL_FILE } = process.env;
 
-const sqlFilePath = path.resolve(__dirname, SQL_FILE || "../database.sql");
+const sqlFilePath = path.resolve(__dirname, SQL_FILE || '../database.sql');
 // Function to execute shell commands
 const execCommand = (command, retries = 0, retryTimeout = 1000) => {
   try {
-    execSync(command, { stdio: "inherit" });
+    execSync(command, { stdio: 'inherit' });
   } catch (err) {
     console.error(`Error executing command: ${command}\n${err}`);
     if (retries) {
@@ -44,9 +37,7 @@ const checkContainerRunning = () => {
 };
 
 if (!checkContainerRunning()) {
-  console.log(
-    `Docker container ${DOCKER_CONTAINER_NAME} is not running. Trying to run it...`
-  );
+  console.log(`Docker container ${DOCKER_CONTAINER_NAME} is not running. Trying to run it...`);
   // start the container
   const _createdContainerId = execSync(
     `docker run --name ${DOCKER_CONTAINER_NAME} -e POSTGRES_PASSWORD=${DB_PASSWORD} -e POSTGRES_USER=${DB_USER} -e POSTGRES_DB=${DB_NAME} -p ${DB_PORT}:${DB_PORT} -d postgres`
@@ -67,4 +58,4 @@ execCommand(
   3
 );
 
-console.log("Database has been reset.");
+console.log('Database has been reset.');

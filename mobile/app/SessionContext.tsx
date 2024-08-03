@@ -1,5 +1,6 @@
-import React, { createContext, ReactNode, FC, useContext, useEffect } from 'react';
+import React, { createContext, ReactNode, FC, useContext } from 'react';
 import { useStorageState } from './useStorageState';
+import { executeQuery } from './(app)/utils/databaseUtils';
 
 /**
  * this context is for storing current target items mainly for navigation
@@ -8,14 +9,15 @@ import { useStorageState } from './useStorageState';
  */
 
 interface SessionContextState {
-  signIn: () => void;
+  signIn: (email: string, password: string) => Promise<void>;
   signOut: () => void;
   session?: string | null;
   isLoading: boolean;
 }
 
 const initialState: SessionContextState = {
-  signIn: () => null,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  signIn: (_email: string, _password: string) => new Promise(() => null),
   signOut: () => null,
   session: null,
   isLoading: false,
@@ -34,18 +36,34 @@ export const useSessionContext = () => {
 export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [[isLoading, session], setSession] = useStorageState('session');
 
-  const signIn = () => {
-    setSession('xxx');
+  const signIn = async (email: string, password: string) => {
+    if (!email || !password) {
+      throw new Error('email or password is missing');
+    }
+
+    console.log(
+      '---sign in',
+      process.env.EXPO_PUBLIC_SERVER_HOST,
+      process.env.EXPO_PUBLIC_SERVER_PORT
+    );
+
+    const response = await executeQuery('auth/login', 'POST', { email, password });
+
+    console.log('---response2', response.status, response.ok, response.data);
+    if (response.ok) {
+      if (!response.data.token) {
+        throw new Error('token is missing');
+      }
+      console.log('setting session', response.data.token);
+      setSession(response.data.token);
+    } else {
+      throw new Error('login error: ' + response.data.message);
+    }
   };
 
   const signOut = () => {
     setSession(null);
   };
-
-  // todo remove this
-  useEffect(() => {
-    signIn();
-  }, []);
 
   return (
     <SessionContext.Provider value={{ session, isLoading, signIn, signOut }}>
