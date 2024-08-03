@@ -77,9 +77,8 @@ const generateItem = (userId) => {
   return {
     userId,
     name: generateRandomHouseholdObjectName(),
-    // images: generateMockedImageUrls(),
     description: generateLoremIpsum(200),
   };
 };
 
-module.exports = { generateItem };
+module.exports = { generateItem, generateMockedImageUrls };

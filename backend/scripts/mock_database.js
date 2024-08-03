@@ -4,7 +4,7 @@ const { generateUserData } = require('./userMocker');
 require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
-const { generateItem } = require('./itemsMocker');
+const { generateItem, generateMockedImageUrls } = require('./itemsMocker');
 
 const { DB_HOST, DB_USER, DB_NAME, DB_PASSWORD, DB_PORT } = process.env;
 
@@ -16,8 +16,9 @@ const pool = new Pool({
   port: DB_PORT,
 });
 
-const insertSampleUsers = async (client, amount = 10) => {
+const insertSampleUsers = async (amount = 10) => {
   try {
+    const client = await pool.connect();
     const users = [];
 
     for (let i = 0; i < amount; ++i) {
@@ -30,10 +31,7 @@ const insertSampleUsers = async (client, amount = 10) => {
           console.log('rerolling...', i, rollCount, newUser.name, newUser.email);
         }
         newUser = generateUserData();
-        console.log('> generated user', newUser);
-        isDuplicate = users.some(
-          (user) => user.email === newUser.email || user.name === newUser.name
-        );
+        isDuplicate = users.some((user) => user.email === newUser.email);
         ++rollCount;
       }
       users.push(newUser);
@@ -55,6 +53,7 @@ const insertSampleUsers = async (client, amount = 10) => {
       users[i] = { ...users[i], id: result.rows[0].id };
     }
     console.log('Sample users inserted successfully!');
+    await client.release();
     return users;
   } catch (err) {
     throw new Error('Error inserting sample users: [' + err + ']');
@@ -75,7 +74,7 @@ const writeDataToFile = async (filePath, data) => {
   });
 };
 
-const insertSampleItems = async (client, users, itemsCount = 10) => {
+const insertSampleItems = async (users, itemsCount = 10) => {
   const items = [];
 
   for (let i = 0; i < itemsCount; ++i) {
@@ -92,9 +91,10 @@ const insertSampleItems = async (client, users, itemsCount = 10) => {
     }
   });
 
-  // insert items
-  for (let i = 0; i < items.length; ++i) {
-    try {
+  try {
+    const client = await pool.connect();
+    // insert items
+    for (let i = 0; i < items.length; ++i) {
       const { userId, name, description } = items[i];
 
       console.log(`> inserting: [${userId}][${name}][${description}]`);
@@ -108,27 +108,49 @@ const insertSampleItems = async (client, users, itemsCount = 10) => {
         ...items[i],
         id: result.rows[0].id,
       };
-
-      console.log('Sample items inserted successfully!');
-      return items;
-    } catch (err) {
-      throw new Error('Error inserting sample items: [' + err + ']');
     }
+    console.log('Sample items inserted successfully!');
+    await client.release();
+    return items;
+  } catch (err) {
+    throw new Error('Error inserting sample items: [' + err + ']');
   }
+};
 
-  console.log(items);
+const insertSampleImages = async (items) => {
+  const client = await pool.connect();
+  try {
+    const images = {};
+    for (let i = 0; i < items.length; ++i) {
+      const item = items[i];
+
+      images[item.id] = generateMockedImageUrls().map((url) => ({ url }));
+
+      for (let j = 0; j < images[item.id].length; ++j) {
+        const result = await client.query(
+          'INSERT INTO items_images (item_id, url) VALUES ($1, $2) RETURNING id',
+          [item.id, images[item.id][j]]
+        );
+        images[item.id][j] = { ...images[item.id][j], id: result.rows[0].id };
+      }
+    }
+    await client.release();
+    return images;
+  } catch (err) {
+    throw new Error('Error inserting sample images: [' + err + ']');
+  }
 };
 
 (async () => {
-  const client = await pool.connect();
-
-  const users = await insertSampleUsers(client);
+  const users = await insertSampleUsers();
   console.log('users', users);
   await writeDataToFile('../mobile/app/(app)/mocks/sampleUsers.json', JSON.stringify(users));
 
-  const items = await insertSampleItems(client, users);
+  const items = await insertSampleItems(users);
   console.log('items', items);
 
-  await client.release();
+  const images = await insertSampleImages(items);
+  console.log('images', images);
+
   await pool.end();
 })();
