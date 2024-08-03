@@ -1,9 +1,9 @@
 CREATE DATABASE barter;
 
 -- reset.sql
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS items;
 DROP TABLE IF EXISTS items_images;
+DROP TABLE IF EXISTS items;
+DROP TABLE IF EXISTS users;
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
