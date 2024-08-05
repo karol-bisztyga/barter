@@ -9,26 +9,24 @@ import { useItemsContext } from '../../context/ItemsContext';
 import { useUserContext } from '../../context/UserContext';
 import { generateItem } from '../../mocks/itemsMocker';
 import { getUserItems } from '../../db_utils/getUserItems';
-import { useSessionContext } from '../../../SessionContext';
+import { authorizeUser } from '../../utils/reusableStuff';
 
 const LOADED_ITEMS_CAPACITY = 5;
 
 export default function Swipe() {
+  const token = authorizeUser();
+
   const [cards, setCards] = useState<Card[]>([]);
   const [currentId, setCurrentId] = useState<number>(0);
   const lockGesture = useSharedValue<boolean>(false);
   const itemsContext = useItemsContext();
   const userContext = useUserContext();
-  const sessionContext = useSessionContext();
 
   useEffect(() => {
     if (!userContext.data) {
       throw new Error('user data not provided');
     }
-    if (!sessionContext.session) {
-      throw new Error('token not present, todo make it required in all views in (app)');
-    }
-    getUserItems(userContext.data.id, sessionContext.session)
+    getUserItems(userContext.data.id, token)
       .then((items) => {
         userContext.setItems(items);
       })

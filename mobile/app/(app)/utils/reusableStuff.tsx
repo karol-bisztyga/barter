@@ -2,6 +2,7 @@ import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
+import { useSessionContext } from '../../SessionContext';
 
 export const headerBackButtonOptions = (beforeCallback?: () => Promise<boolean>) => {
   return {
@@ -28,4 +29,12 @@ export const handleUnauthorizedAccess = (condition: boolean) => {
   if (!condition) {
     throw new Error('Unauthorized access (todo redirect to login)');
   }
+};
+
+export const authorizeUser = (): string => {
+  const session = useSessionContext().session;
+  if (!session) {
+    throw new Error('Unauthorized access');
+  }
+  return session;
 };

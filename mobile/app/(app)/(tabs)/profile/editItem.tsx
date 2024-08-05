@@ -14,16 +14,19 @@ import {
 import AddButton from '../../components/AddButton';
 import { EditImageType, ItemBorderRadius } from '../../types';
 import { useItemsContext } from '../../context/ItemsContext';
-import { MAX_ITEM_PICTURES, MAX_ITEMS_SLOTS } from '../../constants';
+import { MAX_ITEM_PICTURES } from '../../constants';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
 import { useUserContext } from '../../context/UserContext';
-import { generateItemId } from '../../mocks/itemsMocker';
 import { useEditItemContext } from '../../context/EditItemContext';
+import { authorizeUser } from '../../utils/reusableStuff';
+import { updateItem } from '../../db_utils/updateItem';
 
 const { width } = Dimensions.get('window');
 
 const EditItem = () => {
+  const token = authorizeUser();
+
   const imageSize = (width * 3) / 4;
 
   const { usersItemId } = useItemsContext();
@@ -43,7 +46,14 @@ const EditItem = () => {
     }
   });
 
-  const checkIfItemEdited = () => {
+  const checkIfImagesChanged = (): boolean => {
+    if (!usersItem) {
+      return !!pictures.length;
+    }
+    return usersItem.item.images !== pictures;
+  };
+
+  const checkIfItemEdited = (): boolean => {
     if (!usersItem) {
       return !!(name || description || pictures.length);
     }
@@ -161,8 +171,8 @@ const EditItem = () => {
           )}
           <Button
             title="Save"
-            disabled={!validateForm()}
-            onPress={() => {
+            disabled={!validateForm() || !checkIfItemEdited()}
+            onPress={async () => {
               console.log('save item', usersItemId);
               if (!validateForm()) {
                 throw new Error('form invalid');
@@ -170,24 +180,38 @@ const EditItem = () => {
               const newItems = [...userContext.items];
               if (usersItem) {
                 // update item
+                if (!usersItemId) {
+                  throw new Error('item id not provided');
+                }
 
-                newItems[usersItem.index] = {
+                const updatedItem = {
                   ...usersItem.item,
                   name,
                   images: pictures,
                   description,
                 };
+
+                if (!checkIfItemEdited()) {
+                  console.log('item has not been changed changed');
+                  return;
+                }
+                const result = await updateItem(updatedItem, checkIfImagesChanged(), token);
+                newItems[usersItem.index] = result;
+                console.log('update result', result);
               } else {
                 // add new item
-                if (userContext.items.length + 1 > MAX_ITEMS_SLOTS) {
-                  throw new Error('cannot add more items');
-                }
-                newItems.push({
-                  id: generateItemId(),
-                  name,
-                  images: pictures,
-                  description,
-                });
+                // if (userContext.items.length + 1 > MAX_ITEMS_SLOTS) {
+                //   throw new Error('cannot add more items');
+                // }
+                // newItems.push({
+                //   id: generateItemId(),
+                //   name,
+                //   images: pictures,
+                //   description,
+                // });
+
+                // todo do this!!
+                console.log('adding new item', name, description, pictures);
               }
               userContext.setItems(newItems);
               router.back();

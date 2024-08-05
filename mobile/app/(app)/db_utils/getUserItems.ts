@@ -2,12 +2,12 @@ import { Card } from '../types';
 import { executeQuery } from './executeQuery';
 
 export const getUserItems = async (userId: string, token: string) => {
-  const response = await executeQuery('items', 'GET', { userId }, token);
+  const response = await executeQuery('items', 'GET', { userId }, null, token);
   if (response.ok) {
     const data = response.data.map((dataItem: Card) => {
       return {
         ...dataItem,
-        images: dataItem.images.map((image: string) => JSON.parse(image).url),
+        images: dataItem.images,
       };
     });
     return data;

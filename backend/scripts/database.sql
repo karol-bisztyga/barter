@@ -27,5 +27,5 @@ CREATE TABLE items (
 CREATE TABLE items_images (
     id SERIAL PRIMARY KEY,
     item_id INTEGER REFERENCES items(id) NOT NULL,
-    url VARCHAR(100) NOT NULL
+    url VARCHAR(400) NOT NULL
 );

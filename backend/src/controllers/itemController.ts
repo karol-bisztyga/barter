@@ -50,23 +50,51 @@ export const getItems = async (req: AuthRequest, res: Response) => {
 
 export const updateItem = async (req: AuthRequest, res: Response) => {
   const { id } = req.params;
-  const { name, description } = req.body;
+  const { name, description, images } = req.body;
+  const client = await pool.connect();
 
   try {
+    await client.query('BEGIN');
     const userId = getUserIdFromRequest(req);
 
-    const result = await pool.query(
+    const itemResult = await client.query(
       'UPDATE items SET name = $1, description = $2 WHERE id = $3 AND user_id = $4 RETURNING *',
       [name, description, id, userId]
     );
 
-    if (result.rows.length === 0) {
+    if (itemResult.rows.length === 0) {
       return res.status(404).send({ message: 'Item not found' });
     }
 
-    res.json(result.rows[0]);
+    const result: Record<string, string> = itemResult.rows[0];
+
+    if (images) {
+      const parsedImages = JSON.parse(images).map((url: string) => [id, url]);
+      await client.query('DELETE FROM items_images WHERE item_id = $1', [id]);
+
+      const insertQuery = `
+            INSERT INTO items_images (item_id, url)
+            VALUES ${parsedImages.map((_: [string, string], i: number) => `($${i * 2 + 1}, $${i * 2 + 2})`).join(', ')}
+            RETURNING *;
+        `;
+      const values = parsedImages.flatMap((itemImage: [string, string]) => [
+        itemImage[0],
+        itemImage[1],
+      ]);
+      const imagesResult = await client.query(insertQuery, values);
+
+      const imagesResultParsed = imagesResult.rows.map((row: Record<string, number>) => row.url);
+
+      result.images = JSON.stringify(imagesResultParsed);
+    }
+
+    await client.query('COMMIT');
+    res.json(result);
   } catch (err) {
-    res.status(500).send({ message: 'Server error' });
+    await client.query('ROLLBACK');
+    res.status(500).send({ message: 'Server error: ' + err });
+  } finally {
+    client.release();
   }
 };
 

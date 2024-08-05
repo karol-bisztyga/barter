@@ -42,7 +42,7 @@ export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }
       throw new Error('email or password is missing');
     }
 
-    const response = await executeQuery('auth/login', 'POST', { email, password });
+    const response = await executeQuery('auth/login', 'POST', null, { email, password });
 
     if (response.ok) {
       if (!response.data.token) {

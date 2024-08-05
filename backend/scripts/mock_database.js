@@ -124,14 +124,13 @@ const insertSampleImages = async (items) => {
     for (let i = 0; i < items.length; ++i) {
       const item = items[i];
 
-      images[item.id] = generateMockedImageUrls().map((url) => ({ url }));
+      images[item.id] = generateMockedImageUrls();
 
       for (let j = 0; j < images[item.id].length; ++j) {
         const result = await client.query(
           'INSERT INTO items_images (item_id, url) VALUES ($1, $2) RETURNING id',
           [item.id, images[item.id][j]]
         );
-        images[item.id][j] = { ...images[item.id][j], id: result.rows[0].id };
       }
     }
     await client.release();
