@@ -1,6 +1,6 @@
 import React, { createContext, ReactNode, FC, useContext } from 'react';
 import { useStorageState } from './useStorageState';
-import { executeQuery } from './(app)/utils/databaseUtils';
+import { executeQuery } from './(app)/db_utils/executeQuery';
 import { UserData } from './(app)/types';
 
 /**
@@ -52,6 +52,7 @@ export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }
       setSession(response.data.token);
 
       const userData: UserData = {
+        id: response.data.user.id,
         email: response.data.user.email,
         name: response.data.user.name,
         phone: response.data.user.phone,
@@ -59,7 +60,6 @@ export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }
         instagram: response.data.user.instagram,
         profilePicture: response.data.user.profile_picture,
       };
-      console.log('---user data 123', userData, response.data.user);
 
       return userData;
     } else {

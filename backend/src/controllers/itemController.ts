@@ -24,10 +24,26 @@ export const getItems = async (req: AuthRequest, res: Response) => {
   const userId = req.user.id;
 
   try {
-    const result = await pool.query('SELECT * FROM items WHERE user_id = $1', [userId]);
+    const result = await pool.query(
+      `SELECT 
+        items.id AS id,
+        items.name AS name,
+        items.description AS description,
+        ARRAY_AGG(items_images.url) AS images
+      FROM 
+          items
+      LEFT JOIN 
+          items_images ON items.id = items_images.item_id
+      WHERE 
+          items.user_id = $1
+      GROUP BY 
+          items.id, items.name, items.description;
+      `,
+      [userId]
+    );
     res.json(result.rows);
   } catch (err) {
-    res.status(500).send({ message: 'Server error' });
+    res.status(500).send({ message: 'Server error: ' + err });
   }
 };
 
@@ -48,7 +64,7 @@ export const updateItem = async (req: AuthRequest, res: Response) => {
 
     res.json(result.rows[0]);
   } catch (err) {
-    res.status(500).send('Server error');
+    res.status(500).send({ message: 'Server error' });
   }
 };
 
@@ -63,7 +79,7 @@ export const deleteItem = async (req: AuthRequest, res: Response) => {
     );
 
     if (result.rows.length === 0) {
-      return res.status(404).send('Item not found');
+      return res.status(404).send({ message: 'Item not found' });
     }
 
     res.json(result.rows[0]);

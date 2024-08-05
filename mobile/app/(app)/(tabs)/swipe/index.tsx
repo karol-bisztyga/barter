@@ -7,8 +7,9 @@ import { router } from 'expo-router';
 import { Card } from '../../types';
 import { useItemsContext } from '../../context/ItemsContext';
 import { useUserContext } from '../../context/UserContext';
-import { MAX_ITEMS_SLOTS } from '../../constants';
 import { generateItem } from '../../mocks/itemsMocker';
+import { getUserItems } from '../../db_utils/getUserItems';
+import { useSessionContext } from '../../../SessionContext';
 
 const LOADED_ITEMS_CAPACITY = 5;
 
@@ -18,25 +19,23 @@ export default function Swipe() {
   const lockGesture = useSharedValue<boolean>(false);
   const itemsContext = useItemsContext();
   const userContext = useUserContext();
+  const sessionContext = useSessionContext();
 
   useEffect(() => {
-    const userItemsAmount = Math.floor(Math.random() * (MAX_ITEMS_SLOTS - 1) + 1);
-    const loadedItems: Card[] = [];
-    for (let i = 0; i < MAX_ITEMS_SLOTS; ++i) {
-      if (i >= userItemsAmount) {
-        break;
-      }
-      loadedItems[i] = generateItem();
+    if (!userContext.data) {
+      throw new Error('user data not provided');
     }
-    userContext.setItems(loadedItems);
+    if (!sessionContext.session) {
+      throw new Error('token not present, todo make it required in all views in (app)');
+    }
+    getUserItems(userContext.data.id, sessionContext.session)
+      .then((items) => {
+        userContext.setItems(items);
+      })
+      .catch((e) => {
+        console.error('error', e);
+      });
   }, []);
-
-  const printCards = () => {
-    console.log(
-      '> cards',
-      cards.map((card) => [card.name, card.images])
-    );
-  };
 
   const useCurrentId = () => {
     const id = currentId;

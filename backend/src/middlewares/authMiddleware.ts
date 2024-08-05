@@ -3,16 +3,14 @@ import jwt from 'jsonwebtoken';
 import { jwtSecret } from '../config';
 
 export interface AuthRequest extends Request {
-  user?: any;
+  user?: string | jwt.JwtPayload;
 }
 
 export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
 
-  console.log('--- auth middleware', token);
-
   if (!token) {
-    return res.status(401).send('Access denied. No token provided.');
+    return res.status(401).send({ message: 'Access denied. No token provided.' });
   }
 
   try {
@@ -20,6 +18,6 @@ export const authMiddleware = (req: AuthRequest, res: Response, next: NextFuncti
     req.user = decoded;
     next();
   } catch (ex) {
-    res.status(400).send('Invalid token.');
+    res.status(400).send({ message: 'Invalid token.' });
   }
 };
