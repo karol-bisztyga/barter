@@ -2,28 +2,29 @@ import { Response } from 'express';
 import pool from '../db';
 import { Item } from '../models/Item';
 import { AuthRequest } from '../middlewares/authMiddleware';
+import { getUserIdFromRequest } from '../utils';
 
 export const createItem = async (req: AuthRequest, res: Response) => {
   const { name, description } = req.body;
-  const userId = req.user.id;
-
-  const newItem: Item = { name, description, user_id: userId };
-
   try {
+    const userId = getUserIdFromRequest(req);
+
+    const newItem: Item = { name, description, user_id: userId };
+
     const result = await pool.query(
       'INSERT INTO items (name, description, user_id) VALUES ($1, $2, $3) RETURNING *',
       [newItem.name, newItem.description, newItem.user_id]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
-    res.status(500).send({ message: 'Server error' });
+    res.status(500).send({ message: 'Server error: ' + err });
   }
 };
 
 export const getItems = async (req: AuthRequest, res: Response) => {
-  const userId = req.user.id;
-
   try {
+    const userId = getUserIdFromRequest(req);
+
     const result = await pool.query(
       `SELECT 
         items.id AS id,
@@ -50,9 +51,10 @@ export const getItems = async (req: AuthRequest, res: Response) => {
 export const updateItem = async (req: AuthRequest, res: Response) => {
   const { id } = req.params;
   const { name, description } = req.body;
-  const userId = req.user.id;
 
   try {
+    const userId = getUserIdFromRequest(req);
+
     const result = await pool.query(
       'UPDATE items SET name = $1, description = $2 WHERE id = $3 AND user_id = $4 RETURNING *',
       [name, description, id, userId]
@@ -70,9 +72,10 @@ export const updateItem = async (req: AuthRequest, res: Response) => {
 
 export const deleteItem = async (req: AuthRequest, res: Response) => {
   const { id } = req.params;
-  const userId = req.user.id;
 
   try {
+    const userId = getUserIdFromRequest(req);
+
     const result = await pool.query(
       'DELETE FROM items WHERE id = $1 AND user_id = $2 RETURNING *',
       [id, userId]
