@@ -1,4 +1,5 @@
-export type Card = {
+// todo change this type name to `Item`
+export type ItemData = {
   id: string;
   name: string;
   images: string[];

@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Card, ItemBorderRadius, ItemNamePlacement } from '../../../types';
+import { ItemData, ItemBorderRadius, ItemNamePlacement } from '../../../types';
 import Item from '../../../components/Item';
 import EmptyItem from '../../../components/EmptyItem';
 import { router } from 'expo-router';
@@ -14,11 +14,11 @@ const Items = () => {
 
   return (
     <View style={styles.container}>
-      {userContext.items.map((item: Card, index: number) => {
+      {userContext.items.map((item: ItemData, index: number) => {
         return (
           <View style={styles.itemWrapper} key={index}>
             <Item
-              card={item}
+              itemData={item}
               showDescription={false}
               carouselDotsVisible={false}
               borderRadius={ItemBorderRadius.all}

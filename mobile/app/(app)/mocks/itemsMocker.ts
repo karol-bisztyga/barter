@@ -1,5 +1,5 @@
 import { MAX_ITEM_PICTURES } from '../constants';
-import { Card } from '../types';
+import { ItemData } from '../types';
 import { generateImage } from './imageMocker';
 import { generateLoremIpsum } from './textMocker';
 import uuid from 'react-native-uuid';
@@ -79,7 +79,7 @@ const generateMockedImageUrls = (count?: number) => {
   return urls;
 };
 
-export const generateItem = (id?: number): Card => {
+export const generateItem = (id?: number): ItemData => {
   return {
     id: generateItemId(id),
     name: generateRandomHouseholdObjectName(),
@@ -88,8 +88,11 @@ export const generateItem = (id?: number): Card => {
   };
 };
 
-export const generateChatItems = (count: number, userItems: Array<Card>): Array<[Card, Card]> => {
-  const items: Array<[Card, Card]> = [];
+export const generateChatItems = (
+  count: number,
+  userItems: Array<ItemData>
+): Array<[ItemData, ItemData]> => {
+  const items: Array<[ItemData, ItemData]> = [];
   for (let i = 0; i < count; i++) {
     const randomUserItem = userItems[Math.floor(Math.random() * userItems.length)];
     items.push([randomUserItem, generateItem()]);

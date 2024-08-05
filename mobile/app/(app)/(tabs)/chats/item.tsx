@@ -2,7 +2,7 @@ import React from 'react';
 import Item from '../../components/Item';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useItemsContext } from '../../context/ItemsContext';
-import { Card } from '../../types';
+import { ItemData } from '../../types';
 import { useUserContext } from '../../context/UserContext';
 
 const ItemModal = () => {
@@ -10,7 +10,7 @@ const ItemModal = () => {
   const userContext = useUserContext();
   const { whosItem } = useLocalSearchParams();
 
-  let item: Card | null = null;
+  let item: ItemData | null = null;
   if (whosItem === 'self') {
     item = userContext.findItemById(itemsContext.usersItemId)?.item || null;
   } else if (whosItem === 'other') {
@@ -22,7 +22,7 @@ const ItemModal = () => {
     return null;
   }
 
-  return <Item card={item} showFull={true} />;
+  return <Item itemData={item} showFull={true} />;
 };
 
 export default ItemModal;

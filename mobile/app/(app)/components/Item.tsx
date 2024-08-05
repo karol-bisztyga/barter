@@ -1,12 +1,12 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Dimensions, Button } from 'react-native';
 import Carousel from './Carousel';
-import { Card, ItemBorderRadius, ItemNamePlacement } from '../types';
+import { ItemData, ItemBorderRadius, ItemNamePlacement } from '../types';
 
 const { height } = Dimensions.get('window');
 
 export default function Item({
-  card,
+  itemData,
   showDescription = true,
   showName = true,
   namePlacement = ItemNamePlacement['below'],
@@ -18,7 +18,7 @@ export default function Item({
   onPressMore = () => {},
   onPress,
 }: {
-  card: Card;
+  itemData: ItemData;
   showDescription?: boolean;
   showName?: boolean;
   namePlacement?: ItemNamePlacement;
@@ -34,7 +34,7 @@ export default function Item({
     <>
       {showName && namePlacement === ItemNamePlacement.above && (
         <View style={styles.nameWrapper}>
-          <Text style={styles.name}>{card.name}</Text>
+          <Text style={styles.name}>{itemData.name}</Text>
         </View>
       )}
       <View
@@ -49,7 +49,7 @@ export default function Item({
         ]}
       >
         <Carousel
-          images={card.images}
+          images={itemData.images}
           borderRadius={borderRadius}
           dotsVisible={carouselDotsVisible}
           pressEnabled={carouselPressEnabled}
@@ -58,13 +58,13 @@ export default function Item({
       </View>
       {showName && namePlacement === ItemNamePlacement.below && (
         <View style={styles.nameWrapper}>
-          <Text style={styles.name}>{card.name}</Text>
+          <Text style={styles.name}>{itemData.name}</Text>
         </View>
       )}
       {showDescription && (
         <View style={styles.descriptionWrapper}>
           <Text style={styles.description} numberOfLines={showFull ? 0 : 2}>
-            {card.description}
+            {itemData.description}
           </Text>
           {!showFull && (
             <View style={{ padding: 10 }}>

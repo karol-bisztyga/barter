@@ -22,7 +22,7 @@ const ChatHeader = () => {
   return (
     <View style={styles.itemsWrapper}>
       <Item
-        card={usersItem.item}
+        itemData={usersItem.item}
         carouselDotsVisible={false}
         showDescription={false}
         showName={false}
@@ -35,7 +35,7 @@ const ChatHeader = () => {
         <FontAwesome size={28} name="refresh" style={styles.icon} />
       </View>
       <Item
-        card={othersItem}
+        itemData={othersItem}
         carouselDotsVisible={false}
         showDescription={false}
         showName={false}

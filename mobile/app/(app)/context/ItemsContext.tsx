@@ -1,5 +1,5 @@
 import React, { createContext, useState, ReactNode, FC, useContext } from 'react';
-import { Card } from '../types';
+import { ItemData } from '../types';
 
 /**
  * this context is for storing current target items mainly for navigation
@@ -10,8 +10,8 @@ import { Card } from '../types';
 interface ItemsContextState {
   usersItemId: string | null;
   setUsersItemId: React.Dispatch<React.SetStateAction<string | null>>;
-  othersItem: Card | null;
-  setOthersItem: React.Dispatch<React.SetStateAction<Card | null>>;
+  othersItem: ItemData | null;
+  setOthersItem: React.Dispatch<React.SetStateAction<ItemData | null>>;
 }
 
 const initialState: ItemsContextState = {
@@ -33,7 +33,7 @@ export const useItemsContext = () => {
 
 export const ItemsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [usersItemId, setUsersItemId] = useState<string | null>(null);
-  const [othersItem, setOthersItem] = useState<Card | null>(null);
+  const [othersItem, setOthersItem] = useState<ItemData | null>(null);
 
   return (
     <ItemsContext.Provider value={{ usersItemId, setUsersItemId, othersItem, setOthersItem }}>

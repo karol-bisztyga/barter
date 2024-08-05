@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Item from '../../components/Item';
 import { generateChatItems } from '../../mocks/itemsMocker';
-import { Card, ItemBorderRadius } from '../../types';
+import { ItemData, ItemBorderRadius } from '../../types';
 import { router } from 'expo-router';
 import Separator, { SEPARATOR_HEIGHT } from '../../components/Separator';
 import { useItemsContext } from '../../context/ItemsContext';
@@ -18,8 +18,8 @@ const ListItem = ({
   othersItem,
 }: {
   height: number;
-  usersItem: Card;
-  othersItem: Card;
+  usersItem: ItemData;
+  othersItem: ItemData;
 }) => {
   return (
     <View
@@ -31,7 +31,7 @@ const ListItem = ({
       <View style={styles.itemWrapper}>
         <View style={styles.usersItem}>
           <Item
-            card={usersItem}
+            itemData={usersItem}
             showName={false}
             showDescription={false}
             borderRadius={ItemBorderRadius.all}
@@ -44,7 +44,7 @@ const ListItem = ({
         </View>
         <View style={styles.matchedItem}>
           <Item
-            card={othersItem}
+            itemData={othersItem}
             showName={false}
             showDescription={false}
             borderRadius={ItemBorderRadius.all}
@@ -61,7 +61,7 @@ export default function Chats() {
   const itemsContext = useItemsContext();
   const userContext = useUserContext();
   // todo maybe put this in a context so when an item is removed, the chats with this item will be removed
-  const items: Array<[Card, Card]> = generateChatItems(10, userContext.items);
+  const items: Array<[ItemData, ItemData]> = generateChatItems(10, userContext.items);
 
   const [containerHeight, setContainerHeight] = useState<number>(0);
 

@@ -1,7 +1,7 @@
-import { Card } from '../types';
+import { ItemData } from '../types';
 import { executeQuery } from './executeQuery';
 
-export const updateItem = async (item: Card, imagesChanged: boolean, token: string) => {
+export const updateItem = async (item: ItemData, imagesChanged: boolean, token: string) => {
   const response = await executeQuery(
     `items/${item.id}`,
     'PUT',

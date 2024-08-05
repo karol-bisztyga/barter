@@ -3,13 +3,13 @@ import { View, StyleSheet, Text, Dimensions, Button } from 'react-native';
 import { generateItem } from '../../mocks/itemsMocker';
 import Item from '../../components/Item';
 import { router } from 'expo-router';
-import { Card, ItemBorderRadius } from '../../types';
+import { ItemData, ItemBorderRadius } from '../../types';
 import { useItemsContext } from '../../context/ItemsContext';
 
 const { width } = Dimensions.get('window');
 
 const MatchModal = () => {
-  const usersItem: Card = generateItem();
+  const usersItem: ItemData = generateItem();
   const itemsContext = useItemsContext();
 
   const { othersItem } = itemsContext;
@@ -26,7 +26,7 @@ const MatchModal = () => {
         <View style={[styles.itemsImagesWrapper, { height: width }]}>
           <View style={styles.usersItem}>
             <Item
-              card={usersItem}
+              itemData={usersItem}
               borderRadius={ItemBorderRadius.all}
               carouselDotsVisible={false}
               carouselPressEnabled={false}
@@ -36,7 +36,7 @@ const MatchModal = () => {
           </View>
           <View style={styles.matchedItem}>
             <Item
-              card={othersItem}
+              itemData={othersItem}
               borderRadius={ItemBorderRadius.all}
               carouselDotsVisible={false}
               carouselPressEnabled={false}

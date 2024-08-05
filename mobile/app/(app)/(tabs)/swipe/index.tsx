@@ -4,7 +4,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSharedValue } from 'react-native-reanimated';
 import SwipeableCard from '../../components/SwipeableCard';
 import { router } from 'expo-router';
-import { Card } from '../../types';
+import { ItemData } from '../../types';
 import { useItemsContext } from '../../context/ItemsContext';
 import { useUserContext } from '../../context/UserContext';
 import { generateItem } from '../../mocks/itemsMocker';
@@ -16,7 +16,7 @@ const LOADED_ITEMS_CAPACITY = 5;
 export default function Swipe() {
   const token = authorizeUser();
 
-  const [cards, setCards] = useState<Card[]>([]);
+  const [cards, setCards] = useState<ItemData[]>([]);
   const [currentId, setCurrentId] = useState<number>(0);
   const lockGesture = useSharedValue<boolean>(false);
   const itemsContext = useItemsContext();
@@ -41,7 +41,7 @@ export default function Swipe() {
     return id;
   };
 
-  const popAndLoadCard = (): Card | null => {
+  const popAndLoadCard = (): ItemData | null => {
     const currentCard = cards.at(-1);
     if (currentCard === undefined) {
       return null;
@@ -86,7 +86,7 @@ export default function Swipe() {
           {cards.map((card, index) => (
             <SwipeableCard
               key={`${card.id}-${index}`}
-              card={card}
+              itemData={card}
               onSwipeRight={handleSwipeRight}
               onSwipeLeft={handleSwipeLeft}
               lockGesture={lockGesture}

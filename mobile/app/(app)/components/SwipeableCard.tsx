@@ -11,7 +11,7 @@ import Animated, {
   SharedValue,
 } from 'react-native-reanimated';
 import Item from './Item';
-import { Card } from '../types';
+import { ItemData } from '../types';
 
 const { width, height } = Dimensions.get('window');
 const SWIPE_THRESHOLD = 0.25 * width;
@@ -19,13 +19,13 @@ const MAX_RADIUS = 30;
 const END_ANIMATION_DURATION = 200;
 
 const SwipeableCard = ({
-  card,
+  itemData,
   onSwipeRight,
   onSwipeLeft,
   lockGesture,
   onPressMore,
 }: {
-  card: Card;
+  itemData: ItemData;
   onSwipeRight: () => void;
   onSwipeLeft: () => void;
   onPressMore: () => void;
@@ -104,15 +104,15 @@ const SwipeableCard = ({
 
   return (
     <GestureDetector gesture={gesture}>
-      <Animated.View style={[styles.card, animatedStyle]}>
-        <Item card={card} centerVertically={false} onPressMore={onPressMore} />
+      <Animated.View style={[styles.itemWrapper, animatedStyle]}>
+        <Item itemData={itemData} centerVertically={false} onPressMore={onPressMore} />
       </Animated.View>
     </GestureDetector>
   );
 };
 
 const styles = StyleSheet.create({
-  card: {
+  itemWrapper: {
     width: width * 0.9,
     height: height * 0.8,
     borderRadius: 20,
