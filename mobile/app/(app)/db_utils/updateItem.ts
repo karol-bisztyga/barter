@@ -14,7 +14,11 @@ export const updateItem = async (item: ItemData, imagesChanged: boolean, token: 
     token
   );
   if (response.ok) {
-    return { ...response.data, images: JSON.parse(response.data.images) };
+    const responseData = { ...response.data };
+    if (responseData.images) {
+      responseData.images = JSON.parse(responseData.images);
+    }
+    return responseData;
   } else {
     throw new Error('update item error: ' + response.data.message);
   }

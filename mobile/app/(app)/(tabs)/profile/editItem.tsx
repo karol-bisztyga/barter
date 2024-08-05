@@ -12,7 +12,7 @@ import {
   View,
 } from 'react-native';
 import AddButton from '../../components/AddButton';
-import { EditImageType, ItemBorderRadius } from '../../types';
+import { EditImageType, ItemBorderRadius, ItemData } from '../../types';
 import { useItemsContext } from '../../context/ItemsContext';
 import { MAX_ITEM_PICTURES } from '../../constants';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -21,6 +21,7 @@ import { useUserContext } from '../../context/UserContext';
 import { useEditItemContext } from '../../context/EditItemContext';
 import { authorizeUser } from '../../utils/reusableStuff';
 import { updateItem } from '../../db_utils/updateItem';
+import { addItem } from '../../db_utils/addItem';
 
 const { width } = Dimensions.get('window');
 
@@ -177,6 +178,10 @@ const EditItem = () => {
               if (!validateForm()) {
                 throw new Error('form invalid');
               }
+              if (!checkIfItemEdited()) {
+                console.log('no changes detected');
+                return;
+              }
               const newItems = [...userContext.items];
               if (usersItem) {
                 // update item
@@ -191,27 +196,28 @@ const EditItem = () => {
                   description,
                 };
 
-                if (!checkIfItemEdited()) {
-                  console.log('item has not been changed changed');
+                try {
+                  const result = await updateItem(updatedItem, checkIfImagesChanged(), token);
+                  newItems[usersItem.index] = { ...newItems[usersItem.index], ...result };
+                } catch (e) {
+                  console.error('error updating item', e);
                   return;
                 }
-                const result = await updateItem(updatedItem, checkIfImagesChanged(), token);
-                newItems[usersItem.index] = result;
-                console.log('update result', result);
               } else {
-                // add new item
-                // if (userContext.items.length + 1 > MAX_ITEMS_SLOTS) {
-                //   throw new Error('cannot add more items');
-                // }
-                // newItems.push({
-                //   id: generateItemId(),
-                //   name,
-                //   images: pictures,
-                //   description,
-                // });
-
-                // todo do this!!
-                console.log('adding new item', name, description, pictures);
+                // add item
+                const newItem: ItemData = {
+                  id: '',
+                  name,
+                  images: pictures,
+                  description,
+                };
+                try {
+                  const result = await addItem(newItem, token);
+                  newItems.push(result);
+                } catch (e) {
+                  console.error('error adding item', e);
+                  return;
+                }
               }
               userContext.setItems(newItems);
               router.back();

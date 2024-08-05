@@ -1,23 +1,43 @@
 import { Response } from 'express';
 import pool from '../db';
-import { Item } from '../models/Item';
 import { AuthRequest } from '../middlewares/authMiddleware';
 import { getUserIdFromRequest } from '../utils';
 
 export const createItem = async (req: AuthRequest, res: Response) => {
-  const { name, description } = req.body;
+  const { name, description, images } = req.body;
+  const client = await pool.connect();
   try {
+    await client.query('BEGIN');
     const userId = getUserIdFromRequest(req);
 
-    const newItem: Item = { name, description, user_id: userId };
-
-    const result = await pool.query(
+    const itemResult = await client.query(
       'INSERT INTO items (name, description, user_id) VALUES ($1, $2, $3) RETURNING *',
-      [newItem.name, newItem.description, newItem.user_id]
+      [name, description, userId]
     );
-    res.status(201).json(result.rows[0]);
+
+    const result = itemResult.rows[0];
+    if (images) {
+      const parsedImages = JSON.parse(images);
+      const insertQuery = `
+            INSERT INTO items_images (item_id, url)
+            VALUES ${parsedImages.map((_: [string, string], i: number) => `($${i * 2 + 1}, $${i * 2 + 2})`).join(', ')}
+            RETURNING *;
+        `;
+      const values = parsedImages.flatMap((itemImage: string) => [result.id, itemImage]);
+      const imagesResult = await client.query(insertQuery, values);
+
+      const imagesResultParsed = imagesResult.rows.map((row: Record<string, number>) => row.url);
+
+      result.images = JSON.stringify(imagesResultParsed);
+    }
+
+    await client.query('COMMIT');
+    res.json(result);
   } catch (err) {
+    await client.query('ROLLBACK');
     res.status(500).send({ message: 'Server error: ' + err });
+  } finally {
+    client.release();
   }
 };
 
@@ -67,7 +87,6 @@ export const updateItem = async (req: AuthRequest, res: Response) => {
     }
 
     const result: Record<string, string> = itemResult.rows[0];
-
     if (images) {
       const parsedImages = JSON.parse(images).map((url: string) => [id, url]);
       await client.query('DELETE FROM items_images WHERE item_id = $1', [id]);
