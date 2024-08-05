@@ -119,21 +119,21 @@ export const updateItem = async (req: AuthRequest, res: Response) => {
 
 export const deleteItem = async (req: AuthRequest, res: Response) => {
   const { id } = req.params;
+  const client = await pool.connect();
 
   try {
-    const userId = getUserIdFromRequest(req);
+    await client.query('BEGIN');
 
-    const result = await pool.query(
-      'DELETE FROM items WHERE id = $1 AND user_id = $2 RETURNING *',
-      [id, userId]
-    );
+    await client.query('DELETE FROM items_images WHERE item_id = $1', [id]);
+    await client.query('DELETE FROM items WHERE id = $1', [id]);
+    // TODO remove chats related to this item
 
-    if (result.rows.length === 0) {
-      return res.status(404).send({ message: 'Item not found' });
-    }
-
-    res.json(result.rows[0]);
+    await client.query('COMMIT');
+    res.json(true);
   } catch (err) {
-    res.status(500).send({ message: 'Server error' });
+    await client.query('ROLLBACK');
+    res.status(500).send({ message: 'Server error: ' + err });
+  } finally {
+    client.release();
   }
 };

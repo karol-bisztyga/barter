@@ -22,6 +22,7 @@ import { useEditItemContext } from '../../context/EditItemContext';
 import { authorizeUser } from '../../utils/reusableStuff';
 import { updateItem } from '../../db_utils/updateItem';
 import { addItem } from '../../db_utils/addItem';
+import { removeItem } from '../../db_utils/removeItem';
 
 const { width } = Dimensions.get('window');
 
@@ -159,13 +160,23 @@ const EditItem = () => {
                 console.log('remove decision', remove);
                 if (remove) {
                   if (!usersItem) {
-                    throw new Error('trying to remove non-existing item');
+                    throw new Error('item to remove not specified');
                   }
                   // todo remove chats related to this item
                   const newItems = [...userContext.items];
-                  newItems.splice(usersItem.index, 1);
-                  userContext.setItems(newItems);
-                  router.back();
+                  try {
+                    const result = await removeItem(usersItem.item.id, token);
+                    if (result) {
+                      newItems.splice(usersItem.index, 1);
+                      userContext.setItems(newItems);
+                      router.back();
+                    } else {
+                      console.error('removing item failed');
+                    }
+                  } catch (e) {
+                    console.error('error removing item', e);
+                    return;
+                  }
                 }
               }}
             />
