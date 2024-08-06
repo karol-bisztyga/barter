@@ -7,17 +7,18 @@ import { router } from 'expo-router';
 import { ItemData } from '../../types';
 import { useItemsContext } from '../../context/ItemsContext';
 import { useUserContext } from '../../context/UserContext';
-import { generateItem } from '../../mocks/itemsMocker';
 import { getUserItems } from '../../db_utils/getUserItems';
 import { authorizeUser } from '../../utils/reusableStuff';
+import { getItemsForCards } from '../../db_utils/getItemsForCards';
 
 const LOADED_ITEMS_CAPACITY = 5;
+// when there are less items loaded than this value, new items will be fetched
+const ITEMS_LOAD_TRESHOLD = 3;
 
 export default function Swipe() {
   const token = authorizeUser();
 
   const [cards, setCards] = useState<ItemData[]>([]);
-  const [currentId, setCurrentId] = useState<number>(0);
   const lockGesture = useSharedValue<boolean>(false);
   const itemsContext = useItemsContext();
   const userContext = useUserContext();
@@ -26,7 +27,7 @@ export default function Swipe() {
     if (!userContext.data) {
       throw new Error('user data not provided');
     }
-    getUserItems(userContext.data.id, token)
+    getUserItems(token)
       .then((items) => {
         userContext.setItems(items);
       })
@@ -35,37 +36,47 @@ export default function Swipe() {
       });
   }, []);
 
-  const useCurrentId = () => {
-    const id = currentId;
-    setCurrentId(currentId + 1);
-    return id;
-  };
-
-  const popAndLoadCard = (): ItemData | null => {
+  const popAndLoadCard = async (): Promise<ItemData | null> => {
     const currentCard = cards.at(-1);
     if (currentCard === undefined) {
       return null;
     }
-    setCards([generateItem(useCurrentId()), ...cards.slice(0, -1)]);
+
+    // pop
+    const updatedCards = [...cards.slice(0, -1)];
+
+    if (cards.length <= ITEMS_LOAD_TRESHOLD) {
+      try {
+        const itemsLoaded = await getItemsForCards(token, LOADED_ITEMS_CAPACITY);
+        updatedCards.push(...itemsLoaded);
+      } catch (e) {
+        console.error('error loading cards', e);
+        return null;
+      }
+    }
+    setCards(updatedCards);
     return currentCard;
   };
 
   useEffect(() => {
-    const newItems = [];
-    let id = currentId;
-    for (let i = 0; i < LOADED_ITEMS_CAPACITY; ++i) {
-      newItems.push(generateItem(id++));
-    }
-    setCurrentId(id);
-    setCards(newItems);
+    (async () => {
+      try {
+        const itemsLoaded = await getItemsForCards(token, LOADED_ITEMS_CAPACITY);
+
+        setCards(itemsLoaded);
+      } catch (e) {
+        console.error('error loading cards', e);
+      }
+    })();
   }, []);
 
   useEffect(() => {
     // printCards();
+    console.log('> cards updated', cards.length);
   }, [cards]);
 
-  const handleSwipeRight = () => {
-    const swipedCard = popAndLoadCard();
+  const handleSwipeRight = async () => {
+    const swipedCard = await popAndLoadCard();
     console.log('Swiped Right:', swipedCard?.name);
     lockGesture.value = false;
     // todo condition here
@@ -73,8 +84,8 @@ export default function Swipe() {
     router.push('swipe/match');
   };
 
-  const handleSwipeLeft = () => {
-    const swipedCard = popAndLoadCard();
+  const handleSwipeLeft = async () => {
+    const swipedCard = await popAndLoadCard();
     console.log('Swiped Left:', swipedCard?.name);
     lockGesture.value = false;
   };

@@ -41,7 +41,7 @@ export const createItem = async (req: AuthRequest, res: Response) => {
   }
 };
 
-export const getItems = async (req: AuthRequest, res: Response) => {
+export const getUserItems = async (req: AuthRequest, res: Response) => {
   try {
     const userId = getUserIdFromRequest(req);
 
@@ -137,5 +137,45 @@ export const deleteItem = async (req: AuthRequest, res: Response) => {
     res.status(500).send({ message: 'Server error: ' + err });
   } finally {
     client.release();
+  }
+};
+
+/**
+ * items fetched for a specific user
+ * items should be fetched in random order
+ * items that are already liked/disliked by the user should not be included
+ * items should be fetched in batches of certain size
+ *
+ * this algorithm requires further work (which items to fetch first or something) or not!
+ */
+export const getItemsForCards = async (req: AuthRequest, res: Response) => {
+  try {
+    const userId = getUserIdFromRequest(req);
+    const { limit } = req.query;
+
+    // todo do not fetch liked/disliked items
+    const result = await pool.query(
+      `SELECT
+        items.id AS id,
+        items.name AS name,
+        items.description AS description,
+        ARRAY_AGG(items_images.url) AS images
+      FROM
+          items
+      LEFT JOIN
+          items_images ON items.id = items_images.item_id
+      WHERE
+          items.user_id <> $1
+      GROUP BY
+          items.id, items.name, items.description
+      ORDER BY
+          RANDOM()
+      LIMIT $2;
+      `,
+      [userId, limit]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    res.status(500).send({ message: 'Server error: ' + err });
   }
 };

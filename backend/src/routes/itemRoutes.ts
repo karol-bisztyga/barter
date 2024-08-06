@@ -1,12 +1,20 @@
 import { Router } from 'express';
-import { createItem, getItems, updateItem, deleteItem } from '../controllers/itemController';
+import {
+  createItem,
+  getUserItems,
+  updateItem,
+  deleteItem,
+  getItemsForCards,
+} from '../controllers/itemController';
 import { authMiddleware } from '../middlewares/authMiddleware';
 
 const router = Router();
 
 router.post('/items', authMiddleware, createItem);
-router.get('/items', authMiddleware, getItems);
+router.get('/items', authMiddleware, getUserItems);
 router.put('/items/:id', authMiddleware, updateItem);
 router.delete('/items/:id', authMiddleware, deleteItem);
+
+router.get('/cards', authMiddleware, getItemsForCards);
 
 export default router;

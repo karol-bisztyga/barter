@@ -17,13 +17,13 @@ export const executeQuery = async (
     body: '',
   };
 
-  const url = `${process.env.EXPO_PUBLIC_SERVER_HOST}:${process.env.EXPO_PUBLIC_SERVER_PORT}/${rawUrl}`;
+  let url = `${process.env.EXPO_PUBLIC_SERVER_HOST}:${process.env.EXPO_PUBLIC_SERVER_PORT}/${rawUrl}`;
 
   if (urlParams) {
     const modifiedUrl = new URL(url);
     Object.keys(urlParams).forEach((key) => modifiedUrl.searchParams.append(key, urlParams[key]));
-
-    console.log('sending request to modified url', modifiedUrl.toString());
+    url = modifiedUrl.toString();
+    console.log('sending request to modified url', url);
   }
   if (body) {
     config['body'] = JSON.stringify(body);
@@ -31,7 +31,7 @@ export const executeQuery = async (
 
   const response = await fetch(url, config);
   const data = await response.json();
-  console.log('response', data);
+  // console.log('response', data);
 
   return {
     ...response,
