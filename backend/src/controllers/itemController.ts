@@ -77,9 +77,11 @@ export const updateItem = async (req: AuthRequest, res: Response) => {
     await client.query('BEGIN');
     const userId = getUserIdFromRequest(req);
 
+    const currentTimestamp = new Date().getTime();
+
     const itemResult = await client.query(
-      'UPDATE items SET name = $1, description = $2 WHERE id = $3 AND user_id = $4 RETURNING *',
-      [name, description, id, userId]
+      'UPDATE items SET name = $1, description = $2, date_edited = $3 WHERE id = $4 AND user_id = $5 RETURNING *',
+      [name, description, currentTimestamp, id, userId]
     );
 
     if (itemResult.rows.length === 0) {

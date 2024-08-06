@@ -13,14 +13,17 @@ CREATE TABLE users (
     facebook VARCHAR(50),
     instagram VARCHAR(50),
     profile_picture VARCHAR(100),
-    password VARCHAR(100) NOT NULL
+    password VARCHAR(100) NOT NULL,
+    date_created BIGINT DEFAULT (EXTRACT(EPOCH FROM NOW()) * 1000)::BIGINT
 );
 
 CREATE TABLE items (
     id SERIAL PRIMARY KEY,
     user_id INTEGER REFERENCES users(id) NOT NULL,
     name VARCHAR(100) NOT NULL,
-    description TEXT
+    description TEXT,
+    date_added BIGINT DEFAULT (EXTRACT(EPOCH FROM NOW()) * 1000)::BIGINT,
+    date_edited BIGINT
 );
 
 
@@ -29,3 +32,10 @@ CREATE TABLE items_images (
     item_id INTEGER REFERENCES items(id) NOT NULL,
     url VARCHAR(400) NOT NULL
 );
+
+-- new tables
+/*
+- likes
+- matches
+- messages
+*/
