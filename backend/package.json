@@ -6,8 +6,10 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
-    "reset_database": "node scripts/reset_database.js",
-    "mock_database": "node scripts/mock_database.js",
+    "database:reset": "node scripts/reset_database.js",
+    "database:mock": "node scripts/mock_database.js",
+    "database:store": "node scripts/db_backup.js store",
+    "database:restore": "npm run database:reset && node scripts/db_backup.js restore",
     "lint": "eslint .",
     "lintFixAll": "eslint './**/*.{js,jsx,ts,tsx}'",
     "prettierFixAll": "prettier --write './**/*.{js,jsx,ts,tsx}'",

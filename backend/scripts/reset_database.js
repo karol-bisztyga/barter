@@ -1,26 +1,11 @@
 require('dotenv').config();
 const { execSync } = require('child_process');
 const path = require('path');
+const execCommand = require('./executeCommand');
 
 const { DOCKER_CONTAINER_NAME, DB_USER, DB_NAME, DB_PASSWORD, DB_PORT, SQL_FILE } = process.env;
 
 const sqlFilePath = path.resolve(__dirname, SQL_FILE || '../database.sql');
-// Function to execute shell commands
-const execCommand = (command, retries = 0, retryTimeout = 1000) => {
-  try {
-    execSync(command, { stdio: 'inherit' });
-  } catch (err) {
-    console.error(`Error executing command: ${command}\n${err}`);
-    if (retries) {
-      console.log(`Retrying in ${retryTimeout}ms...`);
-      setTimeout(() => {
-        execCommand(command, retries - 1, retryTimeout);
-      }, retryTimeout);
-      return;
-    }
-    throw err;
-  }
-};
 
 // Check if Docker container is running
 const checkContainerRunning = () => {
