@@ -68,32 +68,21 @@ export default function SignIn() {
           />
         </View>
         {/* TODO remove buttons below */}
-        <View style={styles.buttonWrapper}>
-          <Button
-            title="Login as a mocked user #1"
-            onPress={async () => {
-              await hadnleSignIn(sampleUsers[0].email, sampleUsers[0].password);
-            }}
-          />
-        </View>
-
-        <View style={styles.buttonWrapper}>
-          <Button
-            title="Login as a mocked user #2"
-            onPress={async () => {
-              await hadnleSignIn(sampleUsers[1].email, sampleUsers[1].password);
-            }}
-          />
-        </View>
-
-        <View style={styles.buttonWrapper}>
-          <Button
-            title="Login as a mocked user #3"
-            onPress={async () => {
-              await hadnleSignIn(sampleUsers[2].email, sampleUsers[2].password);
-            }}
-          />
-        </View>
+        {sampleUsers.map((user, index) => {
+          if (index > 2) {
+            return null;
+          }
+          return (
+            <View style={styles.buttonWrapper} key={index}>
+              <Button
+                title={`Login as a mocked user #${index + 1}`}
+                onPress={async () => {
+                  await hadnleSignIn(sampleUsers[0].email, sampleUsers[0].password);
+                }}
+              />
+            </View>
+          );
+        })}
         {/* TODO remove buttons above */}
       </View>
     </View>
