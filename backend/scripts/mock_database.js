@@ -178,6 +178,33 @@ const insertHardcodedUsers = async () => {
       profilePicture: null,
       password: 'testowehaslo222',
     },
+    {
+      name: 'Testowy Trzeci',
+      email: 'testowytrzeci@gmail.com',
+      phone: '111222333',
+      facebook: null,
+      instagram: null,
+      profilePicture: 'https://picsum.photos/249/241?random=0.17985964014905065',
+      password: 'testowehaslo333',
+    },
+    {
+      name: 'Testowy Czwarty',
+      email: 'testowyczwarty@gmail.com',
+      phone: '444555666',
+      facebook: 'testowyy4',
+      instagram: 'testowy44',
+      profilePicture: null,
+      password: 'testowehaslo444',
+    },
+    {
+      name: 'Testowy Piąty',
+      email: 'testowypiaty@gmail.com',
+      phone: '777333999',
+      facebook: null,
+      instagram: 'testowy55555',
+      profilePicture: 'https://picsum.photos/226/214?random=0.7296091891251069',
+      password: 'testowehaslo555',
+    },
   ];
   return await insertSampleUsers(users);
 };
@@ -214,6 +241,51 @@ const insertHardcodedItems = async () => {
       name: 'Testowy przedmiot 2-3',
       description: 'Opis testowego przedmiotu 2-3',
     },
+    {
+      userId: 3,
+      name: 'Testowy przedmiot 3-1',
+      description: 'Opis testowego przedmiotu 3-1',
+    },
+    {
+      userId: 3,
+      name: 'Testowy przedmiot 3-2',
+      description: 'Opis testowego przedmiotu 3-2',
+    },
+    {
+      userId: 3,
+      name: 'Testowy przedmiot 3-3',
+      description: 'Opis testowego przedmiotu 3-3',
+    },
+    {
+      userId: 4,
+      name: 'Testowy przedmiot 4-1',
+      description: 'Opis testowego przedmiotu 4-1',
+    },
+    {
+      userId: 4,
+      name: 'Testowy przedmiot 4-2',
+      description: 'Opis testowego przedmiotu 4-2',
+    },
+    {
+      userId: 4,
+      name: 'Testowy przedmiot 4-3',
+      description: 'Opis testowego przedmiotu 4-3',
+    },
+    {
+      userId: 5,
+      name: 'Testowy przedmiot 5-1',
+      description: 'Opis testowego przedmiotu 5-1',
+    },
+    {
+      userId: 5,
+      name: 'Testowy przedmiot 5-2',
+      description: 'Opis testowego przedmiotu 5-2',
+    },
+    {
+      userId: 5,
+      name: 'Testowy przedmiot 5-3',
+      description: 'Opis testowego przedmiotu 5-3',
+    },
   ];
 
   // users can be empty array as it is not used in this case
@@ -228,6 +300,73 @@ const insertHardcodedImages = async (items) => {
   };
 
   return await insertSampleImages(items, hardcodedImages);
+};
+
+const insertHardcodedLikes = async () => {
+  /**
+   * kazy user ma po 3 przedmioty
+   * id itemow usera 1: 1, 2, 3
+   * trzeba przetestowac scenariusze:
+   *  1. user2 lubi 0 przedmiotow usera1
+   *  2. user3 lubi 1 przedmiot usera1
+   *  3. user4 lubi 2 przedmioty usera2 ale nie lubi 1 przedmiotu
+   *  3. user5 lubi 3 przedmioty usera2
+   */
+  const likes = [
+    {
+      userId: 3,
+      itemId: 1,
+      decision: true,
+    },
+    {
+      userId: 4,
+      itemId: 1,
+      decision: true,
+    },
+    {
+      userId: 4,
+      itemId: 2,
+      decision: true,
+    },
+    {
+      userId: 4,
+      itemId: 3,
+      decision: false,
+    },
+    {
+      userId: 5,
+      itemId: 1,
+      decision: true,
+    },
+    {
+      userId: 5,
+      itemId: 2,
+      decision: true,
+    },
+    {
+      userId: 5,
+      itemId: 3,
+      decision: true,
+    },
+  ];
+
+  try {
+    const client = await pool.connect();
+    const likesResult = [];
+    for (let like of likes) {
+      const queryResult = await client.query(
+        'INSERT INTO likes (liker_id, liked_id, decision) VALUES ($1, $2, $3) RETURNING *',
+        [like.userId, like.itemId, like.decision]
+      );
+      likesResult.push(queryResult.rows[0]);
+    }
+    await client.release();
+    return likesResult;
+  } catch (err) {
+    throw new Error('Error inserting hardcoded likes: [' + err + ']');
+  }
+
+  return [];
 };
 
 const mockSampleData = async () => {
@@ -251,6 +390,9 @@ const mockHardcodedData = async () => {
 
   const images = await insertHardcodedImages(items);
   console.log('hardcoded images inserted', images);
+
+  const likes = await insertHardcodedLikes();
+  console.log('hardcoded likes inserted', likes);
 };
 
 (async () => {
