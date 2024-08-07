@@ -1,6 +1,9 @@
 CREATE DATABASE barter;
 
 -- reset.sql
+DROP TABLE IF EXISTS likes;
+DROP TABLE IF EXISTS messages;
+DROP TABLE IF EXISTS matches;
 DROP TABLE IF EXISTS items_images;
 DROP TABLE IF EXISTS items;
 DROP TABLE IF EXISTS users;
@@ -33,9 +36,26 @@ CREATE TABLE items_images (
     url VARCHAR(400) NOT NULL
 );
 
--- new tables
-/*
-- likes
-- matches
-- messages
-*/
+-- this table should store likes and dislikes to avoid showing the same item again
+CREATE TABLE likes (
+    id SERIAL PRIMARY KEY,
+    liker_id INTEGER REFERENCES users(id) NOT NULL,
+    liked_id INTEGER REFERENCES items(id) NOT NULL,
+    decision BOOLEAN NOT NULL, -- true=liked, false=disliked
+    date_created BIGINT DEFAULT (EXTRACT(EPOCH FROM NOW()) * 1000)::BIGINT
+);
+
+CREATE TABLE matches (
+    id SERIAL PRIMARY KEY,
+    matching_item_id INTEGER REFERENCES items(id) NOT NULL,
+    matched_item_id INTEGER REFERENCES items(id) NOT NULL,
+    date_created BIGINT DEFAULT (EXTRACT(EPOCH FROM NOW()) * 1000)::BIGINT
+);
+
+CREATE TABLE messages (
+    id SERIAL PRIMARY KEY,
+    sender_id INTEGER REFERENCES users(id) NOT NULL,
+    match_id INTEGER REFERENCES matches(id) NOT NULL,
+    message TEXT NOT NULL,
+    date_created BIGINT DEFAULT (EXTRACT(EPOCH FROM NOW()) * 1000)::BIGINT
+);

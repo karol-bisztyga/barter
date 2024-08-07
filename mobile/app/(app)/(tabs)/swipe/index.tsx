@@ -10,6 +10,7 @@ import { useUserContext } from '../../context/UserContext';
 import { getUserItems } from '../../db_utils/getUserItems';
 import { authorizeUser } from '../../utils/reusableStuff';
 import { getItemsForCards } from '../../db_utils/getItemsForCards';
+import { addLike } from '../../db_utils/addLike';
 
 const LOADED_ITEMS_CAPACITY = 5;
 // when there are less items loaded than this value, new items will be fetched
@@ -72,21 +73,41 @@ export default function Swipe() {
 
   useEffect(() => {
     // printCards();
-    console.log('> cards updated', cards.length);
+    console.log(
+      '> cards updated',
+      cards.map((card) => card.id)
+    );
   }, [cards]);
+
+  const sendLike = async (likedItemId: string, decision: boolean) => {
+    try {
+      return await addLike(likedItemId, decision, token);
+    } catch (e) {
+      console.error('error sending like', e);
+    }
+  };
 
   const handleSwipeRight = async () => {
     const swipedCard = await popAndLoadCard();
-    console.log('Swiped Right:', swipedCard?.name);
+    if (!swipedCard) {
+      throw new Error('could not find swiped card');
+    }
+    console.log('Swiped Right:', swipedCard.name, swipedCard.id);
+    sendLike(swipedCard.id, true);
     lockGesture.value = false;
     // todo condition here
-    itemsContext.setOthersItem(swipedCard);
-    router.push('swipe/match');
+    // if matched...
+    // itemsContext.setOthersItem(swipedCard);
+    // router.push('swipe/match');
   };
 
   const handleSwipeLeft = async () => {
     const swipedCard = await popAndLoadCard();
+    if (!swipedCard) {
+      throw new Error('could not find swiped card');
+    }
     console.log('Swiped Left:', swipedCard?.name);
+    sendLike(swipedCard.id, false);
     lockGesture.value = false;
   };
 

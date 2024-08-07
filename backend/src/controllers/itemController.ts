@@ -166,6 +166,8 @@ export const getItemsForCards = async (req: AuthRequest, res: Response) => {
           items_images ON items.id = items_images.item_id
       WHERE
           items.user_id <> $1
+      AND
+          items.id NOT IN (SELECT liked_id FROM likes WHERE liker_id = $1)
       GROUP BY
           items.id, items.name, items.description
       ORDER BY
