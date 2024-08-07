@@ -1,50 +1,104 @@
 const { generateImage } = require('./imageMocker');
 
-const firstNames = [
-  'John',
-  'Jane',
-  'Alex',
-  'Emily',
-  'Michael',
-  'Sarah',
-  'David',
-  'Laura',
+const maleFirstNames = [
+  'Jan',
+  'Piotr',
+  'Andrzej',
+  'Krzysztof',
+  'Marek',
+  'Tomasz',
+  'Paweł',
+  'Adam',
+  'Michał',
+  'Grzegorz',
+  'Stanisław',
+  'Marcin',
+  'Jarosław',
+  'Dariusz',
+  'Ryszard',
+  'Wojciech',
+  'Zbigniew',
+  'Sławomir',
+  'Mateusz',
   'Robert',
-  'Emma',
-  'Daniel',
-  'Olivia',
-  'James',
-  'Sophia',
-  'Joseph',
-  'Isabella',
-  'Thomas',
-  'Mia',
-  'Charles',
-  'Ava',
+  'Łukasz',
+  'Henryk',
+  'Kazimierz',
+  'Damian',
+  'Sebastian',
+  'Jakub',
+  'Bartosz',
+  'Karol',
+  'Jacek',
+  'Mariusz',
 ];
 
-const lastNames = [
-  'Smith',
-  'Johnson',
-  'Brown',
-  'Taylor',
-  'Anderson',
-  'Thomas',
-  'Jackson',
-  'White',
-  'Harris',
-  'Martin',
-  'Thompson',
-  'Garcia',
-  'Martinez',
-  'Robinson',
-  'Clark',
-  'Rodriguez',
-  'Lewis',
-  'Lee',
-  'Walker',
-  'Hall',
+const femaleFirstNames = [
+  'Anna',
+  'Maria',
+  'Katarzyna',
+  'Małgorzata',
+  'Agnieszka',
+  'Barbara',
+  'Ewa',
+  'Elżbieta',
+  'Joanna',
+  'Dorota',
+  'Jadwiga',
+  'Halina',
+  'Monika',
+  'Irena',
+  'Beata',
+  'Aleksandra',
+  'Wanda',
+  'Justyna',
+  'Sylwia',
+  'Magdalena',
+  'Grażyna',
+  'Danuta',
+  'Renata',
+  'Izabela',
+  'Teresa',
+  'Jolanta',
+  'Bożena',
+  'Urszula',
+  'Mariola',
+  'Lucyna',
 ];
+
+const surnames = [
+  'Nowak',
+  'Kowalski',
+  'Wiśniewski',
+  'Dąbrowski',
+  'Lewandowski',
+  'Wójcik',
+  'Kamiński',
+  'Kowalczyk',
+  'Zieliński',
+  'Szymański',
+  'Woźniak',
+  'Kozłowski',
+  'Jankowski',
+  'Mazur',
+  'Wojciechowski',
+  'Kwiatkowski',
+  'Krawczyk',
+  'Kaczmarek',
+  'Piotrowski',
+  'Grabowski',
+  'Zając',
+  'Pawłowski',
+  'Michalski',
+  'Król',
+  'Wieczorek',
+  'Nowakowski',
+  'Kubiak',
+  'Adamczyk',
+  'Dudek',
+  'Pietrzak',
+];
+
 const adjectives = [
   'Cool',
   'Happy',
@@ -93,6 +147,10 @@ const nouns = [
 
 const emailDomains = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'aol.com'];
 
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 const getRandomElement = (array) => {
   const randomIndex = Math.floor(Math.random() * array.length);
   return array[randomIndex];
@@ -103,17 +161,43 @@ const getRandomDigit = () => {
 };
 
 const generateRandomFullName = () => {
-  const firstName = getRandomElement(firstNames);
-  const lastName = getRandomElement(lastNames);
-  return `${firstName} ${lastName}`;
+  const isMale = Math.random() < 0.5;
+  const firstName = isMale ? getRandomElement(maleFirstNames) : getRandomElement(femaleFirstNames);
+  const surname = getRandomElement(surnames);
+  return `${firstName} ${surname}`;
 };
 
+function removePolishDiacritics(str) {
+  const diacriticsMap = {
+    ą: 'a',
+    ć: 'c',
+    ę: 'e',
+    ł: 'l',
+    ń: 'n',
+    ó: 'o',
+    ś: 's',
+    ź: 'z',
+    ż: 'z',
+    Ą: 'A',
+    Ć: 'C',
+    Ę: 'E',
+    Ł: 'L',
+    Ń: 'N',
+    Ó: 'O',
+    Ś: 'S',
+    Ź: 'Z',
+    Ż: 'Z',
+  };
+  return str.replace(/[ąćęłńóśźżĄĆĘŁŃÓŚŹŻ]/g, (char) => diacriticsMap[char]);
+}
+
 const generateEmailFromFullName = (fullName) => {
-  const lowerCaseName = fullName.toLowerCase();
-  const nameParts = lowerCaseName.split(' ');
-  const localPart = nameParts.join('.');
+  const [firstName, surname] = fullName.split(' ');
+  const firstPart = removePolishDiacritics(firstName).toLowerCase();
+  const secondPart = removePolishDiacritics(surname).toLowerCase();
+  const randomNum = getRandomInt(10, 99);
   const domain = getRandomElement(emailDomains);
-  return `${localPart}@${domain}`;
+  return `${firstPart}.${secondPart}${randomNum}@${domain}`;
 };
 
 const generateRandomPhoneNumber = () => {
