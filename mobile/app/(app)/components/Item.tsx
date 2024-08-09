@@ -63,11 +63,11 @@ export default function Item({
       )}
       {showDescription && (
         <View style={styles.descriptionWrapper}>
-          <Text style={styles.description} numberOfLines={showFull ? 0 : 2}>
+          <Text style={styles.description} numberOfLines={showFull ? 0 : 1} ellipsizeMode="tail">
             {itemData.description}
           </Text>
           {!showFull && (
-            <View style={{ padding: 10 }}>
+            <View style={{ paddingTop: 20 }}>
               <Button title="more" onPress={onPressMore} />
             </View>
           )}

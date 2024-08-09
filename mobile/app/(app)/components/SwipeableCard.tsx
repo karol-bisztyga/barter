@@ -114,7 +114,7 @@ const SwipeableCard = ({
 const styles = StyleSheet.create({
   itemWrapper: {
     width: width * 0.9,
-    height: height * 0.8,
+    height: height * 0.7,
     borderRadius: 20,
     backgroundColor: '#fff',
     position: 'absolute',
