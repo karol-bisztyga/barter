@@ -20,6 +20,7 @@ export default function Swipe() {
   const token = authorizeUser();
 
   const [cards, setCards] = useState<ItemData[]>([]);
+  const [emptyCardsResponseReceived, setEmptyCardsResponseReceived] = useState<boolean>(false);
   const lockGesture = useSharedValue<boolean>(false);
   const itemsContext = useItemsContext();
   const userContext = useUserContext();
@@ -48,7 +49,19 @@ export default function Swipe() {
 
     if (cards.length <= ITEMS_LOAD_TRESHOLD) {
       try {
-        const itemsLoaded = await getItemsForCards(token, LOADED_ITEMS_CAPACITY);
+        if (emptyCardsResponseReceived) {
+          console.log('no items available for now, try again later');
+          return currentCard;
+        }
+        const itemsLoaded = await getItemsForCards(
+          token,
+          cards.map((card) => card.id),
+          LOADED_ITEMS_CAPACITY
+        );
+        if (!itemsLoaded.length) {
+          setEmptyCardsResponseReceived(true);
+          return currentCard;
+        }
         updatedCards.push(...itemsLoaded);
       } catch (e) {
         console.error('error loading cards', e);
@@ -62,7 +75,19 @@ export default function Swipe() {
   useEffect(() => {
     (async () => {
       try {
-        const itemsLoaded = await getItemsForCards(token, LOADED_ITEMS_CAPACITY);
+        if (emptyCardsResponseReceived) {
+          console.log('no items available for now, try again later');
+          return;
+        }
+        const itemsLoaded = await getItemsForCards(
+          token,
+          cards.map((card) => card.id),
+          LOADED_ITEMS_CAPACITY
+        );
+        if (!itemsLoaded.length) {
+          setEmptyCardsResponseReceived(true);
+          return;
+        }
 
         setCards(itemsLoaded);
       } catch (e) {
@@ -93,12 +118,20 @@ export default function Swipe() {
       throw new Error('could not find swiped card');
     }
     console.log('Swiped Right:', swipedCard.name, swipedCard.id);
-    sendLike(swipedCard.id, true);
+    const sendLikeResult = await sendLike(swipedCard.id, true);
     lockGesture.value = false;
-    // todo condition here
-    // if matched...
-    // itemsContext.setOthersItem(swipedCard);
-    // router.push('swipe/match');
+    if (sendLikeResult.matchStatus === 'match') {
+      console.log(
+        `it's a match: my item ${sendLikeResult.result.matching_item_id} with their item ${sendLikeResult.result.matched_item_id}!`
+      );
+      console.log('my card', userContext.findItemById(sendLikeResult.result.matching_item_id));
+      console.log('their card', swipedCard);
+      // todo show match screen
+      // itemsContext.setOthersItem(swipedCard);
+      // router.push('swipe/match');
+    } else {
+      console.log('no match');
+    }
   };
 
   const handleSwipeLeft = async () => {
@@ -107,8 +140,13 @@ export default function Swipe() {
       throw new Error('could not find swiped card');
     }
     console.log('Swiped Left:', swipedCard?.name);
-    sendLike(swipedCard.id, false);
+    const sendLikeResult = await sendLike(swipedCard.id, false);
     lockGesture.value = false;
+    if (sendLikeResult.matchStatus === 'match') {
+      throw new Error(
+        `something went terribly wrong, it's a match even though the user disliked this item! This should never happen!`
+      );
+    }
   };
 
   return (

@@ -11,12 +11,11 @@ export const addLike = async (req: AuthRequest, res: Response) => {
     console.log('posting like', likedItemId, decision);
     const userId = getUserIdFromRequest(req);
 
-    const queryResult = await pool.query(
+    const queryResult = await client.query(
       'INSERT INTO likes (liker_id, liked_id, decision) VALUES ($1, $2, $3) RETURNING *',
       [userId, likedItemId, decision]
     );
     const likeResult = queryResult.rows[0];
-    console.log('like result', likeResult);
 
     // on successful like check for a match, if it matched, retrun the info about the new match and automatically create it in the db here
     // with a random (or least used) user item.
@@ -29,10 +28,16 @@ export const addLike = async (req: AuthRequest, res: Response) => {
     // - lajki tego ownera do moich itemow - te itemy bede mogl zaproponowac do wymiany w matchu
     // -
 
-    // const myItemsLikedByTargetItemOwnerResult = await pool.query();
-
-    const myItemsLikedByTargetItemOwnerResult = await pool.query(
-      `SELECT
+    if (!likeResult.decision) {
+      await client.query('COMMIT');
+      res.json({
+        matchStatus: 'no match',
+      });
+      return;
+    }
+    const myItemsLikedByTargetItemOwnerResult = await client.query(
+      `
+      SELECT
         items.id AS id,
         items.name AS name,
         items.description AS description,
@@ -55,14 +60,34 @@ export const addLike = async (req: AuthRequest, res: Response) => {
       [userId, likeResult.liked_id]
     );
     const myItemsLikedByTargetItemOwner = myItemsLikedByTargetItemOwnerResult.rows;
-    console.log('likes from liked item owner to my items', myItemsLikedByTargetItemOwner);
-    if (myItemsLikedByTargetItemOwner.length) {
-      console.log(`IT'S A MATCH!`);
-      // TODO create a match query inserting a random user element (can be switched later)
+    const myRandomItem =
+      myItemsLikedByTargetItemOwner[
+        Math.floor(Math.random() * myItemsLikedByTargetItemOwner.length)
+      ];
+    if (!myItemsLikedByTargetItemOwner.length) {
+      await client.query('COMMIT');
+      res.json({
+        matchStatus: 'no match',
+      });
+      return;
     }
+    console.log(`IT'S A MATCH!`);
+
+    const matchResult = await client.query(
+      `
+        INSERT INTO matches (matching_item_id, matched_item_id) 
+        VALUES ($1, $2)
+        RETURNING *
+      `,
+      [myRandomItem.id, likedItemId]
+    );
+    const result = matchResult.rows[0];
 
     await client.query('COMMIT');
-    res.json(likeResult);
+    res.json({
+      matchStatus: 'match',
+      result,
+    });
   } catch (err) {
     await client.query('ROLLBACK');
     res.status(500).send({ message: 'Server error: ' + err });

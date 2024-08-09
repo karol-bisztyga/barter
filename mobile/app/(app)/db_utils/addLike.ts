@@ -11,7 +11,7 @@ export const addLike = async (likedItemId: string, decision: boolean, token: str
   if (response.ok) {
     // here we should return whether a match was made or not
     // of there's a match, the user will see the screen to choose an item for this match
-    return true;
+    return response.data;
   } else {
     throw new Error('send like error: ' + response.data.message);
   }

@@ -151,11 +151,20 @@ export const deleteItem = async (req: AuthRequest, res: Response) => {
 export const getItemsForCards = async (req: AuthRequest, res: Response) => {
   try {
     const userId = getUserIdFromRequest(req);
-    const { limit } = req.query;
+    const { limit, currentCardsIds } = req.query;
 
-    // todo do not fetch liked/disliked items
-    const result = await pool.query(
-      `SELECT
+    const currentCardsIdsArr: string[] = (JSON.parse(currentCardsIds as string) as string[]) || [];
+    console.log('pulling cards excluding', currentCardsIdsArr);
+
+    let additionalCondition = '';
+    let queryArgs = [userId, limit];
+
+    if (currentCardsIdsArr.length) {
+      additionalCondition = `AND items.id NOT IN (${currentCardsIdsArr.map((_: string, i: number) => `$${i + 2}`).join(', ')})`;
+      queryArgs = [userId, ...currentCardsIdsArr, limit];
+    }
+
+    const query = `SELECT
         items.id AS id,
         items.name AS name,
         items.description AS description,
@@ -168,13 +177,20 @@ export const getItemsForCards = async (req: AuthRequest, res: Response) => {
           items.user_id <> $1
       AND
           items.id NOT IN (SELECT liked_id FROM likes WHERE liker_id = $1)
+      ${additionalCondition}
       GROUP BY
           items.id, items.name, items.description
       ORDER BY
           RANDOM()
-      LIMIT $2;
-      `,
-      [userId, limit]
+      LIMIT $${currentCardsIdsArr.length + 2};
+      `;
+
+    const result = await pool.query(query, queryArgs);
+    console.log(
+      'pulled cards',
+      result.rows.map((item) => {
+        return { id: item.id, name: item.name };
+      })
     );
     res.json(result.rows);
   } catch (err) {
