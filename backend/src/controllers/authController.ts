@@ -2,7 +2,6 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import pool from '../db';
-import { User } from '../models/User';
 import { jwtSecret } from '../config';
 
 export const register = async (req: Request, res: Response) => {
@@ -10,7 +9,7 @@ export const register = async (req: Request, res: Response) => {
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const newUser: User = { username, password: hashedPassword };
+  const newUser = { username, password: hashedPassword };
 
   try {
     const result = await pool.query(

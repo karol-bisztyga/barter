@@ -77,7 +77,7 @@ export default function SignIn() {
               <Button
                 title={`Login as a mocked user #${index + 1}`}
                 onPress={async () => {
-                  await hadnleSignIn(sampleUsers[0].email, sampleUsers[0].password);
+                  await hadnleSignIn(user.email, user.password);
                 }}
               />
             </View>
