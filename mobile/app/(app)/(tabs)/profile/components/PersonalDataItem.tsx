@@ -16,22 +16,27 @@ const validateValue = (/*value: string*/) => {
 const StandardTools = ({
   value,
   setEditing,
+  editable,
 }: {
   value: string;
   setEditing: (_: boolean) => void;
+  editable: boolean;
 }) => {
   return (
     <>
-      <TouchableOpacity
-        style={styles.contactItemIconWrapper}
-        activeOpacity={1}
-        onPress={() => {
-          setEditing(true);
-        }}
-      >
-        <FontAwesome size={20} name="pencil" />
-      </TouchableOpacity>
-
+      {editable ? (
+        <TouchableOpacity
+          style={styles.contactItemIconWrapper}
+          activeOpacity={1}
+          onPress={() => {
+            setEditing(true);
+          }}
+        >
+          <FontAwesome size={20} name="pencil" />
+        </TouchableOpacity>
+      ) : (
+        <View style={styles.contactItemIconWrapper} />
+      )}
       <TouchableOpacity
         style={styles.contactItemIconWrapper}
         activeOpacity={1}
@@ -89,10 +94,12 @@ const PersonalDataItem = ({
   name,
   initialValue,
   index,
+  editable = true,
 }: {
   name: string;
   initialValue: string;
   index: number;
+  editable: boolean;
 }) => {
   const [editing, setEditing] = useState(false);
   const [value, setValue] = useState(initialValue);
@@ -143,7 +150,7 @@ const PersonalDataItem = ({
           setEditing={setEditing}
         />
       ) : (
-        <StandardTools value={value} setEditing={setEditing} />
+        <StandardTools value={value} setEditing={setEditing} editable={editable} />
       )}
     </View>
   );

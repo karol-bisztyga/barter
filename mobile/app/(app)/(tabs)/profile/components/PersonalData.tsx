@@ -6,17 +6,31 @@ import { useUserContext } from '../../../context/UserContext';
 
 const PersonalData = () => {
   const userContext = useUserContext();
-  console.log('user data', userContext.data);
+
+  const data = { ...userContext.data };
+
+  if (!data) {
+    throw new Error('personal data is missing');
+  }
+
+  delete data.id;
+
+  console.log('user data', data);
 
   return (
     <View style={styles.container}>
-      {userContext.data &&
-        Object.keys(userContext.data).map((name, index) => {
-          const value = userContext.data && userContext.data[name as keyof UserData];
-          return (
-            <PersonalDataItem name={name} initialValue={value || ''} index={index} key={index} />
-          );
-        })}
+      {Object.keys(data).map((name, index) => {
+        const value = data && data[name as keyof UserData];
+        return (
+          <PersonalDataItem
+            name={name}
+            initialValue={value || ''}
+            index={index}
+            key={index}
+            editable={name !== 'email'}
+          />
+        );
+      })}
     </View>
   );
 };
