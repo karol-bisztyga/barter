@@ -45,7 +45,7 @@ export default function Swipe() {
     }
 
     // pop
-    const updatedCards = [...cards.slice(0, -1)];
+    let updatedCards = [...cards.slice(0, -1)];
 
     if (cards.length <= ITEMS_LOAD_TRESHOLD) {
       try {
@@ -62,7 +62,7 @@ export default function Swipe() {
           setEmptyCardsResponseReceived(true);
           return currentCard;
         }
-        updatedCards.push(...itemsLoaded);
+        updatedCards = [...itemsLoaded, ...updatedCards];
       } catch (e) {
         console.error('error loading cards', e);
         return null;
@@ -97,10 +97,9 @@ export default function Swipe() {
   }, []);
 
   useEffect(() => {
-    // printCards();
     console.log(
       '> cards updated',
-      cards.map((card) => card.id)
+      cards.map((card) => card.name)
     );
   }, [cards]);
 
