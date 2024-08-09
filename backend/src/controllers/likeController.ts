@@ -60,10 +60,6 @@ export const addLike = async (req: AuthRequest, res: Response) => {
       [userId, likeResult.liked_id]
     );
     const myItemsLikedByTargetItemOwner = myItemsLikedByTargetItemOwnerResult.rows;
-    const myRandomItem =
-      myItemsLikedByTargetItemOwner[
-        Math.floor(Math.random() * myItemsLikedByTargetItemOwner.length)
-      ];
     if (!myItemsLikedByTargetItemOwner.length) {
       await client.query('COMMIT');
       res.json({
@@ -72,8 +68,12 @@ export const addLike = async (req: AuthRequest, res: Response) => {
       return;
     }
     console.log(`IT'S A MATCH!`);
+    const myRandomItem =
+      myItemsLikedByTargetItemOwner[
+        Math.floor(Math.random() * myItemsLikedByTargetItemOwner.length)
+      ];
 
-    const matchResult = await client.query(
+    let matchResult = await client.query(
       `
         INSERT INTO matches (matching_item_id, matched_item_id) 
         VALUES ($1, $2)
@@ -81,12 +81,13 @@ export const addLike = async (req: AuthRequest, res: Response) => {
       `,
       [myRandomItem.id, likedItemId]
     );
-    const result = matchResult.rows[0];
+    matchResult = matchResult.rows[0];
 
     await client.query('COMMIT');
     res.json({
       matchStatus: 'match',
-      result,
+      myItemsLikedByTargetItemOwner,
+      matchResult,
     });
   } catch (err) {
     await client.query('ROLLBACK');

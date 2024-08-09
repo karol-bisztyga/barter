@@ -10,6 +10,8 @@ import { ItemData } from '../types';
 interface ItemsContextState {
   usersItemId: string | null;
   setUsersItemId: React.Dispatch<React.SetStateAction<string | null>>;
+  usersItemsLikedByTargetItemOwner: ItemData[];
+  setUsersItemsLikedByTargetItemOwner: React.Dispatch<React.SetStateAction<ItemData[]>>;
   othersItem: ItemData | null;
   setOthersItem: React.Dispatch<React.SetStateAction<ItemData | null>>;
 }
@@ -17,6 +19,8 @@ interface ItemsContextState {
 const initialState: ItemsContextState = {
   usersItemId: null,
   setUsersItemId: () => {},
+  usersItemsLikedByTargetItemOwner: [],
+  setUsersItemsLikedByTargetItemOwner: () => {},
   othersItem: null,
   setOthersItem: () => {},
 };
@@ -34,9 +38,21 @@ export const useItemsContext = () => {
 export const ItemsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [usersItemId, setUsersItemId] = useState<string | null>(null);
   const [othersItem, setOthersItem] = useState<ItemData | null>(null);
+  const [usersItemsLikedByTargetItemOwner, setUsersItemsLikedByTargetItemOwner] = useState<
+    ItemData[]
+  >([]);
 
   return (
-    <ItemsContext.Provider value={{ usersItemId, setUsersItemId, othersItem, setOthersItem }}>
+    <ItemsContext.Provider
+      value={{
+        usersItemId,
+        setUsersItemId,
+        othersItem,
+        setOthersItem,
+        usersItemsLikedByTargetItemOwner,
+        setUsersItemsLikedByTargetItemOwner,
+      }}
+    >
       {children}
     </ItemsContext.Provider>
   );

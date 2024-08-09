@@ -1,19 +1,31 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { View, StyleSheet, Text, Dimensions, Button } from 'react-native';
-import { generateItem } from '../../mocks/itemsMocker';
 import Item from '../../components/Item';
 import { router } from 'expo-router';
 import { ItemData, ItemBorderRadius } from '../../types';
 import { useItemsContext } from '../../context/ItemsContext';
+import { useUserContext } from '../../context/UserContext';
+import { updateMatchMatchingItem } from '../../db_utils/updateMatchMatchingItem';
+import { authorizeUser } from '../../utils/reusableStuff';
 
 const { width } = Dimensions.get('window');
 
 const MatchModal = () => {
-  const usersItem: ItemData = generateItem();
+  const token = authorizeUser();
+  const userContext = useUserContext();
   const itemsContext = useItemsContext();
 
-  const { othersItem } = itemsContext;
-  if (!othersItem) {
+  const { othersItem, usersItemId, usersItemsLikedByTargetItemOwner } = itemsContext;
+
+  if (!usersItemId || !usersItemsLikedByTargetItemOwner.length || !othersItem) {
+    throw new Error(
+      `Match screen did not receive all required data: [${!!itemsContext.usersItemId}][${!!itemsContext.usersItemsLikedByTargetItemOwner.length}][${!!itemsContext.othersItem}]`
+    );
+  }
+  const myDefaultItemId = useRef(itemsContext.usersItemId);
+
+  const usersItem: ItemData | undefined = userContext.findItemById(usersItemId)?.item;
+  if (!othersItem || !usersItem) {
     console.error('at least on of the items has not been set');
     router.back();
     return null;
@@ -22,7 +34,17 @@ const MatchModal = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.matchedLabel}>Items matched!</Text>
-      <View style={[styles.itemsWrapper, { height: width, width: width }]}>
+      <View
+        style={[
+          styles.itemsWrapper,
+          {
+            height: width,
+            width: width,
+            paddingLeft: 10,
+            paddingRight: 10,
+          },
+        ]}
+      >
         <View style={[styles.itemsImagesWrapper, { height: width }]}>
           <View style={styles.usersItem}>
             <Item
@@ -53,8 +75,42 @@ const MatchModal = () => {
             <Text style={[styles.itemsLabel, { paddingLeft: 10 }]}>{othersItem.name}</Text>
           </View>
         </View>
-        <View style={{ position: 'absolute', width: '100%', bottom: 50 }}>
-          <Button title="Cool!" onPress={() => router.back()} />
+        <View style={styles.bottomSectionWrapper}>
+          <View style={styles.buttonsWrapper}>
+            {itemsContext.usersItemsLikedByTargetItemOwner.length > 1 && (
+              <View style={styles.singleButtonWrapper}>
+                <Button
+                  title="Switch my item"
+                  onPress={() => {
+                    router.push('swipe/switch_item');
+                  }}
+                  color={'red'}
+                />
+              </View>
+            )}
+            <View style={styles.singleButtonWrapper}>
+              <Button
+                title="Proceed!"
+                onPress={async () => {
+                  // modify newly created match if the item was switched
+                  if (
+                    myDefaultItemId.current &&
+                    myDefaultItemId.current !== itemsContext.usersItemId
+                  ) {
+                    const updateMatchResult = await updateMatchMatchingItem(
+                      token,
+                      usersItemId,
+                      myDefaultItemId.current,
+                      othersItem.id
+                    );
+                    console.log('match has been updated', updateMatchResult);
+                  }
+                  router.back();
+                }}
+                color={'green'}
+              />
+            </View>
+          </View>
         </View>
       </View>
     </View>
@@ -94,6 +150,22 @@ const styles = StyleSheet.create({
   matchedLabel: {
     fontSize: 50,
     textAlign: 'center',
+  },
+  bottomSectionWrapper: {
+    position: 'absolute',
+    width: '100%',
+    bottom: 50,
+  },
+  buttonsWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+  },
+  singleButtonWrapper: {
+    marginLeft: 10,
+    marginRight: 10,
+    padding: 10,
+    paddingLeft: 30,
+    paddingRight: 30,
   },
 });
 

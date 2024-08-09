@@ -7,7 +7,8 @@ export default function Layout() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
       <Stack.Screen name="item" options={headerBackButtonOptions()} />
-      <Stack.Screen name="match" options={{ presentation: 'modal' }} />
+      <Stack.Screen name="match" />
+      <Stack.Screen name="switch_item" options={headerBackButtonOptions()} />
     </Stack>
   );
 }

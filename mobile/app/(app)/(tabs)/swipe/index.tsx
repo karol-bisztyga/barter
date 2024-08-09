@@ -119,15 +119,16 @@ export default function Swipe() {
     console.log('Swiped Right:', swipedCard.name, swipedCard.id);
     const sendLikeResult = await sendLike(swipedCard.id, true);
     lockGesture.value = false;
+
     if (sendLikeResult.matchStatus === 'match') {
-      console.log(
-        `it's a match: my item ${sendLikeResult.result.matching_item_id} with their item ${sendLikeResult.result.matched_item_id}!`
-      );
-      console.log('my card', userContext.findItemById(sendLikeResult.result.matching_item_id));
       console.log('their card', swipedCard);
       // todo show match screen
-      // itemsContext.setOthersItem(swipedCard);
-      // router.push('swipe/match');
+      itemsContext.setUsersItemId(sendLikeResult.matchResult.matching_item_id);
+      itemsContext.setOthersItem(swipedCard);
+      itemsContext.setUsersItemsLikedByTargetItemOwner(
+        sendLikeResult.myItemsLikedByTargetItemOwner
+      );
+      router.push('swipe/match');
     } else {
       console.log('no match');
     }
