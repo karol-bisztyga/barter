@@ -171,7 +171,7 @@ export const getItemsForCards = async (req: AuthRequest, res: Response) => {
         ARRAY_AGG(items_images.url) AS images
       FROM
           items
-      LEFT JOIN
+      JOIN
           items_images ON items.id = items_images.item_id
       WHERE
           items.user_id <> $1

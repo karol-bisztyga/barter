@@ -6,6 +6,12 @@ export type ItemData = {
   description: string;
 };
 
+export type MatchData = {
+  id: string;
+  matchingItem: ItemData;
+  matchedItem: ItemData;
+};
+
 export enum ItemBorderRadius {
   'all',
   'up-only',

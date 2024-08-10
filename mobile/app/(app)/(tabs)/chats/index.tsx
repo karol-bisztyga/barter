@@ -1,25 +1,25 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Item from '../../components/Item';
-import { generateChatItems } from '../../mocks/itemsMocker';
-import { ItemData, ItemBorderRadius } from '../../types';
+import { ItemData, ItemBorderRadius, MatchData } from '../../types';
 import { router } from 'expo-router';
 import Separator, { SEPARATOR_HEIGHT } from '../../components/Separator';
 import { useItemsContext } from '../../context/ItemsContext';
-import { useUserContext } from '../../context/UserContext';
+import { getUserMatches } from '../../db_utils/getUserMatches';
+import { authorizeUser } from '../../utils/reusableStuff';
 
 const ITEMS_PER_SCREEN = 4;
 
 const ListItem = ({
   height,
-  usersItem,
-  othersItem,
+  matchingItem,
+  matchedItem,
 }: {
   height: number;
-  usersItem: ItemData;
-  othersItem: ItemData;
+  matchingItem: ItemData;
+  matchedItem: ItemData;
 }) => {
   return (
     <View
@@ -29,9 +29,9 @@ const ListItem = ({
       ]}
     >
       <View style={styles.itemWrapper}>
-        <View style={styles.usersItem}>
+        <View style={styles.matchingItem}>
           <Item
-            itemData={usersItem}
+            itemData={matchingItem}
             showName={false}
             showDescription={false}
             borderRadius={ItemBorderRadius.all}
@@ -44,7 +44,7 @@ const ListItem = ({
         </View>
         <View style={styles.matchedItem}>
           <Item
-            itemData={othersItem}
+            itemData={matchedItem}
             showName={false}
             showDescription={false}
             borderRadius={ItemBorderRadius.all}
@@ -58,16 +58,28 @@ const ListItem = ({
 };
 
 export default function Chats() {
+  const token = authorizeUser();
+
   const itemsContext = useItemsContext();
-  const userContext = useUserContext();
-  // todo maybe put this in a context so when an item is removed, the chats with this item will be removed
-  const items: Array<[ItemData, ItemData]> = generateChatItems(10, userContext.items);
+
+  // array of [matchin item, matched item]
+  const [items, setItems] = useState<MatchData[]>([]);
+  useEffect(() => {
+    getUserMatches(token)
+      .then((matches: MatchData[]) => {
+        setItems(matches);
+      })
+      .catch((e) => {
+        console.error('error loading matches', e);
+      });
+  }, []);
 
   const [containerHeight, setContainerHeight] = useState<number>(0);
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={styles.container}>
       <View
+        style={styles.container}
         onLayout={(event) => {
           const { height } = event.nativeEvent.layout;
           setContainerHeight(height);
@@ -76,18 +88,22 @@ export default function Chats() {
         <FlatList
           data={items}
           renderItem={({ item, index }) => {
+            const { matchingItem, matchedItem } = item;
             return (
               <>
                 <TouchableOpacity
                   onPress={() => {
-                    const [usersItem, othersItem] = item;
-                    itemsContext.setUsersItemId(usersItem.id);
-                    itemsContext.setOthersItem(othersItem);
+                    itemsContext.setUsersItemId(matchingItem.id);
+                    itemsContext.setOthersItem(matchedItem);
                     router.push('chats/chat');
                   }}
                   activeOpacity={1}
                 >
-                  <ListItem height={containerHeight} usersItem={item[0]} othersItem={item[1]} />
+                  <ListItem
+                    height={containerHeight}
+                    matchingItem={matchingItem}
+                    matchedItem={matchedItem}
+                  />
                 </TouchableOpacity>
                 {index < items.length - 1 && <Separator />}
               </>
@@ -102,8 +118,6 @@ export default function Chats() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   text: {
     fontSize: 24,
@@ -116,7 +130,7 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
   },
-  usersItem: {
+  matchingItem: {
     flex: 1,
   },
   iconWrapper: {
