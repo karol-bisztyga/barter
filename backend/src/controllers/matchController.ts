@@ -47,13 +47,13 @@ export const getMatches = async (req: AuthRequest, res: Response) => {
           id: row.matching_item_id,
           name: row.matching_item_name,
           description: row.matching_item_description,
-          images: row.matching_item_images,
+          images: [...new Set(row.matching_item_images)],
         },
         matchedItem: {
           id: row.matched_item_id,
           name: row.matched_item_name,
           description: row.matched_item_description,
-          images: row.matched_item_images,
+          images: [...new Set(row.matched_item_images)],
         },
       };
     });
