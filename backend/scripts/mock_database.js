@@ -302,7 +302,7 @@ const insertHardcodedImages = async (items) => {
   return await insertSampleImages(items, hardcodedImages);
 };
 
-const insertHardcodedLikes = async () => {
+const insertHardcodedLikes = async (withMatches = false) => {
   /**
    * kazy user ma po 3 przedmioty
    * id itemow usera 1: 1, 2, 3
@@ -349,6 +349,25 @@ const insertHardcodedLikes = async () => {
       decision: true,
     },
   ];
+  if (withMatches) {
+    likes.push(
+      {
+        userId: 1,
+        itemId: 15, // user 5
+        decision: true,
+      },
+      {
+        userId: 1,
+        itemId: 10, // user 4
+        decision: true,
+      },
+      {
+        userId: 1,
+        itemId: 7, // user 3
+        decision: true,
+      }
+    );
+  }
 
   try {
     const client = await pool.connect();
@@ -365,8 +384,39 @@ const insertHardcodedLikes = async () => {
   } catch (err) {
     throw new Error('Error inserting hardcoded likes: [' + err + ']');
   }
+};
 
-  return [];
+const insertHardcodedMatches = async () => {
+  const matches = [
+    {
+      matching_item_id: 3,
+      matched_item_id: 15,
+    },
+    {
+      matching_item_id: 2,
+      matched_item_id: 10,
+    },
+    {
+      matching_item_id: 1,
+      matched_item_id: 7,
+    },
+  ];
+
+  try {
+    const client = await pool.connect();
+    const matchesResult = [];
+    for (let match of matches) {
+      const queryResult = await client.query(
+        'INSERT INTO matches (matching_item_id, matched_item_id) VALUES ($1, $2) RETURNING *',
+        [match.matching_item_id, match.matched_item_id]
+      );
+      matchesResult.push(queryResult.rows[0]);
+    }
+    await client.release();
+    return matchesResult;
+  } catch (err) {
+    throw new Error('Error inserting hardcoded matches: [' + err + ']');
+  }
 };
 
 const mockSampleData = async () => {
@@ -391,8 +441,11 @@ const mockHardcodedData = async () => {
   const images = await insertHardcodedImages(items);
   console.log('hardcoded images inserted', images);
 
-  const likes = await insertHardcodedLikes();
+  const likes = await insertHardcodedLikes(true);
   console.log('hardcoded likes inserted', likes);
+
+  const matches = await insertHardcodedMatches(items);
+  console.log('matches', matches);
 };
 
 (async () => {
