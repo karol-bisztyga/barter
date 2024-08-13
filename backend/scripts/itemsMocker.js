@@ -198,7 +198,7 @@ function generateRandomHouseholdObjectName() {
   return `${adjective} ${item}`;
 }
 
-const generateMockedImageUrls = (count) => {
+const generateMockedImageUrls = async (count) => {
   if (count === undefined) {
     count = Math.floor(Math.random() * MAX_ITEM_PICTURES) + 1;
   }
@@ -209,7 +209,8 @@ const generateMockedImageUrls = (count) => {
   const urls = [];
 
   for (let i = 0; i < count; i++) {
-    urls.push(generateImage());
+    const imageUrl = await generateImage();
+    urls.push(imageUrl);
   }
 
   return urls;

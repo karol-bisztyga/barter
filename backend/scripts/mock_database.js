@@ -126,11 +126,11 @@ const insertSampleItems = async (users, hardcodedItems = [], itemsCount = 10) =>
   }
 };
 
-const generateSampleImages = (items) => {
+const generateSampleImages = async (items) => {
   const images = {};
   for (let i = 0; i < items.length; ++i) {
     const item = items[i];
-    images[item.id] = generateMockedImageUrls();
+    images[item.id] = await generateMockedImageUrls();
   }
   return images;
 };
@@ -139,7 +139,7 @@ const insertSampleImages = async (items, hardcodedImages = {}) => {
   const client = await pool.connect();
   const images = Object.keys(hardcodedImages).length
     ? hardcodedImages
-    : generateSampleImages(items);
+    : await generateSampleImages(items);
   try {
     for (let i = 0; i < items.length; ++i) {
       const item = items[i];
@@ -166,7 +166,7 @@ const insertHardcodedUsers = async () => {
       phone: '123456789',
       facebook: null,
       instagram: 'testowyyy11',
-      profilePicture: 'https://picsum.photos/248/201?random=0.43567783413855454',
+      profilePicture: 'https://picsum.photos/id/534/500/360',
       password: 'testowehaslo111',
     },
     {
@@ -184,7 +184,7 @@ const insertHardcodedUsers = async () => {
       phone: '111222333',
       facebook: null,
       instagram: null,
-      profilePicture: 'https://picsum.photos/249/241?random=0.17985964014905065',
+      profilePicture: 'https://picsum.photos/id/195/400/300',
       password: 'testowehaslo333',
     },
     {
@@ -202,7 +202,7 @@ const insertHardcodedUsers = async () => {
       phone: '777333999',
       facebook: null,
       instagram: 'testowy55555',
-      profilePicture: 'https://picsum.photos/226/214?random=0.7296091891251069',
+      profilePicture: 'https://picsum.photos/id/943/200',
       password: 'testowehaslo555',
     },
   ];
