@@ -1,3 +1,5 @@
+import Constants from 'expo-constants';
+
 export type RestMethod = 'GET' | 'OPTIONS' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
 export const executeQuery = async (
@@ -12,12 +14,12 @@ export const executeQuery = async (
     headers: {
       Accept: 'application/json',
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
+      Authorization: `Bearer ${token || ''}`,
     },
     body: '',
   };
 
-  let url = `${process.env.EXPO_PUBLIC_SERVER_HOST}:${process.env.EXPO_PUBLIC_SERVER_PORT}/${rawUrl}`;
+  let url = `http://${Constants.expoConfig?.hostUri?.split(':')[0]}:${process.env.EXPO_PUBLIC_SERVER_PORT}/${rawUrl}`;
 
   if (urlParams) {
     const modifiedUrl = new URL(url);
