@@ -15,12 +15,12 @@ export const getMatches = async (req: AuthRequest, res: Response) => {
           matching_item.id AS matching_item_id,
           matching_item.name AS matching_item_name,
           matching_item.description AS matching_item_description,
-          ARRAY_AGG(matching_item_images.url) AS matching_item_images,
+          ARRAY_AGG(matching_item_images.url ORDER BY matching_item_images.id) AS matching_item_images,
           
           matched_item.id AS matched_item_id,
           matched_item.name AS matched_item_name,
           matched_item.description AS matched_item_description,
-          ARRAY_AGG(matched_item_images.url) AS matched_item_images
+          ARRAY_AGG(matched_item_images.url ORDER BY matched_item_images.id) AS matched_item_images
       FROM
           matches
 
@@ -36,6 +36,8 @@ export const getMatches = async (req: AuthRequest, res: Response) => {
 
       WHERE
           matching_item_id IN (SELECT id FROM items WHERE user_id = $1)
+      OR
+          matched_item_id IN (SELECT id FROM items WHERE user_id = $1)
       GROUP BY
           matches.id, matching_item.id, matched_item.id`,
       [userId]

@@ -9,17 +9,18 @@ import Separator, { SEPARATOR_HEIGHT } from '../../components/Separator';
 import { useItemsContext } from '../../context/ItemsContext';
 import { getUserMatches } from '../../db_utils/getUserMatches';
 import { authorizeUser } from '../../utils/reusableStuff';
+import { useUserContext } from '../../context/UserContext';
 
 const ITEMS_PER_SCREEN = 4;
 
 const ListItem = ({
   height,
-  matchingItem,
-  matchedItem,
+  myItem,
+  theirItem,
 }: {
   height: number;
-  matchingItem: ItemData;
-  matchedItem: ItemData;
+  myItem: ItemData;
+  theirItem: ItemData;
 }) => {
   return (
     <View
@@ -31,7 +32,7 @@ const ListItem = ({
       <View style={styles.itemWrapper}>
         <View style={styles.matchingItem}>
           <Item
-            itemData={matchingItem}
+            itemData={myItem}
             showName={false}
             showDescription={false}
             borderRadius={ItemBorderRadius.all}
@@ -44,7 +45,7 @@ const ListItem = ({
         </View>
         <View style={styles.matchedItem}>
           <Item
-            itemData={matchedItem}
+            itemData={theirItem}
             showName={false}
             showDescription={false}
             borderRadius={ItemBorderRadius.all}
@@ -61,13 +62,14 @@ export default function Chats() {
   const token = authorizeUser();
 
   const itemsContext = useItemsContext();
+  const userContext = useUserContext();
 
-  // array of [matchin item, matched item]
-  const [items, setItems] = useState<MatchData[]>([]);
+  // array of [matching item, matched item]
+  const [matches, setMatches] = useState<MatchData[]>([]);
   useEffect(() => {
     getUserMatches(token)
       .then((matches: MatchData[]) => {
-        setItems(matches);
+        setMatches(matches);
       })
       .catch((e) => {
         console.error('error loading matches', e);
@@ -86,26 +88,43 @@ export default function Chats() {
         }}
       >
         <FlatList
-          data={items}
+          data={matches}
           renderItem={({ item, index }) => {
-            const { matchingItem, matchedItem } = item;
+            const { matchingItem, matchedItem, id } = item;
+            // recognize which item is mine matching or matched and pass it properly to the list item
+            const matchingItemFoundInUserItems =
+              userContext.items.map((item) => item.id).indexOf(matchingItem.id) !== -1;
+            const matchedItemFoundInUserItems =
+              userContext.items.map((item) => item.id).indexOf(matchedItem.id) !== -1;
+            if (matchingItemFoundInUserItems && matchedItemFoundInUserItems) {
+              throw new Error(`both matching and matched item have been found in user's items`);
+            }
+            let myItem: ItemData;
+            let theirItem: ItemData;
+            if (matchingItemFoundInUserItems) {
+              myItem = matchingItem;
+              theirItem = matchedItem;
+            } else if (matchedItemFoundInUserItems) {
+              myItem = matchedItem;
+              theirItem = matchingItem;
+            } else {
+              throw new Error(`neither matching nor matched item has been found in user's items`);
+            }
             return (
               <>
                 <TouchableOpacity
                   onPress={() => {
-                    itemsContext.setUsersItemId(matchingItem.id);
-                    itemsContext.setOthersItem(matchedItem);
+                    itemsContext.setUsersItemId(myItem.id);
+                    itemsContext.setOthersItem(theirItem);
+                    itemsContext.setCurrentMatchId(id);
+                    // pass match id to chat screen so we can use it in socket communication
                     router.push('chats/chat');
                   }}
                   activeOpacity={1}
                 >
-                  <ListItem
-                    height={containerHeight}
-                    matchingItem={matchingItem}
-                    matchedItem={matchedItem}
-                  />
+                  <ListItem height={containerHeight} myItem={myItem} theirItem={theirItem} />
                 </TouchableOpacity>
-                {index < items.length - 1 && <Separator />}
+                {index < matches.length - 1 && <Separator />}
               </>
             );
           }}

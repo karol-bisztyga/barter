@@ -14,6 +14,8 @@ interface ItemsContextState {
   setUsersItemsLikedByTargetItemOwner: React.Dispatch<React.SetStateAction<ItemData[]>>;
   othersItem: ItemData | null;
   setOthersItem: React.Dispatch<React.SetStateAction<ItemData | null>>;
+  currentMatchId: string | null;
+  setCurrentMatchId: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 const initialState: ItemsContextState = {
@@ -23,6 +25,8 @@ const initialState: ItemsContextState = {
   setUsersItemsLikedByTargetItemOwner: () => {},
   othersItem: null,
   setOthersItem: () => {},
+  currentMatchId: null,
+  setCurrentMatchId: () => {},
 };
 
 export const ItemsContext = createContext<ItemsContextState | null>(initialState);
@@ -41,6 +45,7 @@ export const ItemsContextProvider: FC<{ children: ReactNode }> = ({ children }) 
   const [usersItemsLikedByTargetItemOwner, setUsersItemsLikedByTargetItemOwner] = useState<
     ItemData[]
   >([]);
+  const [currentMatchId, setCurrentMatchId] = useState<string | null>(null);
 
   return (
     <ItemsContext.Provider
@@ -51,6 +56,8 @@ export const ItemsContextProvider: FC<{ children: ReactNode }> = ({ children }) 
         setOthersItem,
         usersItemsLikedByTargetItemOwner,
         setUsersItemsLikedByTargetItemOwner,
+        currentMatchId,
+        setCurrentMatchId,
       }}
     >
       {children}

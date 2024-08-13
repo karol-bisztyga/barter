@@ -6,19 +6,21 @@ export interface AuthRequest extends Request {
   user?: jwt.JwtPayload;
 }
 
+export const verifyToken = (token: string) => {
+  const decoded = jwt.verify(token, jwtSecret);
+  if (typeof decoded === 'string') {
+    throw new Error('Token validation failed');
+  }
+  return decoded;
+};
+
 export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
   const token = req.header('Authorization')?.replace('Bearer ', '');
-
   if (!token) {
     return res.status(401).send({ message: 'Access denied. No token provided' });
   }
-
   try {
-    const decoded = jwt.verify(token, jwtSecret);
-    if (typeof decoded === 'string') {
-      throw new Error('Token validation failed');
-    }
-    req.user = decoded;
+    req.user = verifyToken(token);
     next();
   } catch (ex) {
     res.status(400).send({ message: 'Invalid token' });

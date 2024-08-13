@@ -50,10 +50,10 @@ export const getUserItems = async (req: AuthRequest, res: Response) => {
         items.id AS id,
         items.name AS name,
         items.description AS description,
-        ARRAY_AGG(items_images.url) AS images
+        ARRAY_AGG(items_images.url ORDER BY items_images.id) AS images
       FROM 
           items
-      LEFT JOIN 
+      JOIN 
           items_images ON items.id = items_images.item_id
       WHERE 
           items.user_id = $1

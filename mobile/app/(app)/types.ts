@@ -24,10 +24,12 @@ export enum ItemNamePlacement {
 
 export type ChatMessageUser = 'self' | 'other';
 
+export type ChatMessageType = 'message' | 'status';
+
 export type ChatMessage = {
-  id: string;
   content: string;
-  user: ChatMessageUser;
+  type: ChatMessageType;
+  userType?: ChatMessageUser;
 };
 
 export type UserData = {
