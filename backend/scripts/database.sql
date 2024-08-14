@@ -56,6 +56,7 @@ CREATE TABLE messages (
     id SERIAL PRIMARY KEY,
     sender_id INTEGER REFERENCES users(id) NOT NULL,
     match_id INTEGER REFERENCES matches(id) NOT NULL,
-    message TEXT NOT NULL,
+    message_type TEXT NOT NULL,
+    content TEXT NOT NULL,
     date_created BIGINT DEFAULT (EXTRACT(EPOCH FROM NOW()) * 1000)::BIGINT
 );
