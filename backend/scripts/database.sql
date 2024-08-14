@@ -17,7 +17,8 @@ CREATE TABLE users (
     instagram VARCHAR(50),
     profile_picture VARCHAR(100),
     password VARCHAR(100) NOT NULL,
-    date_created BIGINT DEFAULT (EXTRACT(EPOCH FROM NOW()) * 1000)::BIGINT
+    date_created BIGINT DEFAULT (EXTRACT(EPOCH FROM NOW()) * 1000)::BIGINT,
+    date_edited BIGINT
 );
 
 CREATE TABLE items (

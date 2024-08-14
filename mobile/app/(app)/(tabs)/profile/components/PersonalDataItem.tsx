@@ -4,6 +4,8 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import * as Clipboard from 'expo-clipboard';
 import { UserData } from '../../../types';
 import { useUserContext } from '../../../context/UserContext';
+import { useSessionContext } from '../../../../SessionContext';
+import { updateUser } from '../../../db_utils/updateUser';
 
 const validateValue = (/*value: string*/) => {
   // todo handle this
@@ -52,26 +54,40 @@ const StandardTools = ({
 };
 
 const EditingTools = ({
+  name,
+  value,
   editingValue,
   setValue,
   setEditing,
 }: {
+  name: string;
+  value: string;
   editingValue: string;
   setValue: (_: string) => void;
   setEditing: (_: boolean) => void;
 }) => {
+  const sessionContext = useSessionContext();
   return (
     <>
       <TouchableOpacity
         style={styles.contactItemIconWrapper}
         activeOpacity={1}
-        onPress={() => {
+        onPress={async () => {
           // todo validation
           if (!validateValue()) {
             return;
           }
-          setEditing(false);
-          setValue(editingValue);
+          if (value === editingValue) {
+            setEditing(false);
+            return;
+          }
+          try {
+            const updateDatabaseResult = await updateUser(sessionContext, name, editingValue);
+            setEditing(false);
+            setValue(updateDatabaseResult[name]);
+          } catch (e) {
+            console.error('error updating user', e);
+          }
         }}
       >
         <FontAwesome size={20} name="check" />
@@ -145,7 +161,9 @@ const PersonalDataItem = ({
       )}
       {editing ? (
         <EditingTools
+          name={name}
           editingValue={editingValue}
+          value={value}
           setValue={setValueWrapper}
           setEditing={setEditing}
         />
