@@ -14,6 +14,7 @@ const PersonalData = () => {
   }
 
   delete data.id;
+  delete data.profilePicture;
 
   console.log('user data', data);
 
