@@ -28,6 +28,9 @@ const INPUT_WRAPPER_HEIGHT = 70;
 const ITEMS_WRPPER_HEIGHT = 200;
 const MESSAGES_PER_CHUNK = 10;
 
+const NO_MORE_MESSAGES_LABEL = 'No more messages';
+const NO_MESSAGES_YET_LABEL = 'No messages yet';
+
 const Chat = () => {
   const token = authorizeUser();
 
@@ -76,12 +79,17 @@ const Chat = () => {
   const socketUrl = `http://${Constants.expoConfig?.hostUri?.split(':')[0]}:${process.env.EXPO_PUBLIC_SERVER_PORT}`;
 
   const onMessage = (message: ChatMessage) => {
-    setMessages((messages) => [message, ...messages]);
+    setMessages((messages) => {
+      if (messages.length === 1 && messages[0].content === NO_MESSAGES_YET_LABEL) {
+        return [message];
+      }
+      return [message, ...messages];
+    });
   };
 
   const onInitialMessages = (initialMessages: ChatMessage[]) => {
     if (!initialMessages.length) {
-      setMessages([generateStatusMessage('No messages yet')]);
+      setMessages([generateStatusMessage(NO_MESSAGES_YET_LABEL)]);
     } else {
       setLoadMoreMessagesEnabled(true);
       setMessages(initialMessages);
@@ -142,13 +150,13 @@ const Chat = () => {
         token
       );
       const newMessages = response.data;
-      console.log('load more messages response', newMessages);
 
       if (
         newMessages.length < MESSAGES_PER_CHUNK &&
-        messages.at(-1)?.content !== 'No more messages'
+        messages.at(-1)?.content !== NO_MORE_MESSAGES_LABEL &&
+        messages.length > MESSAGES_PER_CHUNK
       ) {
-        newMessages.push(generateStatusMessage('No more messages'));
+        newMessages.push(generateStatusMessage(NO_MORE_MESSAGES_LABEL));
         setLoadMoreMessagesEnabled(false);
       }
       setMessages([...messages, ...newMessages]);
@@ -239,10 +247,7 @@ const Chat = () => {
             keyExtractor={(message: ChatMessage) =>
               message.id || `${message.type}-${message.content}`
             }
-            onEndReached={() => {
-              console.log('>>> on end reached', messages.length);
-              loadMoreMessages();
-            }}
+            onEndReached={loadMoreMessages}
             onEndReachedThreshold={0.1}
             ListFooterComponent={() => {
               if (messages.length) {
