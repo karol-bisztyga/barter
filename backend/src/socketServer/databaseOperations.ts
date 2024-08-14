@@ -1,12 +1,10 @@
 import pool from '../db';
 import { ChatMessage } from '../types';
 
-export const getMessages = async (matchId: string, offset: number = 0, limit: number = 10) => {
+export const getMessages = async (matchId: string, offset: string = '0', limit: string = '10') => {
   if (!matchId) {
     throw new Error('get messages: match id is not provided');
   }
-
-  console.log('> reading messages from db', matchId);
 
   const queryResult = await pool.query(
     'SELECT * FROM messages WHERE match_id = $1 ORDER BY date_created DESC LIMIT $2 OFFSET $3',
@@ -23,7 +21,6 @@ export const getMessages = async (matchId: string, offset: number = 0, limit: nu
       dateCreated: row.date_created,
     };
   });
-  console.log('get messages result', result);
 
   return result;
 };

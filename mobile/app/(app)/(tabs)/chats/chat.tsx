@@ -22,15 +22,18 @@ import { authorizeUser } from '../../utils/reusableStuff';
 import { useUserContext } from '../../context/UserContext';
 import Constants from 'expo-constants';
 import { useSessionContext } from '../../../SessionContext';
+import { executeQuery } from '../../db_utils/executeQuery';
 
 const INPUT_WRAPPER_HEIGHT = 70;
 const ITEMS_WRPPER_HEIGHT = 200;
+const MESSAGES_PER_CHUNK = 10;
 
 const Chat = () => {
   const token = authorizeUser();
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [initialScrollPerformed, setInitialScrollPerformed] = useState(false);
+  const [loadMoreMessagesEnabled, setLoadMoreMessagesEnabled] = useState(false);
   const [newMessage, setNewMessage] = useState('');
   const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
 
@@ -45,9 +48,11 @@ const Chat = () => {
 
   const { usersItemId, othersItem, currentMatchId } = itemsContext;
 
-  const noMessagesStatusMessage: ChatMessage = {
-    content: 'No messages yet',
-    type: 'status',
+  const generateStatusMessage = (content: string): ChatMessage => {
+    return {
+      content: content,
+      type: 'status',
+    };
   };
 
   if (!usersItemId || !othersItem || !currentMatchId) {
@@ -76,8 +81,9 @@ const Chat = () => {
 
   const onInitialMessages = (initialMessages: ChatMessage[]) => {
     if (!initialMessages.length) {
-      setMessages([noMessagesStatusMessage]);
+      setMessages([generateStatusMessage('No messages yet')]);
     } else {
+      setLoadMoreMessagesEnabled(true);
       setMessages(initialMessages);
     }
   };
@@ -119,9 +125,37 @@ const Chat = () => {
     };
   }, []);
 
-  useEffect(() => {
-    console.log('messages changed', messages);
-  }, [messages]);
+  const loadMoreMessages = async () => {
+    try {
+      if (!loadMoreMessagesEnabled) {
+        return;
+      }
+      const response = await executeQuery(
+        'messages',
+        'GET',
+        {
+          matchId: currentMatchId,
+          offset: `${messages.length}`,
+          limit: `${MESSAGES_PER_CHUNK}`,
+        },
+        null,
+        token
+      );
+      const newMessages = response.data;
+      console.log('load more messages response', newMessages);
+
+      if (
+        newMessages.length < MESSAGES_PER_CHUNK &&
+        messages.at(-1)?.content !== 'No more messages'
+      ) {
+        newMessages.push(generateStatusMessage('No more messages'));
+        setLoadMoreMessagesEnabled(false);
+      }
+      setMessages([...messages, ...newMessages]);
+    } catch (e) {
+      console.error('error getting messages', e);
+    }
+  };
 
   const sendMessage = () => {
     if (newMessage.length === 0) {
@@ -207,7 +241,7 @@ const Chat = () => {
             }
             onEndReached={() => {
               console.log('>>> on end reached', messages.length);
-              // loadMessages();
+              loadMoreMessages();
             }}
             onEndReachedThreshold={0.1}
             ListFooterComponent={() => {

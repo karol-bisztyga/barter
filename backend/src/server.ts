@@ -5,6 +5,7 @@ import authRoutes from './routes/authRoutes';
 import itemRoutes from './routes/itemRoutes';
 import likeRoutes from './routes/likeRoutes';
 import matchRoutes from './routes/matchRoutes';
+import messageRoutes from './routes/messageRoutes';
 import { runSocketServer } from './socketServer/socketServer';
 
 const app = express();
@@ -14,7 +15,7 @@ const httpServer = http.createServer(app);
 app.use(bodyParser.json());
 
 app.use('/auth', authRoutes);
-app.use('/', [itemRoutes, likeRoutes, matchRoutes]);
+app.use('/', [itemRoutes, likeRoutes, matchRoutes, messageRoutes]);
 
 const { SERVER_PORT } = process.env;
 
