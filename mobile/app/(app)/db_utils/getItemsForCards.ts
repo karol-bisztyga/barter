@@ -1,18 +1,19 @@
+import { SessionContextState } from '../../SessionContext';
 import { ItemData } from '../types';
-import { executeQuery } from './executeQuery';
+import { executeProtectedQuery } from './executeProtectedQuery';
 
 // todo we need to send the card ids we already have and exclude them because now we re-pull the same cards (they're not like yet but they're in the local 'stack')
 export const getItemsForCards = async (
-  token: string,
+  sessionContext: SessionContextState,
   currentCardsIds: string[],
   limit: number = 5
 ) => {
-  const response = await executeQuery(
+  const response = await executeProtectedQuery(
+    sessionContext,
     'cards',
     'GET',
     { limit: limit.toString(), currentCardsIds: JSON.stringify(currentCardsIds) },
-    null,
-    token
+    null
   );
   if (response.ok) {
     const data = response.data.map((dataItem: ItemData) => {

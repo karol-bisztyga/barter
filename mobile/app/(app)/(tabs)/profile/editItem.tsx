@@ -27,7 +27,7 @@ import { removeItem } from '../../db_utils/removeItem';
 const { width } = Dimensions.get('window');
 
 const EditItem = () => {
-  const token = authorizeUser();
+  const sessionContext = authorizeUser();
 
   const imageSize = (width * 3) / 4;
 
@@ -35,6 +35,7 @@ const EditItem = () => {
 
   const editItemContext = useEditItemContext();
   const userContext = useUserContext();
+
   const usersItem = userContext.findItemById(usersItemId);
 
   const [name, setName] = useState<string>(usersItem?.item.name ?? '');
@@ -165,7 +166,7 @@ const EditItem = () => {
                   // todo remove chats related to this item
                   const newItems = [...userContext.items];
                   try {
-                    const result = await removeItem(usersItem.item.id, token);
+                    const result = await removeItem(sessionContext, usersItem.item.id);
                     if (result) {
                       newItems.splice(usersItem.index, 1);
                       userContext.setItems(newItems);
@@ -208,7 +209,11 @@ const EditItem = () => {
                 };
 
                 try {
-                  const result = await updateItem(updatedItem, checkIfImagesChanged(), token);
+                  const result = await updateItem(
+                    sessionContext,
+                    updatedItem,
+                    checkIfImagesChanged()
+                  );
                   newItems[usersItem.index] = { ...newItems[usersItem.index], ...result };
                 } catch (e) {
                   console.error('error updating item', e);
@@ -223,7 +228,7 @@ const EditItem = () => {
                   description,
                 };
                 try {
-                  const result = await addItem(newItem, token);
+                  const result = await addItem(sessionContext, newItem);
                   newItems.push(result);
                 } catch (e) {
                   console.error('error adding item', e);

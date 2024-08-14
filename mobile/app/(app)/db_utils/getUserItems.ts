@@ -1,7 +1,8 @@
-import { executeQuery } from './executeQuery';
+import { SessionContextState } from '../../SessionContext';
+import { executeProtectedQuery } from './executeProtectedQuery';
 
-export const getUserItems = async (token: string) => {
-  const response = await executeQuery('items', 'GET', null, null, token);
+export const getUserItems = async (sessionContext: SessionContextState) => {
+  const response = await executeProtectedQuery(sessionContext, 'items', 'GET', null, null);
   if (response.ok) {
     return response.data;
   } else {

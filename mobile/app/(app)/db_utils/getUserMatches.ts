@@ -1,10 +1,11 @@
-import { executeQuery } from './executeQuery';
+import { SessionContextState } from '../../SessionContext';
+import { executeProtectedQuery } from './executeProtectedQuery';
 
-export const getUserMatches = async (token: string) => {
-  const response = await executeQuery('matches', 'GET', null, null, token);
+export const getUserMatches = async (sessionContext: SessionContextState) => {
+  const response = await executeProtectedQuery(sessionContext, 'matches', 'GET', null, null);
   if (response.ok) {
     return response.data;
   } else {
-    throw new Error('get user items error: ' + response.data.message);
+    throw new Error('get user matches error: ' + response.data.message);
   }
 };

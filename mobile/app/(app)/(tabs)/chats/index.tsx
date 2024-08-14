@@ -59,7 +59,7 @@ const ListItem = ({
 };
 
 export default function Chats() {
-  const token = authorizeUser();
+  const sessionContext = authorizeUser();
 
   const itemsContext = useItemsContext();
   const userContext = useUserContext();
@@ -67,7 +67,7 @@ export default function Chats() {
   // array of [matching item, matched item]
   const [matches, setMatches] = useState<MatchData[]>([]);
   useEffect(() => {
-    getUserMatches(token)
+    getUserMatches(sessionContext)
       .then((matches: MatchData[]) => {
         setMatches(matches);
       })

@@ -11,7 +11,7 @@ import { authorizeUser } from '../../utils/reusableStuff';
 const { width } = Dimensions.get('window');
 
 const MatchModal = () => {
-  const token = authorizeUser();
+  const sessionContext = authorizeUser();
   const userContext = useUserContext();
   const itemsContext = useItemsContext();
 
@@ -98,7 +98,7 @@ const MatchModal = () => {
                     myDefaultItemId.current !== itemsContext.usersItemId
                   ) {
                     const updateMatchResult = await updateMatchMatchingItem(
-                      token,
+                      sessionContext,
                       usersItemId,
                       myDefaultItemId.current,
                       othersItem.id

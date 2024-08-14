@@ -17,7 +17,7 @@ const LOADED_ITEMS_CAPACITY = 5;
 const ITEMS_LOAD_TRESHOLD = 3;
 
 export default function Swipe() {
-  const token = authorizeUser();
+  const sessionContext = authorizeUser();
 
   const [cards, setCards] = useState<ItemData[]>([]);
   const [emptyCardsResponseReceived, setEmptyCardsResponseReceived] = useState<boolean>(false);
@@ -29,7 +29,7 @@ export default function Swipe() {
     if (!userContext.data) {
       throw new Error('user data not provided');
     }
-    getUserItems(token)
+    getUserItems(sessionContext)
       .then((items) => {
         userContext.setItems(items);
       })
@@ -54,7 +54,7 @@ export default function Swipe() {
           return currentCard;
         }
         const itemsLoaded = await getItemsForCards(
-          token,
+          sessionContext,
           cards.map((card) => card.id),
           LOADED_ITEMS_CAPACITY
         );
@@ -64,7 +64,7 @@ export default function Swipe() {
         }
         updatedCards = [...itemsLoaded, ...updatedCards];
       } catch (e) {
-        console.error('error loading cards', e);
+        console.error('error loading cards more', e);
         return null;
       }
     }
@@ -80,7 +80,7 @@ export default function Swipe() {
           return;
         }
         const itemsLoaded = await getItemsForCards(
-          token,
+          sessionContext,
           cards.map((card) => card.id),
           LOADED_ITEMS_CAPACITY
         );
@@ -91,7 +91,7 @@ export default function Swipe() {
 
         setCards(itemsLoaded);
       } catch (e) {
-        console.error('error loading cards', e);
+        console.error('error loading cards initially', e);
       }
     })();
   }, []);
@@ -105,7 +105,7 @@ export default function Swipe() {
 
   const sendLike = async (likedItemId: string, decision: boolean) => {
     try {
-      return await addLike(likedItemId, decision, token);
+      return await addLike(sessionContext, likedItemId, decision);
     } catch (e) {
       console.error('error sending like', e);
     }

@@ -1,7 +1,14 @@
-import { executeQuery } from './executeQuery';
+import { SessionContextState } from '../../SessionContext';
+import { executeProtectedQuery } from './executeProtectedQuery';
 
-export const removeItem = async (itemId: string, token: string) => {
-  const response = await executeQuery(`items/${itemId}`, 'DELETE', null, null, token);
+export const removeItem = async (sessionContext: SessionContextState, itemId: string) => {
+  const response = await executeProtectedQuery(
+    sessionContext,
+    `items/${itemId}`,
+    'DELETE',
+    null,
+    null
+  );
   if (response.ok) {
     return response.data;
   } else {

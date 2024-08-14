@@ -1,18 +1,17 @@
+import { SessionContextState } from '../../SessionContext';
 import { ItemData } from '../types';
-import { executeQuery } from './executeQuery';
+import { executeProtectedQuery } from './executeProtectedQuery';
 
-export const updateItem = async (item: ItemData, imagesChanged: boolean, token: string) => {
-  const response = await executeQuery(
-    `items/${item.id}`,
-    'PUT',
-    null,
-    {
-      name: item.name,
-      images: imagesChanged ? JSON.stringify(item.images) : '',
-      description: item.description,
-    },
-    token
-  );
+export const updateItem = async (
+  sessionContext: SessionContextState,
+  item: ItemData,
+  imagesChanged: boolean
+) => {
+  const response = await executeProtectedQuery(sessionContext, `items/${item.id}`, 'PUT', null, {
+    name: item.name,
+    images: imagesChanged ? JSON.stringify(item.images) : '',
+    description: item.description,
+  });
   if (response.ok) {
     const responseData = { ...response.data };
     if (responseData.images) {

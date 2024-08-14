@@ -21,8 +21,7 @@ import { DefaultEventsMap } from '@socket.io/component-emitter';
 import { authorizeUser } from '../../utils/reusableStuff';
 import { useUserContext } from '../../context/UserContext';
 import Constants from 'expo-constants';
-import { useSessionContext } from '../../../SessionContext';
-import { executeQuery } from '../../db_utils/executeQuery';
+import { executeProtectedQuery } from '../../db_utils/executeProtectedQuery';
 
 const INPUT_WRAPPER_HEIGHT = 70;
 const ITEMS_WRPPER_HEIGHT = 200;
@@ -32,7 +31,7 @@ const NO_MORE_MESSAGES_LABEL = 'No more messages';
 const NO_MESSAGES_YET_LABEL = 'No messages yet';
 
 const Chat = () => {
-  const token = authorizeUser();
+  const sessionContext = authorizeUser();
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [initialScrollPerformed, setInitialScrollPerformed] = useState(false);
@@ -46,7 +45,6 @@ const Chat = () => {
   const flatListRef = useRef<FlatList>(null);
 
   const userContext = useUserContext();
-  const sessionContext = useSessionContext();
   const itemsContext = useItemsContext();
 
   const { usersItemId, othersItem, currentMatchId } = itemsContext;
@@ -99,7 +97,7 @@ const Chat = () => {
   useEffect(() => {
     const newSocket = io(socketUrl, {
       auth: {
-        token,
+        token: sessionContext.session,
       },
       query: {
         matchId: currentMatchId,
@@ -138,7 +136,8 @@ const Chat = () => {
       if (!loadMoreMessagesEnabled) {
         return;
       }
-      const response = await executeQuery(
+      const response = await executeProtectedQuery(
+        sessionContext,
         'messages',
         'GET',
         {
@@ -146,8 +145,7 @@ const Chat = () => {
           offset: `${messages.length}`,
           limit: `${MESSAGES_PER_CHUNK}`,
         },
-        null,
-        token
+        null
       );
       const newMessages = response.data;
 

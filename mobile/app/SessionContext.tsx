@@ -9,7 +9,7 @@ import { UserData } from './(app)/types';
  * othersItem - this is any foreign item, so we don't have it in other context nad we have to store the data here
  */
 
-interface SessionContextState {
+export interface SessionContextState {
   signIn: (email: string, password: string) => Promise<UserData | null>;
   signOut: () => void;
   session?: string | null;
