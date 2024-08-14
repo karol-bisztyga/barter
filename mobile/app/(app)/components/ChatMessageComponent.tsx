@@ -1,12 +1,21 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { ChatMessage } from '../types';
+import { useUserContext } from '../context/UserContext';
+
+const { width } = Dimensions.get('window');
 
 export default function ChatMessageComponent({ message }: { message: ChatMessage }) {
+  const userContext = useUserContext();
+
+  if (!userContext.data?.id) {
+    throw new Error('chat message component: user id not provided');
+  }
+
   const accordingStyle =
     message.type === 'status'
       ? styles.statusMesssage
-      : message.userType === 'self'
+      : message.userId === userContext.data?.id
         ? styles.myMessage
         : styles.theirMessage;
   return (
@@ -28,12 +37,14 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 20,
   },
   myMessage: {
-    marginLeft: 100,
+    alignSelf: 'flex-end',
+    marginLeft: width / 3,
     borderBottomLeftRadius: 20,
     backgroundColor: '#47469e',
   },
   theirMessage: {
-    marginRight: 100,
+    alignSelf: 'flex-start',
+    marginRight: width / 3,
     backgroundColor: '#a6aebd',
     borderBottomRightRadius: 20,
   },

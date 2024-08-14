@@ -31,6 +31,7 @@ export const executeQuery = async (
     config['body'] = JSON.stringify(body);
   }
 
+  // todo on every query if the token expired we should log off the user
   const response = await fetch(url, config);
   const data = await response.json();
   // console.log('response', data);

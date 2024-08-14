@@ -27,9 +27,11 @@ export type ChatMessageUser = 'self' | 'other';
 export type ChatMessageType = 'message' | 'status';
 
 export type ChatMessage = {
+  id?: string;
   content: string;
   type: ChatMessageType;
-  userType?: ChatMessageUser;
+  userId?: string;
+  dateCreated?: number;
 };
 
 export type UserData = {

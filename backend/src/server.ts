@@ -5,7 +5,7 @@ import authRoutes from './routes/authRoutes';
 import itemRoutes from './routes/itemRoutes';
 import likeRoutes from './routes/likeRoutes';
 import matchRoutes from './routes/matchRoutes';
-import { runSocketServer } from './socketServer';
+import { runSocketServer } from './socketServer/socketServer';
 
 const app = express();
 

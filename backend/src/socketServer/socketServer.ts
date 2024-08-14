@@ -1,16 +1,14 @@
 import http from 'http';
 import { Server, Socket } from 'socket.io';
-import { verifyToken } from './middlewares/authMiddleware';
-
-type UserData = {
-  userId: string;
-  matchId: string;
-};
+import { verifyToken } from '../middlewares/authMiddleware';
+import { ChatMessage, UserData } from '../types';
+import { addNewMessage, getMessages } from './databaseOperations';
 
 const socketsToUsers: Record<string, UserData> = {};
 const matchesToSockets: Record<string, string[]> = {};
 
-const registerUser = (userId: string, socketId: string, matchId: string) => {
+const registerUser = (userId: string, socket: Socket, matchId: string) => {
+  const socketId = socket.id;
   console.log('registering user', socketId, matchId);
   socketsToUsers[socketId] = { userId, matchId };
   if (!matchesToSockets[matchId] || !matchesToSockets[matchId].length) {
@@ -18,6 +16,7 @@ const registerUser = (userId: string, socketId: string, matchId: string) => {
   } else {
     matchesToSockets[matchId].push(socketId);
   }
+  socket.join(matchId);
 };
 
 const unregisterUser = (socketId: string) => {
@@ -33,22 +32,34 @@ const unregisterUser = (socketId: string) => {
   delete socketsToUsers[socketId];
 };
 
-const onConnection = (server: Server, socket: Socket) => {
+const onConnection = async (server: Server, socket: Socket) => {
   console.log('A user connected:', socket.id);
-  console.log('initial user data', socket.handshake);
 
   const userToken = socket.handshake.auth.token;
   const matchId: string = socket.handshake.query.matchId as string;
 
-  const verifyTokenResult = verifyToken(userToken);
+  let verifyTokenResult;
+  try {
+    verifyTokenResult = verifyToken(userToken);
+  } catch (e) {
+    console.error('error verifying token', e);
+    server.to(socket.id).emit('error', e);
+    socket.disconnect();
+    return;
+  }
 
   const userId = verifyTokenResult.id;
   console.log('verification', userId, matchId);
 
-  registerUser(userId, socket.id, matchId);
+  registerUser(userId, socket, matchId);
 
-  socket.on('message', (data: string) => {
-    onMessage(server, socket.id, data);
+  const initialMessages = await getMessages(matchId);
+
+  console.log('sending initial messages to', socket.id);
+  server.to(socket.id).emit('initialMessages', JSON.stringify(initialMessages));
+
+  socket.on('message', async (data: ChatMessage) => {
+    await onMessage(server, socket.id, data);
   });
 
   socket.on('disconnect', () => {
@@ -57,13 +68,20 @@ const onConnection = (server: Server, socket: Socket) => {
   });
 };
 
-const onMessage = (server: Server, socketId: string, data: string) => {
+const onMessage = async (server: Server, socketId: string, data: ChatMessage) => {
   const { matchId, userId } = socketsToUsers[socketId];
-  console.log('Message received from[', socketId, userId, '] to match ', matchId, ':', data);
+  console.log('Message received from[', socketId, userId, '] to match', matchId, ':', data);
   const socketsInMatch = matchesToSockets[matchId];
-  console.log('sockets in this match:', socketsInMatch); // todo test this with 2 devices
+  console.log('sockets in this match:', socketsInMatch);
 
-  server.emit('message', data);
+  const dbResult = await addNewMessage(matchId, {
+    content: data.content,
+    type: 'message',
+    userId: userId,
+  });
+  console.log('added message to database', dbResult);
+
+  server.to(matchId).emit('message', data);
 };
 
 export const runSocketServer = (httpServer: http.Server) => {
