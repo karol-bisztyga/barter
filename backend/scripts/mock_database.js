@@ -419,6 +419,119 @@ const insertHardcodedMatches = async () => {
   }
 };
 
+const insertHarcodedMessages = async () => {
+  const messages = [
+    {
+      authorId: 1,
+      matchId: 3,
+      content: `Hey Jamie, I noticed you have a blender you're looking to trade. I have a set of kitchen knives that I don't use much. Would you be interested in swapping?`,
+    },
+    {
+      authorId: 3,
+      matchId: 3,
+      content: `Hi Alex! Yeah, I'm definitely open to that. The blender's in really good condition, I just don't need it anymore. What kind of knives do you have?`,
+    },
+    {
+      authorId: 1,
+      matchId: 3,
+      content: `It's a five-piece stainless steel set with a chef's knife, a paring knife, a bread knife, and a couple of utility knives. They're almost new—I just prefer my other set.`,
+    },
+    {
+      authorId: 3,
+      matchId: 3,
+      content: `That sounds perfect. I've been meaning to upgrade my knife set, so this could work out great. The blender is about a year old, but I've only used it a handful of times. It's still powerful and blends everything smoothly.`,
+    },
+    {
+      authorId: 1,
+      matchId: 3,
+      content: `Awesome, that sounds ideal! I've been wanting a blender for smoothies and soups. Does it come with any extra attachments?`,
+    },
+    {
+      authorId: 3,
+      matchId: 3,
+      content: `Yeah, it comes with a couple of different blades and a smaller cup for making single servings. All the parts are in great shape, and I've kept everything clean and well-maintained.`,
+    },
+    {
+      authorId: 1,
+      matchId: 3,
+      content: `That's good to hear. I think the knives will be a nice upgrade for you too. They've got a good weight to them, and they stay sharp for a long time.`,
+    },
+    {
+      authorId: 3,
+      matchId: 3,
+      content: `I'm definitely excited to try them out. I've been using the same old knives for years, so it'll be a nice change. When do you think we can meet to make the exchange?`,
+    },
+    {
+      authorId: 1,
+      matchId: 3,
+      content: `How does tomorrow evening sound? I'm usually free after 6 PM.`,
+    },
+    {
+      authorId: 3,
+      matchId: 3,
+      content: `Tomorrow evening works for me too. Do you want to meet somewhere in between? I'm on the west side of town.`,
+    },
+    {
+      authorId: 1,
+      matchId: 3,
+      content: `I'm on the east side, but I don't mind meeting halfway. How about the park near Main Street? It's pretty central and usually not too busy in the evenings.`,
+    },
+    { authorId: 3, matchId: 3, content: `That sounds good to me. How about we meet at 6:30 PM?` },
+    {
+      authorId: 1,
+      matchId: 3,
+      content: `Perfect. I'll bring the knife set with me. Should I look out for anything specific when I'm picking up the blender?`,
+    },
+    {
+      authorId: 3,
+      matchId: 3,
+      content: `Just make sure the blades and the cup are there. I'll have everything packed up in the original box, so it should be easy to spot. Anything I need to know about the knives?`,
+    },
+    {
+      authorId: 1,
+      matchId: 3,
+      content: `Nope, they're all in excellent condition. Just make sure you get a good feel for them when we meet. They have a nice balance, and I think you'll like the grip.`,
+    },
+    {
+      authorId: 3,
+      matchId: 3,
+      content: `Sounds great! I'm really looking forward to the trade. This is going to be a win-win for both of us, I think.`,
+    },
+    {
+      authorId: 1,
+      matchId: 3,
+      content: `I agree! I've been searching for a good blender for a while now, and this seems like the perfect match. Glad we could work something out.`,
+    },
+    {
+      authorId: 3,
+      matchId: 3,
+      content: `Me too! It's always nice to find someone who needs what you have and has what you need. I'll see you tomorrow at 6:30 PM at the park near Main Street.`,
+    },
+    { authorId: 1, matchId: 3, content: `Exactly! Looking forward to it. See you then, Jamie!` },
+    { authorId: 3, matchId: 3, content: `See you tomorrow, Alex! Don't forget the knives!` },
+    { authorId: 1, matchId: 3, content: `And you don't forget the blender! 😊` },
+    { authorId: 3, matchId: 3, content: `Haha, I won't! Have a great night, Alex.` },
+    { authorId: 1, matchId: 3, content: `You too, Jamie! Take care.` },
+  ];
+
+  try {
+    const client = await pool.connect();
+    const result = [];
+    for (let message of messages) {
+      const { authorId, content, matchId } = message;
+      const queryResult = await client.query(
+        'INSERT INTO messages (sender_id, match_id, message_type, content) VALUES ($1, $2, $3, $4) RETURNING *',
+        [authorId, matchId, 'message', content]
+      );
+      result.push(queryResult.rows[0]);
+    }
+    await client.release();
+    return result;
+  } catch (err) {
+    throw new Error('Error inserting hardcoded messages: [' + err + ']');
+  }
+};
+
 const mockSampleData = async () => {
   const users = await insertSampleUsers();
   console.log('users', users);
@@ -446,6 +559,9 @@ const mockHardcodedData = async () => {
 
   const matches = await insertHardcodedMatches(items);
   console.log('matches', matches);
+
+  const messages = await insertHarcodedMessages(items);
+  console.log('messages', messages);
 };
 
 (async () => {
