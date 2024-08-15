@@ -47,6 +47,7 @@ function Layout() {
         })}
       />
       <Stack.Screen name="addPicture" options={headerBackButtonOptions()} />
+      <Stack.Screen name="camera" options={headerBackButtonOptions()} />
     </Stack>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button, Dimensions, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import * as ImagePicker from 'expo-image-picker';
@@ -12,11 +12,12 @@ const { width } = Dimensions.get('window');
 const AddPicture = () => {
   const { imageType, tempImage, setTempImage } = useEditItemContext();
   const userContext = useUserContext();
-  if (tempImage) {
-    throw new Error('temp image has not been cleared properly');
-  }
 
-  const [image, setImage] = useState<string>('');
+  const [image, setImage] = useState<string | null>(tempImage);
+
+  useEffect(() => {
+    setImage(tempImage);
+  }, [tempImage]);
 
   const pickImage = async () => {
     // No permissions request is necessary for launching the image library
@@ -60,7 +61,7 @@ const AddPicture = () => {
         activeOpacity={1}
         style={styles.iconWrapper}
         onPress={() => {
-          console.log('use camera');
+          router.push('profile/camera');
         }}
       >
         <FontAwesome size={30} name="camera" />
