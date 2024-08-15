@@ -20,8 +20,8 @@ import io, { Socket } from 'socket.io-client';
 import { DefaultEventsMap } from '@socket.io/component-emitter';
 import { authorizeUser } from '../../utils/reusableStuff';
 import { useUserContext } from '../../context/UserContext';
-import Constants from 'expo-constants';
 import { executeProtectedQuery } from '../../db_utils/executeProtectedQuery';
+import { getServerAddress } from '../../utils/networkUtils';
 
 const INPUT_WRAPPER_HEIGHT = 70;
 const ITEMS_WRPPER_HEIGHT = 200;
@@ -74,8 +74,6 @@ const Chat = () => {
     flatListRef?.current?.scrollToIndex({ index: 0, animated: false });
   };
 
-  const socketUrl = `http://${Constants.expoConfig?.hostUri?.split(':')[0]}:${process.env.EXPO_PUBLIC_SERVER_PORT}`;
-
   const onMessage = (message: ChatMessage) => {
     setMessages((messages) => {
       if (messages.length === 1 && messages[0].content === NO_MESSAGES_YET_LABEL) {
@@ -95,7 +93,7 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    const newSocket = io(socketUrl, {
+    const newSocket = io(getServerAddress(), {
       auth: {
         token: sessionContext.session,
       },

@@ -1,4 +1,4 @@
-import Constants from 'expo-constants';
+import { getServerAddress } from '../utils/networkUtils';
 
 export type RestMethod = 'GET' | 'OPTIONS' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 
@@ -19,7 +19,7 @@ export const executeQuery = async (
     body: '',
   };
 
-  let url = `http://${Constants.expoConfig?.hostUri?.split(':')[0]}:${process.env.EXPO_PUBLIC_SERVER_PORT}/${rawUrl}`;
+  let url = `${getServerAddress()}/${rawUrl}`;
 
   if (urlParams) {
     const modifiedUrl = new URL(url);

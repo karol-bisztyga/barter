@@ -31,7 +31,7 @@ const Carousel = ({
     ));
   };
 
-  const [noImageAsset, error] = useAssets([require('../../../assets/noImg.jpg')]);
+  const [noImageAsset, error] = useAssets([require('../../../assets/no_img.jpg')]);
 
   if (error) {
     throw error;
