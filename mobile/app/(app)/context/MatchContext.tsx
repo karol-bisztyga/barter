@@ -11,7 +11,7 @@ import { MatchData } from '../types';
  *    if it's the same we don't pull the matches
  */
 
-interface MatchContextState {
+export interface MatchContextState {
   matches: MatchData[];
   setMatches: React.Dispatch<React.SetStateAction<MatchData[]>>;
   currentMatchId: string | null;

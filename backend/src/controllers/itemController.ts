@@ -2,6 +2,7 @@ import { Response } from 'express';
 import pool from '../db';
 import { AuthRequest } from '../middlewares/authMiddleware';
 import { getUserIdFromRequest } from '../utils';
+import { updateMatchDateUpdated } from './matchController';
 
 export const createItem = async (req: AuthRequest, res: Response) => {
   const { name, description, images } = req.body;
@@ -120,15 +121,29 @@ export const updateItem = async (req: AuthRequest, res: Response) => {
 };
 
 export const deleteItem = async (req: AuthRequest, res: Response) => {
-  const { id } = req.params;
+  const itemId = req.params.id;
   const client = await pool.connect();
+  const dateNow = Date.now();
+  const userId = getUserIdFromRequest(req);
 
   try {
     await client.query('BEGIN');
-
-    await client.query('DELETE FROM items_images WHERE item_id = $1', [id]);
-    await client.query('DELETE FROM items WHERE id = $1', [id]);
-    // TODO remove chats related to this item
+    await client.query('DELETE FROM items_images WHERE item_id = $1', [itemId]);
+    const matchesIdsResult = await client.query(
+      'SELECT id FROM matches WHERE matching_item_id = $1 OR matched_item_id = $1',
+      [itemId]
+    );
+    const matchesIds = matchesIdsResult.rows.map((row: Record<string, string>) => row.id);
+    await client.query(
+      `DELETE FROM messages WHERE match_id IN (${matchesIds.map((_: string, i: number) => `$${i + 1}`).join(', ')})`,
+      matchesIds
+    );
+    updateMatchDateUpdated(client, dateNow, userId);
+    await client.query('DELETE FROM matches WHERE matching_item_id = $1 OR matched_item_id = $1', [
+      itemId,
+    ]);
+    await client.query('DELETE FROM likes WHERE liked_id = $1', [itemId]);
+    await client.query('DELETE FROM items WHERE id = $1', [itemId]);
 
     await client.query('COMMIT');
     res.json(true);

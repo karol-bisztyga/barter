@@ -2,6 +2,7 @@ import { Response } from 'express';
 import pool from '../db';
 import { AuthRequest } from '../middlewares/authMiddleware';
 import { getUserIdFromRequest } from '../utils';
+import { updateMatchDateUpdated } from './matchController';
 
 export const addLike = async (req: AuthRequest, res: Response) => {
   const { likedItemId, decision } = req.body;
@@ -85,13 +86,7 @@ export const addLike = async (req: AuthRequest, res: Response) => {
       [myRandomItem.id, likedItemId]
     );
 
-    const dateUpdatedResult = await client.query(
-      `
-        UPDATE matches_updates SET date_updated = $1 WHERE user_id = $2 RETURNING *
-      `,
-      [dateNow, userId]
-    );
-    console.log('addLike::dateUpdatedResult', dateUpdatedResult.rows);
+    await updateMatchDateUpdated(client, dateNow, userId);
 
     await client.query('COMMIT');
     res.json({

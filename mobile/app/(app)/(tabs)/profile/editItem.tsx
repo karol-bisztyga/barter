@@ -19,15 +19,17 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
 import { useUserContext } from '../../context/UserContext';
 import { useEditItemContext } from '../../context/EditItemContext';
-import { authorizeUser } from '../../utils/reusableStuff';
+import { authorizeUser, updateMatches } from '../../utils/reusableStuff';
 import { updateItem } from '../../db_utils/updateItem';
 import { addItem } from '../../db_utils/addItem';
 import { removeItem } from '../../db_utils/removeItem';
+import { useMatchContext } from '../../context/MatchContext';
 
 const { width } = Dimensions.get('window');
 
 const EditItem = () => {
   const sessionContext = authorizeUser();
+  const matchContext = useMatchContext();
 
   const imageSize = (width * 3) / 4;
 
@@ -167,6 +169,7 @@ const EditItem = () => {
                   const newItems = [...userContext.items];
                   try {
                     const result = await removeItem(sessionContext, usersItem.item.id);
+                    await updateMatches(sessionContext, matchContext);
                     if (result) {
                       newItems.splice(usersItem.index, 1);
                       userContext.setItems(newItems);

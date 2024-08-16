@@ -1,8 +1,7 @@
 import React from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Tabs } from 'expo-router';
-import { getUserMatches } from '../db_utils/getUserMatches';
-import { authorizeUser } from '../utils/reusableStuff';
+import { authorizeUser, updateMatches } from '../utils/reusableStuff';
 import { useMatchContext } from '../context/MatchContext';
 
 export default function TabLayout() {
@@ -24,17 +23,7 @@ export default function TabLayout() {
             case 'swipe':
               break;
             case 'chats':
-              (async () => {
-                const matchesResult = await getUserMatches(
-                  sessionContext,
-                  matchContext.localDateUpdated
-                );
-                const { matches, dateUpdated } = matchesResult;
-                if (matches) {
-                  matchContext.setMatches(matches);
-                }
-                matchContext.setLocalDateUpdated(dateUpdated);
-              })();
+              updateMatches(sessionContext, matchContext);
               break;
             case 'profile':
               break;

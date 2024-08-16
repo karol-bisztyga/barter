@@ -2,6 +2,7 @@ import { Response } from 'express';
 import pool from '../db';
 import { AuthRequest } from '../middlewares/authMiddleware';
 import { getUserIdFromRequest } from '../utils';
+import { PoolClient } from 'pg';
 
 export const getMatches = async (req: AuthRequest, res: Response) => {
   const userId = getUserIdFromRequest(req);
@@ -83,6 +84,21 @@ export const getMatches = async (req: AuthRequest, res: Response) => {
   }
 };
 
+export const updateMatchDateUpdated = async (
+  client: PoolClient,
+  dateNow: number,
+  userId: string
+) => {
+  const dateUpdatedResult = await client.query(
+    `
+        UPDATE matches_updates SET date_updated = $1 WHERE user_id = $2 RETURNING *
+      `,
+    [dateNow, userId]
+  );
+  console.log('dateUpdatedResult', dateUpdatedResult.rows);
+  return dateUpdatedResult.rows;
+};
+
 export const updateMatchMatchingItem = async (req: AuthRequest, res: Response) => {
   // todo we may check if the user is the owner of the item and is allowed to update the match but for now idk
   const { newMatchingItemId, matchingItemId, matchedItemId } = req.body;
@@ -100,13 +116,7 @@ export const updateMatchMatchingItem = async (req: AuthRequest, res: Response) =
     );
     const updateResult = queryResult.rows[0];
 
-    const dateUpdatedResult = await client.query(
-      `
-        UPDATE matches_updates SET date_updated = $1 WHERE user_id = $2 RETURNING *
-      `,
-      [dateNow, userId]
-    );
-    console.log('updateMatchMatchingItem::dateUpdatedResult', dateUpdatedResult.rows);
+    await updateMatchDateUpdated(client, dateNow, userId);
 
     await client.query('COMMIT');
     res.json({
