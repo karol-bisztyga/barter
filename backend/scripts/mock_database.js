@@ -51,9 +51,27 @@ const insertSampleUsers = async (hardcodedUsers = [], amount = 10) => {
       );
 
       const result = await client.query(
-        'INSERT INTO users (name, email, phone, facebook, instagram, profile_picture, password) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id',
+        `
+        INSERT INTO
+            users (name, email, phone, facebook, instagram, profile_picture, password)
+        VALUES
+            ($1, $2, $3, $4, $5, $6, $7)
+        RETURNING
+            id
+        `,
         [name, email, phone, facebook, instagram, profilePicture, hashedPassword]
       );
+      const matchUpdatesResult = await client.query(
+        `
+        INSERT INTO
+            matches_updates (user_id, date_updated)
+        VALUES
+            ($1, $2)
+        RETURNING *
+        `,
+        [result.rows[0].id, 0]
+      );
+      console.log('inserted match updates', matchUpdatesResult.rows);
       users[i] = { ...users[i], id: result.rows[0].id };
     }
     console.log('Sample users inserted successfully!');
@@ -406,10 +424,23 @@ const insertHardcodedMatches = async () => {
     const client = await pool.connect();
     const matchesResult = [];
     for (let match of matches) {
+      const dateUpdated = Date.now();
       const queryResult = await client.query(
         'INSERT INTO matches (matching_item_id, matched_item_id) VALUES ($1, $2) RETURNING *',
         [match.matching_item_id, match.matched_item_id]
       );
+      const matchesUpdatesResult = await client.query(
+        `
+        UPDATE
+            matches_updates
+        SET
+            date_updated = $1
+        WHERE
+            user_id IN (SELECT user_id FROM items WHERE id = $2 OR id = $3)
+        RETURNING *`,
+        [dateUpdated, match.matching_item_id, match.matched_item_id]
+      );
+      console.log('>>> matchesUpdatesResult', matchesUpdatesResult.rows);
       matchesResult.push(queryResult.rows[0]);
     }
     await client.release();

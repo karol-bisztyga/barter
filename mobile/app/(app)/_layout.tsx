@@ -3,6 +3,7 @@ import { Stack } from 'expo-router/stack';
 import { ItemsContextProvider } from './context/ItemsContext';
 import { useSessionContext } from '../SessionContext';
 import { Redirect } from 'expo-router';
+import { MatchContextProvider } from './context/MatchContext';
 
 export default function Layout() {
   const sessionContext = useSessionContext();
@@ -11,9 +12,11 @@ export default function Layout() {
   }
   return (
     <ItemsContextProvider>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
+      <MatchContextProvider>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
+      </MatchContextProvider>
     </ItemsContextProvider>
   );
 }

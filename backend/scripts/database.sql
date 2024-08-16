@@ -3,6 +3,7 @@ CREATE DATABASE barter;
 -- reset.sql
 DROP TABLE IF EXISTS likes;
 DROP TABLE IF EXISTS messages;
+DROP TABLE IF EXISTS matches_updates;
 DROP TABLE IF EXISTS matches;
 DROP TABLE IF EXISTS items_images;
 DROP TABLE IF EXISTS items;
@@ -51,6 +52,12 @@ CREATE TABLE matches (
     matching_item_id INTEGER REFERENCES items(id) NOT NULL,
     matched_item_id INTEGER REFERENCES items(id) NOT NULL,
     date_created BIGINT DEFAULT (EXTRACT(EPOCH FROM NOW()) * 1000)::BIGINT
+);
+
+CREATE TABLE matches_updates (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id) NOT NULL,
+    date_updated BIGINT DEFAULT (EXTRACT(EPOCH FROM NOW()) * 1000)::BIGINT
 );
 
 CREATE TABLE messages (

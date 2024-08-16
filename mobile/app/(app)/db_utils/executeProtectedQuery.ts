@@ -11,21 +11,12 @@ export const executeProtectedQuery = async (
   body?: Record<string, string> | null
 ) => {
   try {
-    console.log('here executeProtectedQuery 0');
     const result = await executeQuery(
       rawUrl,
       method,
       urlParams,
       body,
       sessionContext.session || undefined
-    );
-    console.log('here executeProtectedQuery 1');
-    console.log(
-      'execute protected query result',
-      result.ok,
-      result.status,
-      result.data,
-      result.data.message
     );
 
     if (!result.ok && result.data.message === 'Invalid token') {

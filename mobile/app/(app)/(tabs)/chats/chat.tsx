@@ -22,6 +22,7 @@ import { authorizeUser } from '../../utils/reusableStuff';
 import { useUserContext } from '../../context/UserContext';
 import { executeProtectedQuery } from '../../db_utils/executeProtectedQuery';
 import { getServerAddress } from '../../utils/networkUtils';
+import { useMatchContext } from '../../context/MatchContext';
 
 const INPUT_WRAPPER_HEIGHT = 70;
 const ITEMS_WRPPER_HEIGHT = 200;
@@ -46,8 +47,10 @@ const Chat = () => {
 
   const userContext = useUserContext();
   const itemsContext = useItemsContext();
+  const matchContext = useMatchContext();
 
-  const { usersItemId, othersItem, currentMatchId } = itemsContext;
+  const { currentMatchId } = matchContext;
+  const { usersItemId, othersItem } = itemsContext;
 
   const generateStatusMessage = (content: string): ChatMessage => {
     return {

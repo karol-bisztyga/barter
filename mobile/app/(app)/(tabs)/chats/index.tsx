@@ -1,15 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Item from '../../components/Item';
-import { ItemData, ItemBorderRadius, MatchData } from '../../types';
+import { ItemData, ItemBorderRadius } from '../../types';
 import { router } from 'expo-router';
 import Separator, { SEPARATOR_HEIGHT } from '../../components/Separator';
 import { useItemsContext } from '../../context/ItemsContext';
-import { getUserMatches } from '../../db_utils/getUserMatches';
-import { authorizeUser } from '../../utils/reusableStuff';
 import { useUserContext } from '../../context/UserContext';
+import { useMatchContext } from '../../context/MatchContext';
 
 const ITEMS_PER_SCREEN = 4;
 
@@ -59,22 +58,9 @@ const ListItem = ({
 };
 
 export default function Chats() {
-  const sessionContext = authorizeUser();
-
   const itemsContext = useItemsContext();
   const userContext = useUserContext();
-
-  // array of [matching item, matched item]
-  const [matches, setMatches] = useState<MatchData[]>([]);
-  useEffect(() => {
-    getUserMatches(sessionContext)
-      .then((matches: MatchData[]) => {
-        setMatches(matches);
-      })
-      .catch((e) => {
-        console.error('error loading matches', e);
-      });
-  }, []);
+  const matchContext = useMatchContext();
 
   const [containerHeight, setContainerHeight] = useState<number>(0);
 
@@ -88,7 +74,7 @@ export default function Chats() {
         }}
       >
         <FlatList
-          data={matches}
+          data={matchContext.matches}
           renderItem={({ item, index }) => {
             const { matchingItem, matchedItem, id } = item;
             // recognize which item is mine matching or matched and pass it properly to the list item
@@ -116,7 +102,7 @@ export default function Chats() {
                   onPress={() => {
                     itemsContext.setUsersItemId(myItem.id);
                     itemsContext.setOthersItem(theirItem);
-                    itemsContext.setCurrentMatchId(id);
+                    matchContext.setCurrentMatchId(id);
                     // pass match id to chat screen so we can use it in socket communication
                     router.push('chats/chat');
                   }}
@@ -124,7 +110,7 @@ export default function Chats() {
                 >
                   <ListItem height={containerHeight} myItem={myItem} theirItem={theirItem} />
                 </TouchableOpacity>
-                {index < matches.length - 1 && <Separator />}
+                {index < matchContext.matches.length - 1 && <Separator />}
               </>
             );
           }}

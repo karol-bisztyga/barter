@@ -6,6 +6,9 @@ import { getUserIdFromRequest } from '../utils';
 export const addLike = async (req: AuthRequest, res: Response) => {
   const { likedItemId, decision } = req.body;
   const client = await pool.connect();
+
+  const dateNow = Date.now();
+
   try {
     await client.query('BEGIN');
     console.log('posting like', likedItemId, decision);
@@ -73,7 +76,7 @@ export const addLike = async (req: AuthRequest, res: Response) => {
         Math.floor(Math.random() * myItemsLikedByTargetItemOwner.length)
       ];
 
-    let matchResult = await client.query(
+    const matchResult = await client.query(
       `
         INSERT INTO matches (matching_item_id, matched_item_id) 
         VALUES ($1, $2)
@@ -81,13 +84,20 @@ export const addLike = async (req: AuthRequest, res: Response) => {
       `,
       [myRandomItem.id, likedItemId]
     );
-    matchResult = matchResult.rows[0];
+
+    const dateUpdatedResult = await client.query(
+      `
+        UPDATE matches_updates SET date_updated = $1 WHERE user_id = $2 RETURNING *
+      `,
+      [dateNow, userId]
+    );
+    console.log('addLike::dateUpdatedResult', dateUpdatedResult.rows);
 
     await client.query('COMMIT');
     res.json({
       matchStatus: 'match',
       myItemsLikedByTargetItemOwner,
-      matchResult,
+      matchResult: matchResult.rows[0],
     });
   } catch (err) {
     await client.query('ROLLBACK');

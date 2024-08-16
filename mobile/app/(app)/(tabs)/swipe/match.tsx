@@ -10,7 +10,7 @@ import { authorizeUser } from '../../utils/reusableStuff';
 
 const { width } = Dimensions.get('window');
 
-const MatchModal = () => {
+const Match = () => {
   const sessionContext = authorizeUser();
   const userContext = useUserContext();
   const itemsContext = useItemsContext();
@@ -169,4 +169,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default MatchModal;
+export default Match;

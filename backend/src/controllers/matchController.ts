@@ -4,14 +4,24 @@ import { AuthRequest } from '../middlewares/authMiddleware';
 import { getUserIdFromRequest } from '../utils';
 
 export const getMatches = async (req: AuthRequest, res: Response) => {
+  const userId = getUserIdFromRequest(req);
+  const { localDateUpdated } = req.query;
+  const queryResult = await pool.query(
+    'SELECT date_updated FROM matches_updates WHERE user_id = $1',
+    [userId]
+  );
+  const serverDateUpdated = queryResult.rows[0]?.date_updated;
+  if (serverDateUpdated === localDateUpdated) {
+    return res.json({
+      dateUpdated: serverDateUpdated,
+    });
+  }
   try {
-    const userId = getUserIdFromRequest(req);
-
     const queryResult = await pool.query(
       `
       SELECT
           matches.id AS id,
-          
+
           matching_item.id AS matching_item_id,
           matching_item.name AS matching_item_name,
           matching_item.description AS matching_item_description,
@@ -39,10 +49,12 @@ export const getMatches = async (req: AuthRequest, res: Response) => {
       OR
           matched_item_id IN (SELECT id FROM items WHERE user_id = $1)
       GROUP BY
-          matches.id, matching_item.id, matched_item.id`,
+          matches.id, matching_item.id, matched_item.id
+      ORDER BY
+          matches.date_created DESC`,
       [userId]
     );
-    const result = queryResult.rows.map((row) => {
+    const parsedQueryResult = queryResult.rows.map((row) => {
       return {
         id: row.id,
         matchingItem: {
@@ -60,7 +72,10 @@ export const getMatches = async (req: AuthRequest, res: Response) => {
       };
     });
 
-    console.log('match result', result);
+    const result = {
+      matches: parsedQueryResult,
+      dateUpdated: serverDateUpdated,
+    };
 
     res.json(result);
   } catch (err) {
@@ -71,19 +86,36 @@ export const getMatches = async (req: AuthRequest, res: Response) => {
 export const updateMatchMatchingItem = async (req: AuthRequest, res: Response) => {
   // todo we may check if the user is the owner of the item and is allowed to update the match but for now idk
   const { newMatchingItemId, matchingItemId, matchedItemId } = req.body;
+  const dateNow = Date.now();
+  const userId = getUserIdFromRequest(req);
+  const client = await pool.connect();
+
   try {
+    await client.query('BEGIN');
     console.log('updating match matching item', newMatchingItemId, matchingItemId, matchedItemId);
 
-    const queryResult = await pool.query(
+    const queryResult = await client.query(
       'UPDATE matches SET matching_item_id = $1 WHERE matching_item_id = $2 AND matched_item_id = $3 RETURNING *',
       [newMatchingItemId, matchingItemId, matchedItemId]
     );
     const updateResult = queryResult.rows[0];
 
+    const dateUpdatedResult = await client.query(
+      `
+        UPDATE matches_updates SET date_updated = $1 WHERE user_id = $2 RETURNING *
+      `,
+      [dateNow, userId]
+    );
+    console.log('updateMatchMatchingItem::dateUpdatedResult', dateUpdatedResult.rows);
+
+    await client.query('COMMIT');
     res.json({
       result: updateResult,
     });
   } catch (err) {
+    await client.query('ROLLBACK');
     res.status(500).send({ message: 'Server error: ' + err });
+  } finally {
+    client.release();
   }
 };
