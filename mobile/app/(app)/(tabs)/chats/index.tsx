@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
+import React, { useCallback, useEffect, useState } from 'react';
+import { View, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Item from '../../components/Item';
@@ -16,17 +16,19 @@ const ListItem = ({
   height,
   myItem,
   theirItem,
+  registerRenderedListItem,
 }: {
   height: number;
   myItem: ItemData;
   theirItem: ItemData;
+  registerRenderedListItem: (_: string) => void;
 }) => {
   return (
     <View
-      style={[
-        styles.itemsWrapper,
-        { height: (height - SEPARATOR_HEIGHT * ITEMS_PER_SCREEN) / ITEMS_PER_SCREEN },
-      ]}
+      style={[styles.itemsWrapper, { height }]}
+      onLayout={() => {
+        registerRenderedListItem(`${myItem.id}-${theirItem.id}`);
+      }}
     >
       <View style={styles.itemWrapper}>
         <View style={styles.matchingItem}>
@@ -62,7 +64,35 @@ export default function Chats() {
   const userContext = useUserContext();
   const matchContext = useMatchContext();
 
-  const [containerHeight, setContainerHeight] = useState<number>(0);
+  const [listItemHeight, setListItemHeight] = useState<number>(0);
+  const [listRendered, setListRendered] = useState(false);
+  const [renderedListItems, setRenderedListItems] = useState<string[]>([]);
+
+  const registerRenderedListItem = (id: string) => {
+    setRenderedListItems((previousValue) =>
+      previousValue.indexOf(id) === -1 ? [...previousValue, id] : previousValue
+    );
+  };
+
+  useEffect(() => {
+    if (listItemHeight && renderedListItems.length === matchContext.matches.length) {
+      setListRendered(true);
+    }
+  }, [renderedListItems, listItemHeight]);
+
+  const renderListItem = useCallback(
+    (myItem: ItemData, theirItem: ItemData) => {
+      return (
+        <ListItem
+          height={listItemHeight}
+          myItem={myItem}
+          theirItem={theirItem}
+          registerRenderedListItem={registerRenderedListItem}
+        />
+      );
+    },
+    [listRendered]
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -70,10 +100,14 @@ export default function Chats() {
         style={styles.container}
         onLayout={(event) => {
           const { height } = event.nativeEvent.layout;
-          setContainerHeight(height);
+          setListItemHeight((height - SEPARATOR_HEIGHT * ITEMS_PER_SCREEN) / ITEMS_PER_SCREEN);
         }}
       >
+        <View style={[styles.loader, { opacity: listRendered ? 0 : 1 }]}>
+          <ActivityIndicator size="large" />
+        </View>
         <FlatList
+          style={{ opacity: listRendered ? 1 : 0 }}
           data={matchContext.matches}
           renderItem={({ item, index }) => {
             const { matchingItem, matchedItem, id } = item;
@@ -108,7 +142,7 @@ export default function Chats() {
                   }}
                   activeOpacity={1}
                 >
-                  <ListItem height={containerHeight} myItem={myItem} theirItem={theirItem} />
+                  {renderListItem(myItem, theirItem)}
                 </TouchableOpacity>
                 {index < matchContext.matches.length - 1 && <Separator />}
               </>
@@ -148,5 +182,12 @@ const styles = StyleSheet.create({
   },
   matchedItem: {
     flex: 1,
+  },
+  loader: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
