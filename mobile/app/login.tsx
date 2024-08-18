@@ -1,20 +1,45 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, StyleSheet, TextInput, View } from 'react-native';
 
 import { useSessionContext } from './SessionContext';
 import { useState } from 'react';
 import { router } from 'expo-router';
 import { useUserContext } from './(app)/context/UserContext';
+import * as SecureStore from 'expo-secure-store';
 
 import sampleUsers from './(app)/mocks/sampleUsers.json';
+import { STORAGE_SESSION_KEY } from './constants';
 
 export default function SignIn() {
   const { signIn } = useSessionContext();
   const userContext = useUserContext();
+  const sessionContext = useSessionContext();
   // todo remove default values
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const storageStr = await SecureStore.getItem(STORAGE_SESSION_KEY);
+        if (!storageStr) {
+          console.log('no data in storage');
+          return;
+        }
+        const storageParsed = JSON.parse(storageStr);
+        console.log('TOKEN_STORAGE_KEY', storageParsed);
+        const { session, userData } = storageParsed;
+        if (session) {
+          sessionContext.setSession(session);
+          userContext.setData(JSON.parse(userData));
+          router.replace('/');
+        }
+      } catch (e) {
+        console.error('error reading token from storage');
+      }
+    })();
+  }, []);
 
   const signInEnabled = () => {
     if (!email || !password) {

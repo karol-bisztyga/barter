@@ -2,6 +2,8 @@ import React, { createContext, ReactNode, FC, useContext } from 'react';
 import { useStorageState } from './useStorageState';
 import { executeQuery } from './(app)/db_utils/executeQuery';
 import { UserData } from './(app)/types';
+import * as SecureStore from 'expo-secure-store';
+import { STORAGE_SESSION_KEY } from './constants';
 
 /**
  * this context is for storing current target items mainly for navigation
@@ -13,6 +15,7 @@ export interface SessionContextState {
   signIn: (email: string, password: string) => Promise<UserData | null>;
   signOut: () => void;
   session?: string | null;
+  setSession: (newSession: string | null) => void;
   isLoading: boolean;
 }
 
@@ -21,6 +24,7 @@ const initialState: SessionContextState = {
   signIn: (_email: string, _password: string) => new Promise(() => null),
   signOut: () => null,
   session: null,
+  setSession: () => null,
   isLoading: false,
 };
 
@@ -37,6 +41,20 @@ export const useSessionContext = () => {
 export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [[isLoading, session], setSession] = useStorageState('session');
 
+  const setSessionWrapper = async (newSession?: string, userData?: UserData) => {
+    try {
+      const userDataStr = JSON.stringify(userData || {});
+      const storageStr = JSON.stringify({
+        session: newSession || '',
+        userData: userDataStr,
+      });
+      await SecureStore.setItem(STORAGE_SESSION_KEY, storageStr);
+      setSession(newSession || null);
+    } catch (e) {
+      console.error('error setting token', e);
+    }
+  };
+
   const signIn = async (email: string, password: string) => {
     if (!email || !password) {
       throw new Error('email or password is missing');
@@ -49,7 +67,6 @@ export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }
         throw new Error('token is missing');
       }
       console.log('setting session', response.data.token);
-      setSession(response.data.token);
 
       const userData: UserData = {
         id: response.data.user.id,
@@ -60,6 +77,7 @@ export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }
         instagram: response.data.user.instagram,
         profilePicture: response.data.user.profile_picture,
       };
+      await setSessionWrapper(response.data.token, userData);
 
       return userData;
     } else {
@@ -67,12 +85,12 @@ export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }
     }
   };
 
-  const signOut = () => {
-    setSession(null);
+  const signOut = async () => {
+    await setSessionWrapper();
   };
 
   return (
-    <SessionContext.Provider value={{ session, isLoading, signIn, signOut }}>
+    <SessionContext.Provider value={{ session, setSession, isLoading, signIn, signOut }}>
       {children}
     </SessionContext.Provider>
   );
