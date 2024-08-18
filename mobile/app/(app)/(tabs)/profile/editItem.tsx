@@ -165,7 +165,6 @@ const EditItem = () => {
                   if (!usersItem) {
                     throw new Error('item to remove not specified');
                   }
-                  // todo remove chats related to this item
                   const newItems = [...userContext.items];
                   try {
                     const result = await removeItem(sessionContext, usersItem.item.id);

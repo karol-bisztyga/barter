@@ -24,7 +24,13 @@ export default function TabLayout() {
             case 'swipe':
               break;
             case 'chats':
-              updateMatches(sessionContext, matchContext);
+              (async () => {
+                try {
+                  await updateMatches(sessionContext, matchContext);
+                } catch (e) {
+                  console.error('error updating matches', e);
+                }
+              })();
               break;
             case 'profile':
               break;
