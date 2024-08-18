@@ -1,45 +1,22 @@
 import React, { useEffect } from 'react';
-import { Button, StyleSheet, TextInput, View } from 'react-native';
+import { ActivityIndicator, Button, StyleSheet, TextInput, View } from 'react-native';
 
 import { useSessionContext } from './SessionContext';
 import { useState } from 'react';
-import { router } from 'expo-router';
+import { Redirect, router } from 'expo-router';
 import { useUserContext } from './(app)/context/UserContext';
 import * as SecureStore from 'expo-secure-store';
 
 import sampleUsers from './(app)/mocks/sampleUsers.json';
 import { STORAGE_SESSION_KEY } from './constants';
 
-export default function SignIn() {
+const SingInForm = () => {
   const { signIn } = useSessionContext();
   const userContext = useUserContext();
-  const sessionContext = useSessionContext();
-  // todo remove default values
 
+  // todo remove default values
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  useEffect(() => {
-    (async () => {
-      try {
-        const storageStr = await SecureStore.getItem(STORAGE_SESSION_KEY);
-        if (!storageStr) {
-          console.log('no data in storage');
-          return;
-        }
-        const storageParsed = JSON.parse(storageStr);
-        console.log('TOKEN_STORAGE_KEY', storageParsed);
-        const { session, userData } = storageParsed;
-        if (session) {
-          sessionContext.setSession(session);
-          userContext.setData(JSON.parse(userData));
-          router.replace('/');
-        }
-      } catch (e) {
-        console.error('error reading token from storage');
-      }
-    })();
-  }, []);
 
   const signInEnabled = () => {
     if (!email || !password) {
@@ -65,51 +42,95 @@ export default function SignIn() {
   };
 
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <View style={styles.inputContainer}>
-        <TextInput placeholder="email" value={email} onChangeText={setEmail} style={styles.input} />
-        <TextInput
-          placeholder="password"
-          secureTextEntry={true}
-          value={password}
-          onChangeText={setPassword}
-          style={styles.input}
+    <View style={styles.inputContainer}>
+      <TextInput placeholder="email" value={email} onChangeText={setEmail} style={styles.input} />
+      <TextInput
+        placeholder="password"
+        secureTextEntry={true}
+        value={password}
+        onChangeText={setPassword}
+        style={styles.input}
+      />
+      <View style={styles.buttonWrapper}>
+        <Button
+          title="Sign in"
+          disabled={!signInEnabled()}
+          onPress={async () => {
+            await hadnleSignIn(email, password);
+          }}
         />
-        <View style={styles.buttonWrapper}>
-          <Button
-            title="Sign in"
-            disabled={!signInEnabled()}
-            onPress={async () => {
-              await hadnleSignIn(email, password);
-            }}
-          />
-        </View>
-        <View style={styles.buttonWrapper}>
-          <Button
-            title="Register"
-            onPress={() => {
-              console.log('register');
-            }}
-          />
-        </View>
-        {/* TODO remove buttons below */}
-        {sampleUsers.map((user, index) => {
-          if (index > 2) {
-            return null;
-          }
-          return (
-            <View style={styles.buttonWrapper} key={index}>
-              <Button
-                title={`Login as a mocked user #${index + 1}`}
-                onPress={async () => {
-                  await hadnleSignIn(user.email, user.password);
-                }}
-              />
-            </View>
-          );
-        })}
-        {/* TODO remove buttons above */}
       </View>
+      <View style={styles.buttonWrapper}>
+        <Button
+          title="Register"
+          onPress={() => {
+            console.log('register');
+          }}
+        />
+      </View>
+      {/* TODO remove buttons below */}
+      {sampleUsers.map((user, index) => {
+        if (index > 2) {
+          return null;
+        }
+        return (
+          <View style={styles.buttonWrapper} key={index}>
+            <Button
+              title={`Login as a mocked user #${index + 1}`}
+              onPress={async () => {
+                await hadnleSignIn(user.email, user.password);
+              }}
+            />
+          </View>
+        );
+      })}
+      {/* TODO remove buttons above */}
+    </View>
+  );
+};
+
+export const Loader = () => {
+  return (
+    <View style={styles.loaderWrapper}>
+      <ActivityIndicator size="large" />
+    </View>
+  );
+};
+
+export default function SignIn() {
+  const userContext = useUserContext();
+  const sessionContext = useSessionContext();
+  const [checkingSession, setCheckingSession] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const storageStr = await SecureStore.getItem(STORAGE_SESSION_KEY);
+        if (!storageStr) {
+          console.log('no data in storage');
+          return;
+        }
+        const storageParsed = JSON.parse(storageStr);
+        console.log('TOKEN_STORAGE_KEY', storageParsed);
+        const { session, userData } = storageParsed;
+        if (session) {
+          sessionContext.setSession(session);
+          userContext.setData(JSON.parse(userData));
+        }
+        setCheckingSession(false);
+      } catch (e) {
+        console.error('error reading token from storage');
+      }
+    })();
+  }, []);
+
+  if (sessionContext.session && userContext.data) {
+    return <Redirect href="/" />;
+  }
+
+  return (
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      {checkingSession ? <Loader /> : <SingInForm />}
     </View>
   );
 }
@@ -139,5 +160,12 @@ const styles = StyleSheet.create({
   buttonWrapper: {
     marginTop: 10,
     marginBottom: 10,
+  },
+  loaderWrapper: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
