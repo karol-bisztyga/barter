@@ -41,3 +41,22 @@
     - rozmawianie
     - share'owanie danych kontaktowych (nr tel, socialki, itp.)
     - usuwanie czatu
+
+## Notes
+
+- On android this has to be added to `build.gradle`:
+
+```
+allprojects {
+    repositories {
+
+        // * Your other repositories here *
+
+        // * Add a new maven block after other repositories / blocks *
+        maven {
+            // expo-camera bundles a custom com.google.android:cameraview
+            url "$rootDir/../node_modules/expo-camera/android/maven"
+        }
+    }
+}
+```

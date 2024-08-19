@@ -5,6 +5,7 @@ import { router } from 'expo-router';
 import { SessionContextState, useSessionContext } from '../../SessionContext';
 import { getUserMatches } from '../db_utils/getUserMatches';
 import { MatchContextState } from '../context/MatchContext';
+import { XMLParser } from 'fast-xml-parser';
 
 export const headerBackButtonOptions = (beforeCallback?: () => Promise<boolean>) => {
   return {
@@ -51,4 +52,28 @@ export const updateMatches = async (
     matchContext.setMatches(matches);
   }
   matchContext.setLocalDateUpdated(dateUpdated);
+};
+
+export const formatLocation = async (locationStr?: string) => {
+  if (!locationStr) {
+    return '';
+  }
+  return (await cityNameFromLocation(locationStr)) || locationStr || '';
+};
+
+export const cityNameFromLocation = async (location?: string) => {
+  if (!location) {
+    return '';
+  }
+  const locationParts = location.split(',');
+  try {
+    const cityNameDeduced = await fetch(
+      `https://nominatim.openstreetmap.org/reverse?lat=${locationParts[0].trim()}&lon=${locationParts[1].trim()}`
+    );
+    const fetchedXml = await cityNameDeduced.text();
+    const parsedXml = new XMLParser().parse(fetchedXml);
+    return `${parsedXml.reversegeocode.addressparts.city}, ${parsedXml.reversegeocode.addressparts.country}`;
+  } catch (e) {
+    return '';
+  }
 };

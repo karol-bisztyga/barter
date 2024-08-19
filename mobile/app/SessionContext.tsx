@@ -76,6 +76,7 @@ export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }
         facebook: response.data.user.facebook,
         instagram: response.data.user.instagram,
         profilePicture: response.data.user.profile_picture,
+        location: response.data.user.location,
       };
       await setSessionWrapper(response.data.token, userData);
 

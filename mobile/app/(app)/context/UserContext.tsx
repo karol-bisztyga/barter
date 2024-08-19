@@ -1,5 +1,8 @@
-import React, { createContext, useState, ReactNode, FC, useContext } from 'react';
+import React, { createContext, useState, ReactNode, FC, useContext, useEffect } from 'react';
 import { ItemData, UserData } from '../types';
+import * as SecureStore from 'expo-secure-store';
+import { STORAGE_SESSION_KEY } from '../../constants';
+import { useSessionContext } from '../../SessionContext';
 
 interface UserContextState {
   data: UserData | null;
@@ -33,6 +36,22 @@ export const useUserContext = () => {
 export const UserContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [data, setData] = useState<UserData | null>(null);
   const [items, setItems] = useState<Array<ItemData>>([]);
+  const sessionContext = useSessionContext();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const userDataStr = JSON.stringify(data || {});
+        const storageStr = JSON.stringify({
+          session: sessionContext.session || '',
+          userData: userDataStr,
+        });
+        await SecureStore.setItem(STORAGE_SESSION_KEY, storageStr);
+      } catch (e) {
+        console.error('error updating user data in storage', e);
+      }
+    })();
+  }, [data]);
 
   const findItemById = (id: string | null): { item: ItemData; index: number } | null => {
     if (!id) {

@@ -6,7 +6,7 @@ import { getUserIdFromRequest } from '../utils';
 export const updateUser = async (req: AuthRequest, res: Response) => {
   const { fieldName, fieldValue } = req.body;
 
-  const availableFields = ['name', 'phone', 'facebook', 'instagram'];
+  const availableFields = ['name', 'phone', 'facebook', 'instagram', 'location'];
 
   try {
     if (availableFields.indexOf(fieldName) === -1) {

@@ -11,6 +11,7 @@ import { useUserContext } from '../../context/UserContext';
 import { useEditItemContext } from '../../context/EditItemContext';
 import Actions from './components/Actions';
 import PersonalData from './components/PersonalData';
+import Location from './components/Location';
 
 export default function Profile() {
   const [imageLoading, setImageLoading] = useState<boolean>(true);
@@ -62,6 +63,9 @@ export default function Profile() {
             <Text style={styles.title}>Personal Data</Text>
           </View>
           <PersonalData />
+          <Separator style={styles.separator} />
+          <Text style={styles.title}>Location</Text>
+          <Location />
           <Separator style={styles.separator} />
           <View style={styles.titleWrapper}>
             <Text style={styles.title}>Items</Text>

@@ -48,6 +48,7 @@ function Layout() {
       />
       <Stack.Screen name="addPicture" options={headerBackButtonOptions()} />
       <Stack.Screen name="camera" options={headerBackButtonOptions()} />
+      <Stack.Screen name="set_location" options={{ presentation: 'modal' }} />
     </Stack>
   );
 }
