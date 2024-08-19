@@ -12,9 +12,11 @@ import Animated, {
 } from 'react-native-reanimated';
 import Item from './Item';
 import { ItemData } from '../types';
+import { useUserContext } from '../context/UserContext';
 
 const { width, height } = Dimensions.get('window');
-const SWIPE_THRESHOLD = 0.25 * width;
+const SWIPE_THRESHOLD_HORIZONTAL = 0.25 * width;
+const SWIPE_THRESHOLD_VERTICAL = 0.25 * height;
 const MAX_RADIUS = 30;
 const END_ANIMATION_DURATION = 200;
 
@@ -22,21 +24,32 @@ const SwipeableCard = ({
   itemData,
   onSwipeRight,
   onSwipeLeft,
+  onSwipeDown,
   lockGesture,
   onPressMore,
 }: {
   itemData: ItemData;
   onSwipeRight: () => void;
   onSwipeLeft: () => void;
+  onSwipeDown: () => void;
   onPressMore: () => void;
   lockGesture: SharedValue<boolean>;
 }) => {
+  const userContext = useUserContext();
+
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const velocityX = useSharedValue(0);
   const velocityY = useSharedValue(0);
   const rotate = useSharedValue('0deg');
   const dragging = useSharedValue(false);
+
+  const getBackToStartingPosition = () => {
+    'worklet';
+    translateX.value = withSpring(0);
+    translateY.value = withSpring(0);
+    rotate.value = withSpring('0deg');
+  };
 
   const gesture = Gesture.Pan()
     .onBegin(() => {
@@ -58,36 +71,63 @@ const SwipeableCard = ({
     })
     .onEnd(() => {
       dragging.value = false;
-      if (translateX.value > SWIPE_THRESHOLD) {
+      if (translateY.value > SWIPE_THRESHOLD_VERTICAL) {
+        translateY.value = withTiming(height * 2, { duration: END_ANIMATION_DURATION }, () => {
+          runOnJS(onSwipeDown)();
+        });
+        return;
+      }
+      if (userContext.swipingLeftRightBlockedReason) {
+        getBackToStartingPosition();
+        return;
+      }
+      if (translateX.value > SWIPE_THRESHOLD_HORIZONTAL) {
         lockGesture.value = true;
         translateX.value = withTiming(width * 2, { duration: END_ANIMATION_DURATION }, () => {
           runOnJS(onSwipeRight)();
         });
-      } else if (translateX.value < -SWIPE_THRESHOLD) {
+      } else if (translateX.value < -SWIPE_THRESHOLD_HORIZONTAL) {
         lockGesture.value = true;
         translateX.value = withTiming(-(width * 2), { duration: END_ANIMATION_DURATION }, () => {
           runOnJS(onSwipeLeft)();
         });
       } else {
-        translateX.value = withSpring(0);
-        translateY.value = withSpring(0);
-        rotate.value = withSpring('0deg');
+        getBackToStartingPosition();
       }
     });
-
-  const radius = useDerivedValue(() => {
-    const tx = Math.abs(translateX.value);
-    if (tx > SWIPE_THRESHOLD) {
-      return MAX_RADIUS;
-    }
-    return (tx / SWIPE_THRESHOLD) * MAX_RADIUS;
-  });
 
   const shadowColor = useDerivedValue(() => {
     if (!dragging.value) {
       return 'black';
     }
+    if (
+      translateY.value > Math.abs(translateX.value) ||
+      translateY.value > SWIPE_THRESHOLD_VERTICAL
+    ) {
+      return 'yellow';
+    }
     return translateX.value > 0 ? 'green' : 'red';
+  });
+
+  const shadowRadius = useDerivedValue(() => {
+    const tx = Math.abs(translateX.value);
+    const ty = translateY.value;
+
+    switch (shadowColor.value) {
+      case 'yellow':
+        if (ty > SWIPE_THRESHOLD_VERTICAL) {
+          return MAX_RADIUS;
+        }
+        return (ty / SWIPE_THRESHOLD_VERTICAL) * MAX_RADIUS;
+      case 'green':
+      case 'red':
+        if (tx > SWIPE_THRESHOLD_HORIZONTAL) {
+          return MAX_RADIUS;
+        }
+        return (tx / SWIPE_THRESHOLD_HORIZONTAL) * MAX_RADIUS;
+      default:
+        return 1;
+    }
   });
 
   const animatedStyle = useAnimatedStyle(() => {
@@ -97,7 +137,7 @@ const SwipeableCard = ({
         { translateY: translateY.value },
         { rotate: rotate.value },
       ],
-      shadowRadius: dragging.value ? radius.value : 1,
+      shadowRadius: dragging.value ? shadowRadius.value : 1,
       shadowColor: shadowColor.value,
     };
   });

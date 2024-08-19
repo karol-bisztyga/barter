@@ -112,6 +112,10 @@ export default function Swipe() {
   };
 
   const handleSwipeRight = async () => {
+    if (userContext.swipingLeftRightBlockedReason) {
+      console.log('swiping left/right blocked, reason:', userContext.swipingLeftRightBlockedReason);
+      return;
+    }
     const swipedCard = await popAndLoadCard();
     if (!swipedCard) {
       throw new Error('could not find swiped card');
@@ -135,6 +139,10 @@ export default function Swipe() {
   };
 
   const handleSwipeLeft = async () => {
+    if (userContext.swipingLeftRightBlockedReason) {
+      console.log('swiping left/right blocked, reason:', userContext.swipingLeftRightBlockedReason);
+      return;
+    }
     const swipedCard = await popAndLoadCard();
     if (!swipedCard) {
       throw new Error('could not find swiped card');
@@ -149,6 +157,14 @@ export default function Swipe() {
     }
   };
 
+  const handleSwipeDown = async () => {
+    const swipedCard = await popAndLoadCard();
+    if (!swipedCard) {
+      throw new Error('could not find swiped card');
+    }
+    console.log('Swiped Down:', swipedCard?.name);
+  };
+
   return (
     <GestureHandlerRootView>
       <SafeAreaView style={styles.container}>
@@ -159,6 +175,7 @@ export default function Swipe() {
               itemData={card}
               onSwipeRight={handleSwipeRight}
               onSwipeLeft={handleSwipeLeft}
+              onSwipeDown={handleSwipeDown}
               lockGesture={lockGesture}
               onPressMore={() => {
                 itemsContext.setOthersItem(card);

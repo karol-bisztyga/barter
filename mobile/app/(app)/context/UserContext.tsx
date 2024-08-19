@@ -9,6 +9,9 @@ interface UserContextState {
   setData: React.Dispatch<React.SetStateAction<UserData | null>>;
   items: Array<ItemData>;
   setItems: React.Dispatch<React.SetStateAction<Array<ItemData>>>;
+  swipingLeftRightBlockedReason: string | null; // null means it's not blocked
+  setSwipingLeftRightBlockedReason: React.Dispatch<React.SetStateAction<string | null>>;
+
   findItemById: (id: string | null) => { item: ItemData; index: number } | null;
 }
 
@@ -17,6 +20,8 @@ const initialState: UserContextState = {
   setData: () => {},
   items: [],
   setItems: () => {},
+  swipingLeftRightBlockedReason: null,
+  setSwipingLeftRightBlockedReason: () => {},
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   findItemById: (_: string | null) => {
     return null;
@@ -36,7 +41,20 @@ export const useUserContext = () => {
 export const UserContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [data, setData] = useState<UserData | null>(null);
   const [items, setItems] = useState<Array<ItemData>>([]);
+  const [swipingLeftRightBlockedReason, setSwipingLeftRightBlockedReason] = useState<string | null>(
+    null
+  );
   const sessionContext = useSessionContext();
+
+  useEffect(() => {
+    if (!items.length) {
+      setSwipingLeftRightBlockedReason(
+        'You have no items, you will be able to swipe when you have at least one item'
+      );
+    } else {
+      setSwipingLeftRightBlockedReason(null);
+    }
+  }, [items]);
 
   useEffect(() => {
     (async () => {
@@ -74,7 +92,17 @@ export const UserContextProvider: FC<{ children: ReactNode }> = ({ children }) =
   };
 
   return (
-    <UserContext.Provider value={{ data, setData, items, setItems, findItemById }}>
+    <UserContext.Provider
+      value={{
+        data,
+        setData,
+        items,
+        setItems,
+        swipingLeftRightBlockedReason,
+        setSwipingLeftRightBlockedReason,
+        findItemById,
+      }}
+    >
       {children}
     </UserContext.Provider>
   );
