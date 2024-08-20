@@ -183,31 +183,34 @@ export const getItemsForCards = async (req: AuthRequest, res: Response) => {
         items.id AS id,
         items.name AS name,
         items.description AS description,
-        ARRAY_AGG(items_images.url) AS images
+        ARRAY_AGG(items_images.url) AS images,
+        users.location AS user_location
       FROM
           items
       JOIN
           items_images ON items.id = items_images.item_id
+      JOIN
+          users ON users.id = items.user_id
       WHERE
           items.user_id <> $1
       AND
           items.id NOT IN (SELECT liked_id FROM likes WHERE liker_id = $1)
       ${additionalCondition}
       GROUP BY
-          items.id, items.name, items.description
+          items.id, items.name, items.description, users.location
       ORDER BY
           RANDOM()
       LIMIT $${currentCardsIdsArr.length + 2};
       `;
 
     const result = await pool.query(query, queryArgs);
-    console.log(
-      'pulled cards',
-      result.rows.map((item) => {
-        return { id: item.id, name: item.name };
-      })
-    );
-    res.json(result.rows);
+    const parsedResult = result.rows.map((row: Record<string, string>) => {
+      const location = row.user_location;
+      delete row.user_location;
+      return { ...row, userLocation: location };
+    });
+    console.log('pulled cards', parsedResult);
+    res.json(parsedResult);
   } catch (err) {
     res.status(500).send({ message: 'Server error: ' + err });
   }

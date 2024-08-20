@@ -4,6 +4,7 @@ export type ItemData = {
   name: string;
   images: string[];
   description: string;
+  userLocation?: string;
 };
 
 export type MatchData = {

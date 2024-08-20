@@ -72,6 +72,7 @@ export default function Item({
           dotsVisible={carouselOptions.dotsVisible}
           pressEnabled={carouselOptions.pressEnabled}
           actionPanelVisible={carouselOptions.actionPanelVisible}
+          itemOwnerLocation={itemData.userLocation}
           onPress={onPress}
         />
       </View>

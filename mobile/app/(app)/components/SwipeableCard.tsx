@@ -97,10 +97,7 @@ const SwipeableCard = ({
     if (!dragging.value) {
       return 'black';
     }
-    if (
-      translateY.value > Math.abs(translateX.value) ||
-      translateY.value > SWIPE_THRESHOLD_VERTICAL
-    ) {
+    if (translateY.value > SWIPE_THRESHOLD_VERTICAL) {
       return 'yellow';
     }
     return translateX.value > 0 ? 'green' : 'red';

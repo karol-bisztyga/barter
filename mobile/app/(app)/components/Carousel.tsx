@@ -4,6 +4,7 @@ import { ItemBorderRadius } from '../types';
 import { useAssets } from 'expo-asset';
 import CarouselActionPanel from './CarouselActionPanel';
 import CarouselDots from './CarouselDots';
+import CarouselDistancePanel from './CarouselDistancePanel';
 
 const Carousel = ({
   images,
@@ -11,6 +12,7 @@ const Carousel = ({
   dotsVisible = true,
   pressEnabled = true,
   actionPanelVisible = false,
+  itemOwnerLocation = undefined,
   onPress,
 }: {
   images: string[];
@@ -18,6 +20,7 @@ const Carousel = ({
   dotsVisible?: boolean;
   pressEnabled?: boolean;
   actionPanelVisible?: boolean;
+  itemOwnerLocation?: string;
   onPress?: () => void;
 }) => {
   const [loading, setLoading] = useState(false);
@@ -97,6 +100,7 @@ const Carousel = ({
         }}
       />
       {actionPanelVisible && <CarouselActionPanel />}
+      {itemOwnerLocation && <CarouselDistancePanel itemOwnerLocation={itemOwnerLocation} />}
     </View>
   );
 };

@@ -19,7 +19,9 @@ export default function LocationScreen() {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        console.error('Permission to access location was denied');
+        console.error(
+          'Permission to access location was denied, you may need to enable location services in settings'
+        );
         return;
       }
 

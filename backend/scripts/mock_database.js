@@ -42,7 +42,8 @@ const insertSampleUsers = async (hardcodedUsers = [], amount = 10) => {
     const client = await pool.connect();
 
     for (let i = 0; i < users.length; ++i) {
-      const { name, email, phone, facebook, instagram, profilePicture, password } = users[i];
+      const { name, email, phone, facebook, instagram, profilePicture, password, location } =
+        users[i];
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -53,13 +54,13 @@ const insertSampleUsers = async (hardcodedUsers = [], amount = 10) => {
       const result = await client.query(
         `
         INSERT INTO
-            users (name, email, phone, facebook, instagram, profile_picture, password)
+            users (name, email, phone, facebook, instagram, profile_picture, password, location)
         VALUES
-            ($1, $2, $3, $4, $5, $6, $7)
+            ($1, $2, $3, $4, $5, $6, $7, $8)
         RETURNING
             id
         `,
-        [name, email, phone, facebook, instagram, profilePicture, hashedPassword]
+        [name, email, phone, facebook, instagram, profilePicture, hashedPassword, location]
       );
       const matchUpdatesResult = await client.query(
         `
@@ -186,6 +187,7 @@ const insertHardcodedUsers = async () => {
       instagram: 'testowyyy11',
       profilePicture: 'https://picsum.photos/id/534/500/360',
       password: 'testowehaslo111',
+      location: '50.067570, 19.917868',
     },
     {
       name: 'Testowy Drugi',
@@ -195,6 +197,7 @@ const insertHardcodedUsers = async () => {
       instagram: 'testowy22',
       profilePicture: null,
       password: 'testowehaslo222',
+      location: '50.066331, 19.928390',
     },
     {
       name: 'Testowy Trzeci',
@@ -204,6 +207,7 @@ const insertHardcodedUsers = async () => {
       instagram: null,
       profilePicture: 'https://picsum.photos/id/195/400/300',
       password: 'testowehaslo333',
+      location: '50.067143, 20.052357',
     },
     {
       name: 'Testowy Czwarty',
@@ -222,6 +226,7 @@ const insertHardcodedUsers = async () => {
       instagram: 'testowy55555',
       profilePicture: 'https://picsum.photos/id/943/200',
       password: 'testowehaslo555',
+      location: 'Krakow, Poland',
     },
   ];
   return await insertSampleUsers(users);
