@@ -173,9 +173,11 @@ export default function Swipe() {
             <SwipeableCard
               key={`${card.id}-${index}`}
               itemData={card}
-              onSwipeRight={handleSwipeRight}
-              onSwipeLeft={handleSwipeLeft}
-              onSwipeDown={handleSwipeDown}
+              swipeCallbacks={{
+                onSwipeRight: handleSwipeRight,
+                onSwipeLeft: handleSwipeLeft,
+                onSwipeDown: handleSwipeDown,
+              }}
               lockGesture={lockGesture}
               onPressMore={() => {
                 itemsContext.setOthersItem(card);

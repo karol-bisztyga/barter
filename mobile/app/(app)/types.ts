@@ -49,3 +49,15 @@ export enum EditImageType {
   'profile',
   'item',
 }
+
+export type SwipeCallbacks = {
+  onSwipeRight: () => void;
+  onSwipeLeft: () => void;
+  onSwipeDown: () => void;
+};
+
+export const defaultSwipeCallbacks = {
+  onSwipeLeft: () => {},
+  onSwipeRight: () => {},
+  onSwipeDown: () => {},
+};

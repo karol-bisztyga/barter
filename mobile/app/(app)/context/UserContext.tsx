@@ -59,9 +59,12 @@ export const UserContextProvider: FC<{ children: ReactNode }> = ({ children }) =
   useEffect(() => {
     (async () => {
       try {
-        const userDataStr = JSON.stringify(data || {});
+        if (!data || !sessionContext.session) {
+          return;
+        }
+        const userDataStr = JSON.stringify(data);
         const storageStr = JSON.stringify({
-          session: sessionContext.session || '',
+          session: sessionContext.session,
           userData: userDataStr,
         });
         await SecureStore.setItem(STORAGE_SESSION_KEY, storageStr);

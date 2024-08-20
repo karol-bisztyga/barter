@@ -1,9 +1,35 @@
 import React from 'react';
 import { View, Text, StyleSheet, ScrollView, Dimensions, Button } from 'react-native';
 import Carousel from './Carousel';
-import { ItemData, ItemBorderRadius, ItemNamePlacement } from '../types';
+import {
+  ItemData,
+  ItemBorderRadius,
+  ItemNamePlacement,
+  SwipeCallbacks,
+  defaultSwipeCallbacks,
+} from '../types';
 
 const { height } = Dimensions.get('window');
+
+type CarouselOptions = {
+  dotsVisible?: boolean;
+  pressEnabled?: boolean;
+  actionPanelVisible?: boolean;
+  swipeCallbacks?: SwipeCallbacks;
+};
+
+type ItemProps = {
+  itemData: ItemData;
+  showDescription?: boolean;
+  showName?: boolean;
+  namePlacement?: ItemNamePlacement;
+  borderRadius?: ItemBorderRadius;
+  showFull?: boolean;
+  centerVertically?: boolean;
+  carouselOptions?: CarouselOptions;
+  onPressMore?: () => void;
+  onPress?: () => void;
+};
 
 export default function Item({
   itemData,
@@ -11,25 +37,17 @@ export default function Item({
   showName = true,
   namePlacement = ItemNamePlacement['below'],
   borderRadius = ItemBorderRadius['up-only'],
-  carouselDotsVisible = true,
-  carouselPressEnabled = true,
   showFull = false,
   centerVertically = true,
+  carouselOptions = {
+    dotsVisible: true,
+    pressEnabled: true,
+    actionPanelVisible: false,
+    swipeCallbacks: defaultSwipeCallbacks,
+  },
   onPressMore = () => {},
   onPress,
-}: {
-  itemData: ItemData;
-  showDescription?: boolean;
-  showName?: boolean;
-  namePlacement?: ItemNamePlacement;
-  borderRadius?: ItemBorderRadius;
-  carouselDotsVisible?: boolean;
-  carouselPressEnabled?: boolean;
-  showFull?: boolean;
-  centerVertically?: boolean;
-  onPressMore?: () => void;
-  onPress?: () => void;
-}) {
+}: ItemProps) {
   const InnerContents = () => (
     <>
       {showName && namePlacement === ItemNamePlacement.above && (
@@ -51,8 +69,9 @@ export default function Item({
         <Carousel
           images={itemData.images}
           borderRadius={borderRadius}
-          dotsVisible={carouselDotsVisible}
-          pressEnabled={carouselPressEnabled}
+          dotsVisible={carouselOptions.dotsVisible}
+          pressEnabled={carouselOptions.pressEnabled}
+          actionPanelVisible={carouselOptions.actionPanelVisible}
           onPress={onPress}
         />
       </View>

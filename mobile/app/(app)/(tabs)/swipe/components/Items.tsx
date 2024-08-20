@@ -29,10 +29,12 @@ const Items = () => {
             <Item
               itemData={item}
               showDescription={false}
-              carouselDotsVisible={false}
+              carouselOptions={{
+                dotsVisible: false,
+                pressEnabled: false,
+              }}
               borderRadius={ItemBorderRadius.all}
               namePlacement={ItemNamePlacement.above}
-              carouselPressEnabled={false}
             />
           </TouchableOpacity>
         );

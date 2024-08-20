@@ -2,34 +2,26 @@ import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Image, ImageSourcePropType } from 'react-native';
 import { ItemBorderRadius } from '../types';
 import { useAssets } from 'expo-asset';
+import CarouselActionPanel from './CarouselActionPanel';
+import CarouselDots from './CarouselDots';
 
 const Carousel = ({
   images,
   borderRadius = ItemBorderRadius['up-only'],
   dotsVisible = true,
   pressEnabled = true,
+  actionPanelVisible = false,
   onPress,
 }: {
   images: string[];
   borderRadius?: ItemBorderRadius;
   dotsVisible?: boolean;
   pressEnabled?: boolean;
+  actionPanelVisible?: boolean;
   onPress?: () => void;
 }) => {
   const [loading, setLoading] = useState(false);
   const [imageIndex, setImageIndex] = useState<number>(0);
-
-  const renderDots = () => {
-    if (!dotsVisible) {
-      return null;
-    }
-    return images.map((_, index) => (
-      <View
-        key={index}
-        style={[styles.dot, { backgroundColor: index === imageIndex ? 'black' : 'lightgrey' }]}
-      />
-    ));
-  };
 
   const [noImageAsset, error] = useAssets([require('../../../assets/no_img.jpg')]);
 
@@ -63,7 +55,13 @@ const Carousel = ({
         onError={() => setLoading(false)}
       />
 
-      {images.length > 1 && <View style={styles.dotsContainer}>{renderDots()}</View>}
+      {images.length > 1 && dotsVisible && (
+        <CarouselDots
+          images={images}
+          actionPanelVisible={actionPanelVisible}
+          imageIndex={imageIndex}
+        />
+      )}
 
       <TouchableOpacity
         disabled={!pressEnabled}
@@ -98,6 +96,7 @@ const Carousel = ({
           setImageIndex(imageIndex >= images.length - 1 ? 0 : imageIndex + 1);
         }}
       />
+      {actionPanelVisible && <CarouselActionPanel />}
     </View>
   );
 };
@@ -130,20 +129,6 @@ const styles = StyleSheet.create({
   },
   image: {
     flex: 1,
-  },
-  dotsContainer: {
-    position: 'absolute',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    bottom: 20,
-    width: '100%',
-  },
-  dot: {
-    width: 10,
-    height: 10,
-    borderRadius: 5,
-    margin: 5,
   },
 });
 

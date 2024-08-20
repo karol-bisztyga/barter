@@ -11,7 +11,7 @@ import Animated, {
   SharedValue,
 } from 'react-native-reanimated';
 import Item from './Item';
-import { ItemData } from '../types';
+import { ItemData, SwipeCallbacks } from '../types';
 import { useUserContext } from '../context/UserContext';
 
 const { width, height } = Dimensions.get('window');
@@ -22,16 +22,12 @@ const END_ANIMATION_DURATION = 200;
 
 const SwipeableCard = ({
   itemData,
-  onSwipeRight,
-  onSwipeLeft,
-  onSwipeDown,
+  swipeCallbacks,
   lockGesture,
   onPressMore,
 }: {
   itemData: ItemData;
-  onSwipeRight: () => void;
-  onSwipeLeft: () => void;
-  onSwipeDown: () => void;
+  swipeCallbacks: SwipeCallbacks;
   onPressMore: () => void;
   lockGesture: SharedValue<boolean>;
 }) => {
@@ -73,23 +69,24 @@ const SwipeableCard = ({
       dragging.value = false;
       if (translateY.value > SWIPE_THRESHOLD_VERTICAL) {
         translateY.value = withTiming(height * 2, { duration: END_ANIMATION_DURATION }, () => {
-          runOnJS(onSwipeDown)();
+          runOnJS(swipeCallbacks.onSwipeDown)();
         });
         return;
       }
       if (userContext.swipingLeftRightBlockedReason) {
+        console.log('swiping left right blocked', userContext.swipingLeftRightBlockedReason);
         getBackToStartingPosition();
         return;
       }
       if (translateX.value > SWIPE_THRESHOLD_HORIZONTAL) {
         lockGesture.value = true;
         translateX.value = withTiming(width * 2, { duration: END_ANIMATION_DURATION }, () => {
-          runOnJS(onSwipeRight)();
+          runOnJS(swipeCallbacks.onSwipeRight)();
         });
       } else if (translateX.value < -SWIPE_THRESHOLD_HORIZONTAL) {
         lockGesture.value = true;
         translateX.value = withTiming(-(width * 2), { duration: END_ANIMATION_DURATION }, () => {
-          runOnJS(onSwipeLeft)();
+          runOnJS(swipeCallbacks.onSwipeLeft)();
         });
       } else {
         getBackToStartingPosition();
@@ -145,7 +142,12 @@ const SwipeableCard = ({
   return (
     <GestureDetector gesture={gesture}>
       <Animated.View style={[styles.itemWrapper, animatedStyle]}>
-        <Item itemData={itemData} centerVertically={false} onPressMore={onPressMore} />
+        <Item
+          itemData={itemData}
+          centerVertically={false}
+          onPressMore={onPressMore}
+          carouselOptions={{ actionPanelVisible: true }}
+        />
       </Animated.View>
     </GestureDetector>
   );

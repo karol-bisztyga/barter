@@ -111,7 +111,6 @@ export default function SignIn() {
           return;
         }
         const storageParsed = JSON.parse(storageStr);
-        console.log('TOKEN_STORAGE_KEY', storageParsed);
         const { session, userData } = storageParsed;
         if (session) {
           sessionContext.setSession(session);

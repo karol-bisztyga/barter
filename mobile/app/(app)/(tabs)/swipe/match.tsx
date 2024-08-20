@@ -50,8 +50,10 @@ const Match = () => {
             <Item
               itemData={usersItem}
               borderRadius={ItemBorderRadius.all}
-              carouselDotsVisible={false}
-              carouselPressEnabled={false}
+              carouselOptions={{
+                dotsVisible: false,
+                pressEnabled: false,
+              }}
               showDescription={false}
               showName={false}
             />
@@ -60,8 +62,10 @@ const Match = () => {
             <Item
               itemData={othersItem}
               borderRadius={ItemBorderRadius.all}
-              carouselDotsVisible={false}
-              carouselPressEnabled={false}
+              carouselOptions={{
+                dotsVisible: false,
+                pressEnabled: false,
+              }}
               showDescription={false}
               showName={false}
             />

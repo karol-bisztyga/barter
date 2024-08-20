@@ -11,8 +11,6 @@ export default function EditableItem({
   showName = true,
   namePlacement = ItemNamePlacement['below'],
   borderRadius = ItemBorderRadius['up-only'],
-  carouselDotsVisible = true,
-  carouselPressEnabled = true,
   showFull = false,
   centerVertically = true,
   onPressMore = () => {},
@@ -23,8 +21,6 @@ export default function EditableItem({
   showName?: boolean;
   namePlacement?: ItemNamePlacement;
   borderRadius?: ItemBorderRadius;
-  carouselDotsVisible?: boolean;
-  carouselPressEnabled?: boolean;
   showFull?: boolean;
   centerVertically?: boolean;
   onPressMore?: () => void;
@@ -51,8 +47,8 @@ export default function EditableItem({
         <Carousel
           images={itemData.images}
           borderRadius={borderRadius}
-          dotsVisible={carouselDotsVisible}
-          pressEnabled={carouselPressEnabled}
+          dotsVisible={true}
+          pressEnabled={true}
           onPress={onPress}
         />
       </View>

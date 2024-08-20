@@ -23,7 +23,7 @@ const ChatHeader = () => {
     <View style={styles.itemsWrapper}>
       <Item
         itemData={usersItem.item}
-        carouselDotsVisible={false}
+        carouselOptions={{ dotsVisible: false }}
         showDescription={false}
         showName={false}
         borderRadius={ItemBorderRadius.all}
@@ -36,7 +36,7 @@ const ChatHeader = () => {
       </View>
       <Item
         itemData={othersItem}
-        carouselDotsVisible={false}
+        carouselOptions={{ dotsVisible: false }}
         showDescription={false}
         showName={false}
         borderRadius={ItemBorderRadius.all}

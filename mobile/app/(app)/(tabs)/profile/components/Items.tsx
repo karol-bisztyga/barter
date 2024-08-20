@@ -20,7 +20,9 @@ const Items = () => {
             <Item
               itemData={item}
               showDescription={false}
-              carouselDotsVisible={false}
+              carouselOptions={{
+                dotsVisible: false,
+              }}
               borderRadius={ItemBorderRadius.all}
               namePlacement={ItemNamePlacement.above}
               onPress={() => {

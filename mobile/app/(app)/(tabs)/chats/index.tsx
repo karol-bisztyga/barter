@@ -37,8 +37,10 @@ const ListItem = ({
             showName={false}
             showDescription={false}
             borderRadius={ItemBorderRadius.all}
-            carouselDotsVisible={false}
-            carouselPressEnabled={false}
+            carouselOptions={{
+              dotsVisible: false,
+              pressEnabled: false,
+            }}
           />
         </View>
         <View style={styles.iconWrapper}>
@@ -50,8 +52,10 @@ const ListItem = ({
             showName={false}
             showDescription={false}
             borderRadius={ItemBorderRadius.all}
-            carouselDotsVisible={false}
-            carouselPressEnabled={false}
+            carouselOptions={{
+              dotsVisible: false,
+              pressEnabled: false,
+            }}
           />
         </View>
       </View>
