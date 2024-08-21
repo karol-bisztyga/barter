@@ -1,0 +1,21 @@
+version: '3.8' # or any other version compatible with your setup
+services:
+  db:
+    image: postgres:15 # or any other PostgreSQL version
+    container_name: barter # Name your container
+    environment:
+      POSTGRES_USER: barter # Replace with your preferred username
+      POSTGRES_PASSWORD: barter # Replace with your preferred password
+      POSTGRES_DB: barter # Replace with your preferred database name
+    ports:
+      - '5432:5432' # Maps the container port 5432 to the host port 5432
+    volumes:
+      - db_data:/var/lib/postgresql/data # Persists the database data
+    networks:
+      - postgres-network # Attach to a custom network
+
+volumes:
+  db_data:
+
+networks:
+  postgres-network:

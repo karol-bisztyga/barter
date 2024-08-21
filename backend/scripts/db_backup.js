@@ -2,7 +2,7 @@ require('dotenv').config();
 const path = require('path');
 const execCommand = require('./executeCommand');
 
-const { DOCKER_CONTAINER_NAME, DB_USER, DB_NAME, DB_PASSWORD, DB_PORT, SQL_FILE } = process.env;
+const { DOCKER_CONTAINER_NAME, DB_USER, DB_NAME, DB_PASSWORD } = process.env;
 
 const dumpFilePath = path.resolve(__dirname, './database_dump.sql');
 const removeTablesPath = path.resolve(__dirname, './database_remove_tables.sql');

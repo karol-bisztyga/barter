@@ -24,9 +24,7 @@ const checkContainerRunning = () => {
 if (!checkContainerRunning()) {
   console.log(`Docker container ${DOCKER_CONTAINER_NAME} is not running. Trying to run it...`);
   // start the container
-  const _createdContainerId = execSync(
-    `docker run --name ${DOCKER_CONTAINER_NAME} -e POSTGRES_PASSWORD=${DB_PASSWORD} -e POSTGRES_USER=${DB_USER} -e POSTGRES_DB=${DB_NAME} -p ${DB_PORT}:${DB_PORT} -d postgres`
-  )
+  const _createdContainerId = execSync(`docker-compose -f scripts/docker-compose.yml up -d`)
     .toString()
     .trim();
 } else {

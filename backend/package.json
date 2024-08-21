@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
+    "setup-docker": "docker-compose -f scripts/docker-compose.yml up -d",
     "database:reset": "node scripts/reset_database.js",
     "database:mock:sample": "node scripts/mock_database.js sample",
     "database:mock:hardcoded": "node scripts/mock_database.js hardcoded",
