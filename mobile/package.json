@@ -28,6 +28,8 @@
     "fast-xml-parser": "^4.4.1",
     "react": "18.2.0",
     "react-native": "0.74.3",
+    "react-native-dropdownalert": "^5.1.0",
+    "react-native-flash-message": "^0.4.2",
     "react-native-gesture-handler": "~2.16.1",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-reanimated": "~3.10.1",

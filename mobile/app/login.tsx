@@ -108,7 +108,6 @@ export default function Login() {
       try {
         const storageStr = await SecureStore.getItem(STORAGE_SESSION_KEY);
         if (!storageStr) {
-          console.log('no data in storage');
           return;
         }
         const storageParsed = JSON.parse(storageStr);
