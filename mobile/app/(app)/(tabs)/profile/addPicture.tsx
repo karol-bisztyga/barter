@@ -6,6 +6,7 @@ import { EditImageType, UserData } from '../../types';
 import { router } from 'expo-router';
 import { useUserContext } from '../../context/UserContext';
 import { useEditItemContext } from '../../context/EditItemContext';
+import { showError } from '../../utils/notifications';
 
 const { width } = Dimensions.get('window');
 
@@ -35,7 +36,9 @@ const AddPicture = () => {
 
   const confirm = () => {
     if (!image) {
-      throw new Error('no image detected');
+      showError('No image detected');
+      console.error('no image detected');
+      return;
     }
     switch (imageType) {
       case EditImageType.profile: {
