@@ -15,7 +15,10 @@ const ChatHeader = () => {
 
   const usersItem = userContext.findItemById(usersItemId);
   if (!usersItem || !othersItem) {
-    showError('at least one of the items has not been set');
+    // todo replace all occurences of 'your session seems to be corrupted' with a function or sth
+    showError(
+      `your session seems to be corrupted (data for one of the items is not present), you may want to restart the app or log in again`
+    );
     return null;
   }
 

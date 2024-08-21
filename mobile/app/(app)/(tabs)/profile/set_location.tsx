@@ -46,7 +46,7 @@ export default function LocationScreen() {
         );
       } catch (e) {
         showError('error getting location');
-        setLocationStr('Error getting location');
+        setLocationStr('error getting location');
         console.error('error getting location', e);
       }
     })();

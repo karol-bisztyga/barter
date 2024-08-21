@@ -29,7 +29,9 @@ export default function TabLayout() {
                 try {
                   await updateMatches(sessionContext, matchContext);
                 } catch (e) {
-                  showError('error updating matches');
+                  if (!`${e}`.includes('Invalid token')) {
+                    showError('error updating matches');
+                  }
                   console.error('error updating matches', e);
                 }
               })();

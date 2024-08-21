@@ -175,7 +175,9 @@ const EditItem = () => {
                     }
                   } catch (e) {
                     console.error('Error removing item', e);
-                    showError('Error removing item');
+                    if (!`${e}`.includes('Invalid token')) {
+                      showError('Error removing item');
+                    }
                     return;
                   }
                 }
@@ -217,7 +219,9 @@ const EditItem = () => {
                   newItems[usersItem.index] = { ...newItems[usersItem.index], ...result };
                 } catch (e) {
                   console.error('Error updating item', e);
-                  showError('Error updating item');
+                  if (!`${e}`.includes('Invalid token')) {
+                    showError('Error updating item');
+                  }
                   return;
                 }
               } else {
@@ -233,7 +237,9 @@ const EditItem = () => {
                   newItems.push(result);
                 } catch (e) {
                   console.error('Error adding item', e);
-                  showError('Error adding item');
+                  if (!`${e}`.includes('Invalid token')) {
+                    showError('Error adding item');
+                  }
                   return;
                 }
               }

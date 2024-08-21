@@ -28,7 +28,9 @@ export default function Swipe() {
 
   useEffect(() => {
     if (!userContext.data) {
-      showError('user data not provided');
+      showError(
+        'your session seems to be corrupted (your data is missing), you may want to restart the app or log in again'
+      );
       return;
     }
     getUserItems(sessionContext)
@@ -37,7 +39,9 @@ export default function Swipe() {
       })
       .catch((e) => {
         console.error('error', e);
-        showError(`error loading user's items`);
+        if (!`${e}`.includes('Invalid token')) {
+          showError(`error loading user's items`);
+        }
       });
   }, []);
 
@@ -67,7 +71,9 @@ export default function Swipe() {
         }
         updatedCards = [...itemsLoaded, ...updatedCards];
       } catch (e) {
-        showError('error loading cards');
+        if (!`${e}`.includes('Invalid token')) {
+          showError('error loading cards');
+        }
         console.error('error loading cards', e);
         return null;
       }
@@ -95,7 +101,9 @@ export default function Swipe() {
 
         setCards(itemsLoaded);
       } catch (e) {
-        showError('error loading cards');
+        if (!`${e}`.includes('Invalid token')) {
+          showError('error loading cards');
+        }
         console.error('error loading cards initially', e);
       }
     })();
@@ -105,7 +113,9 @@ export default function Swipe() {
     try {
       return await addLike(sessionContext, likedItemId, decision);
     } catch (e) {
-      showError('error sending like');
+      if (!`${e}`.includes('Invalid token')) {
+        showError('error sending like');
+      }
       console.error('error sending like', e);
     }
   };

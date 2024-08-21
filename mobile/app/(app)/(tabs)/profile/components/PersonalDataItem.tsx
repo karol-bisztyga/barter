@@ -87,7 +87,9 @@ const EditingTools = ({
             setEditing(false);
             setValue(updateDatabaseResult[name]);
           } catch (e) {
-            showError('error updating user');
+            if (!`${e}`.includes('Invalid token')) {
+              showError('error updating user');
+            }
             console.error('error updating user', e);
           }
         }}

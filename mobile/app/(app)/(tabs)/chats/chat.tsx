@@ -162,7 +162,9 @@ const Chat = () => {
       }
       setMessages([...messages, ...newMessages]);
     } catch (e) {
-      showError('could not load messages');
+      if (!`${e}`.includes('Invalid token')) {
+        showError('could not load messages');
+      }
       console.error('error getting messages', e);
     }
   };

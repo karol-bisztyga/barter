@@ -11,7 +11,9 @@ const PersonalData = () => {
   const data = { ...userContext.data };
 
   if (!data) {
-    showError('personal data is missing');
+    showError(
+      'your session seems to be corrupted (personal data is missing), you may want to restart the app or log in again'
+    );
     return null;
   }
 

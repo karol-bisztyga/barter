@@ -11,7 +11,9 @@ export default function ChatMessageComponent({ message }: { message: ChatMessage
 
   if (!userContext.data?.id) {
     console.error('chat message component: user id not provided');
-    showError('an error occurred when trying to display a chat message, session may be invalid');
+    showError(
+      `your session seems to be corrupted (your data is not properly set), you may want to restart the app or log in again`
+    );
     return null;
   }
 

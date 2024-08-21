@@ -22,7 +22,9 @@ const Match = () => {
     console.error(
       `Match screen did not receive all required data: [${!!itemsContext.usersItemId}][${!!itemsContext.usersItemsLikedByTargetItemOwner.length}][${!!itemsContext.othersItem}]`
     );
-    showError('Match screen did not receive all required data');
+    showError(
+      `your session seems to be corrupted (match screen did not receive all required data), you may want to restart the app or log in again`
+    );
     return null;
   }
   const myDefaultItemId = useRef(itemsContext.usersItemId);
@@ -30,7 +32,9 @@ const Match = () => {
   const usersItem: ItemData | undefined = userContext.findItemById(usersItemId)?.item;
   if (!othersItem || !usersItem) {
     console.error('at least on of the items has not been set');
-    showError('at least on of the items has not been set');
+    showError(
+      `your session seems to be corrupted (at least on of the items has not been set properly), you may want to restart the app or log in again`
+    );
     router.back();
     return null;
   }
@@ -114,7 +118,9 @@ const Match = () => {
                       );
                     } catch (e) {
                       console.error('Error updating match', e);
-                      showError('Error updating match');
+                      if (!`${e}`.includes('Invalid token')) {
+                        showError('Error updating match');
+                      }
                       return;
                     }
                   }
