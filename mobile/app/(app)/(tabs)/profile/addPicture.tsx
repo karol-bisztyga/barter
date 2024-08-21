@@ -37,7 +37,6 @@ const AddPicture = () => {
     if (!image) {
       throw new Error('no image detected');
     }
-    console.log('confirming image', imageType, image);
     switch (imageType) {
       case EditImageType.profile: {
         userContext.setData({
@@ -70,7 +69,6 @@ const AddPicture = () => {
         activeOpacity={1}
         style={styles.iconWrapper}
         onPress={() => {
-          console.log('use disk');
           pickImage();
         }}
       >

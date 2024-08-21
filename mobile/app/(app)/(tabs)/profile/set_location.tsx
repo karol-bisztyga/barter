@@ -6,6 +6,7 @@ import { updateUser } from '../../db_utils/updateUser';
 import { authorizeUser, cityNameFromLocation, formatLocation } from '../../utils/reusableStuff';
 import { router } from 'expo-router';
 import { useUserContext } from '../../context/UserContext';
+import { showError } from '../../utils/notifications';
 
 export default function LocationScreen() {
   const sessionContext = authorizeUser();
@@ -19,7 +20,7 @@ export default function LocationScreen() {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        console.error(
+        showError(
           'Permission to access location was denied, you may need to enable location services in settings'
         );
         return;
@@ -29,8 +30,9 @@ export default function LocationScreen() {
       setLocation(location);
       setLocationStr(await cityNameFromLocation(formatLocationCoords(location.coords)));
       setCity('');
-    } catch (error) {
-      console.error('error getting location', error);
+    } catch (e) {
+      showError('error getting location');
+      console.error('error getting location', e);
     }
   };
 
@@ -43,8 +45,9 @@ export default function LocationScreen() {
             'Location unspecified\n\nPlease enable location services or enter city manually'
         );
       } catch (e) {
-        console.error('error getting persisted location', e);
+        showError('error getting location');
         setLocationStr('Error getting location');
+        console.error('error getting location', e);
       }
     })();
   }, []);
@@ -54,7 +57,8 @@ export default function LocationScreen() {
 
   const saveLocation = async () => {
     if (!city && !location) {
-      throw new Error('neither city nor location provided');
+      showError('neither city nor location provided');
+      return;
     }
     const locationToSave: string = location ? formatLocationCoords(location.coords) : city;
     try {
@@ -65,6 +69,7 @@ export default function LocationScreen() {
       userContext.setData({ ...userContext.data, location: locationToSave });
       router.back();
     } catch (e) {
+      showError('error saving location');
       console.error('error saving location', e);
     }
   };

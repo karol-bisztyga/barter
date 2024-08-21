@@ -7,6 +7,7 @@ import { useItemsContext } from '../../context/ItemsContext';
 import { useUserContext } from '../../context/UserContext';
 import { updateMatchMatchingItem } from '../../db_utils/updateMatchMatchingItem';
 import { authorizeUser } from '../../utils/reusableStuff';
+import { showError } from '../../utils/notifications';
 
 const { width } = Dimensions.get('window');
 
@@ -18,15 +19,18 @@ const Match = () => {
   const { othersItem, usersItemId, usersItemsLikedByTargetItemOwner } = itemsContext;
 
   if (!usersItemId || !usersItemsLikedByTargetItemOwner.length || !othersItem) {
-    throw new Error(
+    console.error(
       `Match screen did not receive all required data: [${!!itemsContext.usersItemId}][${!!itemsContext.usersItemsLikedByTargetItemOwner.length}][${!!itemsContext.othersItem}]`
     );
+    showError('Match screen did not receive all required data');
+    return null;
   }
   const myDefaultItemId = useRef(itemsContext.usersItemId);
 
   const usersItem: ItemData | undefined = userContext.findItemById(usersItemId)?.item;
   if (!othersItem || !usersItem) {
     console.error('at least on of the items has not been set');
+    showError('at least on of the items has not been set');
     router.back();
     return null;
   }
@@ -101,13 +105,18 @@ const Match = () => {
                     myDefaultItemId.current &&
                     myDefaultItemId.current !== itemsContext.usersItemId
                   ) {
-                    const updateMatchResult = await updateMatchMatchingItem(
-                      sessionContext,
-                      usersItemId,
-                      myDefaultItemId.current,
-                      othersItem.id
-                    );
-                    console.log('match has been updated', updateMatchResult);
+                    try {
+                      await updateMatchMatchingItem(
+                        sessionContext,
+                        usersItemId,
+                        myDefaultItemId.current,
+                        othersItem.id
+                      );
+                    } catch (e) {
+                      console.error('Error updating match', e);
+                      showError('Error updating match');
+                      return;
+                    }
                   }
                   router.back();
                 }}

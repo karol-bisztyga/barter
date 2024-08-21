@@ -11,6 +11,6 @@ export const addItem = async (sessionContext: SessionContextState, item: ItemDat
   if (response.ok) {
     return { ...response.data, images: JSON.parse(response.data.images) };
   } else {
-    throw new Error('create item error: ' + response.data.message);
+    throw new Error('add item error: ' + response.data.message);
   }
 };

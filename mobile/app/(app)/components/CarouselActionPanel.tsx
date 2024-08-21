@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { showInfo } from '../utils/notifications';
 
 type ActionButton = {
   name: 'thumbs-down' | 'clock-o' | 'thumbs-up';
@@ -40,7 +41,7 @@ const CarouselActionPanel = () => {
               style={[styles.iconWrapper, { marginTop: item.marginTop }]}
               onPress={() => {
                 // todo only show info what it does for now
-                console.log(item.description);
+                showInfo(item.description);
               }}
               activeOpacity={1}
             >

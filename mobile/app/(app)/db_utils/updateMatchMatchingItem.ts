@@ -15,6 +15,6 @@ export const updateMatchMatchingItem = async (
   if (response.ok) {
     return response.data;
   } else {
-    throw new Error('send like error: ' + response.data.message);
+    throw new Error('update matching item error: ' + response.data.message);
   }
 };

@@ -13,6 +13,7 @@ import Animated, {
 import Item from './Item';
 import { ItemData, SwipeCallbacks } from '../types';
 import { useUserContext } from '../context/UserContext';
+import { showInfo } from '../utils/notifications';
 
 const { width, height } = Dimensions.get('window');
 const SWIPE_THRESHOLD_HORIZONTAL = 0.25 * width;
@@ -74,7 +75,7 @@ const SwipeableCard = ({
         return;
       }
       if (userContext.swipingLeftRightBlockedReason) {
-        console.log('swiping left right blocked', userContext.swipingLeftRightBlockedReason);
+        showInfo('swiping left right blocked', userContext.swipingLeftRightBlockedReason);
         getBackToStartingPosition();
         return;
       }

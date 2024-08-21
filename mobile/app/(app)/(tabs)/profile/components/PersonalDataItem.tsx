@@ -6,6 +6,7 @@ import { UserData } from '../../../types';
 import { useUserContext } from '../../../context/UserContext';
 import { useSessionContext } from '../../../../SessionContext';
 import { updateUser } from '../../../db_utils/updateUser';
+import { showError } from '../../../utils/notifications';
 
 const validateValue = (/*value: string*/) => {
   // todo handle this
@@ -86,6 +87,7 @@ const EditingTools = ({
             setEditing(false);
             setValue(updateDatabaseResult[name]);
           } catch (e) {
+            showError('error updating user');
             console.error('error updating user', e);
           }
         }}

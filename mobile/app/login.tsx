@@ -9,6 +9,7 @@ import * as SecureStore from 'expo-secure-store';
 
 import sampleUsers from './(app)/mocks/sampleUsers.json';
 import { STORAGE_SESSION_KEY } from './constants';
+import { showError, showInfo } from './(app)/utils/notifications';
 
 const SingInForm = () => {
   const { signIn } = useSessionContext();
@@ -36,8 +37,8 @@ const SingInForm = () => {
       userContext.setData(userData);
       router.replace('/');
     } catch (e) {
-      // todo show error message
       console.error('sign in failed', e);
+      showError('sign in failed');
     }
   };
 
@@ -64,7 +65,7 @@ const SingInForm = () => {
         <Button
           title="Register"
           onPress={() => {
-            console.log('register');
+            showInfo('register not implemented yet');
           }}
         />
       </View>
@@ -97,7 +98,7 @@ export const Loader = () => {
   );
 };
 
-export default function SignIn() {
+export default function Login() {
   const userContext = useUserContext();
   const sessionContext = useSessionContext();
   const [checkingSession, setCheckingSession] = useState(true);

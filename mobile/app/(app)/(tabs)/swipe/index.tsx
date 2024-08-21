@@ -11,6 +11,7 @@ import { getUserItems } from '../../db_utils/getUserItems';
 import { authorizeUser } from '../../utils/reusableStuff';
 import { getItemsForCards } from '../../db_utils/getItemsForCards';
 import { addLike } from '../../db_utils/addLike';
+import { showError, showInfo } from '../../utils/notifications';
 
 const LOADED_ITEMS_CAPACITY = 5;
 // when there are less items loaded than this value, new items will be fetched
@@ -27,7 +28,8 @@ export default function Swipe() {
 
   useEffect(() => {
     if (!userContext.data) {
-      throw new Error('user data not provided');
+      showError('user data not provided');
+      return;
     }
     getUserItems(sessionContext)
       .then((items) => {
@@ -35,6 +37,7 @@ export default function Swipe() {
       })
       .catch((e) => {
         console.error('error', e);
+        showError(`error loading user's items`);
       });
   }, []);
 
@@ -50,7 +53,7 @@ export default function Swipe() {
     if (cards.length <= ITEMS_LOAD_TRESHOLD) {
       try {
         if (emptyCardsResponseReceived) {
-          console.log('no items available for now, try again later');
+          showInfo('no items available for now, try again later');
           return currentCard;
         }
         const itemsLoaded = await getItemsForCards(
@@ -64,7 +67,8 @@ export default function Swipe() {
         }
         updatedCards = [...itemsLoaded, ...updatedCards];
       } catch (e) {
-        console.error('error loading cards more', e);
+        showError('error loading cards');
+        console.error('error loading cards', e);
         return null;
       }
     }
@@ -76,7 +80,7 @@ export default function Swipe() {
     (async () => {
       try {
         if (emptyCardsResponseReceived) {
-          console.log('no items available for now, try again later');
+          showInfo('no items available for now, try again later');
           return;
         }
         const itemsLoaded = await getItemsForCards(
@@ -91,78 +95,70 @@ export default function Swipe() {
 
         setCards(itemsLoaded);
       } catch (e) {
+        showError('error loading cards');
         console.error('error loading cards initially', e);
       }
     })();
   }, []);
 
-  useEffect(() => {
-    console.log(
-      '> cards updated',
-      cards.map((card) => card.name)
-    );
-  }, [cards]);
-
   const sendLike = async (likedItemId: string, decision: boolean) => {
     try {
       return await addLike(sessionContext, likedItemId, decision);
     } catch (e) {
+      showError('error sending like');
       console.error('error sending like', e);
     }
   };
 
   const handleSwipeRight = async () => {
     if (userContext.swipingLeftRightBlockedReason) {
-      console.log('swiping left/right blocked, reason:', userContext.swipingLeftRightBlockedReason);
+      showInfo('swiping left/right blocked, reason:', userContext.swipingLeftRightBlockedReason);
       return;
     }
     const swipedCard = await popAndLoadCard();
     if (!swipedCard) {
-      throw new Error('could not find swiped card');
+      showError('could not find swiped card');
+      return;
     }
-    console.log('Swiped Right:', swipedCard.name, swipedCard.id);
     const sendLikeResult = await sendLike(swipedCard.id, true);
     lockGesture.value = false;
 
     if (sendLikeResult.matchStatus === 'match') {
-      console.log('their card', swipedCard);
-      // todo show match screen
       itemsContext.setUsersItemId(sendLikeResult.matchResult.matching_item_id);
       itemsContext.setOthersItem(swipedCard);
       itemsContext.setUsersItemsLikedByTargetItemOwner(
         sendLikeResult.myItemsLikedByTargetItemOwner
       );
       router.push('swipe/match');
-    } else {
-      console.log('no match');
     }
   };
 
   const handleSwipeLeft = async () => {
     if (userContext.swipingLeftRightBlockedReason) {
-      console.log('swiping left/right blocked, reason:', userContext.swipingLeftRightBlockedReason);
+      showInfo('swiping left/right blocked, reason:', userContext.swipingLeftRightBlockedReason);
       return;
     }
     const swipedCard = await popAndLoadCard();
     if (!swipedCard) {
-      throw new Error('could not find swiped card');
+      showError('could not find swiped card');
+      return;
     }
-    console.log('Swiped Left:', swipedCard?.name);
     const sendLikeResult = await sendLike(swipedCard.id, false);
     lockGesture.value = false;
     if (sendLikeResult.matchStatus === 'match') {
-      throw new Error(
+      showError(
         `something went terribly wrong, it's a match even though the user disliked this item! This should never happen!`
       );
+      return;
     }
   };
 
   const handleSwipeDown = async () => {
     const swipedCard = await popAndLoadCard();
     if (!swipedCard) {
-      throw new Error('could not find swiped card');
+      showError('could not find swiped card');
+      return;
     }
-    console.log('Swiped Down:', swipedCard?.name);
   };
 
   return (

@@ -12,6 +12,6 @@ export const removeItem = async (sessionContext: SessionContextState, itemId: st
   if (response.ok) {
     return response.data;
   } else {
-    throw new Error('delete item error: ' + response.data.message);
+    throw new Error('remove item error: ' + response.data.message);
   }
 };

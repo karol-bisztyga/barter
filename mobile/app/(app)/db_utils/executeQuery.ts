@@ -25,7 +25,6 @@ export const executeQuery = async (
     const modifiedUrl = new URL(url);
     Object.keys(urlParams).forEach((key) => modifiedUrl.searchParams.append(key, urlParams[key]));
     url = modifiedUrl.toString();
-    console.log('sending request to modified url', url);
   }
   if (body) {
     config['body'] = JSON.stringify(body);

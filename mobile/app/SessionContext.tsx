@@ -66,7 +66,6 @@ export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }
       if (!response.data.token) {
         throw new Error('token is missing');
       }
-      console.log('setting session', response.data.token);
 
       const userData: UserData = {
         id: response.data.user.id,

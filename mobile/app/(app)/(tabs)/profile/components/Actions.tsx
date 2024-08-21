@@ -2,6 +2,7 @@ import React from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useSessionContext } from '../../../../SessionContext';
+import { showInfo } from '../../../utils/notifications';
 
 const Actions = () => {
   const sessionContext = useSessionContext();
@@ -12,7 +13,6 @@ const Actions = () => {
         style={styles.actionWrapper}
         activeOpacity={1}
         onPress={() => {
-          console.log('sign out');
           sessionContext.signOut();
         }}
       >
@@ -23,7 +23,7 @@ const Actions = () => {
         style={styles.actionWrapper}
         activeOpacity={1}
         onPress={() => {
-          console.log('delete account');
+          showInfo('delete account not implemented yet');
         }}
       >
         <FontAwesome size={30} name="trash" style={styles.icon} />

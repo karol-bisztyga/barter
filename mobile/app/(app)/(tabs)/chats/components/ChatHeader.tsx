@@ -6,6 +6,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
 import { useUserContext } from '../../../context/UserContext';
 import { useItemsContext } from '../../../context/ItemsContext';
+import { showError } from '../../../utils/notifications';
 
 const ChatHeader = () => {
   const userContext = useUserContext();
@@ -14,9 +15,8 @@ const ChatHeader = () => {
 
   const usersItem = userContext.findItemById(usersItemId);
   if (!usersItem || !othersItem) {
-    console.log('>>> ERR', usersItemId, usersItem);
+    showError('at least one of the items has not been set');
     return null;
-    // throw new Error('at least one of the items has not been set');
   }
 
   return (

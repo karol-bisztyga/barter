@@ -24,6 +24,7 @@ import { updateItem } from '../../db_utils/updateItem';
 import { addItem } from '../../db_utils/addItem';
 import { removeItem } from '../../db_utils/removeItem';
 import { useMatchContext } from '../../context/MatchContext';
+import { showError } from '../../utils/notifications';
 
 const { width } = Dimensions.get('window');
 
@@ -107,12 +108,11 @@ const EditItem = () => {
                     style={styles.editImageWrapper}
                     activeOpacity={1}
                     onPress={() => {
-                      console.log('remove picture');
                       if (!usersItem) {
-                        throw new Error('trying to remove non-existing item');
+                        console.error('trying to remove non-existing item');
+                        return;
                       }
 
-                      console.log('removing items picture', index);
                       const newPictures = [...pictures];
                       newPictures.splice(index, 1);
                       setPictures(newPictures);
@@ -128,7 +128,6 @@ const EditItem = () => {
             <View style={[styles.imageSlot, { width: imageSize, height: imageSize }]}>
               <AddButton
                 onPress={() => {
-                  console.log('add picture');
                   editItemContext.setImageType(EditImageType.item);
                   editItemContext.setItemId(usersItem?.item.id || null);
                   router.push('profile/addPicture');
@@ -144,7 +143,6 @@ const EditItem = () => {
               color="red"
               title="Remove Item"
               onPress={async () => {
-                console.log('remove item');
                 const remove: boolean = await new Promise((resolve) => {
                   Alert.alert(
                     'Do you really want to remove this item?',
@@ -160,13 +158,12 @@ const EditItem = () => {
                     { cancelable: false }
                   );
                 });
-                console.log('remove decision', remove);
                 if (remove) {
-                  if (!usersItem) {
-                    throw new Error('item to remove not specified');
-                  }
-                  const newItems = [...userContext.items];
                   try {
+                    if (!usersItem) {
+                      throw new Error('item to remove not specified');
+                    }
+                    const newItems = [...userContext.items];
                     const result = await removeItem(sessionContext, usersItem.item.id);
                     await updateMatches(sessionContext, matchContext);
                     if (result) {
@@ -174,10 +171,11 @@ const EditItem = () => {
                       userContext.setItems(newItems);
                       router.back();
                     } else {
-                      console.error('removing item failed');
+                      throw new Error('server error');
                     }
                   } catch (e) {
-                    console.error('error removing item', e);
+                    console.error('Error removing item', e);
+                    showError('Error removing item');
                     return;
                   }
                 }
@@ -188,19 +186,19 @@ const EditItem = () => {
             title="Save"
             disabled={!validateForm() || !checkIfItemEdited()}
             onPress={async () => {
-              console.log('save item', usersItemId);
               if (!validateForm()) {
-                throw new Error('form invalid');
+                showError('form invalid');
+                return;
               }
               if (!checkIfItemEdited()) {
-                console.log('no changes detected');
                 return;
               }
               const newItems = [...userContext.items];
               if (usersItem) {
                 // update item
                 if (!usersItemId) {
-                  throw new Error('item id not provided');
+                  console.error('item id not provided');
+                  return;
                 }
 
                 const updatedItem = {
@@ -218,7 +216,8 @@ const EditItem = () => {
                   );
                   newItems[usersItem.index] = { ...newItems[usersItem.index], ...result };
                 } catch (e) {
-                  console.error('error updating item', e);
+                  console.error('Error updating item', e);
+                  showError('Error updating item');
                   return;
                 }
               } else {
@@ -233,7 +232,8 @@ const EditItem = () => {
                   const result = await addItem(sessionContext, newItem);
                   newItems.push(result);
                 } catch (e) {
-                  console.error('error adding item', e);
+                  console.error('Error adding item', e);
+                  showError('Error adding item');
                   return;
                 }
               }

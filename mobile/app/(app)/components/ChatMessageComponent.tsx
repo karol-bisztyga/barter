@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { ChatMessage } from '../types';
 import { useUserContext } from '../context/UserContext';
+import { showError } from '../utils/notifications';
 
 const { width } = Dimensions.get('window');
 
@@ -9,7 +10,9 @@ export default function ChatMessageComponent({ message }: { message: ChatMessage
   const userContext = useUserContext();
 
   if (!userContext.data?.id) {
-    throw new Error('chat message component: user id not provided');
+    console.error('chat message component: user id not provided');
+    showError('an error occurred when trying to display a chat message, session may be invalid');
+    return null;
   }
 
   const accordingStyle =

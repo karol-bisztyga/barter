@@ -23,7 +23,6 @@ const Items = () => {
                 return;
               }
               itemsContext.setUsersItemId(item.id);
-              console.log('setting new current item id', itemsContext.usersItemId);
             }}
           >
             <Item

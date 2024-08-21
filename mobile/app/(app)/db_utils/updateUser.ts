@@ -13,6 +13,6 @@ export const updateUser = async (
   if (response.ok) {
     return response.data;
   } else {
-    throw new Error('update item error: ' + response.data.message);
+    throw new Error('update user error: ' + response.data.message);
   }
 };

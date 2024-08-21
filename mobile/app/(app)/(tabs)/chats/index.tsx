@@ -121,7 +121,8 @@ export default function Chats() {
             const matchedItemFoundInUserItems =
               userContext.items.map((item) => item.id).indexOf(matchedItem.id) !== -1;
             if (matchingItemFoundInUserItems && matchedItemFoundInUserItems) {
-              throw new Error(`both matching and matched item have been found in user's items`);
+              console.error(`both matching and matched item have been found in user's items`);
+              return null;
             }
             let myItem: ItemData;
             let theirItem: ItemData;
@@ -132,7 +133,8 @@ export default function Chats() {
               myItem = matchedItem;
               theirItem = matchingItem;
             } else {
-              throw new Error(`neither matching nor matched item has been found in user's items`);
+              console.error(`neither matching nor matched item has been found in user's items`);
+              return null;
             }
             return (
               <>

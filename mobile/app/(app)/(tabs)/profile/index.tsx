@@ -49,7 +49,6 @@ export default function Profile() {
                 style={styles.editProfileImageWrapper}
                 activeOpacity={1}
                 onPress={() => {
-                  console.log('edit profile picture');
                   editItemContext.setImageType(EditImageType.profile);
                   router.push('profile/addPicture');
                 }}

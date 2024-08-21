@@ -3,6 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { UserData } from '../../../types';
 import PersonalDataItem from './PersonalDataItem';
 import { useUserContext } from '../../../context/UserContext';
+import { showError } from '../../../utils/notifications';
 
 const PersonalData = () => {
   const userContext = useUserContext();
@@ -10,14 +11,13 @@ const PersonalData = () => {
   const data = { ...userContext.data };
 
   if (!data) {
-    throw new Error('personal data is missing');
+    showError('personal data is missing');
+    return null;
   }
 
   delete data.id;
   delete data.profilePicture;
   delete data.location;
-
-  console.log('user data', data);
 
   return (
     <View style={styles.container}>

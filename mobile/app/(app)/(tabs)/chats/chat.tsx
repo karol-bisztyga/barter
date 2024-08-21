@@ -23,6 +23,7 @@ import { useUserContext } from '../../context/UserContext';
 import { executeProtectedQuery } from '../../db_utils/executeProtectedQuery';
 import { getServerAddress } from '../../utils/networkUtils';
 import { useMatchContext } from '../../context/MatchContext';
+import { showError } from '../../utils/notifications';
 
 const INPUT_WRAPPER_HEIGHT = 70;
 const ITEMS_WRPPER_HEIGHT = 200;
@@ -123,6 +124,7 @@ const Chat = () => {
     newSocket.on('error', (e) => {
       console.error('socket error', e);
       if (e.name === 'TokenExpiredError') {
+        showError('Session expired');
         sessionContext.signOut();
       }
     });
@@ -160,6 +162,7 @@ const Chat = () => {
       }
       setMessages([...messages, ...newMessages]);
     } catch (e) {
+      showError('could not load messages');
       console.error('error getting messages', e);
     }
   };
@@ -169,7 +172,8 @@ const Chat = () => {
       return;
     }
     if (!socket) {
-      throw new Error('trying to use uninitialized socket');
+      console.error('trying to use uninitialized socket');
+      return;
     }
     const newMessageObject: ChatMessage = {
       content: newMessage,

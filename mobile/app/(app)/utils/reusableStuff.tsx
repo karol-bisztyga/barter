@@ -28,16 +28,10 @@ export const headerBackButtonOptions = (beforeCallback?: () => Promise<boolean>)
   };
 };
 
-export const handleUnauthorizedAccess = (condition: boolean) => {
-  if (!condition) {
-    throw new Error('Unauthorized access (todo redirect to login)');
-  }
-};
-
 export const authorizeUser = (): SessionContextState => {
   const sessionContext = useSessionContext();
   if (!sessionContext.session) {
-    throw new Error('Unauthorized access');
+    throw new Error('Unauthorized access'); // todo this error is not handled
   }
   return sessionContext;
 };

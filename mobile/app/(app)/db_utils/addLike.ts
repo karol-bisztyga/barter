@@ -15,6 +15,6 @@ export const addLike = async (
     // of there's a match, the user will see the screen to choose an item for this match
     return response.data;
   } else {
-    throw new Error('send like error: ' + response.data.message);
+    throw new Error('add like error: ' + response.data.message);
   }
 };
