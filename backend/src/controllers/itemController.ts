@@ -134,10 +134,12 @@ export const deleteItem = async (req: AuthRequest, res: Response) => {
       [itemId]
     );
     const matchesIds = matchesIdsResult.rows.map((row: Record<string, string>) => row.id);
-    await client.query(
-      `DELETE FROM messages WHERE match_id IN (${matchesIds.map((_: string, i: number) => `$${i + 1}`).join(', ')})`,
-      matchesIds
-    );
+    if (matchesIds.length) {
+      await client.query(
+        `DELETE FROM messages WHERE match_id IN (${matchesIds.map((_: string, i: number) => `$${i + 1}`).join(', ')})`,
+        matchesIds
+      );
+    }
     updateMatchDateUpdated(client, dateNow, userId);
     await client.query('DELETE FROM matches WHERE matching_item_id = $1 OR matched_item_id = $1', [
       itemId,
