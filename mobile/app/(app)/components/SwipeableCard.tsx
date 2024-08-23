@@ -75,7 +75,7 @@ const SwipeableCard = ({
         return;
       }
       if (userContext.swipingLeftRightBlockedReason) {
-        showInfo('swiping left right blocked', userContext.swipingLeftRightBlockedReason);
+        runOnJS(showInfo)('swiping left right blocked', userContext.swipingLeftRightBlockedReason);
         getBackToStartingPosition();
         return;
       }

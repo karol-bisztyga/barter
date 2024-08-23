@@ -24,7 +24,7 @@ import { updateItem } from '../../db_utils/updateItem';
 import { addItem } from '../../db_utils/addItem';
 import { removeItem } from '../../db_utils/removeItem';
 import { useMatchContext } from '../../context/MatchContext';
-import { showError } from '../../utils/notifications';
+import { showError, showInfo } from '../../utils/notifications';
 
 const { width } = Dimensions.get('window');
 
@@ -169,6 +169,7 @@ const EditItem = () => {
                     if (result) {
                       newItems.splice(usersItem.index, 1);
                       userContext.setItems(newItems);
+                      showInfo('Item removed');
                       router.back();
                     } else {
                       throw new Error('server error');

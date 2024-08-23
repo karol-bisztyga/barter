@@ -2,7 +2,13 @@ import { DropdownAlertType } from 'react-native-dropdownalert';
 import { showAlert } from '../../_layout';
 
 export const showInfo = (...args: Array<string | number | boolean>) => {
-  console.log(...args); // todo user showAlert
+  const message = `${args.join(' ')}`;
+  console.log(message);
+  showAlert({
+    type: DropdownAlertType.Info,
+    title: 'Info',
+    message,
+  });
 };
 
 export const showWarning = (...args: Array<string | number | boolean>) => {
