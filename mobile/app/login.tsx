@@ -44,8 +44,15 @@ const SingInForm = () => {
 
   return (
     <View style={styles.inputContainer}>
-      <TextInput placeholder="email" value={email} onChangeText={setEmail} style={styles.input} />
       <TextInput
+        placeholder="email"
+        value={email}
+        onChangeText={setEmail}
+        style={styles.input}
+        autoCapitalize="none"
+      />
+      <TextInput
+        autoCapitalize="none"
         placeholder="password"
         secureTextEntry={true}
         value={password}
