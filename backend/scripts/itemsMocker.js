@@ -1,7 +1,4 @@
-const { generateImage } = require('./imageMocker');
 const { generateLoremIpsum } = require('./textMocker');
-
-const MAX_ITEM_PICTURES = 5;
 
 const masculineAdjectives = [
   'duży',
@@ -198,24 +195,6 @@ function generateRandomHouseholdObjectName() {
   return `${adjective} ${item}`;
 }
 
-const generateMockedImageUrls = async (count) => {
-  if (count === undefined) {
-    count = Math.floor(Math.random() * MAX_ITEM_PICTURES) + 1;
-  }
-  if (count < 1 || count > MAX_ITEM_PICTURES) {
-    throw new Error(`Count must be between 1 and ${MAX_ITEM_PICTURES}.`);
-  }
-
-  const urls = [];
-
-  for (let i = 0; i < count; i++) {
-    const imageUrl = await generateImage();
-    urls.push(imageUrl);
-  }
-
-  return urls;
-};
-
 const generateItem = (userId) => {
   return {
     userId,
@@ -224,4 +203,4 @@ const generateItem = (userId) => {
   };
 };
 
-module.exports = { generateItem, generateMockedImageUrls };
+module.exports = { generateItem };

@@ -10,4 +10,11 @@ const pool = new Pool({
   port: parseInt(process.env.DB_PORT || ''),
 });
 
+(async () => {
+  // didn't work without this
+  console.log('testing database connection...');
+  await pool.connect();
+  console.log('database connection works!');
+})();
+
 export default pool;

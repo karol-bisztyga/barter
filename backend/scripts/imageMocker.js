@@ -22,4 +22,21 @@ const generateImage = async (width, height) => {
   return url;
 };
 
-module.exports = { generateImage };
+const generateImageAndFetch = async (width, height) => {
+  let imageCorrect = false;
+  let url = null;
+  let response;
+  const maxRetries = 5;
+  let retryCount = 0;
+  while (!imageCorrect || !url) {
+    url = generateUrl(width, height);
+    response = await fetch(url);
+    imageCorrect = response.status === 200;
+    if (retryCount++ > maxRetries) {
+      throw new Error('image generator: retries limit reached');
+    }
+  }
+  return { url, response };
+};
+
+module.exports = { generateImage, generateImageAndFetch };

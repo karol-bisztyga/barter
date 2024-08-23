@@ -1,4 +1,4 @@
-const { generateImage } = require('./imageMocker');
+const { uploadRandomImage } = require('./setup_storage');
 
 const maleFirstNames = [
   'Jan',
@@ -222,7 +222,7 @@ const generateRandomUsername = (platform = 'fb') => {
   return `${adjective}${noun}${number}`;
 };
 
-const maybeGetValue = (callback, ...args) => {
+const maybeGetValue = async (callback, ...args) => {
   // Generate a random number between 0 and 1
   const chance = Math.random();
 
@@ -232,7 +232,7 @@ const maybeGetValue = (callback, ...args) => {
   }
 
   // 50% chance to return a value from the callback
-  return callback(...args);
+  return await callback(...args);
 };
 
 function generateRandomPassword(length = 12) {
@@ -270,13 +270,18 @@ function generateRandomPassword(length = 12) {
 
 const generateUserData = () => {
   const name = generateRandomFullName();
+  const email = generateEmailFromFullName(name);
   return {
     name,
-    email: generateEmailFromFullName(name),
+    email,
     phone: maybeGetValue(generateRandomPhoneNumber),
     facebook: maybeGetValue(generateRandomUsername, 'fb'),
     instagram: maybeGetValue(generateRandomUsername, 'insta'),
-    profilePicture: maybeGetValue(generateImage),
+    profilePicture: maybeGetValue(
+      uploadRandomImage,
+      'profile-pictures',
+      `profile_pic_${email.replace('@', '_')}.jpg`
+    ),
     password: generateRandomPassword(Math.floor(Math.random() * 12) + 8),
   };
 };

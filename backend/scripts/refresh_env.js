@@ -13,6 +13,7 @@ function copyEnvWithPrefix(inputFilePath, outputFilePath, prefix) {
     if (envConfig.hasOwnProperty(key)) {
       let val = envConfig[key];
       // append 'http://' to localhost as a hot fix (no time for this)
+      // lol this again only works when there is no 'http' wtf xD
       // if (val === 'localhost') {
       //   val = 'http://localhost';
       // }
@@ -33,7 +34,6 @@ function copyEnvWithPrefix(inputFilePath, outputFilePath, prefix) {
 // Define input and output file paths
 const inputFilePath = path.resolve(__dirname, '../../.env');
 const outputFilePath = path.resolve(__dirname, '../.env');
-const prefix = 'EXPO_PUBLIC_';
 
 // Run the function to create the new prefixed .env file
-copyEnvWithPrefix(inputFilePath, outputFilePath, prefix);
+copyEnvWithPrefix(inputFilePath, outputFilePath, '');

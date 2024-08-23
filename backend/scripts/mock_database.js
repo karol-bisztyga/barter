@@ -4,9 +4,11 @@ const { generateUserData } = require('./userMocker');
 require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
-const { generateItem, generateMockedImageUrls } = require('./itemsMocker');
+const { generateItem } = require('./itemsMocker');
+const { uploadRandomImage } = require('./setup_storage');
 
 const { DB_HOST, DB_USER, DB_NAME, DB_PASSWORD, DB_PORT } = process.env;
+const MAX_ITEM_PICTURES = 5;
 
 const pool = new Pool({
   user: DB_USER,
@@ -145,11 +147,22 @@ const insertSampleItems = async (users, hardcodedItems = [], itemsCount = 10) =>
   }
 };
 
+const generateMockedImageUrls = async (itemId) => {
+  const amount = Math.floor(Math.random() * MAX_ITEM_PICTURES) + 1;
+  const result = [];
+  for (let i = 0; i < amount; ++i) {
+    const url = await uploadRandomImage('items-images', `item-image-${itemId}-${i}.jpg`);
+    result.push(url);
+    console.log('uploaded image for item', itemId, url);
+  }
+  return result;
+};
+
 const generateSampleImages = async (items) => {
   const images = {};
   for (let i = 0; i < items.length; ++i) {
     const item = items[i];
-    images[item.id] = await generateMockedImageUrls();
+    images[item.id] = await generateMockedImageUrls(item.id);
   }
   return images;
 };
@@ -185,7 +198,7 @@ const insertHardcodedUsers = async () => {
       phone: '123456789',
       facebook: null,
       instagram: 'testowyyy11',
-      profilePicture: 'https://picsum.photos/id/534/500/360',
+      profilePicture: await uploadRandomImage('profile-pictures', 'profile-pic-1.jpg'),
       password: 'testowehaslo111',
       location: '50.067570, 19.917868',
     },
@@ -205,7 +218,7 @@ const insertHardcodedUsers = async () => {
       phone: '111222333',
       facebook: null,
       instagram: null,
-      profilePicture: 'https://picsum.photos/id/195/400/300',
+      profilePicture: await uploadRandomImage('profile-pictures', 'profile-pic-3.jpg'),
       password: 'testowehaslo333',
       location: '50.067143, 20.052357',
     },
@@ -224,7 +237,7 @@ const insertHardcodedUsers = async () => {
       phone: '777333999',
       facebook: null,
       instagram: 'testowy55555',
-      profilePicture: 'https://picsum.photos/id/943/200',
+      profilePicture: await uploadRandomImage('profile-pictures', 'profile-pic-5.jpg'),
       password: 'testowehaslo555',
       location: 'Krakow, Poland',
     },
@@ -581,6 +594,7 @@ const mockSampleData = async () => {
 };
 
 const mockHardcodedData = async () => {
+  console.log('>>>>>>>>>>>>>>>>>>>>>>>>> HERE');
   const users = await insertHardcodedUsers();
   await writeDataToFile('../mobile/app/(app)/mocks/sampleUsers.json', JSON.stringify(users));
 
