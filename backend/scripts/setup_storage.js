@@ -175,7 +175,7 @@ const deleteAllBuckets = async () => {
       console.log('storage clean...');
       await deleteAllBuckets();
       break;
-    default:
+    case '--setup':
       // setup storage
       console.log('storage setup...');
       await createBuckets(bucketNames);

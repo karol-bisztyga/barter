@@ -4,6 +4,20 @@ import jwt from 'jsonwebtoken';
 import pool from '../db';
 import { jwtSecret } from '../config';
 import { validateEmail, validatePassword } from '../utils/validators';
+import { VERIFICATION_CODE_LENGTH } from '../constants';
+import { sendVerificationEmail } from '../utils/mailingUtils';
+
+const generateVerificationCode = () => {
+  const characters = '1234567890';
+  let code = '';
+
+  for (let i = 0; i < VERIFICATION_CODE_LENGTH; i++) {
+    const randomIndex = Math.floor(Math.random() * characters.length);
+    code += characters[randomIndex];
+  }
+
+  return code;
+};
 
 export const register = async (req: Request, res: Response) => {
   const { email, password } = req.body;
@@ -20,11 +34,17 @@ export const register = async (req: Request, res: Response) => {
       return res.status(400).send({ message: 'Email invalid' });
     }
 
+    const verificationCode = generateVerificationCode();
+
     const result = await pool.query(
-      'INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *',
-      [email, hashedPassword]
+      'INSERT INTO users (email, password, verification_code) VALUES ($1, $2, $3) RETURNING *',
+      [email, hashedPassword, verificationCode]
     );
-    console.log('register result', result.rows[0]);
+    console.log(
+      `register successful, sending email with verification code [${verificationCode}] to ${email}`
+    );
+    const emailResponse = await sendVerificationEmail(email, verificationCode);
+    console.log('email sent', emailResponse);
     res.status(201).json(result.rows[0]);
   } catch (err) {
     const errStr = `${err}`;

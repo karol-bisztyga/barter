@@ -19,6 +19,7 @@ CREATE TABLE users (
     profile_picture VARCHAR(100),
     password VARCHAR(100) NOT NULL,
     location VARCHAR(100),
+    verification_code VARCHAR(100),
     date_created BIGINT DEFAULT (EXTRACT(EPOCH FROM NOW()) * 1000)::BIGINT,
     date_edited BIGINT
 );

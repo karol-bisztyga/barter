@@ -594,7 +594,6 @@ const mockSampleData = async () => {
 };
 
 const mockHardcodedData = async () => {
-  console.log('>>>>>>>>>>>>>>>>>>>>>>>>> HERE');
   const users = await insertHardcodedUsers();
   await writeDataToFile('../mobile/app/(app)/mocks/sampleUsers.json', JSON.stringify(users));
 

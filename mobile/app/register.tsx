@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Button, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { useState } from 'react';
 import { router } from 'expo-router';
@@ -18,6 +18,7 @@ export default function Register() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordRepeat, setPasswordRepeat] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const formValid = () => {
     if (!email || !password || !passwordRepeat) {
@@ -44,6 +45,7 @@ export default function Register() {
   }, [email, password, passwordRepeat]);
 
   const register = async () => {
+    setLoading(true);
     let response;
     try {
       response = await executeQuery('auth/register', 'POST', null, { email, password });
@@ -59,18 +61,26 @@ export default function Register() {
         errorStr += response.data.message;
       }
       showError(errorStr);
+      setLoading(false);
     }
   };
 
   return (
     <View style={styles.container}>
-      <TextInput placeholder="email" value={email} onChangeText={setEmail} style={styles.input} />
+      <TextInput
+        placeholder="email"
+        value={email}
+        onChangeText={setEmail}
+        style={styles.input}
+        autoCapitalize="none"
+      />
       <TextInput
         placeholder="password"
         secureTextEntry={true}
         value={password}
         onChangeText={setPassword}
         style={styles.input}
+        autoCapitalize="none"
       />
       <TextInput
         placeholder="repeat password"
@@ -78,6 +88,7 @@ export default function Register() {
         value={passwordRepeat}
         onChangeText={setPasswordRepeat}
         style={styles.input}
+        autoCapitalize="none"
       />
       {errors.length ? (
         <View style={styles.errorWrapper}>
@@ -94,11 +105,17 @@ export default function Register() {
         <Button title="Register" disabled={!formValid()} onPress={register} />
         <Button
           title="Cancel"
+          disabled={loading}
           onPress={async () => {
             router.replace('/login');
           }}
         />
       </View>
+      {loading && (
+        <View style={styles.loaderWrapper}>
+          <ActivityIndicator size="large" />
+        </View>
+      )}
     </View>
   );
 }
@@ -125,13 +142,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 10,
   },
-  loaderWrapper: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
   errorWrapper: {
     opacity: 0.6,
     width: '100%',
@@ -141,5 +151,10 @@ const styles = StyleSheet.create({
     color: 'red',
     textAlign: 'center',
     fontStyle: 'italic',
+  },
+  loaderWrapper: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
