@@ -9,7 +9,7 @@ import * as SecureStore from 'expo-secure-store';
 
 import sampleUsers from './(app)/mocks/sampleUsers.json';
 import { STORAGE_SESSION_KEY } from './constants';
-import { showError, showInfo } from './(app)/utils/notifications';
+import { showError } from './(app)/utils/notifications';
 
 const SingInForm = () => {
   const { signIn } = useSessionContext();
@@ -19,7 +19,7 @@ const SingInForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const signInEnabled = () => {
+  const formValid = () => {
     if (!email || !password) {
       return false;
     }
@@ -55,7 +55,7 @@ const SingInForm = () => {
       <View style={styles.buttonWrapper}>
         <Button
           title="Sign in"
-          disabled={!signInEnabled()}
+          disabled={!formValid()}
           onPress={async () => {
             await hadnleSignIn(email, password);
           }}
@@ -65,7 +65,7 @@ const SingInForm = () => {
         <Button
           title="Register"
           onPress={() => {
-            showInfo('register not implemented yet');
+            router.replace('/register');
           }}
         />
       </View>
@@ -126,17 +126,14 @@ export default function Login() {
   if (sessionContext.session && userContext.data) {
     return <Redirect href="/" />;
   }
-
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      {checkingSession ? <Loader /> : <SingInForm />}
-    </View>
-  );
+  return <View style={styles.container}>{checkingSession ? <Loader /> : <SingInForm />}</View>;
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   inputContainer: {
     flexDirection: 'column',

@@ -15,7 +15,6 @@ let lastMessage: {
 const checkIfDuplicatedMessage = (message: string, alertType: DropdownAlertType) => {
   const now = Date.now();
 
-  console.log(message, `last message: ${lastMessage}`);
   if (
     lastMessage.message === message &&
     lastMessage.type === alertType &&
@@ -27,38 +26,30 @@ const checkIfDuplicatedMessage = (message: string, alertType: DropdownAlertType)
   return false;
 };
 
-export const showInfo = (...args: Array<string | number | boolean>) => {
-  const alertType = DropdownAlertType.Info;
-  const message = `${args.join(' ')}`;
+const showAlertWrapper = (message: string, alertType: DropdownAlertType) => {
   if (checkIfDuplicatedMessage(message, alertType)) {
     return;
   }
-
   showAlert({
     type: alertType,
-    title: 'Info',
+    title: alertType.toString(),
     message,
     interval: ALERTS_INTERVAL,
   });
 };
 
-export const showWarning = (...args: Array<string | number | boolean>) => {
-  console.warn(...args); // todo user showAlert
+export const showInfo = (...args: Array<string | number | boolean>) => {
+  showAlertWrapper(`${args.join(' ')}`, DropdownAlertType.Info);
+};
+
+export const showSuccess = (...args: Array<string | number | boolean>) => {
+  showAlertWrapper(`${args.join(' ')}`, DropdownAlertType.Success);
 };
 
 export const showError = (...args: Array<string | number | boolean>) => {
-  const alertType = DropdownAlertType.Error;
   let message = `${args.join(' ')}`;
   if (message.includes('Invalid token')) {
     message = 'session expired';
   }
-  if (checkIfDuplicatedMessage(message, alertType)) {
-    return;
-  }
-  showAlert({
-    type: DropdownAlertType.Error,
-    title: 'Error',
-    message,
-    interval: ALERTS_INTERVAL,
-  });
+  showAlertWrapper(message, DropdownAlertType.Error);
 };

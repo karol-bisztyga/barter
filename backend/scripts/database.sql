@@ -11,7 +11,7 @@ DROP TABLE IF EXISTS users;
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(50) NOT NULL,
+    name VARCHAR(50),
     email VARCHAR(50) NOT NULL UNIQUE,
     phone VARCHAR(50),
     facebook VARCHAR(50),

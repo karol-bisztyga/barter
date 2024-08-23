@@ -38,3 +38,4 @@ mobile/app/(app)/mocks/sampleUsers.json
 
 mobile/android
 mobile/ios
+.env

@@ -3,22 +3,39 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import pool from '../db';
 import { jwtSecret } from '../config';
+import { validateEmail, validatePassword } from '../utils/validators';
 
 export const register = async (req: Request, res: Response) => {
-  const { username, password } = req.body;
+  const { email, password } = req.body;
 
   const hashedPassword = await bcrypt.hash(password, 10);
 
-  const newUser = { username, password: hashedPassword };
-
   try {
+    if (!validatePassword(password)) {
+      return res
+        .status(400)
+        .send({ message: 'Password invalid, it must be at least 8 characters' });
+    }
+    if (!validateEmail(email)) {
+      return res.status(400).send({ message: 'Email invalid' });
+    }
+
     const result = await pool.query(
-      'INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *',
-      [newUser.username, newUser.password]
+      'INSERT INTO users (email, password) VALUES ($1, $2) RETURNING *',
+      [email, hashedPassword]
     );
+    console.log('register result', result.rows[0]);
     res.status(201).json(result.rows[0]);
   } catch (err) {
-    res.status(500).send({ message: 'Server error' });
+    const errStr = `${err}`;
+    // todo this logic could be better tbh
+    if (
+      errStr.includes('duplicate key value violates unique constraint') &&
+      errStr.includes('users_email_key')
+    ) {
+      return res.status(400).send({ message: 'User with this email already exists' });
+    }
+    res.status(500).send({ message: 'Server error: ' + err });
   }
 };
 
