@@ -59,14 +59,18 @@ export const register = async (req: Request, res: Response) => {
   }
 };
 
+const generateToken = (userId: string, userEmail: string) => {
+  return jwt.sign({ id: userId, username: userEmail }, jwtSecret, {
+    // expiresIn: '1h', // todo do a research about token expiration
+  });
+};
+
 export const login = async (req: Request, res: Response) => {
   const { email, password } = req.body;
-  console.log('>>> login', req.body);
 
   try {
     const result = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
     const user = result.rows[0];
-    console.log('>>res', user);
 
     if (!user) {
       return res.status(400).send({ message: 'no user found for this email: ' + email });
@@ -78,11 +82,33 @@ export const login = async (req: Request, res: Response) => {
       return res.status(400).send({ message: 'password incorrect for user with email: ' + email });
     }
 
-    const token = jwt.sign({ id: user.id, username: user.username }, jwtSecret, {
-      expiresIn: '1h',
-    });
+    const token = generateToken(user.id, user.email);
 
     res.json({ token, user });
+  } catch (err) {
+    res.status(500).send({ message: 'Server error: ' + err });
+  }
+};
+
+export const verify = async (req: Request, res: Response) => {
+  const { email, verificationCode } = req.body;
+  console.log('>>> verify', email, verificationCode);
+
+  try {
+    const result = await pool.query(
+      'UPDATE users SET verification_code = null WHERE email = $1 AND verification_code = $2 RETURNING *',
+      [email, verificationCode]
+    );
+    const user = result.rows[0];
+    console.log('>>res', user);
+
+    if (user) {
+      const token = generateToken(user.id, user.email);
+      console.log('new token', token);
+      res.json({ result: user, token });
+    } else {
+      return res.status(400).send({ message: 'verification failed' });
+    }
   } catch (err) {
     res.status(500).send({ message: 'Server error: ' + err });
   }

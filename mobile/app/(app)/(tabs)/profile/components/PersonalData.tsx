@@ -20,6 +20,7 @@ const PersonalData = () => {
   delete data.id;
   delete data.profilePicture;
   delete data.location;
+  delete data.verificationCode;
 
   return (
     <View style={styles.container}>

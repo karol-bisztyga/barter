@@ -16,6 +16,7 @@ export interface SessionContextState {
   signOut: () => void;
   session?: string | null;
   setSession: (newSession: string | null) => void;
+  setSessionWithStorage: (newSession?: string, userData?: UserData) => void;
   isLoading: boolean;
 }
 
@@ -25,6 +26,7 @@ const initialState: SessionContextState = {
   signOut: () => null,
   session: null,
   setSession: () => null,
+  setSessionWithStorage: () => null,
   isLoading: false,
 };
 
@@ -41,7 +43,7 @@ export const useSessionContext = () => {
 export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [[isLoading, session], setSession] = useStorageState('session');
 
-  const setSessionWrapper = async (newSession?: string, userData?: UserData) => {
+  const setSessionWithStorage = async (newSession?: string, userData?: UserData) => {
     try {
       const userDataStr = JSON.stringify(userData || {});
       const storageStr = JSON.stringify({
@@ -76,8 +78,9 @@ export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }
         instagram: response.data.user.instagram,
         profilePicture: response.data.user.profile_picture,
         location: response.data.user.location,
+        verificationCode: response.data.user.verification_code,
       };
-      await setSessionWrapper(response.data.token, userData);
+      await setSessionWithStorage(response.data.token, userData);
 
       return userData;
     } else {
@@ -86,11 +89,13 @@ export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }
   };
 
   const signOut = async () => {
-    await setSessionWrapper();
+    await setSessionWithStorage();
   };
 
   return (
-    <SessionContext.Provider value={{ session, setSession, isLoading, signIn, signOut }}>
+    <SessionContext.Provider
+      value={{ session, setSession, setSessionWithStorage, isLoading, signIn, signOut }}
+    >
       {children}
     </SessionContext.Provider>
   );

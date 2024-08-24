@@ -44,6 +44,7 @@ export type UserData = {
   facebook?: string;
   profilePicture?: string;
   location: string;
+  verificationCode?: string;
 };
 
 export enum EditImageType {
