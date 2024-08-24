@@ -10,6 +10,17 @@ const CarouselDistancePanel = ({ itemOwnerLocation }: { itemOwnerLocation: strin
     return null;
   }
 
+  function isValidCoordinates(coords: string) {
+    const arr = coords.split(',');
+    if (arr.length !== 2) {
+      return false;
+    }
+    if (isNaN(Number(arr[0])) || isNaN(Number(arr[1]))) {
+      return false;
+    }
+    return true;
+  }
+
   const getLabel = () => {
     if (!userContext.data?.location) {
       return null;
@@ -18,6 +29,9 @@ const CarouselDistancePanel = ({ itemOwnerLocation }: { itemOwnerLocation: strin
       getDistanceFromLatLonInKm(userContext.data.location, itemOwnerLocation)
     );
     if (isNaN(distance)) {
+      if (isValidCoordinates(itemOwnerLocation)) {
+        return null;
+      }
       return itemOwnerLocation;
     }
     return `${distance} km away`;

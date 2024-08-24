@@ -6,7 +6,7 @@ import { updateUser } from '../../db_utils/updateUser';
 import { authorizeUser, cityNameFromLocation, formatLocation } from '../../utils/reusableStuff';
 import { router } from 'expo-router';
 import { useUserContext } from '../../context/UserContext';
-import { showError } from '../../utils/notifications';
+import { showError, showSuccess } from '../../utils/notifications';
 
 export default function LocationScreen() {
   const sessionContext = authorizeUser();
@@ -67,6 +67,7 @@ export default function LocationScreen() {
       }
       await updateUser(sessionContext, 'location', locationToSave);
       userContext.setData({ ...userContext.data, location: locationToSave });
+      showSuccess('location set');
       router.back();
     } catch (e) {
       showError('error saving location');
