@@ -1,5 +1,13 @@
 import React, { useRef, useState } from 'react';
-import { View, StyleSheet, Text, Image, ActivityIndicator, TouchableOpacity } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  Text,
+  Image,
+  ActivityIndicator,
+  TouchableOpacity,
+  Button,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Separator from '../../components/Separator';
 import Items from './components/Items';
@@ -62,6 +70,13 @@ export default function Profile() {
             <Text style={styles.title}>Personal Data</Text>
           </View>
           <PersonalData />
+          <Separator style={styles.separator} />
+          <Button
+            title="change password"
+            onPress={() => {
+              router.push('profile/change_password');
+            }}
+          />
           <Separator style={styles.separator} />
           <Text style={styles.title}>Location</Text>
           <Location />

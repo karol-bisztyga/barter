@@ -38,7 +38,7 @@ export default function Register() {
     if (password && !validatePassword(password)) {
       newErrors.push(ERROR_MESSAGES.PASSWORD);
     }
-    if (passwordRepeat && !validatePasswords(password, passwordRepeat)) {
+    if (password && passwordRepeat && !validatePasswords(password, passwordRepeat)) {
       newErrors.push(ERROR_MESSAGES.PASSWORDS_NOT_MATCH);
     }
     setErrors(newErrors);
