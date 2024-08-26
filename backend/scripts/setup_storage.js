@@ -9,16 +9,18 @@ const {
   ListBucketsCommand,
   ListObjectsCommand,
 } = require('@aws-sdk/client-s3');
+require('dotenv').config();
 
 const { generateImageAndFetch } = require('./imageMocker');
+const { MINIO_USER, MINIO_PASSWORD } = process.env;
 
 // Configuring the S3 client to connect to MinIO
 const s3Client = new S3Client({
   endpoint: 'http://localhost:9000',
   region: 'us-east-1',
   credentials: {
-    accessKeyId: 'barter',
-    secretAccessKey: 'minio_barter',
+    accessKeyId: MINIO_USER,
+    secretAccessKey: MINIO_PASSWORD,
   },
   forcePathStyle: true, // Required for MinIO
 });
@@ -163,7 +165,10 @@ const deleteAllBuckets = async () => {
   const args = process.argv.slice(2);
   const option = args[0];
 
-  const bucketNames = ['profile-pictures', 'items-images'];
+  const bucketNames = [
+    `profile-pictures-${process.env.BUCKET_SUFFIX}`,
+    `items-images-${process.env.BUCKET_SUFFIX}`,
+  ];
 
   switch (option) {
     case '--reset':

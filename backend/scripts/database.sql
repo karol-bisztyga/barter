@@ -1,5 +1,3 @@
-CREATE DATABASE barter;
-
 -- reset.sql
 DROP TABLE IF EXISTS likes;
 DROP TABLE IF EXISTS messages;

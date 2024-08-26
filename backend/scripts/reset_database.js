@@ -35,9 +35,17 @@ if (!checkContainerRunning()) {
 console.log(`Copying ${sqlFilePath} into the Docker container...`);
 execCommand(`docker cp ${sqlFilePath} ${POSTGRESQL_CONTAINER_NAME}:/database.sql`);
 
+execCommand(
+  `docker exec -it ${POSTGRESQL_CONTAINER_NAME} psql -U ${DB_USER} -d postgres -c 'DROP DATABASE IF EXISTS ${DB_NAME};'`,
+  3
+);
+execCommand(
+  `docker exec -it ${POSTGRESQL_CONTAINER_NAME} psql -U ${DB_USER} -d postgres -c 'CREATE DATABASE ${DB_NAME};'`,
+  3
+);
 // Step 2: Execute the database.sql script inside the container
 execCommand(
-  `docker exec -it ${POSTGRESQL_CONTAINER_NAME} psql -U ${DB_USER} -d ${DB_NAME} -f /database.sql`,
+  `docker exec -it ${POSTGRESQL_CONTAINER_NAME} psql -v DB_NAME=${DB_NAME} -U ${DB_USER} -d ${DB_NAME} -f /database.sql`,
   3
 );
 

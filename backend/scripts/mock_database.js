@@ -7,7 +7,7 @@ const path = require('path');
 const { generateItem } = require('./itemsMocker');
 const { uploadRandomImage } = require('./setup_storage');
 
-const { DB_HOST, DB_USER, DB_NAME, DB_PASSWORD, DB_PORT } = process.env;
+const { DB_HOST, DB_USER, DB_NAME, DB_PASSWORD, DB_PORT, BUCKET_SUFFIX } = process.env;
 const MAX_ITEM_PICTURES = 5;
 
 const pool = new Pool({
@@ -17,6 +17,10 @@ const pool = new Pool({
   password: DB_PASSWORD,
   port: DB_PORT,
 });
+
+const composeBucketUrl = (bucketName) => {
+  return `${bucketName}-${BUCKET_SUFFIX}`;
+};
 
 const generateSampleUsers = (amount = 10) => {
   const users = [];
@@ -151,7 +155,10 @@ const generateMockedImageUrls = async (itemId) => {
   const amount = Math.floor(Math.random() * MAX_ITEM_PICTURES) + 1;
   const result = [];
   for (let i = 0; i < amount; ++i) {
-    const url = await uploadRandomImage('items-images', `item-image-${itemId}-${i}.jpg`);
+    const url = await uploadRandomImage(
+      composeBucketUrl('items-images'),
+      `item-image-${itemId}-${i}.jpg`
+    );
     result.push(url);
     console.log('uploaded image for item', itemId, url);
   }
@@ -198,7 +205,10 @@ const insertHardcodedUsers = async () => {
       phone: '123456789',
       facebook: null,
       instagram: 'testowyyy11',
-      profilePicture: await uploadRandomImage('profile-pictures', 'profile-pic-1.jpg'),
+      profilePicture: await uploadRandomImage(
+        composeBucketUrl('profile-pictures'),
+        'profile-pic-1.jpg'
+      ),
       password: 'testowehaslo111',
       location: '50.067570, 19.917868',
     },
@@ -218,7 +228,10 @@ const insertHardcodedUsers = async () => {
       phone: '111222333',
       facebook: null,
       instagram: null,
-      profilePicture: await uploadRandomImage('profile-pictures', 'profile-pic-3.jpg'),
+      profilePicture: await uploadRandomImage(
+        composeBucketUrl('profile-pictures'),
+        'profile-pic-3.jpg'
+      ),
       password: 'testowehaslo333',
       location: '50.067143, 20.052357',
     },
@@ -237,9 +250,21 @@ const insertHardcodedUsers = async () => {
       phone: '777333999',
       facebook: null,
       instagram: 'testowy55555',
-      profilePicture: await uploadRandomImage('profile-pictures', 'profile-pic-5.jpg'),
+      profilePicture: await uploadRandomImage(
+        composeBucketUrl('profile-pictures'),
+        'profile-pic-5.jpg'
+      ),
       password: 'testowehaslo555',
       location: 'Krakow, Poland',
+    },
+    {
+      name: 'Karol B',
+      email: 'karolbisztyga@gmail.com',
+      phone: '000000000',
+      facebook: null,
+      instagram: null,
+      profilePicture: null,
+      password: 'admin123456',
     },
   ];
   return await insertSampleUsers(users);

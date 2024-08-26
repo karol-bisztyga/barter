@@ -21,7 +21,7 @@
     "lintFixAll": "eslint './**/*.{js,jsx,ts,tsx}'",
     "prettierFixAll": "prettier --write './**/*.{js,jsx,ts,tsx}'",
     "fix:lintPrettier": "npm run prettierFixAll && npm run lintFixAll",
-    "refreshEnv": "node scripts/refresh_env.js"
+    "refreshEnv": "rm .env || : && cp ../.env ."
   },
   "keywords": [],
   "author": "",

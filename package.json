@@ -1,0 +1,11 @@
+{
+  "name": "barter",
+  "version": "1.0.0",
+  "description": "## TODOs",
+  "main": "index.js",
+  "scripts": {
+    "env:setup": "pushd backend && npm run refreshEnv && popd && pushd mobile && npm run refreshEnv && popd && echo OK"
+  },
+  "author": "",
+  "license": "ISC"
+}
