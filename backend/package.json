@@ -6,8 +6,9 @@
   "scripts": {
     "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
-    "docker:setup": "docker-compose -f scripts/docker-compose.yml up -d",
-    "database:reset": "node scripts/reset_database.js",
+    "docker:setup": "docker-compose -f scripts/docker-compose.yml up --build -d",
+    "docker:reset": "docker-compose -f scripts/docker-compose.yml down -v && npm run docker:setup",
+    "database:reset": "node scripts/reset_database.js --force",
     "database:mock:sample": "node scripts/mock_database.js sample",
     "database:mock:hardcoded": "node scripts/mock_database.js hardcoded",
     "database:store": "node scripts/db_backup.js store",
@@ -21,7 +22,8 @@
     "lintFixAll": "eslint './**/*.{js,jsx,ts,tsx}'",
     "prettierFixAll": "prettier --write './**/*.{js,jsx,ts,tsx}'",
     "fix:lintPrettier": "npm run prettierFixAll && npm run lintFixAll",
-    "refreshEnv": "rm .env || : && cp ../.env ."
+    "env:refresh:staging": "rm .env || : && cp ../.env_staging .env",
+    "env:refresh:prod": "rm .env || : && cp ../.env_prod .env"
   },
   "keywords": [],
   "author": "",

@@ -38,4 +38,8 @@ mobile/app/(app)/mocks/sampleUsers.json
 
 mobile/android
 mobile/ios
+
+# .env files
 .env
+.env_prod
+.env_staging

@@ -30,10 +30,25 @@ function copyEnvWithPrefix(inputFilePath, outputFilePath, prefix) {
   console.log(`Prefixed .env file created at ${outputFilePath}`);
 }
 
-// Define input and output file paths
-const inputFilePath = path.resolve(__dirname, '../../.env');
-const outputFilePath = path.resolve(__dirname, '../.env');
-const prefix = 'EXPO_PUBLIC_';
+(() => {
+  const args = process.argv.slice(2);
+  const option = args[0];
 
-// Run the function to create the new prefixed .env file
-copyEnvWithPrefix(inputFilePath, outputFilePath, prefix);
+  let inputFilePath;
+
+  switch (option) {
+    case 'staging':
+      inputFilePath = path.resolve(__dirname, '../../.env_staging');
+      break;
+    case 'prod':
+      inputFilePath = path.resolve(__dirname, '../../.env_prod');
+      break;
+    default:
+      console.error('Invalid option', option);
+      break;
+  }
+  const outputFilePath = path.resolve(__dirname, '../.env');
+  const prefix = 'EXPO_PUBLIC_';
+
+  copyEnvWithPrefix(inputFilePath, outputFilePath, prefix);
+})();

@@ -4,7 +4,10 @@
   "description": "## TODOs",
   "main": "index.js",
   "scripts": {
-    "env:setup": "pushd backend && npm run refreshEnv && popd && pushd mobile && npm run refreshEnv && popd && echo OK"
+    "setup:reset:hardcoded:staging": "npm run env:setup:staging && pushd backend && npm run setup:reset:hardcoded && popd",
+    "setup:reset:hardcoded:prod": "npm run env:setup:prod && pushd backend && npm run setup:reset:hardcoded && popd",
+    "env:setup:staging": "pushd backend && npm run env:refresh:staging && popd && pushd mobile && npm run env:refresh:staging && popd && echo OK",
+    "env:setup:prod": "pushd backend && npm run env:refresh:prod && popd && pushd mobile && npm run env:refresh:prod && popd && echo OK"
   },
   "author": "",
   "license": "ISC"

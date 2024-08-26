@@ -3,7 +3,7 @@ const { execSync } = require('child_process');
 const path = require('path');
 const execCommand = require('./executeCommand');
 
-const { POSTGRESQL_CONTAINER_NAME, DB_USER, DB_NAME, SQL_FILE } = process.env;
+const { POSTGRESQL_CONTAINER_NAME, DB_USER, DB_NAME, SQL_FILE, DB_PASSWORD } = process.env;
 
 const sqlFilePath = path.resolve(__dirname, SQL_FILE || '../database.sql');
 
@@ -21,12 +21,19 @@ const checkContainerRunning = () => {
   }
 };
 
-if (!checkContainerRunning()) {
-  console.log(`Docker container ${POSTGRESQL_CONTAINER_NAME} is not running. Trying to run it...`);
+const args = process.argv.slice(2);
+const option = args[0];
+
+if (!checkContainerRunning() || option === '--force') {
+  if (option === '--force') {
+    console.log('Forcing reset...');
+  } else {
+    console.log(
+      `Docker container ${POSTGRESQL_CONTAINER_NAME} is not running. Trying to run it...`
+    );
+  }
   // start the container
-  const _createdContainerId = execSync(`docker-compose -f scripts/docker-compose.yml up -d`)
-    .toString()
-    .trim();
+  execSync('npm run docker:reset').toString().trim();
 } else {
   console.log(`Docker container ${POSTGRESQL_CONTAINER_NAME} is already running.`);
 }
@@ -45,7 +52,7 @@ execCommand(
 );
 // Step 2: Execute the database.sql script inside the container
 execCommand(
-  `docker exec -it ${POSTGRESQL_CONTAINER_NAME} psql -v DB_NAME=${DB_NAME} -U ${DB_USER} -d ${DB_NAME} -f /database.sql`,
+  `docker exec -it ${POSTGRESQL_CONTAINER_NAME} /bin/bash -c "export PGPASSWORD=${DB_PASSWORD}; psql -v DB_NAME=${DB_NAME} -U ${DB_USER} -d ${DB_NAME} -f /database.sql"`,
   3
 );
 

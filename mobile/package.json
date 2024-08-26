@@ -11,7 +11,8 @@
     "lintFixAll": "eslint 'app/**/*.{js,jsx,ts,tsx}'",
     "prettierFixAll": "prettier --write 'app/**/*.{js,jsx,ts,tsx}'",
     "fix:lintPrettier": "npm run prettierFixAll && npm run lintFixAll",
-    "refreshEnv": "node scripts/refresh_env.js"
+    "env:refresh:staging": "node scripts/refresh_env.js staging",
+    "env:refresh:prod": "node scripts/refresh_env.js prod"
   },
   "dependencies": {
     "@types/validator": "^13.12.0",
