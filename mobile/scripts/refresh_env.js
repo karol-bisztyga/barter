@@ -43,6 +43,9 @@ function copyEnvWithPrefix(inputFilePath, outputFilePath, prefix) {
     case 'prod':
       inputFilePath = path.resolve(__dirname, '../../.env_prod');
       break;
+    case 'local':
+      inputFilePath = path.resolve(__dirname, '../../.env_local');
+      break;
     default:
       console.error('Invalid option', option);
       break;

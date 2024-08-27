@@ -43,3 +43,4 @@ mobile/ios
 .env
 .env_prod
 .env_staging
+.env_local

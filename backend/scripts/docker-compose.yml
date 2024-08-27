@@ -1,4 +1,4 @@
-version: '3.8'
+# version: '3.8'
 services:
   db:
     image: postgres:15
@@ -12,7 +12,7 @@ services:
     volumes:
       - db_data:/var/lib/postgresql/data
     networks:
-      - postgres-network
+      - barter-network
   minio:
     image: minio/minio
     container_name: ${MINIO_CONTAINER_NAME}
@@ -25,10 +25,27 @@ services:
     volumes:
       - minio_data:/data
     command: server /data --console-address ":9001"
+    networks:
+      - barter-network
+  # app:
+  #   image: node:18 # Use the official Node.js image from Docker Hub
+  #   container_name: nodejs_app
+  #   working_dir: /usr/src/app
+  #   ports:
+  #     - '3000:3000' # Map port 3000 on the host to port 3000 in the container
+  #   environment:
+  #     NODE_ENV: production
+  #   volumes:
+  #     - ..:/usr/src/app # Bind mount the current directory to /usr/src/app in the container
+  #     - /usr/src/app/node_modules # Prevents overwriting node_modules with an empty directory on the host
+  #   command: bash -c "npm install --only=production && npm start" # Install dependencies and start the app
+  #   networks:
+  #     - barter-network
 
 volumes:
   db_data:
   minio_data:
 
 networks:
-  postgres-network:
+  barter-network:
+    driver: bridge

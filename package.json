@@ -6,8 +6,11 @@
   "scripts": {
     "setup:reset:hardcoded:staging": "npm run env:setup:staging && pushd backend && npm run setup:reset:hardcoded && popd",
     "setup:reset:hardcoded:prod": "npm run env:setup:prod && pushd backend && npm run setup:reset:hardcoded && popd",
+    "setup:reset:hardcoded:local": "npm run env:setup:local && pushd backend && npm run setup:reset:hardcoded && popd",
     "env:setup:staging": "pushd backend && npm run env:refresh:staging && popd && pushd mobile && npm run env:refresh:staging && popd && echo OK",
-    "env:setup:prod": "pushd backend && npm run env:refresh:prod && popd && pushd mobile && npm run env:refresh:prod && popd && echo OK"
+    "env:setup:prod": "pushd backend && npm run env:refresh:prod && popd && pushd mobile && npm run env:refresh:prod && popd && echo OK",
+    "env:setup:local": "pushd backend && npm run env:refresh:local && popd && pushd mobile && npm run env:refresh:local && popd && echo OK",
+    "backend:deploy": "git subtree push --prefix backend heroku master"
   },
   "author": "",
   "license": "ISC"
