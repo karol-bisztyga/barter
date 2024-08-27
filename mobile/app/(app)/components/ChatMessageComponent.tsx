@@ -45,7 +45,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-end',
     marginLeft: width / 3,
     borderBottomLeftRadius: 20,
-    backgroundColor: '#47469e',
+    backgroundColor: '#7573d9',
   },
   theirMessage: {
     alignSelf: 'flex-start',

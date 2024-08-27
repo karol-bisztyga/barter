@@ -5,7 +5,7 @@ import { useItemsContext } from '../../context/ItemsContext';
 import { ItemData } from '../../types';
 import { useUserContext } from '../../context/UserContext';
 
-const ItemModal = () => {
+const ItemScreen = () => {
   const itemsContext = useItemsContext();
   const userContext = useUserContext();
   const { whosItem } = useLocalSearchParams();
@@ -25,4 +25,4 @@ const ItemModal = () => {
   return <Item itemData={item} showFull={true} />;
 };
 
-export default ItemModal;
+export default ItemScreen;

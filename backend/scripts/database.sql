@@ -68,3 +68,11 @@ CREATE TABLE messages (
     content TEXT NOT NULL,
     date_created BIGINT DEFAULT (EXTRACT(EPOCH FROM NOW()) * 1000)::BIGINT
 );
+
+CREATE TABLE reports (
+    id SERIAL PRIMARY KEY,
+    reporter_user_id INTEGER REFERENCES users(id) NOT NULL,
+    reported_item_id INTEGER REFERENCES items(id) NOT NULL,
+    reason TEXT NOT NULL,
+    date_created BIGINT DEFAULT (EXTRACT(EPOCH FROM NOW()) * 1000)::BIGINT
+);

@@ -21,6 +21,7 @@ export default function Layout() {
         }}
       />
       <Stack.Screen name="item" options={headerBackButtonOptions()} />
+      <Stack.Screen name="send_report" options={{ presentation: 'modal' }} />
     </Stack>
   );
 }

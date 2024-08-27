@@ -7,7 +7,7 @@ export const getMessages = async (matchId: string, offset: string = '0', limit: 
   }
 
   const queryResult = await pool.query(
-    'SELECT * FROM messages WHERE match_id = $1 ORDER BY date_created DESC LIMIT $2 OFFSET $3',
+    'SELECT * FROM messages WHERE match_id = $1 ORDER BY id DESC LIMIT $2 OFFSET $3',
     [matchId, limit, offset]
   );
 

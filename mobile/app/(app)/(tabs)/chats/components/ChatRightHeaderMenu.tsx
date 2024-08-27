@@ -3,13 +3,14 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import { StyleSheet, Text } from 'react-native';
 import { showInfo } from '../../../utils/notifications';
+import { router } from 'expo-router';
 
 const ChatRightHeaderMenu = () => {
   const unmatch = () => {
     showInfo('unmatch not implemented yet');
   };
-  const report = () => {
-    showInfo('report not implemented yet');
+  const report = async () => {
+    router.push('chats/send_report');
   };
 
   return (
