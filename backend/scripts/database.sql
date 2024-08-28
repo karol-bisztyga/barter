@@ -1,4 +1,5 @@
 -- reset.sql
+DROP TABLE IF EXISTS reports;
 DROP TABLE IF EXISTS likes;
 DROP TABLE IF EXISTS messages;
 DROP TABLE IF EXISTS matches_updates;
@@ -6,7 +7,6 @@ DROP TABLE IF EXISTS matches;
 DROP TABLE IF EXISTS items_images;
 DROP TABLE IF EXISTS items;
 DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS reports;
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
@@ -15,10 +15,10 @@ CREATE TABLE users (
     phone VARCHAR(50),
     facebook VARCHAR(50),
     instagram VARCHAR(50),
-    profile_picture VARCHAR(100),
+    profile_picture VARCHAR(400),
     password VARCHAR(100) NOT NULL,
     location VARCHAR(100),
-    verification_code VARCHAR(100),
+    verification_code VARCHAR(6),
     date_created BIGINT DEFAULT (EXTRACT(EPOCH FROM NOW()) * 1000)::BIGINT,
     date_edited BIGINT
 );

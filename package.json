@@ -4,14 +4,15 @@
   "description": "## TODOs",
   "main": "index.js",
   "scripts": {
-    "setup:reset:hardcoded:staging": "npm run env:setup:staging && pushd backend && npm run setup:reset:hardcoded && popd",
-    "setup:reset:hardcoded:prod": "npm run env:setup:prod && pushd backend && npm run setup:reset:hardcoded && popd",
-    "setup:reset:hardcoded:local": "npm run env:setup:local && pushd backend && npm run setup:reset:hardcoded && popd",
-    "env:setup:staging": "pushd backend && npm run env:refresh:staging && popd && pushd mobile && npm run env:refresh:staging && popd && echo OK",
+    "setup:reset:hardcoded:prod": "npm run env:setup:prod && npm run heroku:database:reset && pushd backend && npm run setup:reset:hardcoded:prod && popd",
+    "setup:reset:hardcoded:local": "npm run env:setup:local && pushd backend && npm run setup:reset:hardcoded:local && popd",
     "env:setup:prod": "pushd backend && npm run env:refresh:prod && popd && pushd mobile && npm run env:refresh:prod && popd && echo OK",
     "env:setup:local": "pushd backend && npm run env:refresh:local && popd && pushd mobile && npm run env:refresh:local && popd && echo OK",
     "heroku:backend:deploy": "git subtree push --prefix backend heroku master",
-    "heroku:database:copy_local_to_cloud": "pushd backend && npm run database:store && popd && heroku pg:psql postgresql-sinuous-01484 --app wymianka < backend/scripts/database_dump.sql"
+    "heroku:database:copy_local_to_cloud": "pushd backend && npm run database:store && popd && node scripts/replace_owner_id_db_dump.js && heroku pg:psql postgresql-sinuous-01484 --app wymianka < backend/scripts/database_remove_tables.sql && heroku pg:psql postgresql-sinuous-01484 --app wymianka < backend/scripts/database_dump.sql",
+    "heroku:database:dump_cloud": "heroku pg:psql postgresql-sinuous-01484 --app wymianka > db_dump.sql",
+    "heroku:database:shell": "heroku pg:psql postgresql-sinuous-01484 --app wymianka",
+    "heroku:database:reset": "heroku pg:psql postgresql-sinuous-01484 --app wymianka < backend/scripts/database.sql"
   },
   "author": "",
   "license": "ISC"

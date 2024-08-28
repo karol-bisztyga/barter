@@ -5,9 +5,10 @@ require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 const { generateItem } = require('./itemsMocker');
-const { uploadRandomImage } = require('./setup_storage');
+const { uploadRandomImageLocal } = require('./setup_storage');
+const { uploadRandomImageB2, authenticate } = require('./setup_storage_backblaze');
 
-const { DB_HOST, DB_USER, DB_NAME, DB_PASSWORD, DB_PORT, BUCKET_SUFFIX } = process.env;
+const { DB_HOST, DB_USER, DB_NAME, DB_PASSWORD, DB_PORT, BUCKET_SUFFIX, ENV_ID } = process.env;
 const MAX_ITEM_PICTURES = 5;
 
 const pool = new Pool({
@@ -16,7 +17,21 @@ const pool = new Pool({
   database: DB_NAME,
   password: DB_PASSWORD,
   port: DB_PORT,
+  ssl: {
+    rejectUnauthorized: false,
+  },
 });
+
+switch (ENV_ID) {
+  case 'LOCAL':
+    uploadRandomImage = uploadRandomImageLocal;
+    break;
+  case 'PROD':
+    uploadRandomImage = uploadRandomImageB2;
+    break;
+  default:
+    throw new Error('Invalid ENV_ID', ENV_ID);
+}
 
 const composeBucketUrl = (bucketName) => {
   return `${bucketName}-${BUCKET_SUFFIX}`;
@@ -640,6 +655,10 @@ const mockHardcodedData = async () => {
 
 (async () => {
   const command = process.argv.slice(2)[0];
+
+  if (ENV_ID === 'PROD') {
+    await authenticate();
+  }
 
   switch (command) {
     case 'sample':

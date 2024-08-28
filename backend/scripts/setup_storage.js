@@ -109,7 +109,7 @@ const createBuckets = async (bucketNames) => {
   console.log('done creating buckets');
 };
 
-const uploadRandomImage = async (bucketName, targetFileName) => {
+const uploadRandomImageLocal = async (bucketName, targetFileName) => {
   const { response } = await generateImageAndFetch();
   if (!response.ok) {
     throw new Error(`Failed to download image: ${response.statusText}`);
@@ -188,4 +188,4 @@ const deleteAllBuckets = async () => {
   }
 })();
 
-module.exports = { uploadRandomImage };
+module.exports = { uploadRandomImageLocal };
