@@ -64,7 +64,6 @@ export default function Register() {
       <Button
         title="Back"
         onPress={() => {
-          userContext.setData(null);
           sessionContext.signOut();
           router.replace('/login');
         }}

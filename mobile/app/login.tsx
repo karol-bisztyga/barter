@@ -34,7 +34,7 @@ const SingInForm = () => {
       if (!userData) {
         throw new Error('user data is missing');
       }
-      userContext.setData(userData);
+      userContext.setData({ ...userData });
       router.replace('/');
     } catch (e) {
       console.error('sign in failed', e);
