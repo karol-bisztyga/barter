@@ -6,7 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const { generateItem } = require('./itemsMocker');
 const { uploadRandomImageLocal } = require('./setup_storage');
-const { uploadRandomImageB2, authenticate } = require('./setup_storage_backblaze');
+const { uploadRandomImageB2, authenticate } = require('./backblaze_functions');
 
 const { DB_HOST, DB_USER, DB_NAME, DB_PASSWORD, DB_PORT, BUCKET_SUFFIX, ENV_ID } = process.env;
 const MAX_ITEM_PICTURES = 5;
@@ -17,9 +17,12 @@ const pool = new Pool({
   database: DB_NAME,
   password: DB_PASSWORD,
   port: DB_PORT,
-  ssl: {
-    rejectUnauthorized: false,
-  },
+  ssl:
+    ENV_ID === 'PROD'
+      ? {
+          rejectUnauthorized: false,
+        }
+      : undefined,
 });
 
 switch (ENV_ID) {

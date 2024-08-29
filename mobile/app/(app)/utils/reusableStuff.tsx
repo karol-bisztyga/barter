@@ -89,3 +89,16 @@ export const getDistanceFromLatLonInKm = (coords1: string, coords2: string) => {
   const distance = R * c; // Distance in km
   return distance;
 };
+
+export const formatBytes = (bytes: number, decimals: number = 2): string => {
+  if (bytes === 0) return '0 Bytes';
+
+  const k = 1024; // 1 KB = 1024 bytes
+  const dm = decimals < 0 ? 0 : decimals; // Ensure decimals is non-negative
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']; // Standard units
+
+  const i = Math.floor(Math.log(bytes) / Math.log(k)); // Determine unit
+
+  // Calculate the size and return formatted string
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+};

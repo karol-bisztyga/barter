@@ -3,6 +3,8 @@ import pool from '../db';
 import { AuthRequest } from '../middlewares/authMiddleware';
 import { getUserIdFromRequest } from '../utils';
 import bcrypt from 'bcryptjs';
+import { composeBucketUrl, uploadFile } from '../utils/storageUtils';
+import { extension } from 'mime-types';
 
 export const updateUser = async (req: AuthRequest, res: Response) => {
   const { fieldName, fieldValue } = req.body;
@@ -55,6 +57,27 @@ export const changePassword = async (req: AuthRequest, res: Response) => {
       []
     );
 
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).send({ message: 'Server error: ' + err });
+  }
+};
+
+export const updateProfilePicture = async (req: AuthRequest, res: Response) => {
+  const { fileType, fileContent } = req.body;
+
+  try {
+    const userId = getUserIdFromRequest(req);
+    const ext = extension(fileType);
+    const fileName = `profile-picture-${userId}.${ext}`;
+    const currentTimestamp = new Date().getTime();
+    const bucketUrl = composeBucketUrl('profile-pictures');
+    await uploadFile(bucketUrl, fileName, fileContent);
+    const url = `https://f003.backblazeb2.com/file/${bucketUrl}/${fileName}`;
+    const result = await pool.query(
+      `UPDATE users SET profile_picture='${url}', date_edited = ${currentTimestamp} WHERE id=${userId} RETURNING *`,
+      []
+    );
     res.json(result.rows[0]);
   } catch (err) {
     res.status(500).send({ message: 'Server error: ' + err });

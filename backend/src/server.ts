@@ -14,7 +14,7 @@ const app = express();
 
 const httpServer = http.createServer(app);
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: '10mb' }));
 
 app.use('/auth', authRoutes);
 app.use('/', [itemRoutes, likeRoutes, matchRoutes, messageRoutes, userRoutes, reportRoutes]);

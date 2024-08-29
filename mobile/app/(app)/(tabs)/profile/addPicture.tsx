@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Dimensions, Image, StyleSheet, TouchableOpacity, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Button,
+  Dimensions,
+  Image,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import * as ImagePicker from 'expo-image-picker';
 import { EditImageType, UserData } from '../../types';
@@ -7,14 +16,27 @@ import { router } from 'expo-router';
 import { useUserContext } from '../../context/UserContext';
 import { useEditItemContext } from '../../context/EditItemContext';
 import { showError } from '../../utils/notifications';
+import { uploadProfilePicture } from '../../db_utils/uploadProfilePicture';
+import { useSessionContext } from '../../../SessionContext';
+import { PROFILE_PICTURE_SIZE_LIMIT } from '../../constants';
+import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
+import { getInfoAsync, EncodingType, readAsStringAsync } from 'expo-file-system';
+import { lookup } from 'react-native-mime-types';
+import { formatBytes } from '../../utils/reusableStuff';
 
 const { width } = Dimensions.get('window');
+
+type ImageDimensions = { width: number; height: number };
 
 const AddPicture = () => {
   const { imageType, tempImage, setTempImage } = useEditItemContext();
   const userContext = useUserContext();
+  const sessionContext = useSessionContext();
 
   const [image, setImage] = useState<string | null>(tempImage);
+  const [originalFileSize, setOriginalFileSize] = useState<number | null>(null);
+  const [warning, setWarning] = useState<string>('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     setImage(tempImage);
@@ -30,27 +52,128 @@ const AddPicture = () => {
     });
 
     if (!result.canceled) {
+      setWarning('');
+      setOriginalFileSize(result.assets[0].fileSize || null);
       setImage(result.assets[0].uri);
     }
   };
 
-  const confirm = () => {
+  const getImageDimensions = async (): Promise<ImageDimensions> => {
+    return await (async () => {
+      return new Promise((resolve, reject) => {
+        if (!image) {
+          reject('could not read image');
+          return;
+        }
+        Image.getSize(image, (width, height) => {
+          resolve({ width, height });
+        });
+      });
+    })();
+  };
+
+  const resizeImage = async () => {
+    if (!image) {
+      throw new Error('image not set');
+    }
+    let fileInfo = await getInfoAsync(image);
+    if (!fileInfo.exists) {
+      throw new Error('File does not exist');
+    }
+
+    let { width, height } = await getImageDimensions();
+    let uri = image;
+
+    while (fileInfo.exists && fileInfo.size > PROFILE_PICTURE_SIZE_LIMIT) {
+      const scale = 0.9;
+      width = Math.floor(width * scale);
+      height = Math.floor(height * scale);
+      const resizedImage = await manipulateAsync(uri, [{ resize: { width, height } }], {
+        compress: 0.8,
+        format: SaveFormat.JPEG,
+      });
+      uri = resizedImage.uri;
+      fileInfo = await getInfoAsync(resizedImage.uri);
+    }
+    const originalFileSizeInfo = originalFileSize ? `${formatBytes(originalFileSize)}, ` : '';
+    setWarning(
+      `This image was too big (${originalFileSizeInfo}the limit is 2MB) and has been automatically scaled down, you can proceed or choose another image`
+    );
+    setImage(uri);
+  };
+
+  useEffect(() => {
+    if (!image) {
+      return;
+    }
+    (async () => {
+      const fileInfo = await getInfoAsync(image);
+
+      if (fileInfo.exists && fileInfo.size > PROFILE_PICTURE_SIZE_LIMIT) {
+        setLoading(true);
+        resizeImage();
+      } else {
+        setLoading(false);
+      }
+    })();
+  }, [image]);
+
+  const confirm = async () => {
     if (!image) {
       showError('No image detected');
       console.error('no image detected');
       return;
     }
+    setLoading(true);
     switch (imageType) {
       case EditImageType.profile: {
         userContext.setData({
           ...userContext.data,
           profilePicture: image,
         } as UserData);
+        try {
+          const fileInfo = await getInfoAsync(image);
+
+          if (!fileInfo.exists) {
+            showError('File does not exist');
+            return;
+          }
+          if (fileInfo.size > PROFILE_PICTURE_SIZE_LIMIT) {
+            showError('Image is too big');
+            return;
+          }
+
+          const fileName = fileInfo.uri.split('/').pop();
+          if (!fileName) {
+            showError('No file name detected');
+            return;
+          }
+          const fileType = fileName.split('.').pop();
+          if (!fileType) {
+            showError('No type name detected');
+            return;
+          }
+          const fileMimeType = lookup(fileType);
+          if (!fileMimeType) {
+            showError('file type could not be read properly');
+            return;
+          }
+          const fileContent = await readAsStringAsync(image, {
+            encoding: EncodingType.Base64,
+          });
+
+          await uploadProfilePicture(sessionContext, fileName, fileMimeType, fileContent);
+          setLoading(false);
+        } catch (e) {
+          showError('upload image failed');
+          console.error('upload picture error', e);
+        }
         router.back();
         break;
       }
       case EditImageType.item: {
         setTempImage(image);
+        setLoading(false);
         router.back();
         break;
       }
@@ -80,7 +203,13 @@ const AddPicture = () => {
       {image && (
         <View style={styles.imageWrapper}>
           <Image style={styles.image} source={{ uri: image }} />
-          <Button title="Add" onPress={confirm} />
+          {warning && <Text style={styles.warningText}>{warning}</Text>}
+          <Button title="Add" onPress={confirm} disabled={loading} />
+          {loading && (
+            <View style={styles.loaderWrapper}>
+              <ActivityIndicator size="large" />
+            </View>
+          )}
         </View>
       )}
     </View>
@@ -108,6 +237,16 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 10,
     borderRadius: 20,
+  },
+  warningText: {
+    color: 'orange',
+    textAlign: 'center',
+    fontStyle: 'italic',
+  },
+  loaderWrapper: {
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 
