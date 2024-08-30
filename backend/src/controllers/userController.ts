@@ -3,8 +3,10 @@ import pool from '../db';
 import { AuthRequest } from '../middlewares/authMiddleware';
 import { getUserIdFromRequest } from '../utils';
 import bcrypt from 'bcryptjs';
-import { composeBucketUrl, uploadFile } from '../utils/storageUtils';
+import { b2Authenticate, composeBucketUrl, uploadFile } from '../utils/storageUtils';
 import { extension } from 'mime-types';
+import dotenv from 'dotenv';
+dotenv.config();
 
 export const updateUser = async (req: AuthRequest, res: Response) => {
   const { fieldName, fieldValue } = req.body;
@@ -67,15 +69,23 @@ export const updateProfilePicture = async (req: AuthRequest, res: Response) => {
   const { fileType, fileContent } = req.body;
 
   try {
+    const { STORAGE_FILES_BASE_URL } = process.env;
+
+    if (!STORAGE_FILES_BASE_URL) {
+      throw new Error('storage base url is missing');
+    }
+
+    await b2Authenticate();
+
     const userId = getUserIdFromRequest(req);
     const ext = extension(fileType);
     const fileName = `profile-picture-${userId}.${ext}`;
     const currentTimestamp = new Date().getTime();
     const bucketUrl = composeBucketUrl('profile-pictures');
     await uploadFile(bucketUrl, fileName, fileContent);
-    const url = `https://f003.backblazeb2.com/file/${bucketUrl}/${fileName}`;
+    const url = `${STORAGE_FILES_BASE_URL}/${bucketUrl}/${fileName}`;
     const result = await pool.query(
-      `UPDATE users SET profile_picture='${url}', date_edited = ${currentTimestamp} WHERE id=${userId} RETURNING *`,
+      `UPDATE users SET profile_picture='${url}', date_edited = ${currentTimestamp} WHERE id=${userId} RETURNING profile_picture`,
       []
     );
     res.json(result.rows[0]);

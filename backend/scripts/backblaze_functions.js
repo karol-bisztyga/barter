@@ -2,7 +2,7 @@ const B2 = require('backblaze-b2');
 const { generateImageAndFetch } = require('./imageMocker');
 require('dotenv').config();
 
-const { APP_KEY_ID, APP_KEY, BUCKET_SUFFIX } = process.env;
+const { APP_KEY_ID, APP_KEY, BUCKET_SUFFIX, STORAGE_FILES_BASE_URL } = process.env;
 
 // Initialize the Backblaze B2 client
 const b2 = new B2({
@@ -218,8 +218,8 @@ const uploadRandomImageB2 = async (bucketName, targetFileName) => {
   const imageBuffer = Buffer.from(arrayBuffer);
 
   let bucketId = await getBucketIdByName(bucketName);
-  const fileId = await uploadFile(bucketId, targetFileName, imageBuffer);
-  return `${bucketId}/${fileId}`;
+  await uploadFile(bucketId, targetFileName, imageBuffer);
+  return `${STORAGE_FILES_BASE_URL}/${bucketName}/${targetFileName}`;
 };
 
 const deleteAllBuckets = async (accountId) => {
@@ -236,11 +236,26 @@ const deleteAllBuckets = async (accountId) => {
   }
 };
 
-const clearAllBuckets = async (accountId) => {
+const clearAllBuckets = async () => {
   const existingBuckets = await listBuckets();
   console.log('deleting all buckets', existingBuckets);
   for (let bucket of existingBuckets) {
     console.log(`bucket ${bucket.name}`);
+    console.log(`   clearing bucket...`);
+    await deleteAllFilesInBucket(bucket.id);
+    console.log(`   cleared`);
+  }
+};
+
+const clearBuckets = async (bucketsToClear) => {
+  const existingBuckets = await listBuckets();
+  console.log('deleting all buckets', existingBuckets);
+  for (let bucket of bucketsToClear) {
+    console.log(`bucket ${bucket.name}`);
+    if (!existingBuckets.find((b) => b.name === bucket.name)) {
+      console.log(`   not found, skipping`);
+      continue;
+    }
     console.log(`   clearing bucket...`);
     await deleteAllFilesInBucket(bucket.id);
     console.log(`   cleared`);
@@ -272,4 +287,5 @@ module.exports = {
   authenticate,
   clearAllBuckets,
   listBuckets,
+  clearBuckets,
 };

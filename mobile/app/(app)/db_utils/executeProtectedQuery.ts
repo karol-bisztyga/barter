@@ -12,6 +12,9 @@ export const executeProtectedQuery = async (
   body?: Record<string, string> | null
 ) => {
   try {
+    if (rawUrl.at(0) === '/') {
+      throw new Error('url should not start with /');
+    }
     const result = await executeQuery(
       rawUrl,
       method,

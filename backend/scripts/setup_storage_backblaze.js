@@ -3,7 +3,8 @@ const {
   deleteAllBuckets,
   createBuckets,
   listBuckets,
-  clearAllBuckets,
+  clearBuckets,
+  authenticate,
 } = require('./backblaze_functions');
 
 (async () => {
@@ -22,7 +23,7 @@ const {
       console.log('storage reset...');
       if (bucketNames.every((item) => existingBuketNames.includes(item))) {
         console.log('all buckets with provided names already exist, clearing them...');
-        clearAllBuckets(accountId);
+        clearBuckets(bucketNames);
       } else {
         await deleteAllBuckets(accountId);
         await createBuckets(bucketNames);
@@ -32,7 +33,7 @@ const {
       console.log('storage clean...');
       if (bucketNames.every((item) => existingBuketNames.includes(item))) {
         console.log('all buckets with provided names already exist, clearing them...');
-        clearAllBuckets(accountId);
+        clearBuckets(bucketNames);
       } else {
         await deleteAllBuckets();
       }

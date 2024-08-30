@@ -15,14 +15,14 @@ import { EditImageType, UserData } from '../../types';
 import { router } from 'expo-router';
 import { useUserContext } from '../../context/UserContext';
 import { useEditItemContext } from '../../context/EditItemContext';
-import { showError } from '../../utils/notifications';
+import { showError, showSuccess } from '../../utils/notifications';
 import { uploadProfilePicture } from '../../db_utils/uploadProfilePicture';
 import { useSessionContext } from '../../../SessionContext';
 import { PROFILE_PICTURE_SIZE_LIMIT } from '../../constants';
 import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
-import { getInfoAsync, EncodingType, readAsStringAsync } from 'expo-file-system';
-import { lookup } from 'react-native-mime-types';
+import { getInfoAsync } from 'expo-file-system';
 import { formatBytes } from '../../utils/reusableStuff';
+import { prepareFileToUpload } from '../../utils/storageUtils';
 
 const { width } = Dimensions.get('window');
 
@@ -127,10 +127,6 @@ const AddPicture = () => {
     setLoading(true);
     switch (imageType) {
       case EditImageType.profile: {
-        userContext.setData({
-          ...userContext.data,
-          profilePicture: image,
-        } as UserData);
         try {
           const fileInfo = await getInfoAsync(image);
 
@@ -142,28 +138,19 @@ const AddPicture = () => {
             showError('Image is too big');
             return;
           }
-
-          const fileName = fileInfo.uri.split('/').pop();
-          if (!fileName) {
-            showError('No file name detected');
-            return;
-          }
-          const fileType = fileName.split('.').pop();
-          if (!fileType) {
-            showError('No type name detected');
-            return;
-          }
-          const fileMimeType = lookup(fileType);
-          if (!fileMimeType) {
-            showError('file type could not be read properly');
-            return;
-          }
-          const fileContent = await readAsStringAsync(image, {
-            encoding: EncodingType.Base64,
-          });
-
-          await uploadProfilePicture(sessionContext, fileName, fileMimeType, fileContent);
+          const { fileName, fileMimeType, fileContent } = await prepareFileToUpload(image);
+          const response = await uploadProfilePicture(
+            sessionContext,
+            fileName,
+            fileMimeType,
+            fileContent
+          );
           setLoading(false);
+          showSuccess('successfully uploaded image');
+          userContext.setData({
+            ...userContext.data,
+            profilePicture: response.profilePicture,
+          } as UserData);
         } catch (e) {
           showError('upload image failed');
           console.error('upload picture error', e);

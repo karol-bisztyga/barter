@@ -25,6 +25,7 @@ const pool = new Pool({
       : undefined,
 });
 
+let uploadRandomImage;
 switch (ENV_ID) {
   case 'LOCAL':
     uploadRandomImage = uploadRandomImageLocal;

@@ -19,7 +19,7 @@ export const uploadProfilePicture = async (
     }
   );
   if (response.ok) {
-    return response.data;
+    return { profilePicture: response.data.profile_picture };
   } else {
     throw new Error('upload profile picture: ' + response.data.message);
   }

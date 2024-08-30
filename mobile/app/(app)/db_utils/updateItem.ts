@@ -13,11 +13,7 @@ export const updateItem = async (
     description: item.description,
   });
   if (response.ok) {
-    const responseData = { ...response.data };
-    if (responseData.images) {
-      responseData.images = JSON.parse(responseData.images);
-    }
-    return responseData;
+    return response.data;
   } else {
     throw new Error('update item error: ' + response.data.message);
   }

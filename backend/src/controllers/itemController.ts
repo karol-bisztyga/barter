@@ -3,6 +3,14 @@ import pool from '../db';
 import { AuthRequest } from '../middlewares/authMiddleware';
 import { getUserIdFromRequest } from '../utils';
 import { updateMatchDateUpdated } from './matchController';
+import {
+  b2Authenticate,
+  composeBucketUrl,
+  deleteFile,
+  getBucketDataByName,
+  uploadFile,
+} from '../utils/storageUtils';
+import { MAX_ITEM_PICTURES } from '../constants';
 
 export const createItem = async (req: AuthRequest, res: Response) => {
   const { name, description, images } = req.body;
@@ -71,7 +79,7 @@ export const getUserItems = async (req: AuthRequest, res: Response) => {
 
 export const updateItem = async (req: AuthRequest, res: Response) => {
   const { id } = req.params;
-  const { name, description, images } = req.body;
+  const { name, description } = req.body;
   const client = await pool.connect();
 
   try {
@@ -90,25 +98,6 @@ export const updateItem = async (req: AuthRequest, res: Response) => {
     }
 
     const result: Record<string, string> = itemResult.rows[0];
-    if (images) {
-      const parsedImages = JSON.parse(images).map((url: string) => [id, url]);
-      await client.query('DELETE FROM items_images WHERE item_id = $1', [id]);
-
-      const insertQuery = `
-            INSERT INTO items_images (item_id, url)
-            VALUES ${parsedImages.map((_: [string, string], i: number) => `($${i * 2 + 1}, $${i * 2 + 2})`).join(', ')}
-            RETURNING *;
-        `;
-      const values = parsedImages.flatMap((itemImage: [string, string]) => [
-        itemImage[0],
-        itemImage[1],
-      ]);
-      const imagesResult = await client.query(insertQuery, values);
-
-      const imagesResultParsed = imagesResult.rows.map((row: Record<string, number>) => row.url);
-
-      result.images = JSON.stringify(imagesResultParsed);
-    }
 
     await client.query('COMMIT');
     res.json(result);
@@ -213,6 +202,59 @@ export const getItemsForCards = async (req: AuthRequest, res: Response) => {
     });
     console.log('pulled cards', parsedResult);
     res.json(parsedResult);
+  } catch (err) {
+    res.status(500).send({ message: 'Server error: ' + err });
+  }
+};
+
+export const addImage = async (req: AuthRequest, res: Response) => {
+  const { fileName, fileContent, itemId } = req.body;
+  const { STORAGE_FILES_BASE_URL } = process.env;
+  try {
+    const currentCountResponse = await pool.query(
+      'SELECT COUNT(*) FROM items_images WHERE item_id = $1',
+      [itemId]
+    );
+    const { count } = currentCountResponse.rows[0];
+
+    if (count >= MAX_ITEM_PICTURES) {
+      throw new Error('Max number of images reached');
+    }
+
+    await b2Authenticate();
+    const bucketUrl = composeBucketUrl('items-images');
+    await uploadFile(bucketUrl, fileName, fileContent);
+    const url = `${STORAGE_FILES_BASE_URL}/${bucketUrl}/${fileName}`;
+    const result = await pool.query(
+      `INSERT INTO items_images(item_id, url) VALUES ($1, $2) RETURNING *`,
+      [itemId, url]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).send({ message: 'Server error: ' + err });
+  }
+};
+
+export const deleteImage = async (req: AuthRequest, res: Response) => {
+  const { itemId, imageUrl } = req.body;
+
+  try {
+    const { STORAGE_FILES_BASE_URL } = process.env;
+    if (!STORAGE_FILES_BASE_URL) {
+      throw new Error('storage base url is missing');
+    }
+    await b2Authenticate();
+    const { bucketId } = await getBucketDataByName(composeBucketUrl('items-images'));
+    const fileName = imageUrl.split('/').pop();
+    if (!fileName) {
+      throw new Error('file name not found in url');
+    }
+    await deleteFile(bucketId, fileName);
+    await pool.query('DELETE FROM items_images WHERE item_id = $1 AND url = $2', [
+      itemId,
+      imageUrl,
+    ]);
+    res.json({});
   } catch (err) {
     res.status(500).send({ message: 'Server error: ' + err });
   }
