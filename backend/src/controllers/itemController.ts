@@ -117,7 +117,25 @@ export const deleteItem = async (req: AuthRequest, res: Response) => {
 
   try {
     await client.query('BEGIN');
-    await client.query('DELETE FROM items_images WHERE item_id = $1', [itemId]);
+    // remove images
+    const itemImagesResult = await client.query('SELECT * FROM items_images WHERE item_id = $1', [
+      itemId,
+    ]);
+    await b2Authenticate();
+    const { bucketId } = await getBucketDataByName(composeBucketUrl('items-images'));
+    for (const itemImage of itemImagesResult.rows) {
+      const fileName = itemImage.url.split('/').pop();
+      if (!fileName) {
+        throw new Error('file name not found in url');
+      }
+      await deleteFile(bucketId, fileName);
+      await pool.query('DELETE FROM items_images WHERE item_id = $1 AND url = $2', [
+        itemId,
+        itemImage.url,
+      ]);
+    }
+
+    // remove rest
     const matchesIdsResult = await client.query(
       'SELECT id FROM matches WHERE matching_item_id = $1 OR matched_item_id = $1',
       [itemId]

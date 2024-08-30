@@ -25,7 +25,7 @@ import { updateItem } from '../../db_utils/updateItem';
 import { addItem } from '../../db_utils/addItem';
 import { removeItem } from '../../db_utils/removeItem';
 import { useMatchContext } from '../../context/MatchContext';
-import { showError, showInfo, showSuccess } from '../../utils/notifications';
+import { showError, showSuccess } from '../../utils/notifications';
 import { deleteItemImage } from '../../db_utils/deleteItemImage';
 import { uploadItemImage } from '../../db_utils/uploadItemImage';
 import { prepareFileToUpload } from '../../utils/storageUtils';
@@ -52,6 +52,7 @@ const EditItem = () => {
   const [updatingItemData, setUpdatingItemData] = useState<boolean>(false);
   const [uploadingImage, setUploadingImage] = useState<boolean>(false);
   const [removingImage, setRemovingImage] = useState<number | null>(null);
+  const [removingItem, setRemovingUtem] = useState<boolean>(false);
 
   const scrollRef = useRef<ScrollView>(null);
 
@@ -354,13 +355,14 @@ const EditItem = () => {
                     if (!usersItem) {
                       throw new Error('item to remove not specified');
                     }
+                    setRemovingUtem(true);
                     const newItems = [...userContext.items];
                     const result = await removeItem(sessionContext, usersItem.item.id);
                     await updateMatches(sessionContext, matchContext);
                     if (result) {
                       newItems.splice(usersItem.index, 1);
                       userContext.setItems(newItems);
-                      showInfo('Item removed');
+                      showSuccess('Item removed');
                       router.back();
                     } else {
                       throw new Error('server error');
@@ -371,10 +373,22 @@ const EditItem = () => {
                       showError('Error removing item');
                     }
                     return;
+                  } finally {
+                    setRemovingUtem(false);
                   }
                 }
               }}
             />
+          )}
+          {removingItem && (
+            <View
+              style={styles.loaderWrapper}
+              onLayout={() => {
+                scrollRef.current?.scrollToEnd({ animated: true });
+              }}
+            >
+              <ActivityIndicator size="large" />
+            </View>
           )}
         </View>
       </ScrollView>
