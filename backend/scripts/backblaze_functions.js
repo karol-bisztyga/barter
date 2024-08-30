@@ -288,4 +288,6 @@ module.exports = {
   clearAllBuckets,
   listBuckets,
   clearBuckets,
+  getBucketIdByName,
+  listObjects,
 };

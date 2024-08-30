@@ -16,7 +16,7 @@ const {
   // they must be globally unique LoL
   const bucketNames = [composeBucketUrl(`profile-pictures`), composeBucketUrl(`items-images`)];
 
-  const existingBuketNames = (await listBuckets()).map((bucket) => bucket.bucketName);
+  const existingBuketNames = (await listBuckets()).map((bucket) => bucket.name);
 
   switch (option) {
     case '--reset':
