@@ -4,7 +4,6 @@ import { AuthRequest } from '../middlewares/authMiddleware';
 import { getUserIdFromRequest } from '../utils';
 import bcrypt from 'bcryptjs';
 import { b2Authenticate, composeBucketUrl, uploadFile } from '../utils/storageUtils';
-import { extension } from 'mime-types';
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -66,7 +65,7 @@ export const changePassword = async (req: AuthRequest, res: Response) => {
 };
 
 export const updateProfilePicture = async (req: AuthRequest, res: Response) => {
-  const { fileType, fileContent } = req.body;
+  const { fileName, fileContent } = req.body;
 
   try {
     const { STORAGE_FILES_BASE_URL } = process.env;
@@ -78,8 +77,6 @@ export const updateProfilePicture = async (req: AuthRequest, res: Response) => {
     await b2Authenticate();
 
     const userId = getUserIdFromRequest(req);
-    const ext = extension(fileType);
-    const fileName = `profile-picture-${userId}.${ext}`;
     const currentTimestamp = new Date().getTime();
     const bucketUrl = composeBucketUrl('profile-pictures');
     await uploadFile(bucketUrl, fileName, fileContent);

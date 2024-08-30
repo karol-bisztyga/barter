@@ -39,7 +39,10 @@ const AddPicture = () => {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    setImage(tempImage);
+    if (tempImage) {
+      setImage(tempImage);
+    }
+    setTempImage(null);
   }, [tempImage]);
 
   const pickImage = async () => {
@@ -146,11 +149,12 @@ const AddPicture = () => {
             fileContent
           );
           setLoading(false);
-          showSuccess('successfully uploaded image');
+          console.log('prof pic', response.profilePicture);
           userContext.setData({
             ...userContext.data,
             profilePicture: response.profilePicture,
           } as UserData);
+          showSuccess('successfully uploaded image');
         } catch (e) {
           showError('upload image failed');
           console.error('upload picture error', e);
