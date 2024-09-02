@@ -18,6 +18,8 @@ export interface MatchContextState {
   setCurrentMatchId: React.Dispatch<React.SetStateAction<string | null>>;
   localDateUpdated: string | null;
   setLocalDateUpdated: React.Dispatch<React.SetStateAction<string | null>>;
+  unmatching: boolean;
+  setUnmatching: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const initialState: MatchContextState = {
@@ -27,6 +29,8 @@ const initialState: MatchContextState = {
   setCurrentMatchId: () => {},
   localDateUpdated: null,
   setLocalDateUpdated: () => {},
+  unmatching: false,
+  setUnmatching: () => {},
 };
 
 export const MatchContext = createContext<MatchContextState | null>(initialState);
@@ -43,6 +47,7 @@ export const MatchContextProvider: FC<{ children: ReactNode }> = ({ children }) 
   const [matches, setMatches] = useState<MatchData[]>([]);
   const [currentMatchId, setCurrentMatchId] = useState<string | null>(null);
   const [localDateUpdated, setLocalDateUpdated] = useState<string | null>(null);
+  const [unmatching, setUnmatching] = useState<boolean>(false);
 
   return (
     <MatchContext.Provider
@@ -53,6 +58,8 @@ export const MatchContextProvider: FC<{ children: ReactNode }> = ({ children }) 
         setCurrentMatchId,
         localDateUpdated,
         setLocalDateUpdated,
+        unmatching,
+        setUnmatching,
       }}
     >
       {children}

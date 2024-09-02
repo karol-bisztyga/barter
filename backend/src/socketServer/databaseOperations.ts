@@ -1,11 +1,18 @@
 import pool from '../db';
 import { ChatMessage } from '../types';
 
+const checkIfMatchExists = async (matchId: string) => {
+  const queryResult = await pool.query('SELECT * FROM matches WHERE id = $1', [matchId]);
+  return queryResult.rows.length > 0;
+};
+
 export const getMessages = async (matchId: string, offset: string = '0', limit: string = '10') => {
   if (!matchId) {
-    throw new Error('get messages: match id is not provided');
+    throw new Error('match id is not provided');
   }
-
+  if (!(await checkIfMatchExists(matchId))) {
+    throw new Error('match does not exist');
+  }
   const queryResult = await pool.query(
     'SELECT * FROM messages WHERE match_id = $1 ORDER BY id DESC LIMIT $2 OFFSET $3',
     [matchId, limit, offset]
@@ -30,6 +37,9 @@ export const addNewMessage = async (matchId: string, message: ChatMessage) => {
 
   if (!userId) {
     throw new Error('add message: user id is not provided');
+  }
+  if (!(await checkIfMatchExists(matchId))) {
+    throw new Error('match does not exist');
   }
 
   console.log('> adding message to database', userId, matchId, type, content);

@@ -4,7 +4,7 @@ import { useItemsContext } from '../../context/ItemsContext';
 import { Button, StyleSheet, TextInput, View } from 'react-native';
 import { addReport } from '../../db_utils/addReport';
 import { authorizeUser } from '../../utils/reusableStuff';
-import { showError, showInfo } from '../../utils/notifications';
+import { showError, showSuccess } from '../../utils/notifications';
 
 const SendReportModal = () => {
   const sessionContext = authorizeUser();
@@ -21,7 +21,7 @@ const SendReportModal = () => {
     }
     try {
       await addReport(sessionContext, itemsContext.othersItem.id, report);
-      showInfo('report sent');
+      showSuccess('report sent');
       router.back();
     } catch (e) {
       showError('error sending report');

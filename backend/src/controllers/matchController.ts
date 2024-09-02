@@ -95,7 +95,7 @@ export const updateMatchDateUpdated = async (
       `,
     [dateNow, userId]
   );
-  console.log('dateUpdatedResult', dateUpdatedResult.rows);
+  console.log('matches_updates::dateUpdatedResult', dateUpdatedResult.rows);
   return dateUpdatedResult.rows;
 };
 
@@ -122,6 +122,44 @@ export const updateMatchMatchingItem = async (req: AuthRequest, res: Response) =
     res.json({
       result: updateResult,
     });
+  } catch (err) {
+    await client.query('ROLLBACK');
+    res.status(500).send({ message: 'Server error: ' + err });
+  } finally {
+    client.release();
+  }
+};
+
+export const unmatch = async (req: AuthRequest, res: Response) => {
+  const { matchId } = req.body;
+  const dateNow = Date.now();
+  const client = await pool.connect();
+
+  try {
+    await client.query('BEGIN');
+    // find both users' ids
+    const usersIdsQueryResult = await client.query(
+      `SELECT
+          user_id
+      FROM
+          items
+      WHERE
+          id IN (SELECT matching_item_id FROM matches WHERE id = $1)
+      OR
+          id IN (SELECT matched_item_id FROM matches WHERE id = $1)
+      `,
+      [matchId]
+    );
+
+    const usersIds = usersIdsQueryResult.rows.map((row) => row.user_id);
+
+    await client.query('DELETE FROM messages WHERE match_id=$1', [matchId]);
+    await client.query('DELETE FROM matches WHERE id = $1 RETURNING *', [matchId]);
+    for (const userId of usersIds) {
+      await updateMatchDateUpdated(client, dateNow, userId);
+    }
+    await client.query('COMMIT');
+    res.json({});
   } catch (err) {
     await client.query('ROLLBACK');
     res.status(500).send({ message: 'Server error: ' + err });

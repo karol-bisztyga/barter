@@ -127,6 +127,11 @@ const Chat = () => {
         showError('Session expired');
         sessionContext.signOut();
       }
+      if (e.includes && e.includes('match does not exist')) {
+        showError('Match does not exist');
+        matchContext.setMatches(matchContext.matches.filter((m) => m.id !== currentMatchId));
+        router.back();
+      }
     });
 
     return () => {
@@ -259,7 +264,7 @@ const Chat = () => {
                 return null;
               }
               return (
-                <View style={styles.loaderWrapper}>
+                <View style={styles.messageLoaderWrapper}>
                   <ActivityIndicator size="large" />
                 </View>
               );
@@ -288,6 +293,11 @@ const Chat = () => {
           />
         </Animated.View>
       </View>
+      {matchContext.unmatching && (
+        <View style={styles.unmatchLoaderWrapper}>
+          <ActivityIndicator size="large" />
+        </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -324,8 +334,16 @@ const styles = StyleSheet.create({
     fontSize: 30,
     height: 40,
   },
-  loaderWrapper: {
+  messageLoaderWrapper: {
     margin: 20,
+  },
+  unmatchLoaderWrapper: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, .7)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
 

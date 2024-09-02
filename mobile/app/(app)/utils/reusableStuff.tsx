@@ -7,7 +7,10 @@ import { getUserMatches } from '../db_utils/getUserMatches';
 import { MatchContextState } from '../context/MatchContext';
 import { XMLParser } from 'fast-xml-parser';
 
-export const headerBackButtonOptions = (beforeCallback?: () => Promise<boolean>) => {
+export const headerBackButtonOptions = (
+  beforeCallback?: () => Promise<boolean>,
+  disabled: boolean = false
+) => {
   return {
     headerShown: true,
     headerTitle: () => <></>,
@@ -19,8 +22,13 @@ export const headerBackButtonOptions = (beforeCallback?: () => Promise<boolean>)
           if (beforeCallback && !(await beforeCallback())) {
             return;
           }
+          if (disabled) {
+            return;
+          }
           router.back();
         }}
+        disabled={disabled}
+        style={{ opacity: disabled ? 0.2 : 1 }}
       >
         <FontAwesome size={28} name="arrow-left" />
       </TouchableOpacity>
@@ -101,4 +109,12 @@ export const formatBytes = (bytes: number, decimals: number = 2): string => {
 
   // Calculate the size and return formatted string
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+};
+
+export const sleep = async (ms: number = 1000) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve(true);
+    }, ms);
+  });
 };

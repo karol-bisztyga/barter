@@ -32,6 +32,12 @@ const unregisterUser = (socketId: string) => {
   delete socketsToUsers[socketId];
 };
 
+const sendError = (server: Server, socket: Socket, error: string) => {
+  console.error('error verifying token', error);
+  server.to(socket.id).emit('error', error);
+  socket.disconnect();
+};
+
 const onConnection = async (server: Server, socket: Socket) => {
   console.log('A user connected:', socket.id);
 
@@ -41,25 +47,26 @@ const onConnection = async (server: Server, socket: Socket) => {
   let verifyTokenResult;
   try {
     verifyTokenResult = verifyToken(userToken);
+    const userId = verifyTokenResult.id;
+    console.log('verification', userId, matchId);
+
+    registerUser(userId, socket, matchId);
+
+    const initialMessages = await getMessages(matchId);
+
+    console.log('sending initial messages to', socket.id);
+    server.to(socket.id).emit('initialMessages', JSON.stringify(initialMessages));
   } catch (e) {
-    console.error('error verifying token', e);
-    server.to(socket.id).emit('error', e);
-    socket.disconnect();
+    sendError(server, socket, `${e}`);
     return;
   }
 
-  const userId = verifyTokenResult.id;
-  console.log('verification', userId, matchId);
-
-  registerUser(userId, socket, matchId);
-
-  const initialMessages = await getMessages(matchId);
-
-  console.log('sending initial messages to', socket.id);
-  server.to(socket.id).emit('initialMessages', JSON.stringify(initialMessages));
-
   socket.on('message', async (data: ChatMessage) => {
-    await onMessage(server, socket.id, data);
+    try {
+      await onMessage(server, socket.id, data);
+    } catch (e) {
+      sendError(server, socket, `error sending message: ${e}`);
+    }
   });
 
   socket.on('disconnect', () => {
