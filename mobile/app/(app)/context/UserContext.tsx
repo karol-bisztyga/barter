@@ -3,7 +3,6 @@ import { ItemData, UserData } from '../types';
 import * as SecureStore from 'expo-secure-store';
 import { STORAGE_SESSION_KEY } from '../../constants';
 import { useSessionContext } from '../../SessionContext';
-import { ErrorType, handleError } from '../utils/errorHandler';
 
 interface UserContextState {
   data: UserData | null;
@@ -70,7 +69,8 @@ export const UserContextProvider: FC<{ children: ReactNode }> = ({ children }) =
         });
         await SecureStore.setItem(STORAGE_SESSION_KEY, storageStr);
       } catch (e) {
-        handleError(ErrorType.UPDATE_SESSION, `${e}`);
+        // cannot use error handler due to a Require cycle
+        console.error('Error setting the session in the secure store', e);
       }
     })();
   }, [data]);
