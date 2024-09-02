@@ -35,6 +35,7 @@ export enum ErrorType {
   NETWORK_ERROR,
   EMAIL_NOT_FOUND,
   SWIPE,
+  SESSION_EXPIRED,
 }
 
 const getMessageForErrorType = (type: ErrorType) => {
@@ -105,6 +106,8 @@ const getMessageForErrorType = (type: ErrorType) => {
       return 'Email could not be found';
     case ErrorType.SWIPE:
       return 'Swipe error';
+    case ErrorType.SESSION_EXPIRED:
+      return 'Session expired';
     default:
       return 'Unknown error';
   }
@@ -115,18 +118,17 @@ export const handleError = (
   fullError: string,
   customMessage: string = '',
   showToUser: boolean = true
-) => {
-  // todo here check these errors:
-  // - network error
-  // - invalid token
-  /**
-    // if (!`${e}`.includes('Invalid token')) {
-    //   showError('Error removing item');
-    // }
-   */
+): void => {
   if (type !== ErrorType.NETWORK_ERROR && fullError.includes('Network request failed')) {
-    handleError(ErrorType.NETWORK_ERROR, fullError, 'Network error', showToUser);
-    return;
+    return handleError(ErrorType.NETWORK_ERROR, fullError, 'Network error', showToUser);
+  }
+  if (type !== ErrorType.SESSION_EXPIRED && fullError.includes('Invalid token')) {
+    return handleError(
+      ErrorType.SESSION_EXPIRED,
+      fullError,
+      getMessageForErrorType(type),
+      showToUser
+    );
   }
   const message = customMessage ? customMessage : getMessageForErrorType(type);
   console.error(message, fullError);
