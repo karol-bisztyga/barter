@@ -3,6 +3,7 @@ import { ItemData, UserData } from '../types';
 import * as SecureStore from 'expo-secure-store';
 import { STORAGE_SESSION_KEY } from '../../constants';
 import { useSessionContext } from '../../SessionContext';
+import { ErrorType, handleError } from '../utils/errorHandler';
 
 interface UserContextState {
   data: UserData | null;
@@ -69,7 +70,7 @@ export const UserContextProvider: FC<{ children: ReactNode }> = ({ children }) =
         });
         await SecureStore.setItem(STORAGE_SESSION_KEY, storageStr);
       } catch (e) {
-        console.error('error updating user data in storage', e);
+        handleError(ErrorType.UPDATE_SESSION, `${e}`);
       }
     })();
   }, [data]);

@@ -3,7 +3,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Tabs } from 'expo-router';
 import { authorizeUser, updateMatches } from '../utils/reusableStuff';
 import { useMatchContext } from '../context/MatchContext';
-import { showError } from '../utils/notifications';
+import { ErrorType, handleError } from '../utils/errorHandler';
 
 const getTabNameFromEvent = (eventName?: string): string | undefined => eventName?.split('-')[0];
 
@@ -29,17 +29,14 @@ export default function TabLayout() {
                 try {
                   await updateMatches(sessionContext, matchContext);
                 } catch (e) {
-                  if (!`${e}`.includes('Invalid token')) {
-                    showError('error updating matches');
-                  }
-                  console.error('error updating matches', e);
+                  handleError(ErrorType.UPDATE_MATCHES, `${e}`);
                 }
               })();
               break;
             case 'profile':
               break;
             default:
-              console.error('unknown route', routeName);
+              handleError(ErrorType.UNKNOWN_ROUTE, `${e}`, '', false);
           }
         },
       }}

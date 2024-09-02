@@ -6,7 +6,7 @@ import { UserData } from '../../../types';
 import { useUserContext } from '../../../context/UserContext';
 import { useSessionContext } from '../../../../SessionContext';
 import { updateUser } from '../../../db_utils/updateUser';
-import { showError } from '../../../utils/notifications';
+import { ErrorType, handleError } from '../../../utils/errorHandler';
 
 const validateValue = (/*value: string*/) => {
   // todo handle this
@@ -87,10 +87,7 @@ const EditingTools = ({
             setEditing(false);
             setValue(updateDatabaseResult[name]);
           } catch (e) {
-            if (!`${e}`.includes('Invalid token')) {
-              showError('error updating user');
-            }
-            console.error('error updating user', e);
+            handleError(ErrorType.UPDATE_USER, `${e}`);
           }
         }}
       >

@@ -3,8 +3,9 @@ import { ActivityIndicator, Button, StyleSheet, Text, TextInput, View } from 're
 import { validatePassword, validatePasswords } from '../../utils/validators';
 import { changePassword } from '../../db_utils/changePassword';
 import { authorizeUser } from '../../utils/reusableStuff';
-import { showError, showSuccess } from '../../utils/notifications';
+import { showSuccess } from '../../utils/notifications';
 import { router } from 'expo-router';
+import { ErrorType, handleError } from '../../utils/errorHandler';
 
 const ERROR_MESSAGES = {
   PASSWORD: 'password invalid, it must be at least 8 characters',
@@ -51,8 +52,7 @@ export default function ChangePassword() {
       showSuccess('password changed');
       router.back();
     } catch (e) {
-      console.error('error updating user', e);
-      showError('change password failed'); // todo this hides behind the modal on ios
+      handleError(ErrorType.CHANGE_PASSWORD, `${e}`); // todo this alert hides behind the modal on ios
     }
     setLoading(false);
   };

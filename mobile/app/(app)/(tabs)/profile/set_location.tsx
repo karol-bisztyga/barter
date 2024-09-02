@@ -6,7 +6,8 @@ import { updateUser } from '../../db_utils/updateUser';
 import { authorizeUser, cityNameFromLocation, formatLocation } from '../../utils/reusableStuff';
 import { router } from 'expo-router';
 import { useUserContext } from '../../context/UserContext';
-import { showError, showSuccess } from '../../utils/notifications';
+import { showSuccess } from '../../utils/notifications';
+import { ErrorType, handleError } from '../../utils/errorHandler';
 
 export default function LocationScreen() {
   const sessionContext = authorizeUser();
@@ -20,10 +21,9 @@ export default function LocationScreen() {
     try {
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        showError(
+        throw new Error(
           'Permission to access location was denied, you may need to enable location services in settings'
         );
-        return;
       }
 
       const location = await Location.getCurrentPositionAsync({});
@@ -31,8 +31,7 @@ export default function LocationScreen() {
       setLocationStr(await cityNameFromLocation(formatLocationCoords(location.coords)));
       setCity('');
     } catch (e) {
-      showError('error getting location');
-      console.error('error getting location', e);
+      handleError(ErrorType.GET_LOCATION, `${e}`);
     }
   };
 
@@ -45,9 +44,8 @@ export default function LocationScreen() {
             'Location unspecified\n\nPlease enable location services or enter city manually'
         );
       } catch (e) {
-        showError('error getting location');
+        handleError(ErrorType.GET_LOCATION, `${e}`);
         setLocationStr('error getting location');
-        console.error('error getting location', e);
       }
     })();
   }, []);
@@ -56,12 +54,11 @@ export default function LocationScreen() {
     `${location.latitude}, ${location.longitude}`;
 
   const saveLocation = async () => {
-    if (!city && !location) {
-      showError('neither city nor location provided');
-      return;
-    }
-    const locationToSave: string = location ? formatLocationCoords(location.coords) : city;
     try {
+      if (!city && !location) {
+        throw new Error('neither city nor location provided');
+      }
+      const locationToSave: string = location ? formatLocationCoords(location.coords) : city;
       if (!userContext.data) {
         throw new Error('no user data');
       }
@@ -70,8 +67,7 @@ export default function LocationScreen() {
       showSuccess('location set');
       router.back();
     } catch (e) {
-      showError('error saving location');
-      console.error('error saving location', e);
+      handleError(ErrorType.SET_LOCATION, `${e}`);
     }
   };
 

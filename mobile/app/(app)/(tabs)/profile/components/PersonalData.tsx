@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { UserData } from '../../../types';
 import PersonalDataItem from './PersonalDataItem';
 import { useUserContext } from '../../../context/UserContext';
-import { showError } from '../../../utils/notifications';
+import { ErrorType, handleError } from '../../../utils/errorHandler';
 
 const PersonalData = () => {
   const userContext = useUserContext();
@@ -11,7 +11,8 @@ const PersonalData = () => {
   const data = { ...userContext.data };
 
   if (!data) {
-    showError(
+    handleError(
+      ErrorType.CORRUPTED_SESSION,
       'your session seems to be corrupted (personal data is missing), you may want to restart the app or log in again'
     );
     return null;

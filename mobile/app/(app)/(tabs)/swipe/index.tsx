@@ -11,7 +11,8 @@ import { getUserItems } from '../../db_utils/getUserItems';
 import { authorizeUser } from '../../utils/reusableStuff';
 import { getItemsForCards } from '../../db_utils/getItemsForCards';
 import { addLike } from '../../db_utils/addLike';
-import { showError, showInfo } from '../../utils/notifications';
+import { showInfo } from '../../utils/notifications';
+import { ErrorType, handleError } from '../../utils/errorHandler';
 
 const LOADED_ITEMS_CAPACITY = 5;
 // when there are less items loaded than this value, new items will be fetched
@@ -28,7 +29,8 @@ export default function Swipe() {
 
   useEffect(() => {
     if (!userContext.data) {
-      showError(
+      handleError(
+        ErrorType.CORRUPTED_SESSION,
         'your session seems to be corrupted (your data is missing), you may want to restart the app or log in again'
       );
       return;
@@ -38,10 +40,7 @@ export default function Swipe() {
         userContext.setItems(items);
       })
       .catch((e) => {
-        console.error('error', e);
-        if (!`${e}`.includes('Invalid token')) {
-          showError(`error loading user's items`);
-        }
+        handleError(ErrorType.LOAD_ITEMS, `${e}`);
       });
   }, []);
 
@@ -71,10 +70,7 @@ export default function Swipe() {
         }
         updatedCards = [...itemsLoaded, ...updatedCards];
       } catch (e) {
-        if (!`${e}`.includes('Invalid token')) {
-          showError('error loading cards');
-        }
-        console.error('error loading cards', e);
+        handleError(ErrorType.LOAD_CARDS, `${e}`);
         return null;
       }
     }
@@ -101,10 +97,7 @@ export default function Swipe() {
 
         setCards(itemsLoaded);
       } catch (e) {
-        if (!`${e}`.includes('Invalid token')) {
-          showError('error loading cards');
-        }
-        console.error('error loading cards initially', e);
+        handleError(ErrorType.LOAD_CARDS, `${e}`);
       }
     })();
   }, []);
@@ -113,61 +106,66 @@ export default function Swipe() {
     try {
       return await addLike(sessionContext, likedItemId, decision);
     } catch (e) {
-      if (!`${e}`.includes('Invalid token')) {
-        showError('error sending like');
-      }
-      console.error('error sending like', e);
+      handleError(ErrorType.SEND_LIKE, `${e}`);
     }
   };
 
   const handleSwipeRight = async () => {
-    if (userContext.swipingLeftRightBlockedReason) {
-      showInfo('swiping left/right blocked, reason:', userContext.swipingLeftRightBlockedReason);
-      return;
-    }
-    const swipedCard = await popAndLoadCard();
-    if (!swipedCard) {
-      showError('could not find swiped card');
-      return;
-    }
-    const sendLikeResult = await sendLike(swipedCard.id, true);
-    lockGesture.value = false;
+    try {
+      if (userContext.swipingLeftRightBlockedReason) {
+        showInfo('swiping left/right blocked, reason:', userContext.swipingLeftRightBlockedReason);
+        return;
+      }
+      const swipedCard = await popAndLoadCard();
+      if (!swipedCard) {
+        throw new Error('could not find swiped card');
+      }
+      const sendLikeResult = await sendLike(swipedCard.id, true);
+      lockGesture.value = false;
 
-    if (sendLikeResult.matchStatus === 'match') {
-      itemsContext.setUsersItemId(sendLikeResult.matchResult.matching_item_id);
-      itemsContext.setOthersItem(swipedCard);
-      itemsContext.setUsersItemsLikedByTargetItemOwner(
-        sendLikeResult.myItemsLikedByTargetItemOwner
-      );
-      router.push('swipe/match');
+      if (sendLikeResult.matchStatus === 'match') {
+        itemsContext.setUsersItemId(sendLikeResult.matchResult.matching_item_id);
+        itemsContext.setOthersItem(swipedCard);
+        itemsContext.setUsersItemsLikedByTargetItemOwner(
+          sendLikeResult.myItemsLikedByTargetItemOwner
+        );
+        router.push('swipe/match');
+      }
+    } catch (e) {
+      handleError(ErrorType.SWIPE, `${e}`);
     }
   };
 
   const handleSwipeLeft = async () => {
-    if (userContext.swipingLeftRightBlockedReason) {
-      showInfo('swiping left/right blocked, reason:', userContext.swipingLeftRightBlockedReason);
-      return;
-    }
-    const swipedCard = await popAndLoadCard();
-    if (!swipedCard) {
-      showError('could not find swiped card');
-      return;
-    }
-    const sendLikeResult = await sendLike(swipedCard.id, false);
-    lockGesture.value = false;
-    if (sendLikeResult.matchStatus === 'match') {
-      showError(
-        `something went terribly wrong, it's a match even though the user disliked this item! This should never happen!`
-      );
-      return;
+    try {
+      if (userContext.swipingLeftRightBlockedReason) {
+        showInfo('swiping left/right blocked, reason:', userContext.swipingLeftRightBlockedReason);
+        return;
+      }
+      const swipedCard = await popAndLoadCard();
+      if (!swipedCard) {
+        throw new Error('could not find swiped card');
+      }
+      const sendLikeResult = await sendLike(swipedCard.id, false);
+      lockGesture.value = false;
+      if (sendLikeResult.matchStatus === 'match') {
+        throw new Error(
+          `something went terribly wrong, it's a match even though the user disliked this item! This should never happen!`
+        );
+      }
+    } catch (e) {
+      handleError(ErrorType.SWIPE, `${e}`);
     }
   };
 
   const handleSwipeDown = async () => {
-    const swipedCard = await popAndLoadCard();
-    if (!swipedCard) {
-      showError('could not find swiped card');
-      return;
+    try {
+      const swipedCard = await popAndLoadCard();
+      if (!swipedCard) {
+        throw new Error('could not find swiped card');
+      }
+    } catch (e) {
+      handleError(ErrorType.SWIPE, `${e}`);
     }
   };
 

@@ -9,6 +9,7 @@ import Separator, { SEPARATOR_HEIGHT } from '../../components/Separator';
 import { useItemsContext } from '../../context/ItemsContext';
 import { useUserContext } from '../../context/UserContext';
 import { useMatchContext } from '../../context/MatchContext';
+import { ErrorType, handleError } from '../../utils/errorHandler';
 
 const ITEMS_PER_SCREEN = 4;
 
@@ -120,20 +121,23 @@ export default function Chats() {
               userContext.items.map((item) => item.id).indexOf(matchingItem.id) !== -1;
             const matchedItemFoundInUserItems =
               userContext.items.map((item) => item.id).indexOf(matchedItem.id) !== -1;
-            if (matchingItemFoundInUserItems && matchedItemFoundInUserItems) {
-              console.error(`both matching and matched item have been found in user's items`);
-              return null;
-            }
             let myItem: ItemData;
             let theirItem: ItemData;
-            if (matchingItemFoundInUserItems) {
-              myItem = matchingItem;
-              theirItem = matchedItem;
-            } else if (matchedItemFoundInUserItems) {
-              myItem = matchedItem;
-              theirItem = matchingItem;
-            } else {
-              console.error(`neither matching nor matched item has been found in user's items`);
+            try {
+              if (matchingItemFoundInUserItems && matchedItemFoundInUserItems) {
+                throw new Error(`both matching and matched item have been found in user's items`);
+              }
+              if (matchingItemFoundInUserItems) {
+                myItem = matchingItem;
+                theirItem = matchedItem;
+              } else if (matchedItemFoundInUserItems) {
+                myItem = matchedItem;
+                theirItem = matchingItem;
+              } else {
+                throw new Error(`neither matching nor matched item has been found in user's items`);
+              }
+            } catch (e) {
+              handleError(ErrorType.LOAD_MATCHES, `${e}`);
               return null;
             }
             return (

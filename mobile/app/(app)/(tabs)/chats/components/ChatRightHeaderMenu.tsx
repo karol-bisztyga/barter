@@ -6,7 +6,7 @@ import { router } from 'expo-router';
 import { useMatchContext } from '../../../context/MatchContext';
 import { unmatch } from '../../../db_utils/unmatch';
 import { useSessionContext } from '../../../../SessionContext';
-import { showError } from '../../../utils/notifications';
+import { ErrorType, handleError } from '../../../utils/errorHandler';
 
 const ChatRightHeaderMenu = () => {
   const sessionContext = useSessionContext();
@@ -44,8 +44,7 @@ const ChatRightHeaderMenu = () => {
         router.back();
       }
     } catch (e) {
-      showError('unmatch failed');
-      console.error('unmatch failed', e);
+      handleError(ErrorType.UNMATCH_FAILED, `${e}`);
     } finally {
       matchContext.setUnmatching(false);
     }

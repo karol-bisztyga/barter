@@ -5,7 +5,8 @@ import { router } from 'expo-router';
 import { useUserContext } from './(app)/context/UserContext';
 import { useSessionContext } from './SessionContext';
 import { executeQuery } from './(app)/db_utils/executeQuery';
-import { showError, showSuccess } from './(app)/utils/notifications';
+import { showSuccess } from './(app)/utils/notifications';
+import { ErrorType, handleError } from './(app)/utils/errorHandler';
 
 export default function Register() {
   const userContext = useUserContext();
@@ -21,7 +22,7 @@ export default function Register() {
   const verify = async () => {
     try {
       if (!userContext.data?.email) {
-        showError('Something went wrong, your email could not be found');
+        handleError(ErrorType.VERIFY, 'Email could not be found');
         router.replace('/login');
         return null;
       }
@@ -40,8 +41,7 @@ export default function Register() {
         throw new Error(response.data.message);
       }
     } catch (e) {
-      console.error('error verifying', e);
-      showError('Verification failed');
+      handleError(ErrorType.VERIFY, `${e}`);
     }
   };
 

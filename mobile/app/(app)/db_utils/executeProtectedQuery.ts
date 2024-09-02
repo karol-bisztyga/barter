@@ -1,5 +1,5 @@
 import { SessionContextState } from '../../SessionContext';
-import { showError } from '../utils/notifications';
+import { ErrorType, handleError } from '../utils/errorHandler';
 import { executeQuery } from './executeQuery';
 
 export type RestMethod = 'GET' | 'OPTIONS' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -24,13 +24,12 @@ export const executeProtectedQuery = async (
     );
 
     if (!result.ok && result.data.message.includes('Invalid token')) {
-      showError('session expired');
       sessionContext.signOut();
+      throw new Error(result.data.message);
     }
     return result;
   } catch (e) {
-    showError('server error occured');
-    console.error('error executeProtectedQuery', e);
+    handleError(ErrorType.SERVER_ERROR, `${e}`);
     throw e;
   }
 };

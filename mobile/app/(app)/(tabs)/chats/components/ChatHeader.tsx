@@ -6,7 +6,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
 import { useUserContext } from '../../../context/UserContext';
 import { useItemsContext } from '../../../context/ItemsContext';
-import { showError } from '../../../utils/notifications';
+import { ErrorType, handleError } from '../../../utils/errorHandler';
 
 const ChatHeader = () => {
   const userContext = useUserContext();
@@ -16,7 +16,8 @@ const ChatHeader = () => {
   const usersItem = userContext.findItemById(usersItemId);
   if (!usersItem || !othersItem) {
     // todo replace all occurences of 'your session seems to be corrupted' with a function or sth
-    showError(
+    handleError(
+      ErrorType.CORRUPTED_SESSION,
       `your session seems to be corrupted (data for one of the items is not present), you may want to restart the app or log in again`
     );
     return null;

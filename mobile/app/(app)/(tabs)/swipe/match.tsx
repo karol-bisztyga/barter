@@ -7,7 +7,7 @@ import { useItemsContext } from '../../context/ItemsContext';
 import { useUserContext } from '../../context/UserContext';
 import { updateMatchMatchingItem } from '../../db_utils/updateMatchMatchingItem';
 import { authorizeUser } from '../../utils/reusableStuff';
-import { showError } from '../../utils/notifications';
+import { ErrorType, handleError } from '../../utils/errorHandler';
 
 const { width } = Dimensions.get('window');
 
@@ -19,11 +19,9 @@ const Match = () => {
   const { othersItem, usersItemId, usersItemsLikedByTargetItemOwner } = itemsContext;
 
   if (!usersItemId || !usersItemsLikedByTargetItemOwner.length || !othersItem) {
-    console.error(
+    handleError(
+      ErrorType.CORRUPTED_SESSION,
       `Match screen did not receive all required data: [${!!itemsContext.usersItemId}][${!!itemsContext.usersItemsLikedByTargetItemOwner.length}][${!!itemsContext.othersItem}]`
-    );
-    showError(
-      `your session seems to be corrupted (match screen did not receive all required data), you may want to restart the app or log in again`
     );
     return null;
   }
@@ -31,10 +29,7 @@ const Match = () => {
 
   const usersItem: ItemData | undefined = userContext.findItemById(usersItemId)?.item;
   if (!othersItem || !usersItem) {
-    console.error('at least on of the items has not been set');
-    showError(
-      `your session seems to be corrupted (at least on of the items has not been set properly), you may want to restart the app or log in again`
-    );
+    handleError(ErrorType.CORRUPTED_SESSION, `at least on of the items has not been set`);
     router.back();
     return null;
   }
@@ -117,10 +112,7 @@ const Match = () => {
                         othersItem.id
                       );
                     } catch (e) {
-                      console.error('Error updating match', e);
-                      if (!`${e}`.includes('Invalid token')) {
-                        showError('Error updating match');
-                      }
+                      handleError(ErrorType.UPDATE_MATCH, `${e}`);
                       return;
                     }
                   }

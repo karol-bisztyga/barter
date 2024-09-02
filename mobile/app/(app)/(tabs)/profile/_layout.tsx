@@ -18,7 +18,6 @@ function Layout() {
   return (
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" options={{ title: '' }} />
-      <Stack.Screen name="item" options={headerBackButtonOptions()} />
       <Stack.Screen
         name="editItem"
         options={headerBackButtonOptions(async (): Promise<boolean> => {

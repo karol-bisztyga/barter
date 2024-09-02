@@ -5,7 +5,7 @@ import { useState } from 'react';
 import { router } from 'expo-router';
 import { validateEmail, validatePassword, validatePasswords } from './(app)/utils/validators';
 import { executeQuery } from './(app)/db_utils/executeQuery';
-import { showError } from './(app)/utils/notifications';
+import { ErrorType, handleError } from './(app)/utils/errorHandler';
 
 const ERROR_MESSAGES = {
   INVALID_EMAIL: 'email invalid',
@@ -55,12 +55,11 @@ export default function Register() {
       console.log('register response', response.data);
       router.replace('/register_success');
     } catch (e) {
-      console.error('Error registering', e);
       let errorStr = 'Registering failed: ';
       if (response && response.status === 400) {
         errorStr += response.data.message;
       }
-      showError(errorStr);
+      handleError(ErrorType.REGISTER, `${e}`, errorStr);
       setLoading(false);
     }
   };

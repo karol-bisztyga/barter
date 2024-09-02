@@ -15,7 +15,7 @@ import { EditImageType, UserData } from '../../types';
 import { router } from 'expo-router';
 import { useUserContext } from '../../context/UserContext';
 import { useEditItemContext } from '../../context/EditItemContext';
-import { showError, showSuccess } from '../../utils/notifications';
+import { showSuccess } from '../../utils/notifications';
 import { uploadProfilePicture } from '../../db_utils/uploadProfilePicture';
 import { useSessionContext } from '../../../SessionContext';
 import { PROFILE_PICTURE_SIZE_LIMIT } from '../../constants';
@@ -23,6 +23,7 @@ import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import { getInfoAsync } from 'expo-file-system';
 import { formatBytes } from '../../utils/reusableStuff';
 import { prepareFileToUpload } from '../../utils/storageUtils';
+import { ErrorType, handleError } from '../../utils/errorHandler';
 
 const { width } = Dimensions.get('window');
 
@@ -123,8 +124,7 @@ const AddPicture = () => {
 
   const confirm = async () => {
     if (!image) {
-      showError('No image detected');
-      console.error('no image detected');
+      handleError(ErrorType.UPLOAD_IMAGE, 'image not set');
       return;
     }
     setLoading(true);
@@ -134,12 +134,10 @@ const AddPicture = () => {
           const fileInfo = await getInfoAsync(image);
 
           if (!fileInfo.exists) {
-            showError('File does not exist');
-            return;
+            throw new Error('File does not exist');
           }
           if (fileInfo.size > PROFILE_PICTURE_SIZE_LIMIT) {
-            showError('Image is too big');
-            return;
+            throw new Error('Image is too big');
           }
           const { fileName, fileMimeType, fileContent } = await prepareFileToUpload(image);
           const response = await uploadProfilePicture(
@@ -156,8 +154,7 @@ const AddPicture = () => {
           } as UserData);
           showSuccess('successfully uploaded image');
         } catch (e) {
-          showError('upload image failed');
-          console.error('upload picture error', e);
+          handleError(ErrorType.UPLOAD_IMAGE, `${e}`);
         }
         router.back();
         break;

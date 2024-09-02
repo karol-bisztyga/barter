@@ -4,6 +4,7 @@ import { router, useLocalSearchParams } from 'expo-router';
 import { useItemsContext } from '../../context/ItemsContext';
 import { ItemData } from '../../types';
 import { useUserContext } from '../../context/UserContext';
+import { ErrorType, handleError } from '../../utils/errorHandler';
 
 const ItemScreen = () => {
   const itemsContext = useItemsContext();
@@ -17,7 +18,7 @@ const ItemScreen = () => {
     item = itemsContext.othersItem;
   }
   if (!item) {
-    console.error('item has not been specified/set');
+    handleError(ErrorType.ITEM_UNKNOWN, 'item has not been specified/set');
     router.back();
     return null;
   }

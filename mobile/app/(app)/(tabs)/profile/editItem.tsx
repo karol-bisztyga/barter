@@ -25,10 +25,11 @@ import { updateItem } from '../../db_utils/updateItem';
 import { addItem } from '../../db_utils/addItem';
 import { removeItem } from '../../db_utils/removeItem';
 import { useMatchContext } from '../../context/MatchContext';
-import { showError, showSuccess } from '../../utils/notifications';
+import { showSuccess } from '../../utils/notifications';
 import { deleteItemImage } from '../../db_utils/deleteItemImage';
 import { uploadItemImage } from '../../db_utils/uploadItemImage';
 import { prepareFileToUpload } from '../../utils/storageUtils';
+import { ErrorType, handleError } from '../../utils/errorHandler';
 
 const { width } = Dimensions.get('window');
 
@@ -101,8 +102,7 @@ const EditItem = () => {
           })
         );
       } catch (e) {
-        showError('upload image failed');
-        console.error('upload image failed', e);
+        handleError(ErrorType.UPLOAD_IMAGE, `${e}`);
       } finally {
         setUploadingImage(false);
       }
@@ -171,8 +171,7 @@ const EditItem = () => {
   const removePicture = async (index: number) => {
     try {
       if (!usersItemId || !usersItem) {
-        console.error('trying to remove non-existing item');
-        return;
+        throw new Error('trying to remove non-existing item');
       }
 
       const remove: boolean = await new Promise((resolve) => {
@@ -215,8 +214,7 @@ const EditItem = () => {
         })
       );
     } catch (e) {
-      showError('Error removing image');
-      console.error('Error removing image', e);
+      handleError(ErrorType.REMOVE_IMAGE, `${e}`);
       setRemovingImage(null);
     }
   };
@@ -241,30 +239,28 @@ const EditItem = () => {
           title="Save"
           disabled={!validateForm() || !checkIfItemEdited()}
           onPress={async () => {
-            if (!validateForm()) {
-              showError('form invalid');
-              return;
-            }
-            if (!checkIfItemEdited()) {
-              return;
-            }
-            let newItems: ItemData[];
-            let action = '';
-            setUpdatingItemData(true);
+            const action = usersItem ? 'updating' : 'adding';
             try {
+              if (!validateForm()) {
+                throw new Error('form invalid');
+              }
+              if (!checkIfItemEdited()) {
+                return;
+              }
+              let newItems: ItemData[];
+              setUpdatingItemData(true);
               if (usersItem) {
-                action = 'updating';
                 newItems = await updateItemHandler();
               } else {
-                action = 'adding';
                 newItems = await addItemHandler();
               }
               userContext.setItems(newItems);
               router.back();
             } catch (e) {
-              console.error(`Error ${action} item`, e);
-              if (!`${e}`.includes('Invalid token')) {
-                showError(`Error ${action} item`);
+              if (action === 'updating') {
+                handleError(ErrorType.UPDATE_ITEM, `${e}`);
+              } else if (action === 'adding') {
+                handleError(ErrorType.ADD_ITEM, `${e}`);
               }
             } finally {
               setUpdatingItemData(false);
@@ -368,10 +364,7 @@ const EditItem = () => {
                       throw new Error('server error');
                     }
                   } catch (e) {
-                    console.error('Error removing item', e);
-                    if (!`${e}`.includes('Invalid token')) {
-                      showError('Error removing item');
-                    }
+                    handleError(ErrorType.REMOVE_ITEM, `${e}`);
                     return;
                   } finally {
                     setRemovingUtem(false);

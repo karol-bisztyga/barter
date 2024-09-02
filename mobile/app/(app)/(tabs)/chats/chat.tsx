@@ -23,7 +23,7 @@ import { useUserContext } from '../../context/UserContext';
 import { executeProtectedQuery } from '../../db_utils/executeProtectedQuery';
 import { getServerAddress } from '../../utils/networkUtils';
 import { useMatchContext } from '../../context/MatchContext';
-import { showError } from '../../utils/notifications';
+import { ErrorType, handleError } from '../../utils/errorHandler';
 
 const INPUT_WRAPPER_HEIGHT = 70;
 const ITEMS_WRPPER_HEIGHT = 200;
@@ -61,14 +61,18 @@ const Chat = () => {
   };
 
   if (!usersItemId || !othersItem || !currentMatchId) {
-    if (!usersItemId) {
-      console.error(`user's item not specified`);
-    }
-    if (!othersItem) {
-      console.error(`other item not specified`);
-    }
-    if (!currentMatchId) {
-      console.error(`match not specified`);
+    try {
+      if (!usersItemId) {
+        throw new Error(`user's item not specified`);
+      }
+      if (!othersItem) {
+        throw new Error(`other item not specified`);
+      }
+      if (!currentMatchId) {
+        throw new Error(`match not specified`);
+      }
+    } catch (e) {
+      handleError(ErrorType.CHAT_INITIALIZE, `${e}`, `${e}`);
     }
     router.back();
     return null;
@@ -122,16 +126,17 @@ const Chat = () => {
     });
 
     newSocket.on('error', (e) => {
-      console.error('socket error', e);
+      let customMessage = '';
       if (e.name === 'TokenExpiredError') {
-        showError('Session expired');
+        customMessage = 'Session expired';
         sessionContext.signOut();
       }
       if (e.includes && e.includes('match does not exist')) {
-        showError('Match does not exist');
+        customMessage = 'Match does not exist';
         matchContext.setMatches(matchContext.matches.filter((m) => m.id !== currentMatchId));
         router.back();
       }
+      handleError(ErrorType.SOCKET, `${e}`, `${customMessage}`);
     });
 
     return () => {
@@ -167,10 +172,7 @@ const Chat = () => {
       }
       setMessages([...messages, ...newMessages]);
     } catch (e) {
-      if (!`${e}`.includes('Invalid token')) {
-        showError('could not load messages');
-      }
-      console.error('error getting messages', e);
+      handleError(ErrorType.LOAD_MESSAGES, `${e}`);
     }
   };
 
@@ -179,7 +181,7 @@ const Chat = () => {
       return;
     }
     if (!socket) {
-      console.error('trying to use uninitialized socket');
+      handleError(ErrorType.SOCKET, 'trying to use uninitialized socket');
       return;
     }
     const newMessageObject: ChatMessage = {

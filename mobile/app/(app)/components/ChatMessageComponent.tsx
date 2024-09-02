@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { ChatMessage } from '../types';
 import { useUserContext } from '../context/UserContext';
-import { showError } from '../utils/notifications';
+import { ErrorType, handleError } from '../utils/errorHandler';
 
 const { width } = Dimensions.get('window');
 
@@ -10,10 +10,7 @@ export default function ChatMessageComponent({ message }: { message: ChatMessage
   const userContext = useUserContext();
 
   if (!userContext.data?.id) {
-    console.error('chat message component: user id not provided');
-    showError(
-      `your session seems to be corrupted (your data is not properly set), you may want to restart the app or log in again`
-    );
+    handleError(ErrorType.CORRUPTED_SESSION, 'chat message component: user id not provided');
     return null;
   }
 

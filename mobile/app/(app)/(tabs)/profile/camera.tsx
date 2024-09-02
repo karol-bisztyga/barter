@@ -4,7 +4,7 @@ import { Button, Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } f
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useEditItemContext } from '../../context/EditItemContext';
 import { router } from 'expo-router';
-import { showError } from '../../utils/notifications';
+import { ErrorType, handleError } from '../../utils/errorHandler';
 
 const { width } = Dimensions.get('window');
 
@@ -33,17 +33,15 @@ const CameraComponent = ({
     try {
       setTakingPhotoEnabled(false);
       if (cameraRef.current === null) {
-        showError('camera not detected');
-        return;
+        throw new Error('camera not detected');
       }
       const photoTaken = await cameraRef.current.takePictureAsync();
       if (!photoTaken) {
-        showError('failed to take picture');
-        return;
+        throw new Error('failed to take picture');
       }
       setCurrentPhoto(photoTaken.uri);
     } catch (e) {
-      console.error(e);
+      handleError(ErrorType.CAMERA, `${e}`);
     } finally {
       setTakingPhotoEnabled(true);
     }

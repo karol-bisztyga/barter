@@ -9,7 +9,7 @@ import * as SecureStore from 'expo-secure-store';
 
 import sampleUsers from './(app)/mocks/sampleUsers.json';
 import { STORAGE_SESSION_KEY } from './constants';
-import { showError } from './(app)/utils/notifications';
+import { ErrorType, handleError } from './(app)/utils/errorHandler';
 
 const SingInForm = () => {
   const { signIn } = useSessionContext();
@@ -37,8 +37,7 @@ const SingInForm = () => {
       userContext.setData({ ...userData });
       router.replace('/');
     } catch (e) {
-      console.error('sign in failed', e);
-      showError('sign in failed');
+      handleError(ErrorType.SIGN_IN, `${e}`);
     }
   };
 
@@ -125,7 +124,7 @@ export default function Login() {
         }
         setCheckingSession(false);
       } catch (e) {
-        console.error('error reading token from storage');
+        handleError(ErrorType.READING_FROM_STORAGE, `${e}`);
       }
     })();
   }, []);
