@@ -2,14 +2,10 @@ import { Pool } from 'pg';
 import dotenv from 'dotenv';
 dotenv.config();
 
-const { DB_HOST, DB_USER, DB_NAME, DB_PASSWORD, ENV_ID } = process.env;
+const { DB_CONNECTION_URL, ENV_ID } = process.env;
 
 const pool = new Pool({
-  user: DB_USER,
-  host: DB_HOST,
-  database: DB_NAME,
-  password: DB_PASSWORD,
-  port: parseInt(process.env.DB_PORT || ''),
+  connectionString: DB_CONNECTION_URL,
   ssl:
     ENV_ID === 'PROD'
       ? {
@@ -20,7 +16,10 @@ const pool = new Pool({
 
 (async () => {
   // didn't work without this
-  console.log(`testing evn variables DB_HOST=[${DB_HOST}]`);
+  if (!DB_CONNECTION_URL) {
+    throw new Error('Environment variables not set');
+  }
+  console.log(`testing evn variables [${!!DB_CONNECTION_URL}]`);
   console.log('testing database connection...');
   await pool.connect();
   console.log('database connection works!');
