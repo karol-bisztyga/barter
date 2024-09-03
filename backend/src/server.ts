@@ -19,10 +19,10 @@ app.use(bodyParser.json({ limit: '10mb' }));
 app.use('/auth', authRoutes);
 app.use('/', [itemRoutes, likeRoutes, matchRoutes, messageRoutes, userRoutes, reportRoutes]);
 
-const { SERVER_PORT } = process.env;
+const { PORT } = process.env;
 
 runSocketServer(httpServer);
 
-httpServer.listen(SERVER_PORT, () => {
-  console.log(`Server is running on port ${SERVER_PORT}`);
+httpServer.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
 });
