@@ -9,6 +9,7 @@
     "env:setup:prod": "pushd backend && npm run env:refresh:prod && popd && pushd mobile && npm run env:refresh:prod && popd && echo OK",
     "env:setup:local": "pushd backend && npm run env:refresh:local && popd && pushd mobile && npm run env:refresh:local && popd && echo OK",
     "heroku:backend:deploy": "git subtree push --prefix backend heroku master",
+    "heroku:backend:deploy:force": "git push heroku `git subtree split --prefix backend main`:master --force",
     "heroku:database:copy_local_to_cloud": "pushd backend && npm run database:store && popd && node scripts/replace_owner_id_db_dump.js && heroku pg:psql postgresql-sinuous-01484 --app wymianka < backend/scripts/database_remove_tables.sql && heroku pg:psql postgresql-sinuous-01484 --app wymianka < backend/scripts/database_dump.sql",
     "heroku:database:dump_cloud": "heroku pg:psql postgresql-sinuous-01484 --app wymianka > db_dump.sql",
     "heroku:database:shell": "heroku pg:psql postgresql-sinuous-01484 --app wymianka",
