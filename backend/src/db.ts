@@ -20,6 +20,7 @@ const pool = new Pool({
 
 (async () => {
   // didn't work without this
+  console.log(`testing evn variables DB_HOST=[${DB_HOST}]`);
   console.log('testing database connection...');
   await pool.connect();
   console.log('database connection works!');

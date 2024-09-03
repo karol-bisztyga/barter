@@ -2,12 +2,12 @@ const B2 = require('backblaze-b2');
 const { generateImageAndFetch } = require('./imageMocker');
 require('dotenv').config();
 
-const { APP_KEY_ID, APP_KEY, BUCKET_SUFFIX, STORAGE_FILES_BASE_URL } = process.env;
+const { STORAGE_APP_KEY_ID, STORAGE_APP_KEY, BUCKET_SUFFIX, STORAGE_FILES_BASE_URL } = process.env;
 
 // Initialize the Backblaze B2 client
 const b2 = new B2({
-  applicationKeyId: APP_KEY_ID, // Your Backblaze Account ID (Application Key ID)
-  applicationKey: APP_KEY, // Your Backblaze Application Key
+  applicationKeyId: STORAGE_APP_KEY_ID, // Your Backblaze Account ID (Application Key ID)
+  applicationKey: STORAGE_APP_KEY, // Your Backblaze Application Key
 });
 
 // Create a bucket

@@ -2,16 +2,16 @@ import B2 from 'backblaze-b2';
 
 type BucketType = { bucketName: string; bucketId: string };
 
-const { APP_KEY_ID, APP_KEY, BUCKET_SUFFIX } = process.env;
+const { STORAGE_APP_KEY_ID, STORAGE_APP_KEY, BUCKET_SUFFIX } = process.env;
 
-if (!APP_KEY_ID || !APP_KEY) {
-  throw new Error('Missing environment variables');
+if (!STORAGE_APP_KEY_ID || !STORAGE_APP_KEY) {
+  throw new Error('Missing environment variables for storage');
 }
 
 // Initialize the Backblaze B2 client
 const b2 = new B2({
-  applicationKeyId: APP_KEY_ID, // Your Backblaze Account ID (Application Key ID)
-  applicationKey: APP_KEY, // Your Backblaze Application Key
+  applicationKeyId: STORAGE_APP_KEY_ID, // Your Backblaze Account ID (Application Key ID)
+  applicationKey: STORAGE_APP_KEY, // Your Backblaze Application Key
 });
 
 export async function b2Authenticate() {
