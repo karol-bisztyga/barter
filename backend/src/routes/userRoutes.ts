@@ -1,10 +1,16 @@
 import { Router } from 'express';
-import { changePassword, updateProfilePicture, updateUser } from '../controllers/userController';
+import {
+  changePassword,
+  updateProfilePicture,
+  updateUser,
+  deleteUser,
+} from '../controllers/userController';
 import { authMiddleware } from '../middlewares/authMiddleware';
 
 const router = Router();
 
 router.put('/user', authMiddleware, updateUser);
+router.delete('/user', authMiddleware, deleteUser);
 router.put('/user/password', authMiddleware, changePassword);
 router.put('/user/profile_picture', authMiddleware, updateProfilePicture);
 

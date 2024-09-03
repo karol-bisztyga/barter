@@ -36,6 +36,7 @@ export enum ErrorType {
   EMAIL_NOT_FOUND,
   SWIPE,
   SESSION_EXPIRED,
+  DELETE_ACCOUNT,
 }
 
 const getMessageForErrorType = (type: ErrorType) => {
@@ -108,6 +109,8 @@ const getMessageForErrorType = (type: ErrorType) => {
       return 'Swipe error';
     case ErrorType.SESSION_EXPIRED:
       return 'Session expired';
+    case ErrorType.DELETE_ACCOUNT:
+      return 'Delete account error';
     default:
       return 'Unknown error';
   }

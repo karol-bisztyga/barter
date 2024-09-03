@@ -2,10 +2,14 @@ import React from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useSessionContext } from '../../../../SessionContext';
-import { showInfo } from '../../../utils/notifications';
+import { router } from 'expo-router';
 
 const Actions = () => {
   const sessionContext = useSessionContext();
+
+  const deleteAccountHandler = async () => {
+    router.push('profile/delete_account');
+  };
 
   return (
     <View style={styles.container}>
@@ -22,9 +26,7 @@ const Actions = () => {
       <TouchableOpacity
         style={styles.actionWrapper}
         activeOpacity={1}
-        onPress={() => {
-          showInfo('delete account not implemented yet');
-        }}
+        onPress={deleteAccountHandler}
       >
         <FontAwesome size={30} name="trash" style={styles.icon} />
         <Text style={[styles.actionLabel, { color: 'red' }]}>Delete Account</Text>

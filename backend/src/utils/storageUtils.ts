@@ -103,7 +103,7 @@ export const deleteFile = async (bucketId: string, fileName: string) => {
   let i = 0;
   for (;;) {
     const fileResponse = await checkIfFileExists(bucketId, fileName);
-    console.log('> checking if file exists', fileResponse);
+    console.log('> checking if file exists', fileResponse?.fileName, fileResponse?.fileId);
     if (!fileResponse) {
       break;
     }

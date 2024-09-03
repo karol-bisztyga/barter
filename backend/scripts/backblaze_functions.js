@@ -12,6 +12,9 @@ const b2 = new B2({
 
 // Create a bucket
 async function createBucket(bucketName) {
+  throw new Error(
+    'buckets should be created manually with the lifecycle option `Keep only the last version of the file`'
+  );
   try {
     const response = await b2.createBucket({
       bucketName,
@@ -249,15 +252,15 @@ const clearAllBuckets = async () => {
 
 const clearBuckets = async (bucketsToClear) => {
   const existingBuckets = await listBuckets();
-  console.log('deleting all buckets', existingBuckets);
-  for (let bucket of bucketsToClear) {
-    console.log(`bucket ${bucket.name}`);
-    if (!existingBuckets.find((b) => b.name === bucket.name)) {
+  for (let bucketName of bucketsToClear) {
+    console.log(`bucket ${bucketName}`);
+    const bucketData = existingBuckets.find((b) => b.name === bucketName);
+    if (!bucketData) {
       console.log(`   not found, skipping`);
       continue;
     }
-    console.log(`   clearing bucket...`);
-    await deleteAllFilesInBucket(bucket.id);
+    console.log(`   clearing bucket...`, bucketData);
+    await deleteAllFilesInBucket(bucketData.id);
     console.log(`   cleared`);
   }
 };

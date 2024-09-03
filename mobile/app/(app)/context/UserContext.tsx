@@ -12,6 +12,10 @@ interface UserContextState {
   swipingLeftRightBlockedReason: string | null; // null means it's not blocked
   setSwipingLeftRightBlockedReason: React.Dispatch<React.SetStateAction<string | null>>;
 
+  // this shows a loader on the entire screen blocking the user from interacting with the app
+  blockingLoading: boolean;
+  setBlockingLoading: React.Dispatch<React.SetStateAction<boolean>>;
+
   findItemById: (id: string | null) => { item: ItemData; index: number } | null;
 }
 
@@ -22,6 +26,8 @@ const initialState: UserContextState = {
   setItems: () => {},
   swipingLeftRightBlockedReason: null,
   setSwipingLeftRightBlockedReason: () => {},
+  blockingLoading: false,
+  setBlockingLoading: () => {},
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   findItemById: (_: string | null) => {
     return null;
@@ -45,6 +51,7 @@ export const UserContextProvider: FC<{ children: ReactNode }> = ({ children }) =
     null
   );
   const sessionContext = useSessionContext();
+  const [blockingLoading, setBlockingLoading] = useState<boolean>(false);
 
   useEffect(() => {
     if (!items.length) {
@@ -104,6 +111,8 @@ export const UserContextProvider: FC<{ children: ReactNode }> = ({ children }) =
         setItems,
         swipingLeftRightBlockedReason,
         setSwipingLeftRightBlockedReason,
+        blockingLoading,
+        setBlockingLoading,
         findItemById,
       }}
     >
