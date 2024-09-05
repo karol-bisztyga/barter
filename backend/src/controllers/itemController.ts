@@ -3,14 +3,8 @@ import pool from '../db';
 import { AuthRequest } from '../middlewares/authMiddleware';
 import { getUserIdFromRequest } from '../utils';
 import { updateMatchDateUpdated } from './matchController';
-import {
-  b2Authenticate,
-  composeBucketUrl,
-  deleteFile,
-  getBucketDataByName,
-  uploadFile,
-} from '../utils/storageUtils';
 import { MAX_ITEM_PICTURES } from '../constants';
+import { StorageHandler } from '../utils/storageUtils';
 
 export const createItem = async (req: AuthRequest, res: Response) => {
   const { name, description, images } = req.body;
@@ -114,27 +108,27 @@ export const deleteItem = async (req: AuthRequest, res: Response) => {
   const client = await pool.connect();
   const dateNow = Date.now();
   const userId = getUserIdFromRequest(req);
-
   try {
     await client.query('BEGIN');
     // remove images
     const itemImagesResult = await client.query('SELECT * FROM items_images WHERE item_id = $1', [
       itemId,
     ]);
-    await b2Authenticate();
-    const { bucketId } = await getBucketDataByName(composeBucketUrl('items-images'));
+    const storageHandler = new StorageHandler();
+    const { bucketId } = await storageHandler.getBucketDataByName(
+      await storageHandler.composeBucketUrl('items-images')
+    );
     for (const itemImage of itemImagesResult.rows) {
       const fileName = itemImage.url.split('/').pop();
       if (!fileName) {
         throw new Error('file name not found in url');
       }
-      await deleteFile(bucketId, fileName);
+      await storageHandler.deleteFile(bucketId, fileName);
       await pool.query('DELETE FROM items_images WHERE item_id = $1 AND url = $2', [
         itemId,
         itemImage.url,
       ]);
     }
-
     // remove rest
     const matchesIdsResult = await client.query(
       'SELECT id FROM matches WHERE matching_item_id = $1 OR matched_item_id = $1',
@@ -153,7 +147,6 @@ export const deleteItem = async (req: AuthRequest, res: Response) => {
     ]);
     await client.query('DELETE FROM likes WHERE liked_id = $1', [itemId]);
     await client.query('DELETE FROM items WHERE id = $1', [itemId]);
-
     await client.query('COMMIT');
     res.json(true);
   } catch (err) {
@@ -234,14 +227,12 @@ export const addImage = async (req: AuthRequest, res: Response) => {
       [itemId]
     );
     const { count } = currentCountResponse.rows[0];
-
     if (count >= MAX_ITEM_PICTURES) {
       throw new Error('Max number of images reached');
     }
-
-    await b2Authenticate();
-    const bucketUrl = composeBucketUrl('items-images');
-    await uploadFile(bucketUrl, fileName, fileContent);
+    const storageHandler = new StorageHandler();
+    const bucketUrl = await storageHandler.composeBucketUrl('items-images');
+    await storageHandler.uploadFile(bucketUrl, fileName, fileContent);
     const url = `${STORAGE_FILES_BASE_URL}/${bucketUrl}/${fileName}`;
     const result = await pool.query(
       `INSERT INTO items_images(item_id, url) VALUES ($1, $2) RETURNING *`,
@@ -261,13 +252,15 @@ export const deleteImage = async (req: AuthRequest, res: Response) => {
     if (!STORAGE_FILES_BASE_URL) {
       throw new Error('storage base url is missing');
     }
-    await b2Authenticate();
-    const { bucketId } = await getBucketDataByName(composeBucketUrl('items-images'));
+    const storageHandler = new StorageHandler();
+    const { bucketId } = await storageHandler.getBucketDataByName(
+      await storageHandler.composeBucketUrl('items-images')
+    );
     const fileName = imageUrl.split('/').pop();
     if (!fileName) {
       throw new Error('file name not found in url');
     }
-    await deleteFile(bucketId, fileName);
+    await storageHandler.deleteFile(bucketId, fileName);
     await pool.query('DELETE FROM items_images WHERE item_id = $1 AND url = $2', [
       itemId,
       imageUrl,

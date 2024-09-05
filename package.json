@@ -13,7 +13,8 @@
     "heroku:database:copy_local_to_cloud": "pushd backend && npm run database:store && popd && node scripts/replace_owner_id_db_dump.js && heroku pg:psql postgresql-sinuous-01484 --app wymianka < backend/scripts/database_remove_tables.sql && heroku pg:psql postgresql-sinuous-01484 --app wymianka < backend/scripts/database_dump.sql",
     "heroku:database:dump_cloud": "heroku pg:psql postgresql-sinuous-01484 --app wymianka > db_dump.sql",
     "heroku:database:shell": "heroku pg:psql postgresql-sinuous-01484 --app wymianka",
-    "heroku:database:reset": "heroku pg:psql postgresql-sinuous-01484 --app wymianka < backend/scripts/database.sql"
+    "heroku:database:reset": "heroku pg:psql postgresql-sinuous-01484 --app wymianka < backend/scripts/database.sql",
+    "database:shell:local": "docker exec -it pg_barter psql -U barter_stag -d barter_staging"
   },
   "author": "",
   "license": "ISC"

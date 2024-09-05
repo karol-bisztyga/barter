@@ -3,14 +3,8 @@ import pool from '../db';
 import { AuthRequest } from '../middlewares/authMiddleware';
 import { getUserIdFromRequest } from '../utils';
 import bcrypt from 'bcryptjs';
-import {
-  b2Authenticate,
-  composeBucketUrl,
-  deleteFile,
-  getBucketDataByName,
-  uploadFile,
-} from '../utils/storageUtils';
 import dotenv from 'dotenv';
+import { StorageHandler } from '../utils/storageUtils';
 dotenv.config();
 
 export const updateUser = async (req: AuthRequest, res: Response) => {
@@ -72,26 +66,36 @@ export const changePassword = async (req: AuthRequest, res: Response) => {
 
 export const updateProfilePicture = async (req: AuthRequest, res: Response) => {
   const { fileName, fileContent } = req.body;
-
   try {
     const { STORAGE_FILES_BASE_URL } = process.env;
-
-    if (!STORAGE_FILES_BASE_URL) {
-      throw new Error('storage base url is missing');
-    }
-
-    await b2Authenticate();
+    const storageHandler = new StorageHandler();
 
     const userId = getUserIdFromRequest(req);
     const currentTimestamp = new Date().getTime();
-    const bucketUrl = composeBucketUrl('profile-pictures');
-    await uploadFile(bucketUrl, fileName, fileContent);
+    const bucketUrl = await storageHandler.composeBucketUrl('profile-pictures');
+    await storageHandler.uploadFile(bucketUrl, fileName, fileContent);
     const url = `${STORAGE_FILES_BASE_URL}/${bucketUrl}/${fileName}`;
-    const result = await pool.query(
+    // remove previous picture
+    const currentProfilePictureResult = await pool.query(
+      `SELECT profile_picture FROM users WHERE id=$1`,
+      [userId]
+    );
+    const currentProfilePicture = currentProfilePictureResult.rows[0].profile_picture;
+    if (currentProfilePicture) {
+      const fileName = currentProfilePicture.split('/').pop();
+      if (!fileName) {
+        throw new Error('file name not found in url');
+      }
+      const bucketId = (await storageHandler.getBucketDataByName(bucketUrl)).bucketId;
+      console.log('deleting previous picture', bucketId, fileName);
+      await storageHandler.deleteFile(bucketId, fileName);
+    }
+    // update in the DB
+    const updateResult = await pool.query(
       `UPDATE users SET profile_picture='${url}', date_edited = ${currentTimestamp} WHERE id=${userId} RETURNING profile_picture`,
       []
     );
-    res.json(result.rows[0]);
+    res.json(updateResult.rows[0]);
   } catch (err) {
     res.status(500).send({ message: 'Server error: ' + err });
   }
@@ -102,14 +106,12 @@ export const deleteUser = async (req: AuthRequest, res: Response) => {
   try {
     await client.query('BEGIN');
     const userId = getUserIdFromRequest(req);
-
     // todo this parameterized query didn't work for some reason, I was getting syntax errors
     const usersItemsIdsResult = await client.query(`SELECT id FROM items WHERE user_id=$1`, [
       userId,
     ]);
     const usersItemsIds = usersItemsIdsResult.rows.map((item) => item.id);
     console.log('user items ids', usersItemsIds);
-
     let usersMatchesIds = [];
     if (usersItemsIds.length) {
       const usersMatchesIdsResult = await client.query(
@@ -119,7 +121,6 @@ export const deleteUser = async (req: AuthRequest, res: Response) => {
       usersMatchesIds = usersMatchesIdsResult.rows.map((match) => match.id);
     }
     console.log('user matches ids', usersMatchesIds);
-
     let itemsImagesUrls = [];
     if (usersItemsIds.length) {
       const itemsImagesUrlsResult = await client.query(
@@ -128,13 +129,11 @@ export const deleteUser = async (req: AuthRequest, res: Response) => {
       );
       itemsImagesUrls = itemsImagesUrlsResult.rows.map((itemImage) => itemImage.url);
     }
-
     const usersProfileImageResult = await client.query(
       'SELECT profile_picture FROM users WHERE id=$1',
       [userId]
     );
     const usersProfileImage = usersProfileImageResult.rows[0].profile_picture;
-
     // DELETING FROM DATABASE
     // likes
     if (usersItemsIds.length) {
@@ -176,27 +175,26 @@ export const deleteUser = async (req: AuthRequest, res: Response) => {
     // users
     console.log('deleting user');
     await client.query(`DELETE FROM users WHERE id=$1`, [userId]);
-
     console.log('deleting DONE');
-
     // DELETING FROM STORAGE
-    await b2Authenticate();
+    const storageHandler = new StorageHandler();
     // items images
     console.log('deleting items images');
-    const itemsImagesBucketData = await getBucketDataByName(composeBucketUrl('items-images'));
+    const itemsImagesBucketData = await storageHandler.getBucketDataByName(
+      await storageHandler.composeBucketUrl('items-images')
+    );
     for (const itemImageUrl of itemsImagesUrls) {
       const fileName = itemImageUrl.split('/').pop();
       if (!fileName) {
         throw new Error('file name not found in url: ' + itemImageUrl);
       }
       console.log('deleting file', itemsImagesBucketData.bucketId, fileName);
-      await deleteFile(itemsImagesBucketData.bucketId, fileName);
+      await storageHandler.deleteFile(itemsImagesBucketData.bucketId, fileName);
     }
-
     // profile image
     console.log('deleting profile image');
-    const profilePicturesBucketData = await getBucketDataByName(
-      composeBucketUrl('profile-pictures')
+    const profilePicturesBucketData = await storageHandler.getBucketDataByName(
+      await storageHandler.composeBucketUrl('profile-pictures')
     );
     if (usersProfileImage) {
       const fileName = usersProfileImage.split('/').pop();
@@ -204,9 +202,8 @@ export const deleteUser = async (req: AuthRequest, res: Response) => {
         throw new Error('file name not found in url: ' + usersProfileImage);
       }
       console.log('deleting file', profilePicturesBucketData.bucketId, fileName);
-      await deleteFile(profilePicturesBucketData.bucketId, fileName);
+      await storageHandler.deleteFile(profilePicturesBucketData.bucketId, fileName);
     }
-
     await client.query('COMMIT');
     res.json({});
   } catch (err) {
