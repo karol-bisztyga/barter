@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { ItemBorderRadius } from '../types';
 import { useAssets } from 'expo-asset';
 import CarouselActionPanel from './CarouselActionPanel';
 import CarouselDots from './CarouselDots';
 import CarouselDistancePanel from './CarouselDistancePanel';
+import ImageWrapper from './ImageWrapper';
 
 const Carousel = ({
   images,
@@ -38,8 +39,6 @@ const Carousel = ({
   if (!Array.isArray(frontImageSource) && frontImageSource?.uri) {
     imageUri = frontImageSource.uri;
   }
-  // todo this may not work on andoid emulator, you may need to change localhost to your pc's local ip address in the image uri
-  // http://localhost:9000/items-images/item-image-6-0.jpg => http://192.168.0.59:9000/items-images/item-image-6-0.jpg
   return (
     <View style={styles.container}>
       {/*
@@ -49,8 +48,8 @@ const Carousel = ({
       {/* {loading && (
           <ActivityIndicator style={StyleSheet.absoluteFill} size="large" color="#0000ff" />
         )} */}
-      <Image
-        source={{ uri: imageUri }}
+      <ImageWrapper
+        uri={imageUri || ''}
         style={[
           styles.image,
           {

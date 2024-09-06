@@ -1,10 +1,11 @@
 import React, { useRef, useState } from 'react';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-import { Button, Dimensions, Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Button, Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { useEditItemContext } from '../../context/EditItemContext';
 import { router } from 'expo-router';
 import { ErrorType, handleError } from '../../utils/errorHandler';
+import ImageWrapper from '../../components/ImageWrapper';
+import { useAddPictureContext } from '../../context/AddPictureContext';
 
 const { width } = Dimensions.get('window');
 
@@ -74,10 +75,10 @@ const ImagePreviewComponent = ({
   currentPhoto: string;
   setCurrentPhoto: React.Dispatch<React.SetStateAction<string | null>>;
 }) => {
-  const editItemContext = useEditItemContext();
+  const addPictureContext = useAddPictureContext();
 
   const acceptPhoto = () => {
-    editItemContext.setTempImage(currentPhoto);
+    addPictureContext.setImage(currentPhoto);
     router.back();
   };
 
@@ -87,7 +88,7 @@ const ImagePreviewComponent = ({
 
   return (
     <View>
-      <Image source={{ uri: currentPhoto }} style={{ width: '100%', height: '100%' }} />
+      <ImageWrapper uri={currentPhoto} style={{ width: '100%', height: '100%' }} />
 
       <View style={styles.decisionButtonsWrapper}>
         <TouchableOpacity onPress={rejectPhoto} activeOpacity={0.7}>

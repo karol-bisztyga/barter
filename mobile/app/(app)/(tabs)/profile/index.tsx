@@ -1,13 +1,5 @@
 import React, { useRef, useState } from 'react';
-import {
-  View,
-  StyleSheet,
-  Text,
-  Image,
-  ActivityIndicator,
-  TouchableOpacity,
-  Button,
-} from 'react-native';
+import { View, StyleSheet, Text, ActivityIndicator, TouchableOpacity, Button } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Separator from '../../components/Separator';
 import Items from './components/Items';
@@ -20,6 +12,7 @@ import { useEditItemContext } from '../../context/EditItemContext';
 import Actions from './components/Actions';
 import PersonalData from './components/PersonalData';
 import Location from './components/Location';
+import ImageWrapper from '../../components/ImageWrapper';
 
 export default function Profile() {
   const [imageLoading, setImageLoading] = useState<boolean>(true);
@@ -34,9 +27,9 @@ export default function Profile() {
           <View style={styles.profileImageWrapper}>
             <View style={styles.profileImageInnerWrapper}>
               {userContext.data?.profilePicture && (
-                <Image
+                <ImageWrapper
                   style={styles.profileImage}
-                  source={{ uri: userContext.data.profilePicture }}
+                  uri={userContext.data.profilePicture}
                   onLoadEnd={() => {
                     setImageLoading(false);
                   }}

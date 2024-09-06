@@ -4,7 +4,6 @@ import {
   Alert,
   Button,
   Dimensions,
-  Image,
   ScrollView,
   StyleSheet,
   Text,
@@ -30,6 +29,7 @@ import { deleteItemImage } from '../../db_utils/deleteItemImage';
 import { uploadItemImage } from '../../db_utils/uploadItemImage';
 import { prepareFileToUpload } from '../../utils/storageUtils';
 import { ErrorType, handleError } from '../../utils/errorHandler';
+import ImageWrapper from '../../components/ImageWrapper';
 
 const { width } = Dimensions.get('window');
 
@@ -61,12 +61,14 @@ const EditItem = () => {
     if (!editItemContext.tempImage) {
       return;
     }
+    if (!usersItemId) {
+      setPictures([...pictures, editItemContext.tempImage]);
+      editItemContext.setTempImage(null);
+      return;
+    }
 
     (async () => {
       try {
-        if (!usersItemId) {
-          throw new Error('item not specified');
-        }
         const imageUri = editItemContext.tempImage;
         if (!imageUri) {
           throw new Error('could not read image');
@@ -279,8 +281,8 @@ const EditItem = () => {
             const isCurrentImageBeingRemoved = removingImage === index;
             return (
               <View style={[styles.imageSlot, { width: imageSize, height: imageSize }]} key={index}>
-                <Image
-                  source={{ uri: picture }}
+                <ImageWrapper
+                  uri={picture}
                   style={[styles.imageSlot, { opacity: isCurrentImageBeingRemoved ? 0.3 : 1 }]}
                 />
                 {isCurrentImageBeingRemoved && (

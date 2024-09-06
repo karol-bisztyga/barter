@@ -24,6 +24,8 @@ import { getInfoAsync } from 'expo-file-system';
 import { formatBytes } from '../../utils/reusableStuff';
 import { prepareFileToUpload } from '../../utils/storageUtils';
 import { ErrorType, handleError } from '../../utils/errorHandler';
+import ImageWrapper from '../../components/ImageWrapper';
+import { useAddPictureContext } from '../../context/AddPictureContext';
 
 const { width } = Dimensions.get('window');
 
@@ -33,15 +35,15 @@ const AddPicture = () => {
   const { imageType, tempImage, setTempImage } = useEditItemContext();
   const userContext = useUserContext();
   const sessionContext = useSessionContext();
+  const addPictureContext = useAddPictureContext();
 
-  const [image, setImage] = useState<string | null>(tempImage);
   const [originalFileSize, setOriginalFileSize] = useState<number | null>(null);
   const [warning, setWarning] = useState<string>('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (tempImage) {
-      setImage(tempImage);
+      addPictureContext.setImage(tempImage);
     }
     setTempImage(null);
   }, [tempImage]);
@@ -58,18 +60,18 @@ const AddPicture = () => {
     if (!result.canceled) {
       setWarning('');
       setOriginalFileSize(result.assets[0].fileSize || null);
-      setImage(result.assets[0].uri);
+      addPictureContext.setImage(result.assets[0].uri);
     }
   };
 
   const getImageDimensions = async (): Promise<ImageDimensions> => {
     return await (async () => {
       return new Promise((resolve, reject) => {
-        if (!image) {
+        if (!addPictureContext.image) {
           reject('could not read image');
           return;
         }
-        Image.getSize(image, (width, height) => {
+        Image.getSize(addPictureContext.image, (width, height) => {
           resolve({ width, height });
         });
       });
@@ -77,16 +79,16 @@ const AddPicture = () => {
   };
 
   const resizeImage = async () => {
-    if (!image) {
+    if (!addPictureContext.image) {
       throw new Error('image not set');
     }
-    let fileInfo = await getInfoAsync(image);
+    let fileInfo = await getInfoAsync(addPictureContext.image);
     if (!fileInfo.exists) {
       throw new Error('File does not exist');
     }
 
     let { width, height } = await getImageDimensions();
-    let uri = image;
+    let uri = addPictureContext.image;
 
     while (fileInfo.exists && fileInfo.size > PROFILE_PICTURE_SIZE_LIMIT) {
       const scale = 0.9;
@@ -103,15 +105,15 @@ const AddPicture = () => {
     setWarning(
       `This image was too big (${originalFileSizeInfo}the limit is 2MB) and has been automatically scaled down, you can proceed or choose another image`
     );
-    setImage(uri);
+    addPictureContext.setImage(uri);
   };
 
   useEffect(() => {
-    if (!image) {
-      return;
-    }
     (async () => {
-      const fileInfo = await getInfoAsync(image);
+      if (!addPictureContext.image) {
+        return;
+      }
+      const fileInfo = await getInfoAsync(addPictureContext.image);
 
       if (fileInfo.exists && fileInfo.size > PROFILE_PICTURE_SIZE_LIMIT) {
         setLoading(true);
@@ -120,10 +122,10 @@ const AddPicture = () => {
         setLoading(false);
       }
     })();
-  }, [image]);
+  }, [addPictureContext.image]);
 
   const confirm = async () => {
-    if (!image) {
+    if (!addPictureContext.image) {
       handleError(ErrorType.UPLOAD_IMAGE, 'image not set');
       return;
     }
@@ -131,7 +133,7 @@ const AddPicture = () => {
     switch (imageType) {
       case EditImageType.profile: {
         try {
-          const fileInfo = await getInfoAsync(image);
+          const fileInfo = await getInfoAsync(addPictureContext.image);
 
           if (!fileInfo.exists) {
             throw new Error('File does not exist');
@@ -139,7 +141,9 @@ const AddPicture = () => {
           if (fileInfo.size > PROFILE_PICTURE_SIZE_LIMIT) {
             throw new Error('Image is too big');
           }
-          const { fileName, fileMimeType, fileContent } = await prepareFileToUpload(image);
+          const { fileName, fileMimeType, fileContent } = await prepareFileToUpload(
+            addPictureContext.image
+          );
           const response = await uploadProfilePicture(
             sessionContext,
             fileName,
@@ -160,7 +164,7 @@ const AddPicture = () => {
         break;
       }
       case EditImageType.item: {
-        setTempImage(image);
+        setTempImage(addPictureContext.image);
         setLoading(false);
         router.back();
         break;
@@ -188,9 +192,9 @@ const AddPicture = () => {
       >
         <FontAwesome size={30} name="upload" />
       </TouchableOpacity>
-      {image && (
+      {addPictureContext.image && (
         <View style={styles.imageWrapper}>
-          <Image style={styles.image} source={{ uri: image }} />
+          <ImageWrapper style={styles.image} uri={addPictureContext.image} />
           {warning && <Text style={styles.warningText}>{warning}</Text>}
           <Button title="Add" onPress={confirm} disabled={loading} />
           {loading && (
