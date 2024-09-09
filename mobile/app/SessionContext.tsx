@@ -1,5 +1,5 @@
 import React, { createContext, ReactNode, FC, useContext } from 'react';
-import { useStorageState } from './useStorageState';
+import { useStorageState } from './storageState';
 import { executeQuery } from './(app)/db_utils/executeQuery';
 import { UserData } from './(app)/types';
 import * as SecureStore from 'expo-secure-store';
