@@ -4,6 +4,13 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useSessionContext } from '../../../../SessionContext';
 import { router } from 'expo-router';
 
+type ActionType = {
+  icon: 'arrow-left' | 'trash' | 'info';
+  label: string;
+  onPress: () => void;
+  color?: string;
+};
+
 const Actions = () => {
   const sessionContext = useSessionContext();
 
@@ -11,26 +18,44 @@ const Actions = () => {
     router.push('profile/delete_account');
   };
 
+  const actions: ActionType[] = [
+    {
+      icon: 'info',
+      label: 'Terms and conditions',
+      onPress: () => {
+        router.push('profile/terms_and_conditions');
+      },
+    },
+    {
+      icon: 'arrow-left',
+      label: 'Sign out',
+      onPress: () => {
+        sessionContext.signOut();
+      },
+    },
+    {
+      icon: 'trash',
+      label: 'Delete Account',
+      onPress: deleteAccountHandler,
+      color: 'red',
+    },
+  ];
+
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        style={styles.actionWrapper}
-        activeOpacity={1}
-        onPress={() => {
-          sessionContext.signOut();
-        }}
-      >
-        <FontAwesome size={30} name="arrow-left" style={styles.icon} />
-        <Text style={styles.actionLabel}>Sign out</Text>
-      </TouchableOpacity>
-      <TouchableOpacity
-        style={styles.actionWrapper}
-        activeOpacity={1}
-        onPress={deleteAccountHandler}
-      >
-        <FontAwesome size={30} name="trash" style={styles.icon} />
-        <Text style={[styles.actionLabel, { color: 'red' }]}>Delete Account</Text>
-      </TouchableOpacity>
+      {actions.map((action, index) => (
+        <TouchableOpacity
+          style={styles.actionWrapper}
+          activeOpacity={1}
+          onPress={action.onPress}
+          key={index}
+        >
+          <FontAwesome size={30} name={action.icon} style={styles.icon} />
+          <Text style={[styles.actionLabel, { color: action.color || 'black' }]}>
+            {action.label}
+          </Text>
+        </TouchableOpacity>
+      ))}
     </View>
   );
 };
@@ -45,7 +70,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  icon: {},
+  icon: {
+    width: 30,
+    textAlign: 'center',
+  },
   actionLabel: {
     margin: 5,
     lineHeight: 30,

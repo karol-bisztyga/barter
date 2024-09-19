@@ -52,6 +52,7 @@ function Layout() {
         <Stack.Screen name="set_location" options={{ presentation: 'modal' }} />
         <Stack.Screen name="change_password" options={{ presentation: 'modal' }} />
         <Stack.Screen name="delete_account" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="terms_and_conditions" options={{ presentation: 'modal' }} />
       </Stack>
     </AddPictureContextProvider>
   );
