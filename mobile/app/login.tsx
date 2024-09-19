@@ -7,9 +7,75 @@ import { Redirect, router } from 'expo-router';
 import { useUserContext } from './(app)/context/UserContext';
 import * as SecureStore from 'expo-secure-store';
 
-import sampleUsers from './(app)/mocks/sampleUsers.json';
 import { STORAGE_SESSION_KEY } from './constants';
 import { ErrorType, handleError } from './(app)/utils/errorHandler';
+
+const sampleUsers = [
+  {
+    name: 'Testowy Pierwszy',
+    email: 'testowypierwszy@gmail.com',
+    phone: '123456789',
+    facebook: null,
+    instagram: 'testowyyy11',
+    profilePicture: 'https://f003.backblazeb2.com/file/profile-pictures-wymianka/profile-pic-1.jpg',
+    password: 'testowehaslo111',
+    location: '50.067570, 19.917868',
+    id: 1,
+  },
+  {
+    name: 'Testowy Drugi',
+    email: 'testowydrugi@gmail.com',
+    phone: '987654321',
+    facebook: 'tojatestowy2',
+    instagram: 'testowy22',
+    profilePicture: null,
+    password: 'testowehaslo222',
+    location: '50.066331, 19.928390',
+    id: 2,
+  },
+  {
+    name: 'Testowy Trzeci',
+    email: 'testowytrzeci@gmail.com',
+    phone: '111222333',
+    facebook: null,
+    instagram: null,
+    profilePicture: 'https://f003.backblazeb2.com/file/profile-pictures-wymianka/profile-pic-3.jpg',
+    password: 'testowehaslo333',
+    location: '50.067143, 20.052357',
+    id: 3,
+  },
+  {
+    name: 'Testowy Czwarty',
+    email: 'testowyczwarty@gmail.com',
+    phone: '444555666',
+    facebook: 'testowyy4',
+    instagram: 'testowy44',
+    profilePicture: null,
+    password: 'testowehaslo444',
+    id: 4,
+  },
+  {
+    name: 'Testowy Piąty',
+    email: 'testowypiaty@gmail.com',
+    phone: '777333999',
+    facebook: null,
+    instagram: 'testowy55555',
+    profilePicture: 'https://f003.backblazeb2.com/file/profile-pictures-wymianka/profile-pic-5.jpg',
+    password: 'testowehaslo555',
+    location: 'Krakow, Poland',
+    id: 5,
+  },
+  {
+    name: 'Karol B',
+    email: 'karolbisztyga@gmail.com',
+    phone: '000000000',
+    facebook: null,
+    instagram: null,
+    profilePicture: null,
+    password: 'admin123456',
+    id: 6,
+  },
+];
 
 const SingInForm = () => {
   const { signIn } = useSessionContext();
@@ -114,6 +180,7 @@ export default function Login() {
       try {
         const storageStr = await SecureStore.getItem(STORAGE_SESSION_KEY);
         if (!storageStr) {
+          setCheckingSession(false);
           return;
         }
         const storageParsed = JSON.parse(storageStr);

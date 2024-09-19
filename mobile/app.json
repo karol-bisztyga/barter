@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "barter",
+    "name": "wymianka",
     "slug": "barter",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -21,7 +21,12 @@
         "foregroundImage": "./assets/adaptive_icon.png",
         "backgroundColor": "#ffffff"
       },
-      "permissions": ["android.permission.RECORD_AUDIO"],
+      "permissions": [
+        "android.permission.RECORD_AUDIO",
+        "android.permission.CAMERA",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION"
+      ],
       "package": "com.bb.barter"
     },
     "web": {
@@ -45,17 +50,25 @@
       [
         "expo-camera",
         {
-          "cameraPermission": "Allow barter to access your camera",
-          "microphonePermission": "Allow barter to access your microphone",
+          "cameraPermission": "Allow wymianka to access your camera",
+          "microphonePermission": "Allow wymianka to access your microphone",
           "recordAudioAndroid": true
         }
       ],
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "Allow barter to use your location"
+          "locationAlwaysAndWhenInUsePermission": "Allow wymianka to use your location"
         }
       ]
-    ]
+    ],
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "f79bf452-3a9f-412a-96e0-ed837477e54e"
+      }
+    }
   }
 }

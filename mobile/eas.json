@@ -1,0 +1,44 @@
+{
+  "cli": {
+    "version": ">= 12.0.0",
+    "appVersionSource": "remote"
+  },
+  "build": {
+    "development": {
+      "developmentClient": true,
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      }
+    },
+    "preview": {
+      "distribution": "internal"
+    },
+    "production": {
+      "autoIncrement": true,
+      "env": {
+        "EXPO_PUBLIC_ENV_ID": "PROD",
+        "EXPO_PUBLIC_SERVER_HOST": "https://wymianka-9e1bde49d6ae.herokuapp.com",
+        "EXPO_PUBLIC_PORT": "3000",
+        "EXPO_PUBLIC_SERVER_PORT": "50192",
+        "EXPO_PUBLIC_POSTGRESQL_CONTAINER_NAME": "pg_barter",
+        "EXPO_PUBLIC_DB_CONNECTION_URL": "postgres://ucmbtf9m0asbm6:p8c21fbca5236445aa4e0437d9c84b8d69cd913032797cbdadbc7fe6af9947e8f@cah8ha8ra8h8i7.cluster-czz5s0kz4scl.eu-west-1.rds.amazonaws.com:5432/dhif1lifn67te",
+        "EXPO_PUBLIC_DB_USER": "ucmbtf9m0asbm6",
+        "EXPO_PUBLIC_DB_PASSWORD": "p8c21fbca5236445aa4e0437d9c84b8d69cd913032797cbdadbc7fe6af9947e8f",
+        "EXPO_PUBLIC_DB_NAME": "dhif1lifn67te",
+        "EXPO_PUBLIC_DB_HOST": "cah8ha8ra8h8i7.cluster-czz5s0kz4scl.eu-west-1.rds.amazonaws.com",
+        "EXPO_PUBLIC_DB_PORT": "5432",
+        "EXPO_PUBLIC_SQL_FILE": "database.sql",
+        "EXPO_PUBLIC_STORAGE_APP_KEY_ID": "00322210fe5a54d0000000001",
+        "EXPO_PUBLIC_STORAGE_APP_KEY": "K003cV0Q7ckxrQ/Hk4Vp3UrcckkhQ4A",
+        "EXPO_PUBLIC_STORAGE_FILES_BASE_URL": "https://f003.backblazeb2.com/file",
+        "EXPO_PUBLIC_BUCKET_SUFFIX": "wymianka",
+        "EXPO_PUBLIC_EMAIL_ADDRESS": "wymianka.app@gmail.com",
+        "EXPO_PUBLIC_EMAIL_PASSWORD": "daoe dmqd upir vpfn"
+      }
+    }
+  },
+  "submit": {
+    "production": {}
+  }
+}
