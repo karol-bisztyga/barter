@@ -4,6 +4,7 @@ import { executeQuery } from './(app)/db_utils/executeQuery';
 import { UserData } from './(app)/types';
 import * as SecureStore from 'expo-secure-store';
 import { STORAGE_SESSION_KEY } from './constants';
+import { convertUserData } from './(app)/db_utils/utils';
 
 export interface SessionContextState {
   signIn: (email: string, password: string) => Promise<UserData | null>;
@@ -59,18 +60,7 @@ export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }
         throw new Error('token is missing');
       }
 
-      const userData: UserData = {
-        id: response.data.user.id,
-        email: response.data.user.email,
-        name: response.data.user.name,
-        phone: response.data.user.phone,
-        facebook: response.data.user.facebook,
-        instagram: response.data.user.instagram,
-        profilePicture: response.data.user.profile_picture,
-        location: response.data.user.location,
-        verificationCode: response.data.user.verification_code,
-        onboarded: response.data.user.onboarded,
-      };
+      const userData: UserData = convertUserData(response.data.user);
       await setSessionWithStorage(response.data.token, userData);
 
       return userData;

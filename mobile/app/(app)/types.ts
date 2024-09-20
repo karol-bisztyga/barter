@@ -45,7 +45,7 @@ export type UserData = {
   profilePicture?: string;
   location: string;
   verificationCode?: string;
-  onboarded: boolean;
+  onboarded: string;
 };
 
 export enum EditImageType {

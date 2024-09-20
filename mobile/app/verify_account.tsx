@@ -7,6 +7,7 @@ import { useSessionContext } from './SessionContext';
 import { executeQuery } from './(app)/db_utils/executeQuery';
 import { showSuccess } from './(app)/utils/notifications';
 import { ErrorType, handleError } from './(app)/utils/errorHandler';
+import { convertUserData } from './(app)/db_utils/utils';
 
 export default function Register() {
   const userContext = useUserContext();
@@ -34,8 +35,10 @@ export default function Register() {
       if (response.ok) {
         showSuccess('verification successful');
         const { result, token } = response.data;
-        sessionContext.setSessionWithStorage(token, result);
-        userContext.setData(result);
+        const newUserData = convertUserData(result);
+        sessionContext.setSessionWithStorage(token, newUserData);
+
+        userContext.setData(newUserData);
         router.replace('/');
       } else {
         throw new Error(response.data.message);
