@@ -213,3 +213,22 @@ export const deleteUser = async (req: AuthRequest, res: Response) => {
     client.release();
   }
 };
+
+export const updateOnboarded = async (req: AuthRequest, res: Response) => {
+  const { onboarded } = req.body;
+
+  try {
+    const userId = getUserIdFromRequest(req);
+
+    const currentTimestamp = new Date().getTime();
+
+    const result = await pool.query(
+      `UPDATE users SET onboarded='${onboarded}', date_edited = ${currentTimestamp} WHERE id=${userId} RETURNING *`,
+      []
+    );
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).send({ message: 'Server error: ' + err });
+  }
+};

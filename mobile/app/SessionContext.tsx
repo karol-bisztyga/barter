@@ -5,12 +5,6 @@ import { UserData } from './(app)/types';
 import * as SecureStore from 'expo-secure-store';
 import { STORAGE_SESSION_KEY } from './constants';
 
-/**
- * this context is for storing current target items mainly for navigation
- * we store user's item id because we pull the data from userContext mostly via `findItemById`
- * othersItem - this is any foreign item, so we don't have it in other context nad we have to store the data here
- */
-
 export interface SessionContextState {
   signIn: (email: string, password: string) => Promise<UserData | null>;
   signOut: () => void;
@@ -75,6 +69,7 @@ export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }
         profilePicture: response.data.user.profile_picture,
         location: response.data.user.location,
         verificationCode: response.data.user.verification_code,
+        onboarded: response.data.user.onboarded,
       };
       await setSessionWithStorage(response.data.token, userData);
 

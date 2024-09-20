@@ -3,9 +3,10 @@ import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useSessionContext } from '../../../../SessionContext';
 import { router } from 'expo-router';
+import { showInfo } from '../../../utils/notifications';
 
 type ActionType = {
-  icon: 'arrow-left' | 'trash' | 'info';
+  icon: 'arrow-left' | 'trash' | 'info' | 'language' | 'book';
   label: string;
   onPress: () => void;
   color?: string;
@@ -19,6 +20,20 @@ const Actions = () => {
   };
 
   const actions: ActionType[] = [
+    {
+      icon: 'language',
+      label: 'Change language',
+      onPress: () => {
+        showInfo('Change language not implemented yet...');
+      },
+    },
+    {
+      icon: 'book',
+      label: 'Onboarding',
+      onPress: () => {
+        router.replace('onboarding');
+      },
+    },
     {
       icon: 'info',
       label: 'Terms and conditions',

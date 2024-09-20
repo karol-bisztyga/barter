@@ -11,8 +11,9 @@ import { getUserItems } from '../../db_utils/getUserItems';
 import { authorizeUser } from '../../utils/reusableStuff';
 import { getItemsForCards } from '../../db_utils/getItemsForCards';
 import { addLike } from '../../db_utils/addLike';
-import { showInfo } from '../../utils/notifications';
+import { showError, showInfo } from '../../utils/notifications';
 import { ErrorType, handleError } from '../../utils/errorHandler';
+import { executeProtectedQuery } from '../../db_utils/executeProtectedQuery';
 
 const LOADED_ITEMS_CAPACITY = 5;
 // when there are less items loaded than this value, new items will be fetched
@@ -26,6 +27,24 @@ export default function Swipe() {
   const lockGesture = useSharedValue<boolean>(false);
   const itemsContext = useItemsContext();
   const userContext = useUserContext();
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const userData = userContext.data;
+        if (!userData || userData.onboarded) {
+          return;
+        }
+        userContext.setData({ ...userData, onboarded: true });
+        await executeProtectedQuery(sessionContext, 'user/onboarded', 'PUT', null, {
+          onboarded: 'true',
+        });
+      } catch (e) {
+        showError('error updating onboarding data');
+        console.error('error updating onboarding data', e);
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     if (!userContext.data) {

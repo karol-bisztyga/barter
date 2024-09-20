@@ -19,6 +19,7 @@ CREATE TABLE users (
     password VARCHAR(100) NOT NULL,
     location VARCHAR(100),
     verification_code VARCHAR(6),
+    onboarded BOOLEAN DEFAULT FALSE,
     date_created BIGINT DEFAULT (EXTRACT(EPOCH FROM NOW()) * 1000)::BIGINT,
     date_edited BIGINT
 );

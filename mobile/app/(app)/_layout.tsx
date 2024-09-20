@@ -11,10 +11,11 @@ export default function Layout() {
   const sessionContext = useSessionContext();
   const userContext = useUserContext();
 
-  if (sessionContext.session === null) {
+  if (sessionContext.session === null || userContext.data === null) {
+    sessionContext.signOut();
     return <Redirect href="/login" />;
   }
-  if (userContext.data?.verificationCode) {
+  if (userContext.data.verificationCode) {
     return <Redirect href="/verify_account" />;
   }
   return (
@@ -22,6 +23,7 @@ export default function Layout() {
       <MatchContextProvider>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="onboarding" options={{ headerShown: false }} />
         </Stack>
         {userContext.blockingLoading && (
           <View style={styles.blockingLoader}>
