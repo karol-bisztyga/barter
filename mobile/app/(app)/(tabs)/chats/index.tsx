@@ -1,5 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
+import {
+  View,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  ActivityIndicator,
+  Text,
+} from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Item from '../../components/Item';
@@ -111,6 +118,11 @@ export default function Chats() {
         <View style={[styles.loader, { opacity: listRendered ? 0 : 1 }]}>
           <ActivityIndicator size="large" />
         </View>
+        {matchContext.matches.length === 0 && listRendered && (
+          <View style={styles.noChatsWrapper}>
+            <Text style={styles.noChatsLabel}>No chats</Text>
+          </View>
+        )}
         <FlatList
           style={{ opacity: listRendered ? 1 : 0 }}
           data={matchContext.matches}
@@ -199,5 +211,16 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  noChatsWrapper: {
+    flex: 1,
+    marginTop: 50,
+    alignItems: 'center',
+  },
+  noChatsLabel: {
+    fontSize: 14,
+    textAlign: 'center',
+    fontStyle: 'italic',
+    opacity: 0.5,
   },
 });

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, View } from 'react-native';
+import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSharedValue } from 'react-native-reanimated';
 import SwipeableCard from '../../components/SwipeableCard';
@@ -35,7 +35,7 @@ export default function Swipe() {
         if (!userData || userData.onboarded) {
           return;
         }
-        userContext.setData({ ...userData, onboarded: true });
+        userContext.setData({ ...userData, onboarded: 'true' });
         await executeProtectedQuery(sessionContext, 'user/onboarded', 'PUT', null, {
           onboarded: 'true',
         });
@@ -192,6 +192,11 @@ export default function Swipe() {
     <GestureHandlerRootView>
       <SafeAreaView style={styles.container}>
         <View style={styles.container}>
+          {cards.length === 0 && (
+            <View style={styles.noCardsWrapper}>
+              <Text style={styles.noCardsLabel}>No more cards</Text>
+            </View>
+          )}
           {cards.map((card, index) => (
             <SwipeableCard
               key={`${card.id}-${index}`}
@@ -219,5 +224,16 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  noCardsWrapper: {
+    flex: 1,
+    marginTop: 50,
+    alignItems: 'center',
+  },
+  noCardsLabel: {
+    fontSize: 14,
+    textAlign: 'center',
+    fontStyle: 'italic',
+    opacity: 0.5,
   },
 });
