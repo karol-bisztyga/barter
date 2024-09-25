@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
   ActivityIndicator,
-  Button,
   Dimensions,
   Image,
   StyleSheet,
@@ -26,6 +25,7 @@ import { prepareFileToUpload } from '../../utils/storageUtils';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import ImageWrapper from '../../genericComponents/ImageWrapper';
 import { useAddPictureContext } from '../../context/AddPictureContext';
+import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 
 const { width } = Dimensions.get('window');
 
@@ -196,7 +196,7 @@ const AddPicture = () => {
         <View style={styles.imageWrapper}>
           <ImageWrapper style={styles.image} uri={addPictureContext.image} />
           {warning && <Text style={styles.warningText}>{warning}</Text>}
-          <Button title="Add" onPress={confirm} disabled={loading} />
+          <ButtonWrapper title="Add" onPress={confirm} disabled={loading} />
           {loading && (
             <View style={styles.loaderWrapper}>
               <ActivityIndicator size="large" />

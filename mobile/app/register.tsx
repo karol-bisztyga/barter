@@ -1,11 +1,12 @@
 import React, { useEffect } from 'react';
-import { ActivityIndicator, Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { useState } from 'react';
 import { router } from 'expo-router';
 import { validateEmail, validatePassword, validatePasswords } from './(app)/utils/validators';
 import { executeQuery } from './(app)/db_utils/executeQuery';
 import { ErrorType, handleError } from './(app)/utils/errorHandler';
+import ButtonWrapper from './(app)/genericComponents/ButtonWrapper';
 
 const ERROR_MESSAGES = {
   INVALID_EMAIL: 'email invalid',
@@ -101,8 +102,8 @@ export default function Register() {
         </View>
       ) : null}
       <View style={styles.buttonWrapper}>
-        <Button title="Register" disabled={!formValid()} onPress={register} />
-        <Button
+        <ButtonWrapper title="Register" disabled={!formValid()} onPress={register} />
+        <ButtonWrapper
           title="Cancel"
           disabled={loading}
           onPress={async () => {

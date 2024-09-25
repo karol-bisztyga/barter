@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { View, StyleSheet, Text, ActivityIndicator, TouchableOpacity, Button } from 'react-native';
+import { View, StyleSheet, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Separator from '../../components/Separator';
 import Items from './components/Items';
@@ -13,6 +13,7 @@ import Actions from './components/Actions';
 import PersonalData from './components/PersonalData';
 import Location from './components/Location';
 import ImageWrapper from '../../genericComponents/ImageWrapper';
+import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 
 export default function Profile() {
   const [imageLoading, setImageLoading] = useState<boolean>(true);
@@ -64,7 +65,7 @@ export default function Profile() {
           </View>
           <PersonalData />
           <Separator style={styles.separator} />
-          <Button
+          <ButtonWrapper
             title="change password"
             onPress={() => {
               router.push('profile/change_password');

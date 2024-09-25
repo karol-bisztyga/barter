@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { router } from 'expo-router';
 import { useItemsContext } from '../../context/ItemsContext';
-import { Button, StyleSheet, TextInput, View } from 'react-native';
+import { StyleSheet, TextInput, View } from 'react-native';
 import { addReport } from '../../db_utils/addReport';
 import { authorizeUser } from '../../utils/reusableStuff';
 import { showSuccess } from '../../utils/notifications';
 import { ErrorType, handleError } from '../../utils/errorHandler';
+import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 
 const SendReportModal = () => {
   const sessionContext = authorizeUser();
@@ -38,7 +39,7 @@ const SendReportModal = () => {
           style={styles.input}
         />
         <View style={styles.buttonWrapper}>
-          <Button title="Send report" disabled={report.length < 10} onPress={sendReport} />
+          <ButtonWrapper title="Send report" disabled={report.length < 10} onPress={sendReport} />
         </View>
       </View>
     </View>

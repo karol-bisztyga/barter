@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text, Button } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import { useUserContext } from '../../../context/UserContext';
 import { formatLocation } from '../../../utils/reusableStuff';
 import { router } from 'expo-router';
+import ButtonWrapper from '../../../genericComponents/ButtonWrapper';
 
 const Location = () => {
   const userContext = useUserContext();
@@ -22,7 +23,7 @@ const Location = () => {
   return (
     <View style={styles.container}>
       <Text style={styles.locationLabel}>{location}</Text>
-      <Button
+      <ButtonWrapper
         title="set location"
         onPress={() => {
           router.push('profile/set_location');

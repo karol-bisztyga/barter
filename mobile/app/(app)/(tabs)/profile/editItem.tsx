@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import {
   ActivityIndicator,
   Alert,
-  Button,
   Dimensions,
   ScrollView,
   StyleSheet,
@@ -30,6 +29,7 @@ import { uploadItemImage } from '../../db_utils/uploadItemImage';
 import { prepareFileToUpload } from '../../utils/storageUtils';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import ImageWrapper from '../../genericComponents/ImageWrapper';
+import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 
 const { width } = Dimensions.get('window');
 
@@ -237,7 +237,7 @@ const EditItem = () => {
           value={description}
           onChangeText={setDescription}
         />
-        <Button
+        <ButtonWrapper
           title="Save"
           disabled={!validateForm() || !checkIfItemEdited()}
           onPress={async () => {
@@ -329,7 +329,7 @@ const EditItem = () => {
         </View>
         <View style={styles.addButton}>
           {usersItemId && (
-            <Button
+            <ButtonWrapper
               color="red"
               title="Remove Item"
               onPress={async () => {

@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Dimensions, Button } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Dimensions } from 'react-native';
 import Carousel from './Carousel';
 import { ItemData, ItemBorderRadius, ItemNamePlacement } from '../types';
+import ButtonWrapper from '../genericComponents/ButtonWrapper';
 
 const { height } = Dimensions.get('window');
 
@@ -64,7 +65,7 @@ export default function EditableItem({
           </Text>
           {!showFull && (
             <View style={{ padding: 10 }}>
-              <Button title="more" onPress={onPressMore} />
+              <ButtonWrapper title="more" onPress={onPressMore} />
             </View>
           )}
         </View>

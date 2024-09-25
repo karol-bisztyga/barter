@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { View, StyleSheet, Text, Dimensions, Button } from 'react-native';
+import { View, StyleSheet, Text, Dimensions } from 'react-native';
 import Item from '../../components/Item';
 import { router } from 'expo-router';
 import { ItemData, ItemBorderRadius } from '../../types';
@@ -8,6 +8,7 @@ import { useUserContext } from '../../context/UserContext';
 import { updateMatchMatchingItem } from '../../db_utils/updateMatchMatchingItem';
 import { authorizeUser } from '../../utils/reusableStuff';
 import { ErrorType, handleError } from '../../utils/errorHandler';
+import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 
 const { width } = Dimensions.get('window');
 
@@ -86,7 +87,7 @@ const Match = () => {
           <View style={styles.buttonsWrapper}>
             {itemsContext.usersItemsLikedByTargetItemOwner.length > 1 && (
               <View style={styles.singleButtonWrapper}>
-                <Button
+                <ButtonWrapper
                   title="Switch my item"
                   onPress={() => {
                     router.push('swipe/switch_item');
@@ -96,7 +97,7 @@ const Match = () => {
               </View>
             )}
             <View style={styles.singleButtonWrapper}>
-              <Button
+              <ButtonWrapper
                 title="Proceed!"
                 onPress={async () => {
                   // modify newly created match if the item was switched

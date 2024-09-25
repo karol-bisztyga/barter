@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Dimensions, Button } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, Dimensions } from 'react-native';
 import Carousel from './Carousel';
 import {
   ItemData,
@@ -8,6 +8,7 @@ import {
   SwipeCallbacks,
   defaultSwipeCallbacks,
 } from '../types';
+import ButtonWrapper from '../genericComponents/ButtonWrapper';
 
 const { height } = Dimensions.get('window');
 
@@ -88,7 +89,7 @@ export default function Item({
           </Text>
           {!showFull && (
             <View style={{ paddingTop: 20 }}>
-              <Button title="more" onPress={onPressMore} />
+              <ButtonWrapper title="more" onPress={onPressMore} />
             </View>
           )}
         </View>

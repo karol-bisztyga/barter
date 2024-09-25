@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, Button, TextInput } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
 import * as Location from 'expo-location';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { updateUser } from '../../db_utils/updateUser';
@@ -8,6 +8,7 @@ import { router } from 'expo-router';
 import { useUserContext } from '../../context/UserContext';
 import { showSuccess } from '../../utils/notifications';
 import { ErrorType, handleError } from '../../utils/errorHandler';
+import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 
 export default function LocationScreen() {
   const sessionContext = authorizeUser();
@@ -101,7 +102,7 @@ export default function LocationScreen() {
         />
       </View>
       <View style={styles.section}>
-        <Button title="Save" disabled={!city && !location} onPress={saveLocation} />
+        <ButtonWrapper title="Save" disabled={!city && !location} onPress={saveLocation} />
       </View>
     </View>
   );

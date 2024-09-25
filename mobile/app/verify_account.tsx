@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 
 import { router } from 'expo-router';
 import { useUserContext } from './(app)/context/UserContext';
@@ -8,6 +8,7 @@ import { executeQuery } from './(app)/db_utils/executeQuery';
 import { showSuccess } from './(app)/utils/notifications';
 import { ErrorType, handleError } from './(app)/utils/errorHandler';
 import { convertUserData } from './(app)/db_utils/utils';
+import ButtonWrapper from './(app)/genericComponents/ButtonWrapper';
 
 export default function Register() {
   const userContext = useUserContext();
@@ -63,8 +64,8 @@ export default function Register() {
         onChangeText={setVerificationCode}
         style={styles.input}
       />
-      <Button title="Submit" disabled={!verificationCodeValid()} onPress={verify} />
-      <Button
+      <ButtonWrapper title="Submit" disabled={!verificationCodeValid()} onPress={verify} />
+      <ButtonWrapper
         title="Back"
         onPress={() => {
           sessionContext.signOut();

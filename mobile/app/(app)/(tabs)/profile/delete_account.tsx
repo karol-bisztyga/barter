@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 import { authorizeUser } from '../../utils/reusableStuff';
 import { showSuccess } from '../../utils/notifications';
 import { router } from 'expo-router';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import { useUserContext } from '../../context/UserContext';
 import { deleteAccount } from '../../db_utils/deleteAccount';
+import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 
 export default function DeleteAccount() {
   const sessionContext = authorizeUser();
@@ -38,7 +39,12 @@ export default function DeleteAccount() {
         style={styles.input}
         autoCapitalize="none"
       />
-      <Button title="Delete" disabled={value !== 'delete'} onPress={handleDelete} color="red" />
+      <ButtonWrapper
+        title="Delete"
+        disabled={value !== 'delete'}
+        onPress={handleDelete}
+        color="red"
+      />
     </View>
   );
 }

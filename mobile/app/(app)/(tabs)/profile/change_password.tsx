@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, Button, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, TextInput, View } from 'react-native';
 import { validatePassword, validatePasswords } from '../../utils/validators';
 import { changePassword } from '../../db_utils/changePassword';
 import { authorizeUser } from '../../utils/reusableStuff';
 import { showSuccess } from '../../utils/notifications';
 import { router } from 'expo-router';
 import { ErrorType, handleError } from '../../utils/errorHandler';
+import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 
 const ERROR_MESSAGES = {
   PASSWORD: 'password invalid, it must be at least 8 characters',
@@ -94,7 +95,7 @@ export default function ChangePassword() {
           })}
         </View>
       ) : null}
-      <Button title="Submit" disabled={!formValid()} onPress={handlePasswordChange} />
+      <ButtonWrapper title="Submit" disabled={!formValid()} onPress={handlePasswordChange} />
       {loading && (
         <View style={styles.loaderWrapper}>
           <ActivityIndicator size="large" />

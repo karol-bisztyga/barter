@@ -1,7 +1,8 @@
 import React from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { router } from 'expo-router';
+import ButtonWrapper from './(app)/genericComponents/ButtonWrapper';
 
 export default function Register() {
   return (
@@ -10,7 +11,7 @@ export default function Register() {
         <Text style={styles.label}>Registered successfully!</Text>
         <Text style={styles.label}>Please check your email for the verification code :)</Text>
       </View>
-      <Button
+      <ButtonWrapper
         title="Proceed"
         onPress={() => {
           router.replace('/login');

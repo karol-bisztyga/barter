@@ -7,7 +7,6 @@ import {
   Keyboard,
   Platform,
   FlatList,
-  Button,
   ActivityIndicator,
 } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
@@ -24,6 +23,7 @@ import { executeProtectedQuery } from '../../db_utils/executeProtectedQuery';
 import { getServerAddress } from '../../utils/networkUtils';
 import { useMatchContext } from '../../context/MatchContext';
 import { ErrorType, handleError } from '../../utils/errorHandler';
+import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 
 const INPUT_WRAPPER_HEIGHT = 70;
 const ITEMS_WRPPER_HEIGHT = 200;
@@ -286,7 +286,7 @@ const Chat = () => {
             value={newMessage}
             onChangeText={setNewMessage}
           />
-          <Button
+          <ButtonWrapper
             title="Send"
             disabled={newMessage.length === 0}
             onPress={() => {

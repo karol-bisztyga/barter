@@ -1,18 +1,19 @@
 import React from 'react';
-import { Button, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { router } from 'expo-router';
+import ButtonWrapper from '../genericComponents/ButtonWrapper';
 
 export default function Onboarding() {
   return (
     <View style={styles.container}>
       <Text>Onboarding not implemented yet stage 1...</Text>
-      <Button
+      <ButtonWrapper
         title="proceed"
         onPress={() => {
           router.navigate('/onboarding/stage_2');
         }}
       />
-      <Button
+      <ButtonWrapper
         title="skip onboarding"
         onPress={() => {
           router.replace('/swipe');

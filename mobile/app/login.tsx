@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { ActivityIndicator, Button, StyleSheet, TextInput, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, TextInput, View } from 'react-native';
 
 import { useSessionContext } from './SessionContext';
 import { useState } from 'react';
@@ -9,6 +9,7 @@ import * as SecureStore from 'expo-secure-store';
 
 import { STORAGE_SESSION_KEY } from './constants';
 import { ErrorType, handleError } from './(app)/utils/errorHandler';
+import ButtonWrapper from './(app)/genericComponents/ButtonWrapper';
 
 const sampleUsers = [
   {
@@ -77,13 +78,36 @@ const sampleUsers = [
   },
 ];
 
-const SingInForm = () => {
+const SingInForm = ({
+  loading,
+  setButtonsLoading,
+}: {
+  loading: boolean;
+  setButtonsLoading: (_: boolean) => void;
+}) => {
   const { signIn } = useSessionContext();
   const userContext = useUserContext();
 
   // todo remove default values
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const [loadedButtons, setLoadedButtons] = useState({
+    signIn: false,
+    register: false,
+    mocked: [false, false, false],
+  });
+
+  useEffect(() => {
+    if (
+      !loadedButtons.signIn ||
+      !loadedButtons.register ||
+      loadedButtons.mocked.some((mocked) => !mocked)
+    ) {
+      return;
+    }
+    setButtonsLoading(false);
+  }, [loadedButtons]);
 
   const formValid = () => {
     if (!email || !password) {
@@ -108,7 +132,14 @@ const SingInForm = () => {
   };
 
   return (
-    <View style={styles.inputContainer}>
+    <View
+      style={[
+        styles.inputContainer,
+        {
+          opacity: loading ? 0 : 1,
+        },
+      ]}
+    >
       <TextInput
         placeholder="email"
         value={email}
@@ -125,19 +156,31 @@ const SingInForm = () => {
         style={styles.input}
       />
       <View style={styles.buttonWrapper}>
-        <Button
+        <ButtonWrapper
           title="Sign in"
           disabled={!formValid()}
           onPress={async () => {
             await hadnleSignIn(email, password);
           }}
+          onLayout={() => {
+            if (loadedButtons.signIn) {
+              return;
+            }
+            setLoadedButtons({ ...loadedButtons, signIn: true });
+          }}
         />
       </View>
       <View style={styles.buttonWrapper}>
-        <Button
+        <ButtonWrapper
           title="Register"
           onPress={() => {
             router.replace('/register');
+          }}
+          onLayout={() => {
+            if (loadedButtons.register) {
+              return;
+            }
+            setLoadedButtons({ ...loadedButtons, register: true });
           }}
         />
       </View>
@@ -148,10 +191,18 @@ const SingInForm = () => {
         }
         return (
           <View style={styles.buttonWrapper} key={index}>
-            <Button
+            <ButtonWrapper
               title={`Login as a mocked user #${index + 1}`}
               onPress={async () => {
                 await hadnleSignIn(user.email, user.password);
+              }}
+              onLayout={() => {
+                if (loadedButtons.mocked[index]) {
+                  return;
+                }
+                const mocked = [...loadedButtons.mocked];
+                mocked[index] = true;
+                setLoadedButtons({ ...loadedButtons, mocked });
               }}
             />
           </View>
@@ -174,6 +225,15 @@ export default function Login() {
   const userContext = useUserContext();
   const sessionContext = useSessionContext();
   const [checkingSession, setCheckingSession] = useState(true);
+  const [loading, setLoading] = useState(true);
+  const [buttonsLoading, setButtonsLoading] = useState(true);
+
+  useEffect(() => {
+    if (checkingSession || buttonsLoading) {
+      return;
+    }
+    setLoading(false);
+  }, [checkingSession, buttonsLoading]);
 
   useEffect(() => {
     (async () => {
@@ -199,7 +259,12 @@ export default function Login() {
   if (sessionContext.session && userContext.data) {
     return <Redirect href="/" />;
   }
-  return <View style={styles.container}>{checkingSession ? <Loader /> : <SingInForm />}</View>;
+  return (
+    <View style={styles.container}>
+      {loading && <Loader />}
+      <SingInForm loading={loading} setButtonsLoading={setButtonsLoading} />
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -236,5 +301,6 @@ const styles = StyleSheet.create({
     height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+    zIndex: 1,
   },
 });
