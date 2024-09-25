@@ -12,7 +12,6 @@ export default function Layout() {
   const userContext = useUserContext();
 
   if (sessionContext.session === null || userContext.data === null) {
-    sessionContext.signOut();
     return <Redirect href="/login" />;
   }
   if (userContext.data.verificationCode) {

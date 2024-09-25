@@ -38,13 +38,13 @@ export const useSessionContext = () => {
 export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const [[isLoading, session], setSession] = useStorageState('session');
 
-  const setSessionWithStorage = async (newSession?: string, userData?: UserData) => {
+  const setSessionWithStorage = (newSession?: string, userData?: UserData) => {
     const userDataStr = JSON.stringify(userData || {});
     const storageStr = JSON.stringify({
       session: newSession || '',
       userData: userDataStr,
     });
-    await SecureStore.setItem(STORAGE_SESSION_KEY, storageStr);
+    SecureStore.setItem(STORAGE_SESSION_KEY, storageStr);
     setSession(newSession || null);
   };
 

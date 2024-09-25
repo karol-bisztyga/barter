@@ -64,22 +64,20 @@ export const UserContextProvider: FC<{ children: ReactNode }> = ({ children }) =
   }, [items]);
 
   useEffect(() => {
-    (async () => {
-      try {
-        if (!data || !sessionContext.session) {
-          return;
-        }
-        const userDataStr = JSON.stringify(data);
-        const storageStr = JSON.stringify({
-          session: sessionContext.session,
-          userData: userDataStr,
-        });
-        await SecureStore.setItem(STORAGE_SESSION_KEY, storageStr);
-      } catch (e) {
-        // cannot use error handler due to a Require cycle
-        console.error('Error setting the session in the secure store', e);
+    try {
+      if (!data || !sessionContext.session) {
+        return;
       }
-    })();
+      const userDataStr = JSON.stringify(data);
+      const storageStr = JSON.stringify({
+        session: sessionContext.session,
+        userData: userDataStr,
+      });
+      SecureStore.setItem(STORAGE_SESSION_KEY, storageStr);
+    } catch (e) {
+      // cannot use error handler due to a Require cycle
+      console.error('Error setting the session in the secure store', e);
+    }
   }, [data]);
 
   const findItemById = (id: string | null): { item: ItemData; index: number } | null => {
