@@ -5,7 +5,7 @@ import { useAssets } from 'expo-asset';
 import CarouselActionPanel from './CarouselActionPanel';
 import CarouselDots from './CarouselDots';
 import CarouselDistancePanel from './CarouselDistancePanel';
-import ImageWrapper from './ImageWrapper';
+import ImageWrapper from '../genericComponents/ImageWrapper';
 
 const Carousel = ({
   images,

@@ -29,7 +29,7 @@ import { deleteItemImage } from '../../db_utils/deleteItemImage';
 import { uploadItemImage } from '../../db_utils/uploadItemImage';
 import { prepareFileToUpload } from '../../utils/storageUtils';
 import { ErrorType, handleError } from '../../utils/errorHandler';
-import ImageWrapper from '../../components/ImageWrapper';
+import ImageWrapper from '../../genericComponents/ImageWrapper';
 
 const { width } = Dimensions.get('window');
 

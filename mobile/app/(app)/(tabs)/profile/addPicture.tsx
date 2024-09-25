@@ -24,7 +24,7 @@ import { getInfoAsync } from 'expo-file-system';
 import { formatBytes } from '../../utils/reusableStuff';
 import { prepareFileToUpload } from '../../utils/storageUtils';
 import { ErrorType, handleError } from '../../utils/errorHandler';
-import ImageWrapper from '../../components/ImageWrapper';
+import ImageWrapper from '../../genericComponents/ImageWrapper';
 import { useAddPictureContext } from '../../context/AddPictureContext';
 
 const { width } = Dimensions.get('window');

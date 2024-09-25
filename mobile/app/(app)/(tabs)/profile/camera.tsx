@@ -4,7 +4,7 @@ import { Button, Dimensions, StyleSheet, Text, TouchableOpacity, View } from 're
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
 import { ErrorType, handleError } from '../../utils/errorHandler';
-import ImageWrapper from '../../components/ImageWrapper';
+import ImageWrapper from '../../genericComponents/ImageWrapper';
 import { useAddPictureContext } from '../../context/AddPictureContext';
 
 const { width } = Dimensions.get('window');

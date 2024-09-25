@@ -12,7 +12,7 @@ import { useEditItemContext } from '../../context/EditItemContext';
 import Actions from './components/Actions';
 import PersonalData from './components/PersonalData';
 import Location from './components/Location';
-import ImageWrapper from '../../components/ImageWrapper';
+import ImageWrapper from '../../genericComponents/ImageWrapper';
 
 export default function Profile() {
   const [imageLoading, setImageLoading] = useState<boolean>(true);
