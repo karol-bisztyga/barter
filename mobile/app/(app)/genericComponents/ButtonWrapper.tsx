@@ -14,82 +14,91 @@ type MyButtonProps = {
   color?: ColorValue;
 };
 
-type Dimesions = {
+type ButtonWrapperDimensions = {
   width: number;
   height: number;
 };
 
 const TILE_SIZE = 200;
 
-const ButtonWrapper = ({ title, icon, onPress, disabled, onLayout, color }: MyButtonProps) => {
-  const [dimensions, setDimensions] = React.useState<Dimesions>({ width: 0, height: 0 });
+const Background = ({
+  dimensions,
+  onLayout,
+}: {
+  dimensions: ButtonWrapperDimensions;
+  onLayout?: () => void;
+}) => {
+  const [elements, setElements] = React.useState<Array<Array<boolean>>>([]);
 
-  const Background = () => {
-    const [elements, setElements] = React.useState<Array<Array<boolean>>>([]);
-
-    useEffect(() => {
-      if (!elements.length) {
-        return;
-      }
-      for (const row of elements) {
-        if (row.some((element) => !element)) {
-          return;
-        }
-      }
-      onLayout && onLayout();
-    }, [elements]);
-
-    useEffect(() => {
-      if (!dimensions) {
-        return;
-      }
-      const newElements: Array<Array<boolean>> = [];
-      for (let i = 0; i < dimensions.height; i += TILE_SIZE) {
-        const row: Array<boolean> = [];
-        for (let j = 0; j < dimensions.width; j += TILE_SIZE) {
-          row.push(false);
-        }
-        newElements.push(row);
-      }
-      setElements(newElements);
-    }, [dimensions]);
-
-    const [loadedFonts] = useFonts({
-      Skyscapers: require('../../../assets/fonts/Skyscapers.ttf'),
-    });
-
-    if (!dimensions || !loadedFonts) {
-      return null;
+  useEffect(() => {
+    if (!elements.length) {
+      return;
     }
+    for (const row of elements) {
+      if (row.some((element) => !element)) {
+        return;
+      }
+    }
+    onLayout && onLayout();
+  }, [elements]);
 
-    return (
-      <View style={styles.backgroundWrapper}>
-        {elements.map((row, i) => {
-          return (
-            <View key={`tile-${i}`} style={styles.backgroundRowWrapper}>
-              {row.map((tile, j) => {
-                return (
-                  <WoodSVG
-                    key={`tile-${i}-${j}`}
-                    width={TILE_SIZE}
-                    height={TILE_SIZE}
-                    onLayout={() => {
-                      if (elements[i][j]) {
-                        return;
-                      }
-                      const updatedElements = [...elements];
-                      updatedElements[i][j] = true;
-                      setElements(updatedElements);
-                    }}
-                  />
-                );
-              })}
-            </View>
-          );
-        })}
-      </View>
-    );
-  };
+  useEffect(() => {
+    if (!dimensions) {
+      return;
+    }
+    const newElements: Array<Array<boolean>> = [];
+    for (let i = 0; i < dimensions.height; i += TILE_SIZE) {
+      const row: Array<boolean> = [];
+      for (let j = 0; j < dimensions.width; j += TILE_SIZE) {
+        row.push(false);
+      }
+      newElements.push(row);
+    }
+    setElements(newElements);
+  }, [dimensions]);
+
+  const [loadedFonts] = useFonts({
+    Skyscapers: require('../../../assets/fonts/Skyscapers.ttf'),
+  });
+
+  if (!dimensions || !loadedFonts) {
+    return null;
+  }
+
+  return (
+    <View style={styles.backgroundWrapper}>
+      {elements.map((row, i) => {
+        return (
+          <View key={`tile-${i}`} style={styles.backgroundRowWrapper}>
+            {row.map((tile, j) => {
+              return (
+                <WoodSVG
+                  key={`tile-${i}-${j}`}
+                  width={TILE_SIZE}
+                  height={TILE_SIZE}
+                  onLayout={() => {
+                    if (elements[i][j]) {
+                      return;
+                    }
+                    const updatedElements = [...elements];
+                    updatedElements[i][j] = true;
+                    setElements(updatedElements);
+                  }}
+                />
+              );
+            })}
+          </View>
+        );
+      })}
+    </View>
+  );
+};
+
+const ButtonWrapper = ({ title, icon, onPress, disabled, onLayout, color }: MyButtonProps) => {
+  const [dimensions, setDimensions] = React.useState<ButtonWrapperDimensions>({
+    width: 0,
+    height: 0,
+  });
 
   const textStyle = {
     color: color ? color : disabled ? FONT_COLOR_DISABLED : FONT_COLOR,
@@ -111,7 +120,7 @@ const ButtonWrapper = ({ title, icon, onPress, disabled, onLayout, color }: MyBu
         }}
         disabled={disabled}
       >
-        <Background />
+        <Background dimensions={dimensions} onLayout={onLayout} />
         {icon && <FontAwesome size={30} name={icon} style={[styles.icon, textStyle]} />}
         <Text
           style={[styles.label, icon ? styles.labelWithIcon : styles.labelWithoutIcon, textStyle]}
@@ -130,6 +139,8 @@ const styles = StyleSheet.create({
   button: {
     margin: 5,
     padding: 10,
+    paddingTop: 0,
+    paddingBottom: 0,
     borderRadius: 10,
     overflow: 'hidden',
     borderWidth: 1,
@@ -156,7 +167,8 @@ const styles = StyleSheet.create({
   },
   label: {
     fontFamily: 'Skyscapers',
-    lineHeight: 30,
+    lineHeight: 40,
+    height: 40,
     fontSize: 20,
   },
   labelWithoutIcon: {

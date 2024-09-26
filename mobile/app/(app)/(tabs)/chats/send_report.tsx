@@ -68,7 +68,6 @@ const styles = StyleSheet.create({
     height: 120,
     lineHeight: 30,
     margin: 10,
-    width: '80%',
     textAlignVertical: 'top',
   },
 });

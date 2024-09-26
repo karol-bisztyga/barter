@@ -102,7 +102,6 @@ const styles = StyleSheet.create({
     fontSize: 30,
     height: 40,
     margin: 10,
-    width: '80%',
     textAlign: 'center',
   },
 });

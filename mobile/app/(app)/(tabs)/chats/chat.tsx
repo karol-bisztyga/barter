@@ -286,13 +286,15 @@ const Chat = () => {
             value={newMessage}
             onChangeText={setNewMessage}
           />
-          <ButtonWrapper
-            title="Send"
-            disabled={newMessage.length === 0}
-            onPress={() => {
-              sendMessage();
-            }}
-          />
+          <View>
+            <ButtonWrapper
+              title="Send"
+              disabled={newMessage.length === 0}
+              onPress={() => {
+                sendMessage();
+              }}
+            />
+          </View>
         </Animated.View>
       </View>
       {matchContext.unmatching && (
