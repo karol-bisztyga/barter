@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, StyleSheet, TouchableOpacity, Text, Alert, TextInput } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, Alert, TextInput } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import * as Clipboard from 'expo-clipboard';
 import { UserData } from '../../../types';
@@ -8,6 +8,7 @@ import { useSessionContext } from '../../../../SessionContext';
 import { updateUser } from '../../../db_utils/updateUser';
 import { ErrorType, handleError } from '../../../utils/errorHandler';
 import InputWrapper from '../../../genericComponents/InputWrapper';
+import TextWrapper from '../../../genericComponents/TextWrapper';
 
 const validateValue = (/*value: string*/) => {
   // todo handle this
@@ -141,7 +142,7 @@ const PersonalDataItem = ({
 
   return (
     <View style={styles.container} key={index}>
-      <Text style={styles.constactItemTitle}>{name}</Text>
+      <TextWrapper style={styles.constactItemTitle}>{name}</TextWrapper>
       {editing ? (
         <InputWrapper
           ref={inputRef}
@@ -150,7 +151,7 @@ const PersonalDataItem = ({
           style={[styles.constactItemValue, styles.editingTextInput]}
         />
       ) : (
-        <Text
+        <TextWrapper
           style={[
             styles.constactItemValue,
             {
@@ -159,7 +160,7 @@ const PersonalDataItem = ({
           ]}
         >
           {value}
-        </Text>
+        </TextWrapper>
       )}
       {editing ? (
         <EditingTools

@@ -1,12 +1,13 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
 import ButtonWrapper from '../genericComponents/ButtonWrapper';
+import TextWrapper from '../genericComponents/TextWrapper';
 
 export default function Onboarding() {
   return (
     <View style={styles.container}>
-      <Text>Onboarding not implemented yet stage 3...</Text>
+      <TextWrapper>Onboarding not implemented yet stage 3...</TextWrapper>
       <ButtonWrapper
         title="proceed"
         onPress={() => {

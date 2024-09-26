@@ -1,12 +1,13 @@
 import React from 'react';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
-import { Alert, StyleSheet, Text } from 'react-native';
+import { Alert, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
 import { useMatchContext } from '../../../context/MatchContext';
 import { unmatch } from '../../../db_utils/unmatch';
 import { useSessionContext } from '../../../../SessionContext';
 import { ErrorType, handleError } from '../../../utils/errorHandler';
+import TextWrapper from '../../../genericComponents/TextWrapper';
 
 const ChatRightHeaderMenu = () => {
   const sessionContext = useSessionContext();
@@ -62,12 +63,12 @@ const ChatRightHeaderMenu = () => {
         <MenuOptions customStyles={{ optionsContainer: styles.optionsContainer }}>
           <MenuOption onSelect={unmatchHandler} style={styles.menuItemWrapper}>
             <FontAwesome size={28} style={styles.menuItemIcon} name="trash" />
-            <Text style={styles.menuItemLabel}>Unmatch</Text>
+            <TextWrapper style={styles.menuItemLabel}>Unmatch</TextWrapper>
           </MenuOption>
 
           <MenuOption onSelect={report} style={styles.menuItemWrapper}>
             <FontAwesome size={28} style={styles.menuItemIcon} name="exclamation" />
-            <Text style={styles.menuItemLabel}>Report</Text>
+            <TextWrapper style={styles.menuItemLabel}>Report</TextWrapper>
           </MenuOption>
         </MenuOptions>
       </Menu>

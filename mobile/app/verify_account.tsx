@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 
 import { router } from 'expo-router';
 import { useUserContext } from './(app)/context/UserContext';
@@ -11,6 +11,7 @@ import { convertUserData } from './(app)/db_utils/utils';
 import ButtonWrapper from './(app)/genericComponents/ButtonWrapper';
 import { BACKGROUND_COLOR } from './(app)/constants';
 import InputWrapper from './(app)/genericComponents/InputWrapper';
+import TextWrapper from './(app)/genericComponents/TextWrapper';
 
 export default function Register() {
   const userContext = useUserContext();
@@ -54,11 +55,11 @@ export default function Register() {
   return (
     <View style={styles.container}>
       <View style={styles.labelsWrapper}>
-        <Text style={styles.label}>You need to verify your account</Text>
-        <Text style={styles.label}>
+        <TextWrapper style={styles.label}>You need to verify your account</TextWrapper>
+        <TextWrapper style={styles.label}>
           Please check your email for the verification code and enter it below
-        </Text>
-        <Text style={styles.label}>Thank you</Text>
+        </TextWrapper>
+        <TextWrapper style={styles.label}>Thank you</TextWrapper>
       </View>
       <InputWrapper
         placeholder="Verification code"

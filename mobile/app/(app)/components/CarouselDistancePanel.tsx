@@ -1,7 +1,8 @@
 import React from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useUserContext } from '../context/UserContext';
 import { getDistanceFromLatLonInKm } from '../utils/reusableStuff';
+import TextWrapper from '../genericComponents/TextWrapper';
 
 const CarouselDistancePanel = ({ itemOwnerLocation }: { itemOwnerLocation: string }) => {
   const userContext = useUserContext();
@@ -40,7 +41,7 @@ const CarouselDistancePanel = ({ itemOwnerLocation }: { itemOwnerLocation: strin
   return (
     <View style={styles.container}>
       <View style={styles.labelWrapper}>
-        <Text style={styles.label}>{getLabel()}</Text>
+        <TextWrapper style={styles.label}>{getLabel()}</TextWrapper>
       </View>
     </View>
   );

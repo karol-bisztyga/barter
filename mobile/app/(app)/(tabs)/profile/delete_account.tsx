@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { authorizeUser } from '../../utils/reusableStuff';
 import { showSuccess } from '../../utils/notifications';
 import { router } from 'expo-router';
@@ -8,6 +8,7 @@ import { useUserContext } from '../../context/UserContext';
 import { deleteAccount } from '../../db_utils/deleteAccount';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 import InputWrapper from '../../genericComponents/InputWrapper';
+import TextWrapper from '../../genericComponents/TextWrapper';
 
 export default function DeleteAccount() {
   const sessionContext = authorizeUser();
@@ -31,8 +32,8 @@ export default function DeleteAccount() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>If you really want to remove this account</Text>
-      <Text style={styles.label}>{`please type "delete" below`}</Text>
+      <TextWrapper style={styles.label}>If you really want to remove this account</TextWrapper>
+      <TextWrapper style={styles.label}>{`please type "delete" below`}</TextWrapper>
       <InputWrapper
         placeholder="delete"
         value={value}

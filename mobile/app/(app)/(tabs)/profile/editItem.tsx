@@ -5,7 +5,6 @@ import {
   Dimensions,
   ScrollView,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -30,6 +29,7 @@ import { ErrorType, handleError } from '../../utils/errorHandler';
 import ImageWrapper from '../../genericComponents/ImageWrapper';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 import InputWrapper from '../../genericComponents/InputWrapper';
+import TextWrapper from '../../genericComponents/TextWrapper';
 
 const { width } = Dimensions.get('window');
 
@@ -275,7 +275,7 @@ const EditItem = () => {
             <ActivityIndicator size="large" />
           </View>
         )}
-        <Text style={styles.sectionTitle}>Pictures</Text>
+        <TextWrapper style={styles.sectionTitle}>Pictures</TextWrapper>
         <View style={styles.imageSlotsWrapper}>
           {pictures.map((picture, index) => {
             const isCurrentImageBeingRemoved = removingImage === index;

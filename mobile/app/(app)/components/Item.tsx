@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Dimensions } from 'react-native';
+import { View, StyleSheet, ScrollView, Dimensions } from 'react-native';
 import Carousel from './Carousel';
 import {
   ItemData,
@@ -9,6 +9,7 @@ import {
   defaultSwipeCallbacks,
 } from '../types';
 import ButtonWrapper from '../genericComponents/ButtonWrapper';
+import TextWrapper from '../genericComponents/TextWrapper';
 
 const { height } = Dimensions.get('window');
 
@@ -53,7 +54,7 @@ export default function Item({
     <>
       {showName && namePlacement === ItemNamePlacement.above && (
         <View style={styles.nameWrapper}>
-          <Text style={styles.name}>{itemData.name}</Text>
+          <TextWrapper style={styles.name}>{itemData.name}</TextWrapper>
         </View>
       )}
       <View
@@ -79,14 +80,18 @@ export default function Item({
       </View>
       {showName && namePlacement === ItemNamePlacement.below && (
         <View style={styles.nameWrapper}>
-          <Text style={styles.name}>{itemData.name}</Text>
+          <TextWrapper style={styles.name}>{itemData.name}</TextWrapper>
         </View>
       )}
       {showDescription && (
         <View style={styles.descriptionWrapper}>
-          <Text style={styles.description} numberOfLines={showFull ? 0 : 1} ellipsizeMode="tail">
+          <TextWrapper
+            style={styles.description}
+            numberOfLines={showFull ? 0 : 1}
+            ellipsizeMode="tail"
+          >
             {itemData.description}
-          </Text>
+          </TextWrapper>
           {!showFull && (
             <View style={{ paddingTop: 20 }}>
               <ButtonWrapper title="more" onPress={onPressMore} />

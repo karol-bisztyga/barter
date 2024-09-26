@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { validatePassword, validatePasswords } from '../../utils/validators';
 import { changePassword } from '../../db_utils/changePassword';
 import { authorizeUser } from '../../utils/reusableStuff';
@@ -8,6 +8,7 @@ import { router } from 'expo-router';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 import InputWrapper from '../../genericComponents/InputWrapper';
+import TextWrapper from '../../genericComponents/TextWrapper';
 
 const ERROR_MESSAGES = {
   PASSWORD: 'password invalid, it must be at least 8 characters',
@@ -89,9 +90,9 @@ export default function ChangePassword() {
         <View style={styles.errorWrapper}>
           {errors.map((error) => {
             return (
-              <Text key={error} style={styles.errorText}>
+              <TextWrapper key={error} style={styles.errorText}>
                 {error}
-              </Text>
+              </TextWrapper>
             );
           })}
         </View>

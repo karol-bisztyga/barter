@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { View, StyleSheet, Text, Dimensions } from 'react-native';
+import { View, StyleSheet, Dimensions } from 'react-native';
 import Item from '../../components/Item';
 import { router } from 'expo-router';
 import { ItemData, ItemBorderRadius } from '../../types';
@@ -9,6 +9,7 @@ import { updateMatchMatchingItem } from '../../db_utils/updateMatchMatchingItem'
 import { authorizeUser } from '../../utils/reusableStuff';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
+import TextWrapper from '../../genericComponents/TextWrapper';
 
 const { width } = Dimensions.get('window');
 
@@ -37,7 +38,7 @@ const Match = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.matchedLabel}>Items matched!</Text>
+      <TextWrapper style={styles.matchedLabel}>Items matched!</TextWrapper>
       <View
         style={[
           styles.itemsWrapper,
@@ -77,10 +78,14 @@ const Match = () => {
         </View>
         <View style={styles.itemsLabelsWrapper}>
           <View style={styles.usersItem}>
-            <Text style={[styles.itemsLabel, { paddingRight: 10 }]}>{usersItem.name}</Text>
+            <TextWrapper style={[styles.itemsLabel, { paddingRight: 10 }]}>
+              {usersItem.name}
+            </TextWrapper>
           </View>
           <View style={styles.matchedItem}>
-            <Text style={[styles.itemsLabel, { paddingLeft: 10 }]}>{othersItem.name}</Text>
+            <TextWrapper style={[styles.itemsLabel, { paddingLeft: 10 }]}>
+              {othersItem.name}
+            </TextWrapper>
           </View>
         </View>
         <View style={styles.bottomSectionWrapper}>

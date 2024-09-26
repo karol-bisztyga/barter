@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { View, StyleSheet, Text, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Separator from '../../components/Separator';
 import Items from './components/Items';
@@ -14,6 +14,7 @@ import PersonalData from './components/PersonalData';
 import Location from './components/Location';
 import ImageWrapper from '../../genericComponents/ImageWrapper';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
+import TextWrapper from '../../genericComponents/TextWrapper';
 
 export default function Profile() {
   const [imageLoading, setImageLoading] = useState<boolean>(true);
@@ -44,7 +45,7 @@ export default function Profile() {
                 )
               ) : (
                 <View style={styles.noProfilePictureWrapper}>
-                  <Text style={styles.noProfilePictureLabel}>No profile picture</Text>
+                  <TextWrapper style={styles.noProfilePictureLabel}>No profile picture</TextWrapper>
                 </View>
               )}
               <TouchableOpacity
@@ -61,7 +62,7 @@ export default function Profile() {
           </View>
           <Separator style={styles.separator} />
           <View style={styles.titleWrapper}>
-            <Text style={styles.title}>Personal Data</Text>
+            <TextWrapper style={styles.title}>Personal Data</TextWrapper>
           </View>
           <PersonalData />
           <Separator style={styles.separator} />
@@ -72,11 +73,11 @@ export default function Profile() {
             }}
           />
           <Separator style={styles.separator} />
-          <Text style={styles.title}>Location</Text>
+          <TextWrapper style={styles.title}>Location</TextWrapper>
           <Location />
           <Separator style={styles.separator} />
           <View style={styles.titleWrapper}>
-            <Text style={styles.title}>Items</Text>
+            <TextWrapper style={styles.title}>Items</TextWrapper>
           </View>
           <Items />
           <Separator style={styles.separator} />

@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { View, StyleSheet, Dimensions } from 'react-native';
 import { ChatMessage } from '../types';
 import { useUserContext } from '../context/UserContext';
 import { ErrorType, handleError } from '../utils/errorHandler';
+import TextWrapper from '../genericComponents/TextWrapper';
 
 const { width } = Dimensions.get('window');
 
@@ -22,9 +23,9 @@ export default function ChatMessageComponent({ message }: { message: ChatMessage
         : styles.theirMessage;
   return (
     <View style={[styles.message, accordingStyle]}>
-      <Text style={{ fontStyle: message.type === 'status' ? 'italic' : 'normal' }}>
+      <TextWrapper style={{ fontStyle: message.type === 'status' ? 'italic' : 'normal' }}>
         {message.content}
-      </Text>
+      </TextWrapper>
     </View>
   );
 }

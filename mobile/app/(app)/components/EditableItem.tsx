@@ -1,8 +1,9 @@
 import React from 'react';
-import { View, Text, StyleSheet, ScrollView, Dimensions } from 'react-native';
+import { View, StyleSheet, ScrollView, Dimensions } from 'react-native';
 import Carousel from './Carousel';
 import { ItemData, ItemBorderRadius, ItemNamePlacement } from '../types';
 import ButtonWrapper from '../genericComponents/ButtonWrapper';
+import TextWrapper from '../genericComponents/TextWrapper';
 
 const { height } = Dimensions.get('window');
 
@@ -31,7 +32,7 @@ export default function EditableItem({
     <>
       {showName && namePlacement === ItemNamePlacement.above && (
         <View style={styles.nameWrapper}>
-          <Text style={styles.name}>{itemData.name}</Text>
+          <TextWrapper style={styles.name}>{itemData.name}</TextWrapper>
         </View>
       )}
       <View
@@ -55,14 +56,14 @@ export default function EditableItem({
       </View>
       {showName && namePlacement === ItemNamePlacement.below && (
         <View style={styles.nameWrapper}>
-          <Text style={styles.name}>{itemData.name}</Text>
+          <TextWrapper style={styles.name}>{itemData.name}</TextWrapper>
         </View>
       )}
       {showDescription && (
         <View style={styles.descriptionWrapper}>
-          <Text style={styles.description} numberOfLines={showFull ? 0 : 2}>
+          <TextWrapper style={styles.description} numberOfLines={showFull ? 0 : 2}>
             {itemData.description}
-          </Text>
+          </TextWrapper>
           {!showFull && (
             <View style={{ padding: 10 }}>
               <ButtonWrapper title="more" onPress={onPressMore} />

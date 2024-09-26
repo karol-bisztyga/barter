@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSharedValue } from 'react-native-reanimated';
 import SwipeableCard from '../../components/SwipeableCard';
@@ -14,6 +14,7 @@ import { addLike } from '../../db_utils/addLike';
 import { showError, showInfo } from '../../utils/notifications';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import { executeProtectedQuery } from '../../db_utils/executeProtectedQuery';
+import TextWrapper from '../../genericComponents/TextWrapper';
 
 const LOADED_ITEMS_CAPACITY = 5;
 // when there are less items loaded than this value, new items will be fetched
@@ -194,7 +195,7 @@ export default function Swipe() {
         <View style={styles.container}>
           {cards.length === 0 && (
             <View style={styles.noCardsWrapper}>
-              <Text style={styles.noCardsLabel}>No more cards</Text>
+              <TextWrapper style={styles.noCardsLabel}>No more cards</TextWrapper>
             </View>
           )}
           {cards.map((card, index) => (

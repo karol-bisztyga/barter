@@ -1,10 +1,11 @@
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
+import TextWrapper from '../../genericComponents/TextWrapper';
 
 export default function TermsAndConditions() {
   return (
     <View style={styles.container}>
-      <Text>Not implemented yet...</Text>
+      <TextWrapper>Not implemented yet...</TextWrapper>
     </View>
   );
 }

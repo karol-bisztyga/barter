@@ -4,7 +4,6 @@ import {
   Dimensions,
   Image,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -26,6 +25,7 @@ import { ErrorType, handleError } from '../../utils/errorHandler';
 import ImageWrapper from '../../genericComponents/ImageWrapper';
 import { useAddPictureContext } from '../../context/AddPictureContext';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
+import TextWrapper from '../../genericComponents/TextWrapper';
 
 const { width } = Dimensions.get('window');
 
@@ -195,7 +195,7 @@ const AddPicture = () => {
       {addPictureContext.image && (
         <View style={styles.imageWrapper}>
           <ImageWrapper style={styles.image} uri={addPictureContext.image} />
-          {warning && <Text style={styles.warningText}>{warning}</Text>}
+          {warning && <TextWrapper style={styles.warningText}>{warning}</TextWrapper>}
           <ButtonWrapper title="Add" onPress={confirm} disabled={loading} />
           {loading && (
             <View style={styles.loaderWrapper}>

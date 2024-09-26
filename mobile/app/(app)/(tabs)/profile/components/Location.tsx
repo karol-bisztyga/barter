@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { useUserContext } from '../../../context/UserContext';
 import { formatLocation } from '../../../utils/reusableStuff';
 import { router } from 'expo-router';
 import ButtonWrapper from '../../../genericComponents/ButtonWrapper';
+import TextWrapper from '../../../genericComponents/TextWrapper';
 
 const Location = () => {
   const userContext = useUserContext();
@@ -22,7 +23,7 @@ const Location = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.locationLabel}>{location}</Text>
+      <TextWrapper style={styles.locationLabel}>{location}</TextWrapper>
       <ButtonWrapper
         title="set location"
         onPress={() => {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import * as Location from 'expo-location';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { updateUser } from '../../db_utils/updateUser';
@@ -10,6 +10,7 @@ import { showSuccess } from '../../utils/notifications';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 import InputWrapper from '../../genericComponents/InputWrapper';
+import TextWrapper from '../../genericComponents/TextWrapper';
 
 export default function LocationScreen() {
   const sessionContext = authorizeUser();
@@ -80,7 +81,7 @@ export default function LocationScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.section}>
-        <Text style={styles.paragraph}>{locationStr}</Text>
+        <TextWrapper style={styles.paragraph}>{locationStr}</TextWrapper>
       </View>
       <TouchableOpacity style={styles.section} activeOpacity={1} onPress={getLocation}>
         <FontAwesome

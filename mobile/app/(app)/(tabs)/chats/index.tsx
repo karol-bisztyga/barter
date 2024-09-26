@@ -1,12 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import {
-  View,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  ActivityIndicator,
-  Text,
-} from 'react-native';
+import { View, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import Item from '../../components/Item';
@@ -17,6 +10,7 @@ import { useItemsContext } from '../../context/ItemsContext';
 import { useUserContext } from '../../context/UserContext';
 import { useMatchContext } from '../../context/MatchContext';
 import { ErrorType, handleError } from '../../utils/errorHandler';
+import TextWrapper from '../../genericComponents/TextWrapper';
 
 const ITEMS_PER_SCREEN = 4;
 
@@ -120,7 +114,7 @@ export default function Chats() {
         </View>
         {matchContext.matches.length === 0 && listRendered && (
           <View style={styles.noChatsWrapper}>
-            <Text style={styles.noChatsLabel}>No chats</Text>
+            <TextWrapper style={styles.noChatsLabel}>No chats</TextWrapper>
           </View>
         )}
         <FlatList

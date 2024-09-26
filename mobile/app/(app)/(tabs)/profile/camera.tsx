@@ -1,12 +1,13 @@
 import React, { useRef, useState } from 'react';
 import { CameraView, CameraType, useCameraPermissions } from 'expo-camera';
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import ImageWrapper from '../../genericComponents/ImageWrapper';
 import { useAddPictureContext } from '../../context/AddPictureContext';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
+import TextWrapper from '../../genericComponents/TextWrapper';
 
 const { width } = Dimensions.get('window');
 
@@ -114,7 +115,7 @@ export default function Camera() {
   if (!permission.granted) {
     return (
       <View style={styles.container}>
-        <Text style={styles.message}>We need your permission to show the camera</Text>
+        <TextWrapper style={styles.message}>We need your permission to show the camera</TextWrapper>
         <ButtonWrapper onPress={requestPermission} title="grant permission" />
       </View>
     );

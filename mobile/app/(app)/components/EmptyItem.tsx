@@ -1,11 +1,12 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import { ItemBorderRadius, ItemNamePlacement } from '../types';
 import AddButton from './AddButton';
+import TextWrapper from '../genericComponents/TextWrapper';
 
 const EmptySlotLabel = () => (
   <View style={styles.nameWrapper}>
-    <Text style={styles.name}>Add Item</Text>
+    <TextWrapper style={styles.name}>Add Item</TextWrapper>
   </View>
 );
 

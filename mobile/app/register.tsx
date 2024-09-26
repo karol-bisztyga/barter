@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 import { useState } from 'react';
 import { router } from 'expo-router';
@@ -9,6 +9,7 @@ import { ErrorType, handleError } from './(app)/utils/errorHandler';
 import ButtonWrapper from './(app)/genericComponents/ButtonWrapper';
 import { BACKGROUND_COLOR } from './(app)/constants';
 import InputWrapper from './(app)/genericComponents/InputWrapper';
+import TextWrapper from './(app)/genericComponents/TextWrapper';
 
 const ERROR_MESSAGES = {
   INVALID_EMAIL: 'email invalid',
@@ -96,9 +97,9 @@ export default function Register() {
         <View style={styles.errorWrapper}>
           {errors.map((error) => {
             return (
-              <Text key={error} style={styles.errorText}>
+              <TextWrapper key={error} style={styles.errorText}>
                 {error}
-              </Text>
+              </TextWrapper>
             );
           })}
         </View>
