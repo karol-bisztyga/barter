@@ -10,6 +10,7 @@ import * as SecureStore from 'expo-secure-store';
 import { STORAGE_SESSION_KEY } from './constants';
 import { ErrorType, handleError } from './(app)/utils/errorHandler';
 import ButtonWrapper from './(app)/genericComponents/ButtonWrapper';
+import { BACKGROUND_COLOR } from './(app)/constants';
 
 const sampleUsers = [
   {
@@ -236,24 +237,22 @@ export default function Login() {
   }, [checkingSession, buttonsLoading]);
 
   useEffect(() => {
-    (async () => {
-      try {
-        const storageStr = await SecureStore.getItem(STORAGE_SESSION_KEY);
-        if (!storageStr) {
-          setCheckingSession(false);
-          return;
-        }
-        const storageParsed = JSON.parse(storageStr);
-        const { session, userData } = storageParsed;
-        if (session) {
-          sessionContext.setSession(session);
-          userContext.setData(JSON.parse(userData));
-        }
+    try {
+      const storageStr = SecureStore.getItem(STORAGE_SESSION_KEY);
+      if (!storageStr) {
         setCheckingSession(false);
-      } catch (e) {
-        handleError(ErrorType.READING_FROM_STORAGE, `${e}`);
+        return;
       }
-    })();
+      const storageParsed = JSON.parse(storageStr);
+      const { session, userData } = storageParsed;
+      if (session) {
+        sessionContext.setSession(session);
+        userContext.setData(JSON.parse(userData));
+      }
+      setCheckingSession(false);
+    } catch (e) {
+      handleError(ErrorType.READING_FROM_STORAGE, `${e}`);
+    }
   }, []);
 
   if (sessionContext.session && userContext.data) {
@@ -272,6 +271,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: BACKGROUND_COLOR,
   },
   inputContainer: {
     flexDirection: 'column',

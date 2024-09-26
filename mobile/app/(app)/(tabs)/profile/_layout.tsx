@@ -4,6 +4,7 @@ import { headerBackButtonOptions } from '../../utils/reusableStuff';
 import { Alert } from 'react-native';
 import { EditItemContextProvider, useEditItemContext } from '../../context/EditItemContext';
 import { AddPictureContextProvider } from '../../context/AddPictureContext';
+import { BACKGROUND_COLOR } from '../../constants';
 
 export default function Wrapper() {
   return (
@@ -18,7 +19,13 @@ function Layout() {
 
   return (
     <AddPictureContextProvider>
-      <Stack screenOptions={{ headerShown: false }}>
+      <Stack
+        screenOptions={{
+          headerShown: false,
+          headerStyle: { backgroundColor: BACKGROUND_COLOR },
+          contentStyle: { backgroundColor: BACKGROUND_COLOR },
+        }}
+      >
         <Stack.Screen name="index" options={{ title: '' }} />
         <Stack.Screen
           name="editItem"

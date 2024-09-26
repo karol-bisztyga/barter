@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
-import MySvgImg from '../../../assets/wood.svg';
+import WoodSVG from '../../../assets/wood.svg';
+import { useFonts } from 'expo-font';
 
 type MyButtonProps = {
   title: string;
@@ -49,7 +50,11 @@ const ButtonWrapper = ({ title, onPress, disabled, onLayout }: MyButtonProps) =>
       setElements(newElements);
     }, [dimensions]);
 
-    if (!dimensions) {
+    const [loadedFonts] = useFonts({
+      Skyscapers: require('../../../assets/fonts/Skyscapers.ttf'),
+    });
+
+    if (!dimensions || !loadedFonts) {
       return null;
     }
 
@@ -60,7 +65,7 @@ const ButtonWrapper = ({ title, onPress, disabled, onLayout }: MyButtonProps) =>
             <View key={`tile-${i}`} style={styles.backgroundRowWrapper}>
               {row.map((tile, j) => {
                 return (
-                  <MySvgImg
+                  <WoodSVG
                     key={`tile-${i}-${j}`}
                     width={TILE_SIZE}
                     height={TILE_SIZE}
@@ -123,9 +128,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   label: {
-    fontWeight: 'bold',
     color: 'white',
     textAlign: 'center',
+    fontFamily: 'Skyscapers',
+    fontSize: 20,
+    lineHeight: 25,
   },
 });
 

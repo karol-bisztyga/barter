@@ -4,3 +4,8 @@ export const ALERTS_INTERVAL = 2000;
 export const PASSWORD_MINIMUM_LENGTH = 8;
 // 2 MB limit
 export const PROFILE_PICTURE_SIZE_LIMIT = 2 * 1024 * 1024;
+
+// colors
+export const BACKGROUND_COLOR = '#761000';
+export const FONT_COLOR = '#f0f0f0';
+export const FONT_COLOR_DISABLED = '#a0a0a0';

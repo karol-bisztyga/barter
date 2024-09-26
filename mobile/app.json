@@ -60,6 +60,12 @@
         {
           "locationAlwaysAndWhenInUsePermission": "Allow wymianka to use your location"
         }
+      ],
+      [
+        "expo-font",
+        {
+          "fonts": ["assets/fonts/Rokkitt-Regular.ttf", "assets/fonts/Typefesse_Pleine.otf"]
+        }
       ]
     ],
     "extra": {

@@ -4,6 +4,7 @@ import { Tabs } from 'expo-router';
 import { authorizeUser, updateMatches } from '../utils/reusableStuff';
 import { useMatchContext } from '../context/MatchContext';
 import { ErrorType, handleError } from '../utils/errorHandler';
+import { BACKGROUND_COLOR, FONT_COLOR, FONT_COLOR_DISABLED } from '../constants';
 
 const getTabNameFromEvent = (eventName?: string): string | undefined => eventName?.split('-')[0];
 
@@ -14,7 +15,16 @@ export default function TabLayout() {
   return (
     <Tabs
       initialRouteName="swipe"
-      screenOptions={{ tabBarActiveTintColor: 'blue', headerShown: false }}
+      screenOptions={{
+        tabBarActiveTintColor: FONT_COLOR,
+        tabBarInactiveTintColor: FONT_COLOR_DISABLED,
+        headerShown: false,
+        tabBarActiveBackgroundColor: BACKGROUND_COLOR,
+        tabBarInactiveBackgroundColor: BACKGROUND_COLOR,
+        tabBarStyle: {
+          backgroundColor: BACKGROUND_COLOR,
+        },
+      }}
       screenListeners={{
         tabPress: (e) => {
           const routeName = getTabNameFromEvent(e?.target);
