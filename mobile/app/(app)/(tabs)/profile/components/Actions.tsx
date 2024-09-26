@@ -65,6 +65,7 @@ const Actions = () => {
           title={action.label}
           icon={action.icon}
           onPress={action.onPress}
+          color={action.color}
         />
       ))}
     </View>
@@ -73,24 +74,6 @@ const Actions = () => {
 
 const styles = StyleSheet.create({
   container: {},
-  actionWrapper: {
-    borderWidth: 1,
-    borderRadius: 10,
-    margin: 10,
-    padding: 10,
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  icon: {
-    width: 30,
-    textAlign: 'center',
-  },
-  actionLabel: {
-    margin: 5,
-    lineHeight: 30,
-    fontSize: 20,
-    marginLeft: 20,
-  },
 });
 
 export default Actions;

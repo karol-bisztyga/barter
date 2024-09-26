@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { ColorValue, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import WoodSVG from '../../../assets/wood.svg';
 import { useFonts } from 'expo-font';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -11,6 +11,7 @@ type MyButtonProps = {
   onPress: (() => void) | (() => Promise<void>);
   onLayout?: () => void;
   disabled?: boolean;
+  color?: ColorValue;
 };
 
 type Dimesions = {
@@ -20,7 +21,7 @@ type Dimesions = {
 
 const TILE_SIZE = 200;
 
-const ButtonWrapper = ({ title, icon, onPress, disabled, onLayout }: MyButtonProps) => {
+const ButtonWrapper = ({ title, icon, onPress, disabled, onLayout, color }: MyButtonProps) => {
   const [dimensions, setDimensions] = React.useState<Dimesions>({ width: 0, height: 0 });
 
   const Background = () => {
@@ -91,7 +92,7 @@ const ButtonWrapper = ({ title, icon, onPress, disabled, onLayout }: MyButtonPro
   };
 
   const textStyle = {
-    color: disabled ? FONT_COLOR_DISABLED : FONT_COLOR,
+    color: color ? color : disabled ? FONT_COLOR_DISABLED : FONT_COLOR,
   };
 
   return (
