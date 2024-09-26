@@ -294,6 +294,7 @@ const styles = StyleSheet.create({
   buttonWrapper: {
     marginTop: 10,
     marginBottom: 10,
+    width: '100%',
   },
   loaderWrapper: {
     position: 'absolute',

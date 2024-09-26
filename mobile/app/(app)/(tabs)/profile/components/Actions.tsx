@@ -1,12 +1,13 @@
 import React from 'react';
-import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useSessionContext } from '../../../../SessionContext';
 import { router } from 'expo-router';
 import { showInfo } from '../../../utils/notifications';
+import ButtonWrapper from '../../../genericComponents/ButtonWrapper';
 
 type ActionType = {
-  icon: 'arrow-left' | 'trash' | 'info' | 'language' | 'book';
+  icon: keyof typeof FontAwesome.glyphMap;
   label: string;
   onPress: () => void;
   color?: string;
@@ -59,17 +60,12 @@ const Actions = () => {
   return (
     <View style={styles.container}>
       {actions.map((action, index) => (
-        <TouchableOpacity
-          style={styles.actionWrapper}
-          activeOpacity={1}
-          onPress={action.onPress}
+        <ButtonWrapper
           key={index}
-        >
-          <FontAwesome size={30} name={action.icon} style={styles.icon} />
-          <Text style={[styles.actionLabel, { color: action.color || 'black' }]}>
-            {action.label}
-          </Text>
-        </TouchableOpacity>
+          title={action.label}
+          icon={action.icon}
+          onPress={action.onPress}
+        />
       ))}
     </View>
   );

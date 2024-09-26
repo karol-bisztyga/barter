@@ -7,6 +7,7 @@ import { validateEmail, validatePassword, validatePasswords } from './(app)/util
 import { executeQuery } from './(app)/db_utils/executeQuery';
 import { ErrorType, handleError } from './(app)/utils/errorHandler';
 import ButtonWrapper from './(app)/genericComponents/ButtonWrapper';
+import { BACKGROUND_COLOR } from './(app)/constants';
 
 const ERROR_MESSAGES = {
   INVALID_EMAIL: 'email invalid',
@@ -126,6 +127,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: BACKGROUND_COLOR,
   },
   input: {
     backgroundColor: 'white',
@@ -141,6 +143,7 @@ const styles = StyleSheet.create({
   buttonWrapper: {
     marginTop: 10,
     marginBottom: 10,
+    width: '100%',
   },
   errorWrapper: {
     opacity: 0.6,

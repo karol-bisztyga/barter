@@ -3,6 +3,7 @@ import { StyleSheet, Text, View } from 'react-native';
 
 import { router } from 'expo-router';
 import ButtonWrapper from './(app)/genericComponents/ButtonWrapper';
+import { BACKGROUND_COLOR } from './(app)/constants';
 
 export default function Register() {
   return (
@@ -11,12 +12,14 @@ export default function Register() {
         <Text style={styles.label}>Registered successfully!</Text>
         <Text style={styles.label}>Please check your email for the verification code :)</Text>
       </View>
-      <ButtonWrapper
-        title="Proceed"
-        onPress={() => {
-          router.replace('/login');
-        }}
-      />
+      <View style={styles.buttonWrapper}>
+        <ButtonWrapper
+          title="Proceed"
+          onPress={() => {
+            router.replace('/login');
+          }}
+        />
+      </View>
     </View>
   );
 }
@@ -27,6 +30,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: BACKGROUND_COLOR,
   },
   labelsWrapper: {
     margin: 20,
@@ -34,5 +38,10 @@ const styles = StyleSheet.create({
   label: {
     margin: 5,
     textAlign: 'center',
+  },
+  buttonWrapper: {
+    marginTop: 10,
+    marginBottom: 10,
+    width: '100%',
   },
 });

@@ -7,5 +7,5 @@ export const PROFILE_PICTURE_SIZE_LIMIT = 2 * 1024 * 1024;
 
 // colors
 export const BACKGROUND_COLOR = '#761000';
-export const FONT_COLOR = '#f0f0f0';
-export const FONT_COLOR_DISABLED = '#a0a0a0';
+export const FONT_COLOR = '#FFFFFF';
+export const FONT_COLOR_DISABLED = '#FFFFFF';

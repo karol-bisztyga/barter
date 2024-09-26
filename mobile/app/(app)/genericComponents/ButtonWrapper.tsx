@@ -2,9 +2,12 @@ import React, { useEffect } from 'react';
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import WoodSVG from '../../../assets/wood.svg';
 import { useFonts } from 'expo-font';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { FONT_COLOR, FONT_COLOR_DISABLED } from '../constants';
 
 type MyButtonProps = {
   title: string;
+  icon?: keyof typeof FontAwesome.glyphMap;
   onPress: (() => void) | (() => Promise<void>);
   onLayout?: () => void;
   disabled?: boolean;
@@ -17,7 +20,7 @@ type Dimesions = {
 
 const TILE_SIZE = 200;
 
-const ButtonWrapper = ({ title, onPress, disabled, onLayout }: MyButtonProps) => {
+const ButtonWrapper = ({ title, icon, onPress, disabled, onLayout }: MyButtonProps) => {
   const [dimensions, setDimensions] = React.useState<Dimesions>({ width: 0, height: 0 });
 
   const Background = () => {
@@ -87,11 +90,19 @@ const ButtonWrapper = ({ title, onPress, disabled, onLayout }: MyButtonProps) =>
     );
   };
 
+  const textStyle = {
+    color: disabled ? FONT_COLOR_DISABLED : FONT_COLOR,
+  };
+
   return (
     <TouchableOpacity
       activeOpacity={1}
       onPress={onPress}
-      style={[styles.container, { opacity: disabled ? 0.5 : 1 }]}
+      style={[
+        styles.container,
+        icon ? styles.containerWithIcon : styles.containerWithoutIcon,
+        { opacity: disabled ? 0.5 : 1 },
+      ]}
       onLayout={(event) => {
         const { width, height } = event.nativeEvent.layout;
         setDimensions({ width, height });
@@ -99,7 +110,12 @@ const ButtonWrapper = ({ title, onPress, disabled, onLayout }: MyButtonProps) =>
       disabled={disabled}
     >
       <Background />
-      <Text style={styles.label}>{title}</Text>
+      {icon && <FontAwesome size={30} name={icon} style={[styles.icon, textStyle]} />}
+      <Text
+        style={[styles.label, icon ? styles.labelWithIcon : styles.labelWithoutIcon, textStyle]}
+      >
+        {title}
+      </Text>
     </TouchableOpacity>
   );
 };
@@ -108,12 +124,15 @@ const styles = StyleSheet.create({
   container: {
     margin: 5,
     padding: 10,
-    paddingLeft: 20,
-    paddingRight: 20,
-    borderWidth: 1,
     borderRadius: 10,
     overflow: 'hidden',
+    borderWidth: 1,
   },
+  containerWithIcon: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  containerWithoutIcon: {},
   backgroundWrapper: {
     position: 'absolute',
     top: 0,
@@ -128,11 +147,20 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   label: {
-    color: 'white',
-    textAlign: 'center',
     fontFamily: 'Skyscapers',
+    lineHeight: 30,
     fontSize: 20,
-    lineHeight: 25,
+  },
+  labelWithoutIcon: {
+    textAlign: 'center',
+  },
+  labelWithIcon: {
+    margin: 5,
+    marginLeft: 20,
+  },
+  icon: {
+    width: 30,
+    textAlign: 'center',
   },
 });
 

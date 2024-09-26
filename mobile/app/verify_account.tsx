@@ -9,6 +9,7 @@ import { showSuccess } from './(app)/utils/notifications';
 import { ErrorType, handleError } from './(app)/utils/errorHandler';
 import { convertUserData } from './(app)/db_utils/utils';
 import ButtonWrapper from './(app)/genericComponents/ButtonWrapper';
+import { BACKGROUND_COLOR } from './(app)/constants';
 
 export default function Register() {
   const userContext = useUserContext();
@@ -64,14 +65,16 @@ export default function Register() {
         onChangeText={setVerificationCode}
         style={styles.input}
       />
-      <ButtonWrapper title="Submit" disabled={!verificationCodeValid()} onPress={verify} />
-      <ButtonWrapper
-        title="Back"
-        onPress={() => {
-          sessionContext.signOut();
-          router.replace('/login');
-        }}
-      />
+      <View style={styles.buttonWrapper}>
+        <ButtonWrapper title="Submit" disabled={!verificationCodeValid()} onPress={verify} />
+        <ButtonWrapper
+          title="Back"
+          onPress={() => {
+            sessionContext.signOut();
+            router.replace('/login');
+          }}
+        />
+      </View>
     </View>
   );
 }
@@ -82,6 +85,7 @@ const styles = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
+    backgroundColor: BACKGROUND_COLOR,
   },
   labelsWrapper: {
     margin: 20,
@@ -89,6 +93,11 @@ const styles = StyleSheet.create({
   label: {
     margin: 5,
     textAlign: 'center',
+  },
+  buttonWrapper: {
+    marginTop: 10,
+    marginBottom: 10,
+    width: '100%',
   },
   input: {
     backgroundColor: 'white',
