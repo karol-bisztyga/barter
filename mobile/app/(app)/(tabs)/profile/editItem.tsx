@@ -6,7 +6,6 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   TouchableOpacity,
   View,
 } from 'react-native';
@@ -30,6 +29,7 @@ import { prepareFileToUpload } from '../../utils/storageUtils';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import ImageWrapper from '../../genericComponents/ImageWrapper';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
+import InputWrapper from '../../genericComponents/InputWrapper';
 
 const { width } = Dimensions.get('window');
 
@@ -224,13 +224,13 @@ const EditItem = () => {
   return (
     <View style={styles.container}>
       <ScrollView ref={scrollRef}>
-        <TextInput
+        <InputWrapper
           style={[styles.nameInput, styles.input]}
           placeholder="Name"
           value={name}
           onChangeText={setName}
         />
-        <TextInput
+        <InputWrapper
           style={[styles.descriptionInput, styles.input]}
           placeholder="Description"
           multiline={true}

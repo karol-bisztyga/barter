@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
+import { Text, View, StyleSheet, TouchableOpacity } from 'react-native';
 import * as Location from 'expo-location';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { updateUser } from '../../db_utils/updateUser';
@@ -9,6 +9,7 @@ import { useUserContext } from '../../context/UserContext';
 import { showSuccess } from '../../utils/notifications';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
+import InputWrapper from '../../genericComponents/InputWrapper';
 
 export default function LocationScreen() {
   const sessionContext = authorizeUser();
@@ -90,7 +91,7 @@ export default function LocationScreen() {
       </TouchableOpacity>
       <View style={styles.section}>
         {/* todo verify/autocomplete city name */}
-        <TextInput
+        <InputWrapper
           value={city}
           onChangeText={(value) => {
             setLocation(null);

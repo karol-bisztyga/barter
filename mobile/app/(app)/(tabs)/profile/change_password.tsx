@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 import { validatePassword, validatePasswords } from '../../utils/validators';
 import { changePassword } from '../../db_utils/changePassword';
 import { authorizeUser } from '../../utils/reusableStuff';
@@ -7,6 +7,7 @@ import { showSuccess } from '../../utils/notifications';
 import { router } from 'expo-router';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
+import InputWrapper from '../../genericComponents/InputWrapper';
 
 const ERROR_MESSAGES = {
   PASSWORD: 'password invalid, it must be at least 8 characters',
@@ -60,7 +61,7 @@ export default function ChangePassword() {
 
   return (
     <View style={styles.container}>
-      <TextInput
+      <InputWrapper
         placeholder="current password"
         value={currentPassword}
         onChangeText={setCurrentPassword}
@@ -68,7 +69,7 @@ export default function ChangePassword() {
         autoCapitalize="none"
         secureTextEntry={true}
       />
-      <TextInput
+      <InputWrapper
         placeholder="new password"
         value={newPassword}
         onChangeText={setNewPassword}
@@ -76,7 +77,7 @@ export default function ChangePassword() {
         autoCapitalize="none"
         secureTextEntry={true}
       />
-      <TextInput
+      <InputWrapper
         placeholder="repeat new password"
         value={newPasswordRepeat}
         onChangeText={setNewPasswordRepeat}

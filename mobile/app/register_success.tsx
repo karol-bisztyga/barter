@@ -12,14 +12,12 @@ export default function Register() {
         <Text style={styles.label}>Registered successfully!</Text>
         <Text style={styles.label}>Please check your email for the verification code :)</Text>
       </View>
-      <View style={styles.buttonWrapper}>
-        <ButtonWrapper
-          title="Proceed"
-          onPress={() => {
-            router.replace('/login');
-          }}
-        />
-      </View>
+      <ButtonWrapper
+        title="Proceed"
+        onPress={() => {
+          router.replace('/login');
+        }}
+      />
     </View>
   );
 }
@@ -38,10 +36,5 @@ const styles = StyleSheet.create({
   label: {
     margin: 5,
     textAlign: 'center',
-  },
-  buttonWrapper: {
-    marginTop: 10,
-    marginBottom: 10,
-    width: '100%',
   },
 });

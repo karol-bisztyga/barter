@@ -7,6 +7,7 @@ import { useUserContext } from '../../../context/UserContext';
 import { useSessionContext } from '../../../../SessionContext';
 import { updateUser } from '../../../db_utils/updateUser';
 import { ErrorType, handleError } from '../../../utils/errorHandler';
+import InputWrapper from '../../../genericComponents/InputWrapper';
 
 const validateValue = (/*value: string*/) => {
   // todo handle this
@@ -142,7 +143,7 @@ const PersonalDataItem = ({
     <View style={styles.container} key={index}>
       <Text style={styles.constactItemTitle}>{name}</Text>
       {editing ? (
-        <TextInput
+        <InputWrapper
           ref={inputRef}
           value={editingValue}
           onChangeText={setEditingValue}

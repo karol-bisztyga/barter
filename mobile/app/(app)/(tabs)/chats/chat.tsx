@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   SafeAreaView,
-  TextInput,
   View,
   StyleSheet,
   Keyboard,
@@ -24,6 +23,7 @@ import { getServerAddress } from '../../utils/networkUtils';
 import { useMatchContext } from '../../context/MatchContext';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
+import InputWrapper from '../../genericComponents/InputWrapper';
 
 const INPUT_WRAPPER_HEIGHT = 70;
 const ITEMS_WRPPER_HEIGHT = 200;
@@ -279,7 +279,7 @@ const Chat = () => {
             inputWrapperPosition.value = e.nativeEvent.layout.y;
           }}
         >
-          <TextInput
+          <InputWrapper
             style={styles.input}
             placeholder="Type a message"
             blurOnSubmit={false}

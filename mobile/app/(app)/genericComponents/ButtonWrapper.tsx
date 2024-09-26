@@ -96,44 +96,51 @@ const ButtonWrapper = ({ title, icon, onPress, disabled, onLayout, color }: MyBu
   };
 
   return (
-    <TouchableOpacity
-      activeOpacity={1}
-      onPress={onPress}
-      style={[
-        styles.container,
-        icon ? styles.containerWithIcon : styles.containerWithoutIcon,
-        { opacity: disabled ? 0.5 : 1 },
-      ]}
-      onLayout={(event) => {
-        const { width, height } = event.nativeEvent.layout;
-        setDimensions({ width, height });
-      }}
-      disabled={disabled}
-    >
-      <Background />
-      {icon && <FontAwesome size={30} name={icon} style={[styles.icon, textStyle]} />}
-      <Text
-        style={[styles.label, icon ? styles.labelWithIcon : styles.labelWithoutIcon, textStyle]}
+    <View style={styles.container}>
+      <TouchableOpacity
+        activeOpacity={1}
+        onPress={onPress}
+        style={[
+          styles.button,
+          icon ? styles.buttonWithIcon : styles.buttonWithoutIcon,
+          { opacity: disabled ? 0.5 : 1 },
+        ]}
+        onLayout={(event) => {
+          const { width, height } = event.nativeEvent.layout;
+          setDimensions({ width, height });
+        }}
+        disabled={disabled}
       >
-        {title}
-      </Text>
-    </TouchableOpacity>
+        <Background />
+        {icon && <FontAwesome size={30} name={icon} style={[styles.icon, textStyle]} />}
+        <Text
+          style={[styles.label, icon ? styles.labelWithIcon : styles.labelWithoutIcon, textStyle]}
+        >
+          {title}
+        </Text>
+      </TouchableOpacity>
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
+    width: '100%',
+  },
+  button: {
     margin: 5,
     padding: 10,
     borderRadius: 10,
     overflow: 'hidden',
     borderWidth: 1,
+    marginTop: 10,
+    marginBottom: 10,
   },
-  containerWithIcon: {
+  buttonWithIcon: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  containerWithoutIcon: {},
+  buttonWithoutIcon: {},
   backgroundWrapper: {
     position: 'absolute',
     top: 0,

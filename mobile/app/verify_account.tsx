@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 
 import { router } from 'expo-router';
 import { useUserContext } from './(app)/context/UserContext';
@@ -10,6 +10,7 @@ import { ErrorType, handleError } from './(app)/utils/errorHandler';
 import { convertUserData } from './(app)/db_utils/utils';
 import ButtonWrapper from './(app)/genericComponents/ButtonWrapper';
 import { BACKGROUND_COLOR } from './(app)/constants';
+import InputWrapper from './(app)/genericComponents/InputWrapper';
 
 export default function Register() {
   const userContext = useUserContext();
@@ -59,22 +60,20 @@ export default function Register() {
         </Text>
         <Text style={styles.label}>Thank you</Text>
       </View>
-      <TextInput
+      <InputWrapper
         placeholder="Verification code"
         value={verificationCode}
         onChangeText={setVerificationCode}
         style={styles.input}
       />
-      <View style={styles.buttonWrapper}>
-        <ButtonWrapper title="Submit" disabled={!verificationCodeValid()} onPress={verify} />
-        <ButtonWrapper
-          title="Back"
-          onPress={() => {
-            sessionContext.signOut();
-            router.replace('/login');
-          }}
-        />
-      </View>
+      <ButtonWrapper title="Submit" disabled={!verificationCodeValid()} onPress={verify} />
+      <ButtonWrapper
+        title="Back"
+        onPress={() => {
+          sessionContext.signOut();
+          router.replace('/login');
+        }}
+      />
     </View>
   );
 }
@@ -93,11 +92,6 @@ const styles = StyleSheet.create({
   label: {
     margin: 5,
     textAlign: 'center',
-  },
-  buttonWrapper: {
-    marginTop: 10,
-    marginBottom: 10,
-    width: '100%',
   },
   input: {
     backgroundColor: 'white',

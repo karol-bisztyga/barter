@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { router } from 'expo-router';
 import { useItemsContext } from '../../context/ItemsContext';
-import { StyleSheet, TextInput, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { addReport } from '../../db_utils/addReport';
 import { authorizeUser } from '../../utils/reusableStuff';
 import { showSuccess } from '../../utils/notifications';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
+import InputWrapper from '../../genericComponents/InputWrapper';
 
 const SendReportModal = () => {
   const sessionContext = authorizeUser();
@@ -30,7 +31,7 @@ const SendReportModal = () => {
   return (
     <View style={styles.container}>
       <View style={styles.inputContainer}>
-        <TextInput
+        <InputWrapper
           multiline={true}
           placeholder="reason"
           secureTextEntry={true}
@@ -38,9 +39,7 @@ const SendReportModal = () => {
           onChangeText={setReport}
           style={styles.input}
         />
-        <View style={styles.buttonWrapper}>
-          <ButtonWrapper title="Send report" disabled={report.length < 10} onPress={sendReport} />
-        </View>
+        <ButtonWrapper title="Send report" disabled={report.length < 10} onPress={sendReport} />
       </View>
     </View>
   );
@@ -71,10 +70,6 @@ const styles = StyleSheet.create({
     margin: 10,
     width: '80%',
     textAlignVertical: 'top',
-  },
-  buttonWrapper: {
-    marginTop: 10,
-    marginBottom: 10,
   },
 });
 

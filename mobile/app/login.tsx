@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { ActivityIndicator, StyleSheet, TextInput, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 import { useSessionContext } from './SessionContext';
 import { useState } from 'react';
@@ -11,6 +11,7 @@ import { STORAGE_SESSION_KEY } from './constants';
 import { ErrorType, handleError } from './(app)/utils/errorHandler';
 import ButtonWrapper from './(app)/genericComponents/ButtonWrapper';
 import { BACKGROUND_COLOR } from './(app)/constants';
+import InputWrapper from './(app)/genericComponents/InputWrapper';
 
 const sampleUsers = [
   {
@@ -141,14 +142,14 @@ const SingInForm = ({
         },
       ]}
     >
-      <TextInput
+      <InputWrapper
         placeholder="email"
         value={email}
-        onChangeText={setEmail}
         style={styles.input}
+        onChangeText={setEmail}
         autoCapitalize="none"
       />
-      <TextInput
+      <InputWrapper
         autoCapitalize="none"
         placeholder="password"
         secureTextEntry={true}
@@ -156,57 +157,52 @@ const SingInForm = ({
         onChangeText={setPassword}
         style={styles.input}
       />
-      <View style={styles.buttonWrapper}>
-        <ButtonWrapper
-          title="Sign in"
-          disabled={!formValid()}
-          onPress={async () => {
-            await hadnleSignIn(email, password);
-          }}
-          onLayout={() => {
-            if (loadedButtons.signIn) {
-              return;
-            }
-            setLoadedButtons({ ...loadedButtons, signIn: true });
-          }}
-        />
-      </View>
-      <View style={styles.buttonWrapper}>
-        <ButtonWrapper
-          title="Register"
-          onPress={() => {
-            router.replace('/register');
-          }}
-          onLayout={() => {
-            if (loadedButtons.register) {
-              return;
-            }
-            setLoadedButtons({ ...loadedButtons, register: true });
-          }}
-        />
-      </View>
+      <ButtonWrapper
+        title="Sign in"
+        disabled={!formValid()}
+        onPress={async () => {
+          await hadnleSignIn(email, password);
+        }}
+        onLayout={() => {
+          if (loadedButtons.signIn) {
+            return;
+          }
+          setLoadedButtons({ ...loadedButtons, signIn: true });
+        }}
+      />
+      <ButtonWrapper
+        title="Register"
+        onPress={() => {
+          router.replace('/register');
+        }}
+        onLayout={() => {
+          if (loadedButtons.register) {
+            return;
+          }
+          setLoadedButtons({ ...loadedButtons, register: true });
+        }}
+      />
       {/* TODO remove buttons below */}
       {sampleUsers.map((user, index) => {
         if (index > 2) {
           return null;
         }
         return (
-          <View style={styles.buttonWrapper} key={index}>
-            <ButtonWrapper
-              title={`Login as a mocked user #${index + 1}`}
-              onPress={async () => {
-                await hadnleSignIn(user.email, user.password);
-              }}
-              onLayout={() => {
-                if (loadedButtons.mocked[index]) {
-                  return;
-                }
-                const mocked = [...loadedButtons.mocked];
-                mocked[index] = true;
-                setLoadedButtons({ ...loadedButtons, mocked });
-              }}
-            />
-          </View>
+          <ButtonWrapper
+            key={index}
+            title={`Login as a mocked user #${index + 1}`}
+            onPress={async () => {
+              await hadnleSignIn(user.email, user.password);
+            }}
+            onLayout={() => {
+              if (loadedButtons.mocked[index]) {
+                return;
+              }
+              const mocked = [...loadedButtons.mocked];
+              mocked[index] = true;
+              setLoadedButtons({ ...loadedButtons, mocked });
+            }}
+          />
         );
       })}
       {/* TODO remove buttons above */}
@@ -290,11 +286,6 @@ const styles = StyleSheet.create({
     height: 40,
     margin: 10,
     width: '80%',
-  },
-  buttonWrapper: {
-    marginTop: 10,
-    marginBottom: 10,
-    width: '100%',
   },
   loaderWrapper: {
     position: 'absolute',

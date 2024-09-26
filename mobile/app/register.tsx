@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { ActivityIndicator, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 
 import { useState } from 'react';
 import { router } from 'expo-router';
@@ -8,6 +8,7 @@ import { executeQuery } from './(app)/db_utils/executeQuery';
 import { ErrorType, handleError } from './(app)/utils/errorHandler';
 import ButtonWrapper from './(app)/genericComponents/ButtonWrapper';
 import { BACKGROUND_COLOR } from './(app)/constants';
+import InputWrapper from './(app)/genericComponents/InputWrapper';
 
 const ERROR_MESSAGES = {
   INVALID_EMAIL: 'email invalid',
@@ -68,14 +69,14 @@ export default function Register() {
 
   return (
     <View style={styles.container}>
-      <TextInput
+      <InputWrapper
         placeholder="email"
         value={email}
         onChangeText={setEmail}
         style={styles.input}
         autoCapitalize="none"
       />
-      <TextInput
+      <InputWrapper
         placeholder="password"
         secureTextEntry={true}
         value={password}
@@ -83,7 +84,7 @@ export default function Register() {
         style={styles.input}
         autoCapitalize="none"
       />
-      <TextInput
+      <InputWrapper
         placeholder="repeat password"
         secureTextEntry={true}
         value={passwordRepeat}
@@ -102,16 +103,14 @@ export default function Register() {
           })}
         </View>
       ) : null}
-      <View style={styles.buttonWrapper}>
-        <ButtonWrapper title="Register" disabled={!formValid()} onPress={register} />
-        <ButtonWrapper
-          title="Cancel"
-          disabled={loading}
-          onPress={async () => {
-            router.replace('/login');
-          }}
-        />
-      </View>
+      <ButtonWrapper title="Register" disabled={!formValid()} onPress={register} />
+      <ButtonWrapper
+        title="Cancel"
+        disabled={loading}
+        onPress={async () => {
+          router.replace('/login');
+        }}
+      />
       {loading && (
         <View style={styles.loaderWrapper}>
           <ActivityIndicator size="large" />
@@ -139,11 +138,6 @@ const styles = StyleSheet.create({
     height: 40,
     margin: 10,
     width: '80%',
-  },
-  buttonWrapper: {
-    marginTop: 10,
-    marginBottom: 10,
-    width: '100%',
   },
   errorWrapper: {
     opacity: 0.6,
