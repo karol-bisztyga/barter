@@ -1,9 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
 import * as Location from 'expo-location';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { updateUser } from '../../db_utils/updateUser';
-import { authorizeUser, cityNameFromLocation, formatLocation } from '../../utils/reusableStuff';
+import {
+  authorizeUser,
+  cityNameFromLocation,
+  formatLocation,
+  sleep,
+} from '../../utils/reusableStuff';
 import { router } from 'expo-router';
 import { useUserContext } from '../../context/UserContext';
 import { showSuccess } from '../../utils/notifications';
@@ -16,12 +21,19 @@ export default function LocationScreen() {
   const sessionContext = authorizeUser();
   const userContext = useUserContext();
 
+  const loadingLocationStr = 'Loading...';
+
   const [location, setLocation] = useState<Location.LocationObject | null>(null);
   const [city, setCity] = useState<string>('');
-  const [locationStr, setLocationStr] = useState<string>('Loading...');
+  const [locationStr, setLocationStr] = useState<string>(loadingLocationStr);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const getLocation = async () => {
     try {
+      setLocation(null);
+      setLocationStr(loadingLocationStr);
+      setLoading(true);
+      await sleep(2000);
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
         throw new Error(
@@ -33,6 +45,7 @@ export default function LocationScreen() {
       setLocation(location);
       setLocationStr(await cityNameFromLocation(formatLocationCoords(location.coords)));
       setCity('');
+      setLoading(false);
     } catch (e) {
       handleError(ErrorType.GET_LOCATION, `${e}`);
     }
@@ -106,6 +119,12 @@ export default function LocationScreen() {
       <View style={styles.section}>
         <ButtonWrapper title="Save" disabled={!city && !location} onPress={saveLocation} />
       </View>
+      {/* cannot use blocking loader from user context as it hides under the modal */}
+      {loading && (
+        <View style={styles.blockingLoader}>
+          <ActivityIndicator size="large" />
+        </View>
+      )}
     </View>
   );
 }
@@ -115,7 +134,6 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 20,
   },
   paragraph: {
     fontSize: 18,
@@ -136,5 +154,13 @@ const styles = StyleSheet.create({
     padding: 10,
     textAlign: 'center',
     borderRadius: 10,
+  },
+  blockingLoader: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, .7)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });
