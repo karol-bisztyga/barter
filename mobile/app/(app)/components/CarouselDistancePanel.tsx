@@ -38,10 +38,16 @@ const CarouselDistancePanel = ({ itemOwnerLocation }: { itemOwnerLocation: strin
     return `${distance} km away`;
   };
 
+  const label = getLabel();
+
+  if (!label) {
+    return null;
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.labelWrapper}>
-        <TextWrapper style={styles.label}>{getLabel()}</TextWrapper>
+        <TextWrapper style={styles.label}>{label}</TextWrapper>
       </View>
     </View>
   );
@@ -60,9 +66,16 @@ const styles = StyleSheet.create({
   labelWrapper: {
     padding: 10,
     borderRadius: 20,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    backgroundColor: 'black',
+    borderWidth: 1,
+    borderColor: 'white',
   },
-  label: {},
+  label: {
+    color: 'white',
+    padding: 2,
+    paddingLeft: 20,
+    paddingRight: 20,
+  },
 });
 
 export default CarouselDistancePanel;
