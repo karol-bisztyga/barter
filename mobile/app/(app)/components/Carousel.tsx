@@ -2,27 +2,29 @@ import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { ItemBorderRadius } from '../types';
 import { useAssets } from 'expo-asset';
-import CarouselActionPanel from './CarouselActionPanel';
-import CarouselDots from './CarouselDots';
 import CarouselDistancePanel from './CarouselDistancePanel';
 import ImageWrapper from '../genericComponents/ImageWrapper';
+import CarouselImageIndicators from './CarouselImageIndicators';
+import CarouselInfoPanel, { CarouselInfoPanelData } from './CarouselInfoPanel';
 
 const Carousel = ({
   images,
   borderRadius = ItemBorderRadius['up-only'],
-  dotsVisible = true,
+  imageIndicatorsVisible = true,
   pressEnabled = true,
   actionPanelVisible = false,
   itemOwnerLocation = undefined,
   onPress,
+  infoPanelData,
 }: {
   images: string[];
   borderRadius?: ItemBorderRadius;
-  dotsVisible?: boolean;
+  imageIndicatorsVisible?: boolean;
   pressEnabled?: boolean;
   actionPanelVisible?: boolean;
   itemOwnerLocation?: string;
   onPress?: () => void;
+  infoPanelData?: CarouselInfoPanelData;
 }) => {
   const [loading, setLoading] = useState(false);
   const [imageIndex, setImageIndex] = useState<number>(0);
@@ -54,17 +56,17 @@ const Carousel = ({
           styles.image,
           {
             opacity: loading ? 0 : 1,
-            borderTopLeftRadius: 20,
-            borderTopRightRadius: 20,
-            borderRadius: borderRadius === ItemBorderRadius['all'] ? 20 : 0,
+            borderTopLeftRadius: 8,
+            borderTopRightRadius: 8,
+            borderRadius: borderRadius === ItemBorderRadius['all'] ? 8 : 0,
           },
         ]}
         onLoadEnd={() => setLoading(false)}
         onError={() => setLoading(false)}
       />
 
-      {images.length > 1 && dotsVisible && (
-        <CarouselDots
+      {images.length > 1 && imageIndicatorsVisible && (
+        <CarouselImageIndicators
           images={images}
           actionPanelVisible={actionPanelVisible}
           imageIndex={imageIndex}
@@ -104,8 +106,8 @@ const Carousel = ({
           setImageIndex(imageIndex >= images.length - 1 ? 0 : imageIndex + 1);
         }}
       />
-      {actionPanelVisible && <CarouselActionPanel />}
       {itemOwnerLocation && <CarouselDistancePanel itemOwnerLocation={itemOwnerLocation} />}
+      {infoPanelData && <CarouselInfoPanel data={infoPanelData} />}
     </View>
   );
 };

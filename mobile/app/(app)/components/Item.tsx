@@ -8,7 +8,6 @@ import {
   SwipeCallbacks,
   defaultSwipeCallbacks,
 } from '../types';
-import ButtonWrapper from '../genericComponents/ButtonWrapper';
 import TextWrapper from '../genericComponents/TextWrapper';
 
 const { height } = Dimensions.get('window');
@@ -29,7 +28,6 @@ type ItemProps = {
   showFull?: boolean;
   centerVertically?: boolean;
   carouselOptions?: CarouselOptions;
-  onPressMore?: () => void;
   onPress?: () => void;
 };
 
@@ -47,7 +45,6 @@ export default function Item({
     actionPanelVisible: false,
     swipeCallbacks: defaultSwipeCallbacks,
   },
-  onPressMore = () => {},
   onPress,
 }: ItemProps) {
   const InnerContents = () => (
@@ -71,7 +68,7 @@ export default function Item({
         <Carousel
           images={itemData.images}
           borderRadius={borderRadius}
-          dotsVisible={carouselOptions.dotsVisible}
+          imageIndicatorsVisible={carouselOptions.dotsVisible}
           pressEnabled={carouselOptions.pressEnabled}
           actionPanelVisible={carouselOptions.actionPanelVisible}
           itemOwnerLocation={itemData.userLocation}
@@ -92,11 +89,6 @@ export default function Item({
           >
             {itemData.description}
           </TextWrapper>
-          {!showFull && (
-            <View style={{ paddingTop: 20 }}>
-              <ButtonWrapper title="more" onPress={onPressMore} />
-            </View>
-          )}
         </View>
       )}
     </>

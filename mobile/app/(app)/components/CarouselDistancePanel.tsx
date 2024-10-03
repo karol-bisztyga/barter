@@ -3,6 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { useUserContext } from '../context/UserContext';
 import { getDistanceFromLatLonInKm } from '../utils/reusableStuff';
 import TextWrapper from '../genericComponents/TextWrapper';
+import { INDICATOR_HEIGHT } from './CarouselImageIndicators';
 
 const CarouselDistancePanel = ({ itemOwnerLocation }: { itemOwnerLocation: string }) => {
   const userContext = useUserContext();
@@ -58,23 +59,20 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: 50,
-    top: 0,
+    top: INDICATOR_HEIGHT,
     left: 0,
     justifyContent: 'center',
     alignItems: 'center',
   },
   labelWrapper: {
-    padding: 10,
     borderRadius: 20,
-    backgroundColor: 'black',
-    borderWidth: 1,
-    borderColor: 'white',
+    padding: 10,
+    paddingTop: 5,
+    paddingBottom: 5,
+    backgroundColor: 'rgba(0,0,0, 0.7)',
   },
   label: {
     color: 'white',
-    padding: 2,
-    paddingLeft: 20,
-    paddingRight: 20,
   },
 });
 

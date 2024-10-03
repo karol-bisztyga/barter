@@ -5,6 +5,7 @@ export type ItemData = {
   images: string[];
   description: string;
   userLocation?: string;
+  userName?: string;
 };
 
 export type MatchData = {

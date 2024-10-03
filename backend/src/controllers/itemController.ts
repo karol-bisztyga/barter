@@ -186,7 +186,8 @@ export const getItemsForCards = async (req: AuthRequest, res: Response) => {
         items.name AS name,
         items.description AS description,
         ARRAY_AGG(items_images.url) AS images,
-        users.location AS user_location
+        users.location AS user_location,
+        users.name AS user_name
       FROM
           items
       JOIN
@@ -199,7 +200,7 @@ export const getItemsForCards = async (req: AuthRequest, res: Response) => {
           items.id NOT IN (SELECT liked_id FROM likes WHERE liker_id = $1)
       ${additionalCondition}
       GROUP BY
-          items.id, items.name, items.description, users.location
+          items.id, items.name, items.description, users.location, users.name
       ORDER BY
           RANDOM()
       LIMIT $${currentCardsIdsArr.length + 2};
@@ -207,9 +208,11 @@ export const getItemsForCards = async (req: AuthRequest, res: Response) => {
 
     const result = await pool.query(query, queryArgs);
     const parsedResult = result.rows.map((row: Record<string, string>) => {
-      const location = row.user_location;
+      const userLocation = row.user_location;
       delete row.user_location;
-      return { ...row, userLocation: location };
+      const userName = row.user_name;
+      delete row.user_name;
+      return { ...row, userLocation, userName };
     });
     console.log('pulled cards', parsedResult);
     res.json(parsedResult);

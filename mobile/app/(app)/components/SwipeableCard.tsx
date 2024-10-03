@@ -1,5 +1,5 @@
-import React from 'react';
-import { StyleSheet, Dimensions } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet, Dimensions, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
@@ -10,16 +10,18 @@ import Animated, {
   withTiming,
   SharedValue,
 } from 'react-native-reanimated';
-import Item from './Item';
 import { ItemData, SwipeCallbacks } from '../types';
 import { useUserContext } from '../context/UserContext';
 import { showInfo } from '../utils/notifications';
+import CardItem from './CardItem';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 const { width, height } = Dimensions.get('window');
 const SWIPE_THRESHOLD_HORIZONTAL = 0.25 * width;
 const SWIPE_THRESHOLD_VERTICAL = 0.25 * height;
 const MAX_RADIUS = 30;
 const END_ANIMATION_DURATION = 200;
+const DECIDE_ICON_SIZE = 100;
 
 const SwipeableCard = ({
   itemData,
@@ -33,6 +35,8 @@ const SwipeableCard = ({
   lockGesture: SharedValue<boolean>;
 }) => {
   const userContext = useUserContext();
+
+  const [wrapperHeight, setWrapperHeight] = useState<number | null>(null);
 
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
@@ -138,31 +142,91 @@ const SwipeableCard = ({
   });
 
   return (
-    <GestureDetector gesture={gesture}>
-      <Animated.View style={[styles.itemWrapper, animatedStyle]}>
-        <Item
-          itemData={itemData}
-          centerVertically={false}
-          onPressMore={onPressMore}
-          carouselOptions={{ actionPanelVisible: true }}
-        />
-      </Animated.View>
-    </GestureDetector>
+    <View
+      style={{ position: 'absolute', width: '100%', height: '100%' }}
+      onLayout={(event) => {
+        setWrapperHeight(event.nativeEvent.layout.height);
+      }}
+    >
+      {wrapperHeight && (
+        <GestureDetector gesture={gesture}>
+          <Animated.View
+            style={[
+              styles.itemWrapper,
+              {
+                marginTop: (wrapperHeight - height * 0.7) / 2,
+              },
+              animatedStyle,
+            ]}
+          >
+            <CardItem itemData={itemData} onPressMore={onPressMore} />
+          </Animated.View>
+        </GestureDetector>
+      )}
+      {wrapperHeight && (
+        <View
+          style={[
+            styles.decideIconWrapper,
+            {
+              top: wrapperHeight / 2 - DECIDE_ICON_SIZE / 2,
+            },
+            styles.decideIconWrapperLeft,
+          ]}
+        >
+          <FontAwesome size={DECIDE_ICON_SIZE} style={styles.decideIcon} name="remove" />
+        </View>
+      )}
+      {wrapperHeight && (
+        <View
+          style={[
+            styles.decideIconWrapper,
+            {
+              top: wrapperHeight / 2 - DECIDE_ICON_SIZE / 2,
+            },
+            styles.decideIconWrapperRight,
+          ]}
+        >
+          <FontAwesome size={DECIDE_ICON_SIZE} style={styles.decideIcon} name="bomb" />
+        </View>
+      )}
+    </View>
   );
 };
 
 const styles = StyleSheet.create({
   itemWrapper: {
-    width: width * 0.9,
+    width: '100%',
     height: height * 0.7,
-    borderRadius: 20,
     backgroundColor: 'black',
+    borderRadius: 5,
     position: 'absolute',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
     shadowRadius: 10,
     elevation: 30,
+  },
+  decideIconWrapper: {
+    position: 'absolute',
+    backgroundColor: 'white',
+    borderRadius: 500,
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 20,
+  },
+  decideIcon: {
+    color: 'black',
+    width: DECIDE_ICON_SIZE,
+    height: DECIDE_ICON_SIZE,
+    textAlign: 'center',
+    lineHeight: DECIDE_ICON_SIZE,
+  },
+  decideIconWrapperLeft: {
+    left: -DECIDE_ICON_SIZE / 2,
+  },
+  decideIconWrapperRight: {
+    right: -DECIDE_ICON_SIZE / 2,
+    transform: [{ scaleX: -1 }],
   },
 });
 
