@@ -190,7 +190,7 @@ const SingInForm = ({
         return (
           <ButtonWrapper
             key={index}
-            title={`Login as a mocked user #${index + 1}`}
+            title={`Mocked user #${index + 1} login`}
             onPress={async () => {
               await hadnleSignIn(user.email, user.password);
             }}

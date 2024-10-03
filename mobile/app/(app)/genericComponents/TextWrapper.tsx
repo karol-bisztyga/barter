@@ -8,19 +8,28 @@ interface TextWrapperProps extends TextProps {}
 const TextWrapper = ({ ...props }: TextWrapperProps) => {
   const [loadedFonts] = useFonts({
     RokkittRegular: require('../../../assets/fonts/Rokkitt-Regular.ttf'),
+    Schoolbell: require('../../../assets/fonts/Schoolbell.ttf'),
   });
 
   if (!loadedFonts) {
     return null;
   }
 
-  return <Text {...props} style={[props['style'] ? props['style'] : {}, styles.text]} />;
+  return (
+    <Text
+      {...props}
+      style={[styles.overridable, props['style'] ? props['style'] : {}, styles.important]}
+    />
+  );
 };
 
 const styles = StyleSheet.create({
-  text: {
+  overridable: {
+    fontSize: 14,
     color: FONT_COLOR,
-    fontFamily: 'RokkittRegular',
+  },
+  important: {
+    fontFamily: 'Schoolbell',
   },
 });
 

@@ -82,7 +82,8 @@ export default function Swipe() {
         const itemsLoaded = await getItemsForCards(
           sessionContext,
           cards.map((card) => card.id),
-          LOADED_ITEMS_CAPACITY
+          LOADED_ITEMS_CAPACITY,
+          userContext.data?.location
         );
         if (!itemsLoaded.length) {
           setEmptyCardsResponseReceived(true);
@@ -105,16 +106,19 @@ export default function Swipe() {
           showInfo('no items available for now, try again later');
           return;
         }
+        userContext.setBlockingLoading(true);
         const itemsLoaded = await getItemsForCards(
           sessionContext,
           cards.map((card) => card.id),
-          LOADED_ITEMS_CAPACITY
+          LOADED_ITEMS_CAPACITY,
+          userContext.data?.location
         );
         if (!itemsLoaded.length) {
           setEmptyCardsResponseReceived(true);
           return;
         }
 
+        userContext.setBlockingLoading(false);
         setCards(itemsLoaded);
       } catch (e) {
         handleError(ErrorType.LOAD_CARDS, `${e}`);
@@ -193,7 +197,7 @@ export default function Swipe() {
     <GestureHandlerRootView>
       <SafeAreaView style={styles.container}>
         <View style={styles.container}>
-          {cards.length === 0 && (
+          {cards.length === 0 && !userContext.blockingLoading && (
             <View style={styles.noCardsWrapper}>
               <TextWrapper style={styles.noCardsLabel}>No more cards</TextWrapper>
             </View>

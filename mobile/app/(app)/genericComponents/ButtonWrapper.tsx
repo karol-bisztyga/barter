@@ -58,7 +58,7 @@ const Background = ({
   }, [dimensions]);
 
   const [loadedFonts] = useFonts({
-    Skyscapers: require('../../../assets/fonts/Skyscapers.ttf'),
+    Schoolbell: require('../../../assets/fonts/Schoolbell.ttf'),
   });
 
   if (!dimensions || !loadedFonts) {
@@ -76,6 +76,7 @@ const Background = ({
                   key={`tile-${i}-${j}`}
                   width={TILE_SIZE}
                   height={TILE_SIZE}
+                  style={styles.backgroundTile}
                   onLayout={() => {
                     if (elements[i][j]) {
                       return;
@@ -165,8 +166,13 @@ const styles = StyleSheet.create({
     height: TILE_SIZE,
     flexDirection: 'row',
   },
+  backgroundTile: {
+    opacity: 0.8,
+    shadowColor: 'black',
+    shadowOpacity: 1,
+  },
   label: {
-    fontFamily: 'Skyscapers',
+    fontFamily: 'Schoolbell',
     lineHeight: 40,
     height: 40,
     fontSize: 20,
