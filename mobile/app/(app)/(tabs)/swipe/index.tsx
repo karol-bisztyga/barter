@@ -4,7 +4,7 @@ import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSharedValue } from 'react-native-reanimated';
 import SwipeableCard from '../../components/SwipeableCard';
 import { router } from 'expo-router';
-import { ItemData } from '../../types';
+import { ItemData, SwipeDirection } from '../../types';
 import { useItemsContext } from '../../context/ItemsContext';
 import { useUserContext } from '../../context/UserContext';
 import { getUserItems } from '../../db_utils/getUserItems';
@@ -15,6 +15,7 @@ import { showError, showInfo } from '../../utils/notifications';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import { executeProtectedQuery } from '../../db_utils/executeProtectedQuery';
 import TextWrapper from '../../genericComponents/TextWrapper';
+import SwipeBackgroundAnimation from '../../components/SwipeBackgroundAnimation';
 
 const LOADED_ITEMS_CAPACITY = 5;
 // when there are less items loaded than this value, new items will be fetched
@@ -25,6 +26,8 @@ export default function Swipe() {
 
   const [cards, setCards] = useState<ItemData[]>([]);
   const [emptyCardsResponseReceived, setEmptyCardsResponseReceived] = useState<boolean>(false);
+  const [swipeDirection, setSwipeDirection] = useState<SwipeDirection | null>(null);
+
   const lockGesture = useSharedValue<boolean>(false);
   const itemsContext = useItemsContext();
   const userContext = useUserContext();
@@ -197,6 +200,7 @@ export default function Swipe() {
     <GestureHandlerRootView>
       <SafeAreaView style={styles.container}>
         <View style={styles.container}>
+          <SwipeBackgroundAnimation swipeDirection={swipeDirection} />
           {cards.length === 0 && !userContext.blockingLoading && (
             <View style={styles.noCardsWrapper}>
               <TextWrapper style={styles.noCardsLabel}>No more cards</TextWrapper>
@@ -218,6 +222,7 @@ export default function Swipe() {
               }}
               cardsLength={cards.length}
               currentCardIndex={index}
+              setSwipeDirection={setSwipeDirection}
             />
           ))}
         </View>

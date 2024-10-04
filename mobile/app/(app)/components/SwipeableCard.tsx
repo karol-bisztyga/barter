@@ -12,7 +12,7 @@ import Animated, {
   clamp,
   interpolate,
 } from 'react-native-reanimated';
-import { ItemData, SwipeCallbacks } from '../types';
+import { ItemData, SwipeCallbacks, SwipeDirection } from '../types';
 import { useUserContext } from '../context/UserContext';
 import { showInfo } from '../utils/notifications';
 import CardItem from './CardItem';
@@ -42,6 +42,7 @@ const SwipeableCard = ({
   onPressMore,
   currentCardIndex,
   cardsLength,
+  setSwipeDirection,
 }: {
   itemData: ItemData;
   swipeCallbacks: SwipeCallbacks;
@@ -49,6 +50,7 @@ const SwipeableCard = ({
   lockGesture: SharedValue<boolean>;
   currentCardIndex: number;
   cardsLength: number;
+  setSwipeDirection: (_: SwipeDirection | null) => void;
 }) => {
   const userContext = useUserContext();
 
@@ -121,15 +123,27 @@ const SwipeableCard = ({
 
   const shadowColor = useDerivedValue(() => {
     if (!dragging.value) {
+      runOnJS(setSwipeDirection)(null);
       return DECISION_COLORS.NONE;
     }
     if (translateY.value > SWIPE_THRESHOLD_VERTICAL) {
+      runOnJS(setSwipeDirection)(SwipeDirection.DOWN);
       return DECISION_COLORS.BOTTOM;
     }
     if (translateY.value > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
+      runOnJS(setSwipeDirection)(null);
       return DECISION_COLORS.NONE;
     }
-    return translateX.value > 0 ? DECISION_COLORS.RIGHT : DECISION_COLORS.LEFT;
+    if (Math.abs(translateX.value) < SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
+      runOnJS(setSwipeDirection)(null);
+      return DECISION_COLORS.NONE;
+    }
+    if (translateX.value > 0) {
+      runOnJS(setSwipeDirection)(SwipeDirection.RIGHT);
+      return DECISION_COLORS.RIGHT;
+    }
+    runOnJS(setSwipeDirection)(SwipeDirection.LEFT);
+    return DECISION_COLORS.LEFT;
   });
 
   const shadowRadius = useDerivedValue(() => {

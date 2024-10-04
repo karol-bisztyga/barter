@@ -54,6 +54,12 @@ export enum EditImageType {
   'item',
 }
 
+export enum SwipeDirection {
+  'LEFT',
+  'RIGHT',
+  'DOWN',
+}
+
 export type SwipeCallbacks = {
   onSwipeRight: () => void;
   onSwipeLeft: () => void;
