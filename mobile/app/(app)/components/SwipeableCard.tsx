@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Dimensions, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Dimensions, View } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
@@ -9,8 +9,8 @@ import Animated, {
   useDerivedValue,
   withTiming,
   SharedValue,
-  useAnimatedReaction,
   clamp,
+  interpolate,
 } from 'react-native-reanimated';
 import { ItemData, SwipeCallbacks } from '../types';
 import { useUserContext } from '../context/UserContext';
@@ -45,6 +45,7 @@ const SwipeableCard = ({
 }) => {
   const userContext = useUserContext();
 
+  const [wrapperWidth, setWrapperWidth] = useState<number | null>(null);
   const [wrapperHeight, setWrapperHeight] = useState<number | null>(null);
 
   const translateX = useSharedValue(0);
@@ -247,6 +248,33 @@ const SwipeableCard = ({
     };
   });
 
+  const decideIconBottomAnimatedStyle = useAnimatedStyle(() => {
+    let scale = 1;
+    if (translateY.value > 0) {
+      scale = interpolate(translateY.value, [0, SWIPE_THRESHOLD_VERTICAL], [1, 1.5]);
+    }
+    scale = clamp(scale, 1, 1.5);
+
+    let ty = 0;
+    if (translateY.value > 0) {
+      ty = interpolate(translateY.value, [0, SWIPE_THRESHOLD_VERTICAL], [0, -DECIDE_ICON_SIZE / 8]);
+    } else {
+      ty = -translateY.value;
+    }
+    ty = clamp(ty, (-DECIDE_ICON_SIZE / 8) * 3, DECIDE_ICON_SIZE);
+
+    return {
+      transform: [
+        {
+          scale,
+        },
+        {
+          translateY: ty,
+        },
+      ],
+    };
+  });
+
   const isCurrentCardOnTop = currentCardIndex === cardsLength - 1;
 
   const controlIconsOpacityStyle = {
@@ -258,8 +286,10 @@ const SwipeableCard = ({
       style={{ position: 'absolute', width: '100%', height: '100%' }}
       onLayout={(event) => {
         setWrapperHeight(event.nativeEvent.layout.height);
+        setWrapperWidth(event.nativeEvent.layout.width);
       }}
     >
+      {/* card */}
       {wrapperHeight && (
         <GestureDetector gesture={gesture}>
           <Animated.View
@@ -275,6 +305,7 @@ const SwipeableCard = ({
           </Animated.View>
         </GestureDetector>
       )}
+      {/* left icon */}
       {wrapperHeight && (
         <Animated.View
           style={[
@@ -290,6 +321,7 @@ const SwipeableCard = ({
           <FontAwesome size={DECIDE_ICON_SIZE} style={styles.decideIcon} name="remove" />
         </Animated.View>
       )}
+      {/* right icon */}
       {wrapperHeight && (
         <Animated.View
           style={[
@@ -303,6 +335,25 @@ const SwipeableCard = ({
           ]}
         >
           <FontAwesome size={DECIDE_ICON_SIZE} style={styles.decideIcon} name="bomb" />
+        </Animated.View>
+      )}
+      {/* bottom icon */}
+      {wrapperHeight && wrapperWidth && (
+        <Animated.View
+          style={[
+            styles.decideIconWrapper,
+            {
+              left: wrapperWidth / 2 - DECIDE_ICON_SIZE / 2,
+              top: wrapperHeight - DECIDE_ICON_SIZE / 2,
+              width: DECIDE_ICON_SIZE,
+              height: DECIDE_ICON_SIZE,
+            },
+            styles.decideIconWrapperRight,
+            decideIconBottomAnimatedStyle,
+            controlIconsOpacityStyle,
+          ]}
+        >
+          <FontAwesome size={DECIDE_ICON_SIZE} style={styles.decideIcon} name="clock-o" />
         </Animated.View>
       )}
     </View>
