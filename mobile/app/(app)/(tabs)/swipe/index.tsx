@@ -216,6 +216,8 @@ export default function Swipe() {
                 itemsContext.setOthersItem(card);
                 router.push({ pathname: 'swipe/item', params: { whosItem: 'other' } });
               }}
+              cardsLength={cards.length}
+              currentCardIndex={index}
             />
           ))}
         </View>

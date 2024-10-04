@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { StyleSheet, Dimensions, View } from 'react-native';
+import { StyleSheet, Dimensions, View, TouchableOpacity } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
@@ -9,6 +9,8 @@ import Animated, {
   useDerivedValue,
   withTiming,
   SharedValue,
+  useAnimatedReaction,
+  clamp,
 } from 'react-native-reanimated';
 import { ItemData, SwipeCallbacks } from '../types';
 import { useUserContext } from '../context/UserContext';
@@ -19,6 +21,9 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 const { width, height } = Dimensions.get('window');
 const SWIPE_THRESHOLD_HORIZONTAL = 0.25 * width;
 const SWIPE_THRESHOLD_VERTICAL = 0.25 * height;
+// this treshold says if the the horizontal swipe can be performed
+// if the left/right swipe goes beyond that treshold vertically it will not be performed
+const SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL = 50;
 const MAX_RADIUS = 30;
 const END_ANIMATION_DURATION = 200;
 const DECIDE_ICON_SIZE = 100;
@@ -28,11 +33,15 @@ const SwipeableCard = ({
   swipeCallbacks,
   lockGesture,
   onPressMore,
+  currentCardIndex,
+  cardsLength,
 }: {
   itemData: ItemData;
   swipeCallbacks: SwipeCallbacks;
   onPressMore: () => void;
   lockGesture: SharedValue<boolean>;
+  currentCardIndex: number;
+  cardsLength: number;
 }) => {
   const userContext = useUserContext();
 
@@ -83,6 +92,10 @@ const SwipeableCard = ({
         getBackToStartingPosition();
         return;
       }
+      if (translateY.value > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
+        getBackToStartingPosition();
+        return;
+      }
       if (translateX.value > SWIPE_THRESHOLD_HORIZONTAL) {
         lockGesture.value = true;
         translateX.value = withTiming(width * 2, { duration: END_ANIMATION_DURATION }, () => {
@@ -104,6 +117,9 @@ const SwipeableCard = ({
     }
     if (translateY.value > SWIPE_THRESHOLD_VERTICAL) {
       return 'yellow';
+    }
+    if (translateY.value > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
+      return 'black';
     }
     return translateX.value > 0 ? 'green' : 'red';
   });
@@ -129,7 +145,7 @@ const SwipeableCard = ({
     }
   });
 
-  const animatedStyle = useAnimatedStyle(() => {
+  const cardAnimatedStyle = useAnimatedStyle(() => {
     return {
       transform: [
         { translateX: translateX.value },
@@ -140,6 +156,102 @@ const SwipeableCard = ({
       shadowColor: shadowColor.value,
     };
   });
+
+  const decideIconLeftAnimatedStyle = useAnimatedStyle(() => {
+    // calculate scale
+    let scaleModifierImportant = 0;
+    if (translateY.value > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
+      scaleModifierImportant = (translateY.value - SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) / 100;
+    }
+
+    let scale = 1;
+    if (translateX.value < 0) {
+      scale = clamp(1 + (-translateX.value * 2) / 100, 1, 2);
+    } else {
+      scale = 1 - clamp(translateX.value / 100, 0, 0.5);
+    }
+
+    if (translateY.value > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
+      scale = clamp(scale - scaleModifierImportant, 0.5, 2);
+    }
+
+    // calculate translateX
+    let tx = 0;
+    if (translateX.value < 0) {
+      tx = clamp(-translateX.value, 0, DECIDE_ICON_SIZE / 2);
+    } else {
+      tx = -translateX.value;
+    }
+    if (translateY.value > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
+      tx = clamp(
+        -(translateX.value + translateY.value - SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL),
+        -DECIDE_ICON_SIZE,
+        DECIDE_ICON_SIZE / 2
+      );
+    }
+
+    return {
+      transform: [
+        {
+          scale,
+        },
+        {
+          translateX: tx,
+        },
+      ],
+    };
+  });
+
+  const decideIconRightAnimatedStyle = useAnimatedStyle(() => {
+    // calculate scale
+    let scaleModifierImportant = 0;
+    if (translateY.value > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
+      scaleModifierImportant = (translateY.value - SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) / 100;
+    }
+
+    let scale = 1;
+    if (translateX.value > 0) {
+      scale = clamp(1 + (translateX.value * 2) / 100, 1, 2);
+    } else {
+      scale = 1 - clamp(-translateX.value / 100, 0, 0.5);
+    }
+
+    if (translateY.value > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
+      scale = clamp(scale - scaleModifierImportant, 0.5, 2);
+    }
+
+    // calculate translateX
+    let tx = 0;
+    if (translateX.value > 0) {
+      tx = clamp(-translateX.value, -DECIDE_ICON_SIZE / 2, 0);
+    } else {
+      tx = -translateX.value;
+    }
+    if (translateY.value > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
+      tx = clamp(
+        tx + translateY.value - SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL,
+        -DECIDE_ICON_SIZE / 2,
+        DECIDE_ICON_SIZE
+      );
+    }
+
+    return {
+      transform: [
+        {
+          scale,
+        },
+        {
+          translateX: tx,
+        },
+      ],
+    };
+  });
+
+  const isCurrentCardOnTop = currentCardIndex === cardsLength - 1;
+
+  const controlIconsOpacityStyle = {
+    opacity: isCurrentCardOnTop ? 1 : 0,
+  };
 
   return (
     <View
@@ -156,7 +268,7 @@ const SwipeableCard = ({
               {
                 marginTop: (wrapperHeight - height * 0.7) / 2,
               },
-              animatedStyle,
+              cardAnimatedStyle,
             ]}
           >
             <CardItem itemData={itemData} onPressMore={onPressMore} />
@@ -164,30 +276,34 @@ const SwipeableCard = ({
         </GestureDetector>
       )}
       {wrapperHeight && (
-        <View
+        <Animated.View
           style={[
             styles.decideIconWrapper,
             {
               top: wrapperHeight / 2 - DECIDE_ICON_SIZE / 2,
             },
             styles.decideIconWrapperLeft,
+            decideIconLeftAnimatedStyle,
+            controlIconsOpacityStyle,
           ]}
         >
           <FontAwesome size={DECIDE_ICON_SIZE} style={styles.decideIcon} name="remove" />
-        </View>
+        </Animated.View>
       )}
       {wrapperHeight && (
-        <View
+        <Animated.View
           style={[
             styles.decideIconWrapper,
             {
               top: wrapperHeight / 2 - DECIDE_ICON_SIZE / 2,
             },
             styles.decideIconWrapperRight,
+            decideIconRightAnimatedStyle,
+            controlIconsOpacityStyle,
           ]}
         >
           <FontAwesome size={DECIDE_ICON_SIZE} style={styles.decideIcon} name="bomb" />
-        </View>
+        </Animated.View>
       )}
     </View>
   );
@@ -222,10 +338,10 @@ const styles = StyleSheet.create({
     lineHeight: DECIDE_ICON_SIZE,
   },
   decideIconWrapperLeft: {
-    left: -DECIDE_ICON_SIZE / 2,
+    left: -(DECIDE_ICON_SIZE + 40) / 2,
   },
   decideIconWrapperRight: {
-    right: -DECIDE_ICON_SIZE / 2,
+    right: -(DECIDE_ICON_SIZE + 40) / 2,
     transform: [{ scaleX: -1 }],
   },
 });
