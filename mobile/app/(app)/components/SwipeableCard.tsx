@@ -28,6 +28,13 @@ const MAX_RADIUS = 30;
 const END_ANIMATION_DURATION = 200;
 const DECIDE_ICON_SIZE = 100;
 
+const DECISION_COLORS = {
+  LEFT: 'red',
+  RIGHT: 'green',
+  BOTTOM: 'yellow',
+  NONE: 'black',
+};
+
 const SwipeableCard = ({
   itemData,
   swipeCallbacks,
@@ -114,15 +121,15 @@ const SwipeableCard = ({
 
   const shadowColor = useDerivedValue(() => {
     if (!dragging.value) {
-      return 'black';
+      return DECISION_COLORS.NONE;
     }
     if (translateY.value > SWIPE_THRESHOLD_VERTICAL) {
-      return 'yellow';
+      return DECISION_COLORS.BOTTOM;
     }
     if (translateY.value > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
-      return 'black';
+      return DECISION_COLORS.NONE;
     }
-    return translateX.value > 0 ? 'green' : 'red';
+    return translateX.value > 0 ? DECISION_COLORS.RIGHT : DECISION_COLORS.LEFT;
   });
 
   const shadowRadius = useDerivedValue(() => {
@@ -130,13 +137,13 @@ const SwipeableCard = ({
     const ty = translateY.value;
 
     switch (shadowColor.value) {
-      case 'yellow':
+      case DECISION_COLORS.BOTTOM:
         if (ty > SWIPE_THRESHOLD_VERTICAL) {
           return MAX_RADIUS;
         }
         return (ty / SWIPE_THRESHOLD_VERTICAL) * MAX_RADIUS;
-      case 'green':
-      case 'red':
+      case DECISION_COLORS.RIGHT:
+      case DECISION_COLORS.LEFT:
         if (tx > SWIPE_THRESHOLD_HORIZONTAL) {
           return MAX_RADIUS;
         }
@@ -281,9 +288,20 @@ const SwipeableCard = ({
     opacity: isCurrentCardOnTop ? 1 : 0,
   };
 
+  const getCardOpacityStyle = () => {
+    let opacity = 0;
+    const distanceFromTop = cardsLength - 1 - currentCardIndex;
+    if (distanceFromTop === 0) {
+      opacity = 1;
+    } else if (distanceFromTop === 1) {
+      opacity = 0;
+    }
+    return { opacity };
+  };
+
   return (
     <View
-      style={{ position: 'absolute', width: '100%', height: '100%' }}
+      style={[styles.container, getCardOpacityStyle()]}
       onLayout={(event) => {
         setWrapperHeight(event.nativeEvent.layout.height);
         setWrapperWidth(event.nativeEvent.layout.width);
@@ -361,6 +379,11 @@ const SwipeableCard = ({
 };
 
 const styles = StyleSheet.create({
+  container: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+  },
   itemWrapper: {
     width: '100%',
     height: height * 0.7,
