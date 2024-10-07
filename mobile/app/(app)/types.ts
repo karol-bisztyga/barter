@@ -71,3 +71,8 @@ export const defaultSwipeCallbacks = {
   onSwipeRight: () => {},
   onSwipeDown: () => {},
 };
+
+export type ViewDimensions = {
+  width: number;
+  height: number;
+};

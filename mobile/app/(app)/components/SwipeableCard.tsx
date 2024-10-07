@@ -20,7 +20,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 const { width, height } = Dimensions.get('window');
 const SWIPE_THRESHOLD_HORIZONTAL = 0.25 * width;
-const SWIPE_THRESHOLD_VERTICAL = 0.25 * height;
+export const SWIPE_THRESHOLD_VERTICAL = 0.25 * height;
 // this treshold says if the the horizontal swipe can be performed
 // if the left/right swipe goes beyond that treshold vertically it will not be performed
 const SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL = 50;

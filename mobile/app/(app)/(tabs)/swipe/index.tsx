@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { Dimensions, SafeAreaView, StyleSheet, View } from 'react-native';
+import { SafeAreaView, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useAnimatedReaction, useSharedValue } from 'react-native-reanimated';
-import SwipeableCard from '../../components/SwipeableCard';
+import SwipeableCard, {
+  SWIPE_THRESHOLD_VERTICAL,
+  SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL,
+} from '../../components/SwipeableCard';
 import { router } from 'expo-router';
 import { ItemData, SwipeDirection } from '../../types';
 import { useItemsContext } from '../../context/ItemsContext';
@@ -16,16 +19,6 @@ import { ErrorType, handleError } from '../../utils/errorHandler';
 import { executeProtectedQuery } from '../../db_utils/executeProtectedQuery';
 import TextWrapper from '../../genericComponents/TextWrapper';
 import SwipeBackgroundAnimation from '../../components/SwipeBackgroundAnimation';
-
-const { width, height } = Dimensions.get('window');
-const SWIPE_THRESHOLD_HORIZONTAL = 0.25 * width;
-const SWIPE_THRESHOLD_VERTICAL = 0.25 * height;
-// this treshold says if the the horizontal swipe can be performed
-// if the left/right swipe goes beyond that treshold vertically it will not be performed
-const SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL = 50;
-const MAX_RADIUS = 30;
-const END_ANIMATION_DURATION = 200;
-const DECIDE_ICON_SIZE = 100;
 
 const LOADED_ITEMS_CAPACITY = 5;
 // when there are less items loaded than this value, new items will be fetched
