@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Dimensions } from 'react-native';
 import Animated, {
+  clamp,
   runOnJS,
   SharedValue,
   useAnimatedReaction,
@@ -96,10 +97,6 @@ const generateNonCollidingItems = (containerDimensions: ViewDimensions): Item[] 
   return items;
 };
 
-const getRandomShakeModifier = () => {
-  return Math.round(Math.random() * 6 - 3);
-};
-
 interface AnimatedItemProps {
   item: Item;
   swipeDirection: SharedValue<SwipeDirection | null>;
@@ -119,13 +116,13 @@ const AnimatedItem: React.FC<AnimatedItemProps> = ({
 
   useAnimatedReaction(
     () => {
-      return swipeIntensity.value;
+      return swipeDirection.value;
     },
     (prepared, previous) => {
-      if (prepared === previous) {
+      if (prepared === previous && prepared !== null) {
         return;
       }
-      console.log('swipeIntensity ### ', prepared, previous);
+      // console.log('swipe dir lets go ### ', prepared, previous, itemTranslateX.value);
     }
   );
 
@@ -136,6 +133,9 @@ const AnimatedItem: React.FC<AnimatedItemProps> = ({
   //   });
   // }, [scale]);
 
+  const getRandomShakeModifier = () => {
+    return Math.round(Math.random() * 6 - 3);
+  };
   // useEffect(() => {
   const beginTremble = () => {
     const modifierX = getRandomShakeModifier();
@@ -162,27 +162,6 @@ const AnimatedItem: React.FC<AnimatedItemProps> = ({
     );
   };
   // }, []);
-
-  useAnimatedReaction(
-    () => {
-      return swipeDirection.value;
-    },
-    (prepared, previous) => {
-      if (previous === prepared) {
-        return;
-      }
-      // console.log('swipe direction changed', previous, prepared);
-      const newOpacity = prepared === null ? 0 : 1;
-      opacity.value = withTiming(newOpacity, { duration: 500 });
-
-      // if (prepared === null) {
-      //   translateX.value = 0;
-      //   translateY.value = 0;
-      // } else {
-      //   runOnJS(beginTremble)();
-      // }
-    }
-  );
 
   // useEffect(() => {
   //   if (visible) {
@@ -220,6 +199,8 @@ const AnimatedItem: React.FC<AnimatedItemProps> = ({
   );
 };
 
+const { width, height } = Dimensions.get('window');
+
 const SwipeBackgroundAnimation = ({
   swipeDirection,
   cardTranslateX,
@@ -246,9 +227,9 @@ const SwipeBackgroundAnimation = ({
         return;
       }
       console.log('swipe direction changed', previous, prepared);
-      const newOpacity = prepared === null ? 0 : 1;
-      opacity.value = withTiming(newOpacity, { duration: 500 });
-      if (prepared === null || containerDimensions === null) {
+      // const newOpacity = prepared === null ? 0 : 1;
+      // opacity.value = withTiming(newOpacity, { duration: 500 });
+      if (prepared !== null || containerDimensions === null) {
         return;
       }
       runOnJS(setRegenerateItems)(true);
@@ -261,9 +242,9 @@ const SwipeBackgroundAnimation = ({
         return 0;
       }
       if (swipeDirection.value === SwipeDirection.DOWN) {
-        return cardTranslateY.value;
+        return clamp(cardTranslateY.value / (height / 2), 0, 1);
       }
-      return Math.abs(cardTranslateX.value);
+      return clamp(Math.abs(cardTranslateX.value) / (width / 2), 0, 1);
     },
     (prepared, previous) => {
       if (prepared === previous) {
@@ -271,6 +252,30 @@ const SwipeBackgroundAnimation = ({
       }
       // console.log('swipeIntensity update', prepared);
       swipeIntensity.value = prepared;
+    }
+  );
+
+  useAnimatedReaction(
+    () => {
+      if (swipeDirection.value == null || regenerateItems || !items.length) {
+        return 0;
+      }
+      return swipeIntensity.value;
+    },
+    (prepared, previous) => {
+      if (previous === prepared) {
+        return;
+      }
+      // console.log('swipe direction changed', previous, prepared);
+      console.log('oopacity change', prepared);
+      opacity.value = prepared; //withTiming(prepared, { duration: 500 });
+
+      // if (prepared === null) {
+      //   translateX.value = 0;
+      //   translateY.value = 0;
+      // } else {
+      //   runOnJS(beginTremble)();
+      // }
     }
   );
 
@@ -293,6 +298,13 @@ const SwipeBackgroundAnimation = ({
     setItems(generateNonCollidingItems(containerDimensions));
     setRegenerateItems(false);
   }, [regenerateItems]);
+
+  useEffect(() => {
+    if (containerDimensions === null) {
+      return;
+    }
+    setItems(generateNonCollidingItems(containerDimensions));
+  }, [containerDimensions]);
 
   // useEffect(() => {
   //   if (!containerDimensions || swipeDirection.value === null) {
