@@ -42,6 +42,9 @@ const SwipeableCard = ({
   onPressMore,
   currentCardIndex,
   cardsLength,
+  translateX,
+  translateY,
+  dragging,
   swipeDirection,
 }: {
   itemData: ItemData;
@@ -50,6 +53,9 @@ const SwipeableCard = ({
   lockGesture: SharedValue<boolean>;
   currentCardIndex: number;
   cardsLength: number;
+  translateX: SharedValue<number>;
+  translateY: SharedValue<number>;
+  dragging: SharedValue<boolean>;
   swipeDirection: SharedValue<SwipeDirection | null>;
 }) => {
   const userContext = useUserContext();
@@ -57,12 +63,9 @@ const SwipeableCard = ({
   const [wrapperWidth, setWrapperWidth] = useState<number | null>(null);
   const [wrapperHeight, setWrapperHeight] = useState<number | null>(null);
 
-  const translateX = useSharedValue(0);
-  const translateY = useSharedValue(0);
   const velocityX = useSharedValue(0);
   const velocityY = useSharedValue(0);
   const rotate = useSharedValue('0deg');
-  const dragging = useSharedValue(false);
 
   const getBackToStartingPosition = () => {
     'worklet';
@@ -98,7 +101,12 @@ const SwipeableCard = ({
         return;
       }
       if (userContext.swipingLeftRightBlockedReason) {
-        runOnJS(showInfo)('swiping left right blocked', userContext.swipingLeftRightBlockedReason);
+        if (Math.abs(translateX.value) > SWIPE_THRESHOLD_HORIZONTAL) {
+          runOnJS(showInfo)(
+            'swiping left right blocked',
+            userContext.swipingLeftRightBlockedReason
+          );
+        }
         getBackToStartingPosition();
         return;
       }
@@ -122,28 +130,16 @@ const SwipeableCard = ({
     });
 
   const shadowColor = useDerivedValue(() => {
-    if (!dragging.value) {
-      swipeDirection.value = null;
-      return DECISION_COLORS.NONE;
+    switch (swipeDirection.value) {
+      case SwipeDirection.DOWN:
+        return DECISION_COLORS.BOTTOM;
+      case SwipeDirection.LEFT:
+        return DECISION_COLORS.LEFT;
+      case SwipeDirection.RIGHT:
+        return DECISION_COLORS.RIGHT;
+      case null:
+        return DECISION_COLORS.NONE;
     }
-    if (translateY.value > SWIPE_THRESHOLD_VERTICAL) {
-      swipeDirection.value = SwipeDirection.DOWN;
-      return DECISION_COLORS.BOTTOM;
-    }
-    if (translateY.value > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
-      swipeDirection.value = null;
-      return DECISION_COLORS.NONE;
-    }
-    if (Math.abs(translateX.value) < SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
-      swipeDirection.value = null;
-      return DECISION_COLORS.NONE;
-    }
-    if (translateX.value > 0) {
-      swipeDirection.value = SwipeDirection.RIGHT;
-      return DECISION_COLORS.RIGHT;
-    }
-    swipeDirection.value = SwipeDirection.LEFT;
-    return DECISION_COLORS.LEFT;
   });
 
   const shadowRadius = useDerivedValue(() => {

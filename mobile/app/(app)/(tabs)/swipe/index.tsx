@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, View } from 'react-native';
+import { Dimensions, SafeAreaView, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { useSharedValue } from 'react-native-reanimated';
+import { useAnimatedReaction, useSharedValue } from 'react-native-reanimated';
 import SwipeableCard from '../../components/SwipeableCard';
 import { router } from 'expo-router';
 import { ItemData, SwipeDirection } from '../../types';
@@ -17,6 +17,16 @@ import { executeProtectedQuery } from '../../db_utils/executeProtectedQuery';
 import TextWrapper from '../../genericComponents/TextWrapper';
 import SwipeBackgroundAnimation from '../../components/SwipeBackgroundAnimation';
 
+const { width, height } = Dimensions.get('window');
+const SWIPE_THRESHOLD_HORIZONTAL = 0.25 * width;
+const SWIPE_THRESHOLD_VERTICAL = 0.25 * height;
+// this treshold says if the the horizontal swipe can be performed
+// if the left/right swipe goes beyond that treshold vertically it will not be performed
+const SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL = 50;
+const MAX_RADIUS = 30;
+const END_ANIMATION_DURATION = 200;
+const DECIDE_ICON_SIZE = 100;
+
 const LOADED_ITEMS_CAPACITY = 5;
 // when there are less items loaded than this value, new items will be fetched
 const ITEMS_LOAD_TRESHOLD = 3;
@@ -28,10 +38,52 @@ export default function Swipe() {
   const [emptyCardsResponseReceived, setEmptyCardsResponseReceived] = useState<boolean>(false);
 
   const lockGesture = useSharedValue<boolean>(false);
+  const translateX = useSharedValue(0);
+  const translateY = useSharedValue(0);
+  const dragging = useSharedValue(false);
   const swipeDirection = useSharedValue<SwipeDirection | null>(null);
 
   const itemsContext = useItemsContext();
   const userContext = useUserContext();
+
+  useAnimatedReaction(
+    () => {
+      if (!dragging.value) {
+        return null;
+      }
+      if (translateY.value > SWIPE_THRESHOLD_VERTICAL) {
+        return SwipeDirection.DOWN;
+      }
+      if (translateY.value > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
+        return null;
+      }
+      if (Math.abs(translateX.value) < SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
+        return null;
+      }
+      if (translateX.value > 0) {
+        return SwipeDirection.RIGHT;
+      }
+      return SwipeDirection.LEFT;
+    },
+    (prepared, previous) => {
+      if (prepared === previous) {
+        return;
+      }
+      swipeDirection.value = prepared;
+    }
+  );
+
+  // useAnimatedReaction(
+  //   () => {
+  //     return swipeDirection.value;
+  //   },
+  //   (prepared, previous) => {
+  //     if (prepared === previous) {
+  //       return;
+  //     }
+  //     console.log('direction changed', prepared);
+  //   }
+  // );
 
   useEffect(() => {
     (async () => {
@@ -201,7 +253,11 @@ export default function Swipe() {
     <GestureHandlerRootView>
       <SafeAreaView style={styles.container}>
         <View style={styles.container}>
-          <SwipeBackgroundAnimation swipeDirection={swipeDirection} />
+          <SwipeBackgroundAnimation
+            swipeDirection={swipeDirection}
+            cardTranslateX={translateX}
+            cardTranslateY={translateY}
+          />
           {cards.length === 0 && !userContext.blockingLoading && (
             <View style={styles.noCardsWrapper}>
               <TextWrapper style={styles.noCardsLabel}>No more cards</TextWrapper>
@@ -223,6 +279,9 @@ export default function Swipe() {
               }}
               cardsLength={cards.length}
               currentCardIndex={index}
+              translateX={translateX}
+              translateY={translateY}
+              dragging={dragging}
               swipeDirection={swipeDirection}
             />
           ))}
