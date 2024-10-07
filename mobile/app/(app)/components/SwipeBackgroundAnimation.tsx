@@ -150,8 +150,24 @@ const SwipeBackgroundAnimation = ({
       if (prepared === previous) {
         return;
       }
-      // console.log('swipeIntensity update', prepared);
       swipeIntensity.value = prepared;
+    }
+  );
+
+  const opacityStartingIntensity = useSharedValue<number>(0);
+
+  useAnimatedReaction(
+    () => {
+      if (swipeDirection.value == null || regenerateItems || !items.length) {
+        return 0;
+      }
+      return swipeIntensity.value;
+    },
+    (prepared, previous) => {
+      if (previous !== 0) {
+        return;
+      }
+      opacityStartingIntensity.value = prepared;
     }
   );
 
@@ -160,7 +176,7 @@ const SwipeBackgroundAnimation = ({
       if (swipeDirection.value == null || regenerateItems || !items.length) {
         return 0;
       }
-      return swipeIntensity.value;
+      return swipeIntensity.value - opacityStartingIntensity.value;
     },
     (prepared, previous) => {
       if (previous === prepared) {
