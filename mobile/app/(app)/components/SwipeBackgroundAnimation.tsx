@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
-import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import Animated, {
+  runOnJS,
+  SharedValue,
+  useAnimatedReaction,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
 import { SwipeDirection } from '../types';
 
 const MIN_SIZE = 20;
 const MAX_SIZE = 50;
 const ITEM_COUNT = 50;
 const DISTANCE = 20;
+const GENERATE_ATTEMPTS_LIMIT = 100;
 
 interface Item {
   x: number;
@@ -67,7 +75,7 @@ const generateNonCollidingItems = (containerDimensions: ViewDimensions): Item[] 
   const items: Item[] = [];
   let attempts = 0;
 
-  while (items.length < ITEM_COUNT && attempts < 1000) {
+  while (items.length < ITEM_COUNT && attempts < GENERATE_ATTEMPTS_LIMIT) {
     const size = getRandomInt(MIN_SIZE, MAX_SIZE);
     const x = getRandomInt(0, containerDimensions.width - size);
     const y = getRandomInt(0, containerDimensions.height - size);
@@ -125,21 +133,40 @@ const AnimatedItem: React.FC<AnimatedItemProps> = ({ item }) => {
 const SwipeBackgroundAnimation = ({
   swipeDirection,
 }: {
-  swipeDirection: SwipeDirection | null;
+  swipeDirection: SharedValue<SwipeDirection | null>;
 }) => {
   const [items, setItems] = useState<Item[]>([]);
   const [containerDimensions, setContainerDimensions] = useState<ViewDimensions | null>(null);
+  const [regenerateItems, setRegenerateItems] = useState(false);
+
+  useAnimatedReaction(
+    () => {
+      return swipeDirection.value;
+    },
+    (prepared, previous) => {
+      if (previous === prepared || prepared === null || containerDimensions === null) {
+        return;
+      }
+      console.log('swipe direction changed', previous, prepared);
+      runOnJS(setRegenerateItems)(true);
+    }
+  );
 
   useEffect(() => {
-    console.log('swipe direction changed', swipeDirection);
-  }, [swipeDirection]);
-
-  useEffect(() => {
-    if (!containerDimensions || swipeDirection === null) {
+    if (!regenerateItems || containerDimensions === null) {
       return;
     }
     setItems(generateNonCollidingItems(containerDimensions));
-  }, [containerDimensions, swipeDirection]);
+    setRegenerateItems(false);
+  }, [regenerateItems]);
+
+  useEffect(() => {
+    if (!containerDimensions || swipeDirection.value === null) {
+      return;
+    }
+    console.log('set items');
+    setItems(generateNonCollidingItems(containerDimensions));
+  }, [containerDimensions, swipeDirection.value]);
 
   // once the swipe direction is set, change the opacity of elements to 1 and start tremble + when swiped, make some other animation
 

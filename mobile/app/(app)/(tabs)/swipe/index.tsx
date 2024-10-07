@@ -26,9 +26,10 @@ export default function Swipe() {
 
   const [cards, setCards] = useState<ItemData[]>([]);
   const [emptyCardsResponseReceived, setEmptyCardsResponseReceived] = useState<boolean>(false);
-  const [swipeDirection, setSwipeDirection] = useState<SwipeDirection | null>(null);
 
   const lockGesture = useSharedValue<boolean>(false);
+  const swipeDirection = useSharedValue<SwipeDirection | null>(null);
+
   const itemsContext = useItemsContext();
   const userContext = useUserContext();
 
@@ -222,7 +223,7 @@ export default function Swipe() {
               }}
               cardsLength={cards.length}
               currentCardIndex={index}
-              setSwipeDirection={setSwipeDirection}
+              swipeDirection={swipeDirection}
             />
           ))}
         </View>

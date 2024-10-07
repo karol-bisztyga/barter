@@ -42,7 +42,7 @@ const SwipeableCard = ({
   onPressMore,
   currentCardIndex,
   cardsLength,
-  setSwipeDirection,
+  swipeDirection,
 }: {
   itemData: ItemData;
   swipeCallbacks: SwipeCallbacks;
@@ -50,7 +50,7 @@ const SwipeableCard = ({
   lockGesture: SharedValue<boolean>;
   currentCardIndex: number;
   cardsLength: number;
-  setSwipeDirection: (_: SwipeDirection | null) => void;
+  swipeDirection: SharedValue<SwipeDirection | null>;
 }) => {
   const userContext = useUserContext();
 
@@ -123,26 +123,26 @@ const SwipeableCard = ({
 
   const shadowColor = useDerivedValue(() => {
     if (!dragging.value) {
-      runOnJS(setSwipeDirection)(null);
+      swipeDirection.value = null;
       return DECISION_COLORS.NONE;
     }
     if (translateY.value > SWIPE_THRESHOLD_VERTICAL) {
-      runOnJS(setSwipeDirection)(SwipeDirection.DOWN);
+      swipeDirection.value = SwipeDirection.DOWN;
       return DECISION_COLORS.BOTTOM;
     }
     if (translateY.value > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
-      runOnJS(setSwipeDirection)(null);
+      swipeDirection.value = null;
       return DECISION_COLORS.NONE;
     }
     if (Math.abs(translateX.value) < SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
-      runOnJS(setSwipeDirection)(null);
+      swipeDirection.value = null;
       return DECISION_COLORS.NONE;
     }
     if (translateX.value > 0) {
-      runOnJS(setSwipeDirection)(SwipeDirection.RIGHT);
+      swipeDirection.value = SwipeDirection.RIGHT;
       return DECISION_COLORS.RIGHT;
     }
-    runOnJS(setSwipeDirection)(SwipeDirection.LEFT);
+    swipeDirection.value = SwipeDirection.LEFT;
     return DECISION_COLORS.LEFT;
   });
 
