@@ -1,13 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { useAnimatedReaction, useSharedValue } from 'react-native-reanimated';
-import SwipeableCard, {
-  SWIPE_THRESHOLD_VERTICAL,
-  SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL,
-} from '../../components/SwipeableCard';
+import { useSharedValue } from 'react-native-reanimated';
+import SwipeableCard from '../../components/SwipeableCard';
 import { router } from 'expo-router';
-import { ItemData, SwipeDirection } from '../../types';
+import { ItemData } from '../../types';
 import { useItemsContext } from '../../context/ItemsContext';
 import { useUserContext } from '../../context/UserContext';
 import { getUserItems } from '../../db_utils/getUserItems';
@@ -27,6 +24,7 @@ export default function Swipe() {
   const sessionContext = authorizeUser();
 
   const [cards, setCards] = useState<ItemData[]>([]);
+  const [activeCard, setActiveCard] = useState<ItemData | null>(null);
   const [emptyCardsResponseReceived, setEmptyCardsResponseReceived] = useState<boolean>(false);
 
   const lockGesture = useSharedValue<boolean>(false);
@@ -34,18 +32,7 @@ export default function Swipe() {
   const itemsContext = useItemsContext();
   const userContext = useUserContext();
 
-  // useAnimatedReaction(
-  //   () => {
-  //     return swipeDirection.value;
-  //   },
-  //   (prepared, previous) => {
-  //     if (prepared === previous) {
-  //       return;
-  //     }
-  //     console.log('direction changed', prepared);
-  //   }
-  // );
-
+  // onboarding
   useEffect(() => {
     (async () => {
       try {
@@ -64,6 +51,7 @@ export default function Swipe() {
     })();
   }, []);
 
+  // load user's items
   useEffect(() => {
     if (!userContext.data) {
       handleError(
@@ -81,41 +69,7 @@ export default function Swipe() {
       });
   }, []);
 
-  const popAndLoadCard = async (): Promise<ItemData | null> => {
-    const currentCard = cards.at(-1);
-    if (currentCard === undefined) {
-      return null;
-    }
-
-    // pop
-    let updatedCards = [...cards.slice(0, -1)];
-
-    if (cards.length <= ITEMS_LOAD_TRESHOLD) {
-      try {
-        if (emptyCardsResponseReceived) {
-          showInfo('no items available for now, try again later');
-          return currentCard;
-        }
-        const itemsLoaded = await getItemsForCards(
-          sessionContext,
-          cards.map((card) => card.id),
-          LOADED_ITEMS_CAPACITY,
-          userContext.data?.location
-        );
-        if (!itemsLoaded.length) {
-          setEmptyCardsResponseReceived(true);
-          return currentCard;
-        }
-        updatedCards = [...itemsLoaded, ...updatedCards];
-      } catch (e) {
-        handleError(ErrorType.LOAD_CARDS, `${e}`);
-        return null;
-      }
-    }
-    setCards(updatedCards);
-    return currentCard;
-  };
-
+  // load cards initially
   useEffect(() => {
     (async () => {
       try {
@@ -124,7 +78,7 @@ export default function Swipe() {
           return;
         }
         userContext.setBlockingLoading(true);
-        const itemsLoaded = await getItemsForCards(
+        const itemsLoaded: ItemData[] = await getItemsForCards(
           sessionContext,
           cards.map((card) => card.id),
           LOADED_ITEMS_CAPACITY,
@@ -136,12 +90,61 @@ export default function Swipe() {
         }
 
         userContext.setBlockingLoading(false);
+        const newActiveCard = itemsLoaded.pop();
+        if (!newActiveCard) {
+          throw new Error('could not find active card');
+        }
+        setActiveCard(newActiveCard);
         setCards(itemsLoaded);
       } catch (e) {
         handleError(ErrorType.LOAD_CARDS, `${e}`);
       }
     })();
   }, []);
+
+  const popAndLoadCard = async (): Promise<ItemData | null> => {
+    console.log('popn load', activeCard?.name);
+    if (activeCard === undefined) {
+      return null;
+    }
+
+    let updatedCards = [...cards];
+
+    if (cards.length <= ITEMS_LOAD_TRESHOLD) {
+      try {
+        if (emptyCardsResponseReceived) {
+          showInfo('no items available for now, try again later');
+          return activeCard;
+        }
+        const itemsLoaded = await getItemsForCards(
+          sessionContext,
+          cards.map((card) => card.id),
+          LOADED_ITEMS_CAPACITY,
+          userContext.data?.location
+        );
+        if (!itemsLoaded.length) {
+          setEmptyCardsResponseReceived(true);
+          return activeCard;
+        }
+        updatedCards = [...itemsLoaded, ...updatedCards];
+      } catch (e) {
+        handleError(ErrorType.LOAD_CARDS, `${e}`);
+        return null;
+      }
+    }
+    const newActiveCard = updatedCards.pop();
+    if (!newActiveCard) {
+      return null;
+    }
+    console.log('new active card', newActiveCard.name);
+    setActiveCard(newActiveCard);
+    setCards(updatedCards);
+    return activeCard;
+  };
+
+  useEffect(() => {
+    console.log('active card update', activeCard?.name);
+  }, [activeCard]);
 
   const sendLike = async (likedItemId: string, decision: boolean) => {
     try {
@@ -201,10 +204,10 @@ export default function Swipe() {
 
   const handleSwipeDown = async () => {
     try {
-      const swipedCard = await popAndLoadCard();
-      if (!swipedCard) {
+      if (!activeCard) {
         throw new Error('could not find swiped card');
       }
+      await popAndLoadCard();
     } catch (e) {
       handleError(ErrorType.SWIPE, `${e}`);
     }
@@ -219,10 +222,9 @@ export default function Swipe() {
               <TextWrapper style={styles.noCardsLabel}>No more cards</TextWrapper>
             </View>
           )}
-          {cards.map((card, index) => (
+          {activeCard && (
             <SwipeableCard
-              key={`${card.id}-${index}`}
-              itemData={card}
+              itemData={activeCard}
               swipeCallbacks={{
                 onSwipeRight: handleSwipeRight,
                 onSwipeLeft: handleSwipeLeft,
@@ -230,13 +232,11 @@ export default function Swipe() {
               }}
               lockGesture={lockGesture}
               onPressMore={() => {
-                itemsContext.setOthersItem(card);
+                itemsContext.setOthersItem(activeCard);
                 router.push({ pathname: 'swipe/item', params: { whosItem: 'other' } });
               }}
-              cardsLength={cards.length}
-              currentCardIndex={index}
             />
-          ))}
+          )}
         </View>
       </SafeAreaView>
     </GestureHandlerRootView>

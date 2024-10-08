@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { StyleSheet, Dimensions, View } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, Dimensions } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
@@ -12,6 +12,7 @@ import Animated, {
   clamp,
   interpolate,
   useAnimatedReaction,
+  ReduceMotion,
 } from 'react-native-reanimated';
 import { ItemData, SwipeCallbacks, SwipeDirection } from '../types';
 import { useUserContext } from '../context/UserContext';
@@ -42,15 +43,11 @@ const SwipeableCard = ({
   swipeCallbacks,
   lockGesture,
   onPressMore,
-  currentCardIndex,
-  cardsLength,
 }: {
   itemData: ItemData;
   swipeCallbacks: SwipeCallbacks;
   onPressMore: () => void;
   lockGesture: SharedValue<boolean>;
-  currentCardIndex: number;
-  cardsLength: number;
 }) => {
   const userContext = useUserContext();
 
@@ -66,11 +63,67 @@ const SwipeableCard = ({
   const velocityY = useSharedValue(0);
   const rotate = useSharedValue('0deg');
 
+  const forceControlsScale = useSharedValue(1);
+  const forceControlsOpacity = useSharedValue(1);
+
+  const cardOpacity = useSharedValue(0);
+
   const getBackToStartingPosition = () => {
     'worklet';
+
     translateX.value = withSpring(0);
     translateY.value = withSpring(0);
     rotate.value = withSpring('0deg');
+  };
+
+  const completeAnimations = useSharedValue(0);
+
+  const resetPositionAfterSwipe = () => {
+    'worklet';
+    lockGesture.value = true;
+    translateY.value = -height * 2;
+    translateX.value = -width / 2;
+    cardOpacity.value = 0;
+
+    rotate.value = withSpring('0deg');
+
+    const completeAnimation = () => {
+      'worklet';
+      completeAnimations.value = completeAnimations.value + 1;
+      if (completeAnimations.value === 2) {
+        lockGesture.value = false;
+        completeAnimations.value = 0;
+      }
+    };
+
+    cardOpacity.value = withTiming(1, { duration: 1000 }, completeAnimation);
+
+    translateX.value = withSpring(
+      0,
+      {
+        mass: 1,
+        damping: 20,
+        stiffness: 200,
+        overshootClamping: false,
+        restDisplacementThreshold: 0.01,
+        restSpeedThreshold: 2,
+        reduceMotion: ReduceMotion.System,
+      },
+      completeAnimation
+    );
+    translateY.value = withSpring(
+      0,
+      {
+        mass: 1,
+        damping: 20,
+        stiffness: 200,
+        overshootClamping: false,
+        restDisplacementThreshold: 0.01,
+        restSpeedThreshold: 2,
+        reduceMotion: ReduceMotion.System,
+      },
+      completeAnimation
+    );
   };
 
   const gesture = Gesture.Pan()
@@ -318,26 +371,29 @@ const SwipeableCard = ({
     };
   });
 
-  const isCurrentCardOnTop = currentCardIndex === cardsLength - 1;
+  const forcedControlsParametersAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: forceControlsOpacity.value,
+      transform: [{ scale: forceControlsScale.value }],
+    };
+  });
 
-  const controlIconsOpacityStyle = {
-    opacity: isCurrentCardOnTop ? 1 : 0,
-  };
+  const opacityAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: cardOpacity.value,
+    };
+  });
 
-  const getCardOpacityStyle = () => {
-    let opacity = 0;
-    const distanceFromTop = cardsLength - 1 - currentCardIndex;
-    if (distanceFromTop === 0) {
-      opacity = 1;
-    } else if (distanceFromTop === 1) {
-      opacity = 0;
+  useEffect(() => {
+    if (!itemData) {
+      return;
     }
-    return { opacity };
-  };
+    resetPositionAfterSwipe();
+  }, [itemData]);
 
   return (
-    <View
-      style={[styles.container, controlIconsOpacityStyle]}
+    <Animated.View
+      style={[styles.container, opacityAnimatedStyle]}
       onLayout={(event) => {
         setWrapperHeight(event.nativeEvent.layout.height);
         setWrapperWidth(event.nativeEvent.layout.width);
@@ -374,7 +430,8 @@ const SwipeableCard = ({
             },
             styles.decideIconWrapperLeft,
             decideIconLeftAnimatedStyle,
-            controlIconsOpacityStyle,
+            opacityAnimatedStyle,
+            forcedControlsParametersAnimatedStyle,
           ]}
         >
           <FontAwesome size={DECIDE_ICON_SIZE} style={styles.decideIcon} name="remove" />
@@ -390,7 +447,8 @@ const SwipeableCard = ({
             },
             styles.decideIconWrapperRight,
             decideIconRightAnimatedStyle,
-            controlIconsOpacityStyle,
+            opacityAnimatedStyle,
+            forcedControlsParametersAnimatedStyle,
           ]}
         >
           <FontAwesome size={DECIDE_ICON_SIZE} style={styles.decideIcon} name="bomb" />
@@ -409,13 +467,14 @@ const SwipeableCard = ({
             },
             styles.decideIconWrapperRight,
             decideIconBottomAnimatedStyle,
-            controlIconsOpacityStyle,
+            opacityAnimatedStyle,
+            forcedControlsParametersAnimatedStyle,
           ]}
         >
           <FontAwesome size={DECIDE_ICON_SIZE} style={styles.decideIcon} name="clock-o" />
         </Animated.View>
       )}
-    </View>
+    </Animated.View>
   );
 };
 
