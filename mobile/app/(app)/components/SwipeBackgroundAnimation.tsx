@@ -15,7 +15,6 @@ import SwipeBackgroundAnimatedItem, {
 
 const getIconForSwipeDirection = (swipeDirection: SwipeDirection | null) => {
   'worklet';
-  console.log('icons for swipe dir', swipeDirection);
   switch (swipeDirection) {
     case SwipeDirection.LEFT:
       return 'remove';
@@ -205,7 +204,6 @@ const SwipeBackgroundAnimation = ({
     <View
       style={styles.container}
       onLayout={(e) => {
-        console.log(e.nativeEvent.layout);
         setContainerDimensions({
           width: e.nativeEvent.layout.width,
           height: e.nativeEvent.layout.height,

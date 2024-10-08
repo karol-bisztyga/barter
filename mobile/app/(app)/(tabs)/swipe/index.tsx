@@ -18,7 +18,6 @@ import { showError, showInfo } from '../../utils/notifications';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import { executeProtectedQuery } from '../../db_utils/executeProtectedQuery';
 import TextWrapper from '../../genericComponents/TextWrapper';
-import SwipeBackgroundAnimation from '../../components/SwipeBackgroundAnimation';
 
 const LOADED_ITEMS_CAPACITY = 5;
 // when there are less items loaded than this value, new items will be fetched
@@ -31,40 +30,9 @@ export default function Swipe() {
   const [emptyCardsResponseReceived, setEmptyCardsResponseReceived] = useState<boolean>(false);
 
   const lockGesture = useSharedValue<boolean>(false);
-  const translateX = useSharedValue(0);
-  const translateY = useSharedValue(0);
-  const dragging = useSharedValue(false);
-  const swipeDirection = useSharedValue<SwipeDirection | null>(null);
 
   const itemsContext = useItemsContext();
   const userContext = useUserContext();
-
-  useAnimatedReaction(
-    () => {
-      if (!dragging.value) {
-        return null;
-      }
-      if (translateY.value > SWIPE_THRESHOLD_VERTICAL) {
-        return SwipeDirection.DOWN;
-      }
-      if (translateY.value > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
-        return null;
-      }
-      if (Math.abs(translateX.value) < SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
-        return null;
-      }
-      if (translateX.value > 0) {
-        return SwipeDirection.RIGHT;
-      }
-      return SwipeDirection.LEFT;
-    },
-    (prepared, previous) => {
-      if (prepared === previous) {
-        return;
-      }
-      swipeDirection.value = prepared;
-    }
-  );
 
   // useAnimatedReaction(
   //   () => {
@@ -246,11 +214,6 @@ export default function Swipe() {
     <GestureHandlerRootView>
       <SafeAreaView style={styles.container}>
         <View style={styles.container}>
-          <SwipeBackgroundAnimation
-            swipeDirection={swipeDirection}
-            cardTranslateX={translateX}
-            cardTranslateY={translateY}
-          />
           {cards.length === 0 && !userContext.blockingLoading && (
             <View style={styles.noCardsWrapper}>
               <TextWrapper style={styles.noCardsLabel}>No more cards</TextWrapper>
@@ -272,10 +235,6 @@ export default function Swipe() {
               }}
               cardsLength={cards.length}
               currentCardIndex={index}
-              translateX={translateX}
-              translateY={translateY}
-              dragging={dragging}
-              swipeDirection={swipeDirection}
             />
           ))}
         </View>

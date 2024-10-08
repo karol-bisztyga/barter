@@ -11,12 +11,14 @@ import Animated, {
   SharedValue,
   clamp,
   interpolate,
+  useAnimatedReaction,
 } from 'react-native-reanimated';
 import { ItemData, SwipeCallbacks, SwipeDirection } from '../types';
 import { useUserContext } from '../context/UserContext';
 import { showInfo } from '../utils/notifications';
 import CardItem from './CardItem';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import SwipeBackgroundAnimation from './SwipeBackgroundAnimation';
 
 const { width, height } = Dimensions.get('window');
 const SWIPE_THRESHOLD_HORIZONTAL = 0.25 * width;
@@ -42,10 +44,6 @@ const SwipeableCard = ({
   onPressMore,
   currentCardIndex,
   cardsLength,
-  translateX,
-  translateY,
-  dragging,
-  swipeDirection,
 }: {
   itemData: ItemData;
   swipeCallbacks: SwipeCallbacks;
@@ -53,15 +51,16 @@ const SwipeableCard = ({
   lockGesture: SharedValue<boolean>;
   currentCardIndex: number;
   cardsLength: number;
-  translateX: SharedValue<number>;
-  translateY: SharedValue<number>;
-  dragging: SharedValue<boolean>;
-  swipeDirection: SharedValue<SwipeDirection | null>;
 }) => {
   const userContext = useUserContext();
 
   const [wrapperWidth, setWrapperWidth] = useState<number | null>(null);
   const [wrapperHeight, setWrapperHeight] = useState<number | null>(null);
+
+  const translateX = useSharedValue(0);
+  const translateY = useSharedValue(0);
+  const dragging = useSharedValue(false);
+  const swipeDirection = useSharedValue<SwipeDirection | null>(null);
 
   const velocityX = useSharedValue(0);
   const velocityY = useSharedValue(0);
@@ -128,6 +127,33 @@ const SwipeableCard = ({
         getBackToStartingPosition();
       }
     });
+
+  useAnimatedReaction(
+    () => {
+      if (!dragging.value) {
+        return null;
+      }
+      if (translateY.value > SWIPE_THRESHOLD_VERTICAL) {
+        return SwipeDirection.DOWN;
+      }
+      // if (translateY.value > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
+      //   return null;
+      // }
+      if (Math.abs(translateX.value) < SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
+        return null;
+      }
+      if (translateX.value > 0) {
+        return SwipeDirection.RIGHT;
+      }
+      return SwipeDirection.LEFT;
+    },
+    (prepared, previous) => {
+      if (prepared === previous) {
+        return;
+      }
+      swipeDirection.value = prepared;
+    }
+  );
 
   const shadowColor = useDerivedValue(() => {
     switch (swipeDirection.value) {
@@ -311,12 +337,17 @@ const SwipeableCard = ({
 
   return (
     <View
-      style={[styles.container, getCardOpacityStyle()]}
+      style={[styles.container, controlIconsOpacityStyle]}
       onLayout={(event) => {
         setWrapperHeight(event.nativeEvent.layout.height);
         setWrapperWidth(event.nativeEvent.layout.width);
       }}
     >
+      <SwipeBackgroundAnimation
+        swipeDirection={swipeDirection}
+        cardTranslateX={translateX}
+        cardTranslateY={translateY}
+      />
       {/* card */}
       {wrapperHeight && (
         <GestureDetector gesture={gesture}>
