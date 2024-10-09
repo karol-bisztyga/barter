@@ -224,9 +224,9 @@ export const getItemsForCards = async (req: AuthRequest, res: Response) => {
           current_user_location_city
       ORDER BY
         CASE
-            WHEN curr_user.location_coordinate_lat <> '' AND target_item_owner.location_coordinate_lat <> '' THEN 3
+            WHEN curr_user.location_coordinate_lat <> '' AND target_item_owner.location_coordinate_lat <> '' THEN 1
             WHEN target_item_owner.location_city = curr_user.location_city THEN 2
-            ELSE 1
+            ELSE 3
         END, distance_km DESC, RANDOM()
       LIMIT $${currentCardsIdsArr.length + 2};
     `;
