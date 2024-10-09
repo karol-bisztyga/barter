@@ -1,14 +1,14 @@
 import { SessionContextState } from '../../SessionContext';
 import { executeProtectedQuery } from './executeProtectedQuery';
 
-export const updateUser = async (
-  sessionContext: SessionContextState,
-  fieldName: string,
-  fieldValue: string
-) => {
+type Update = {
+  field: string;
+  value: string;
+};
+
+export const updateUser = async (sessionContext: SessionContextState, updates: Update[]) => {
   const response = await executeProtectedQuery(sessionContext, `user`, 'PUT', null, {
-    fieldName,
-    fieldValue,
+    updates: JSON.stringify(updates),
   });
   if (response.ok) {
     return response.data;

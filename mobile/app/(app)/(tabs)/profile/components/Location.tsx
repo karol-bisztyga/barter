@@ -14,12 +14,12 @@ const Location = () => {
   useEffect(() => {
     (async () => {
       try {
-        setLocation((await formatLocation(userContext.data?.location)) || 'Unknown');
+        setLocation((await formatLocation(userContext.data)) || 'Unknown');
       } catch (e) {
         setLocation('Error getting location');
       }
     })();
-  }, [userContext.data?.location]);
+  }, [userContext.data?.userLocationCity, userContext.data?.userLocationCoordinates]);
 
   return (
     <View style={styles.container}>

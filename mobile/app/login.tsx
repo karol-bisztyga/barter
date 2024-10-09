@@ -22,7 +22,9 @@ const sampleUsers = [
     instagram: 'testowyyy11',
     profilePicture: 'https://f003.backblazeb2.com/file/profile-pictures-wymianka/profile-pic-1.jpg',
     password: 'testowehaslo111',
-    location: '50.067570, 19.917868',
+    location_coordinate_lat: '50.067570',
+    location_coordinate_lon: '19.917868',
+    location_city: 'Krakow',
     id: 1,
   },
   {
@@ -33,7 +35,9 @@ const sampleUsers = [
     instagram: 'testowy22',
     profilePicture: null,
     password: 'testowehaslo222',
-    location: '50.066331, 19.928390',
+    location_coordinate_lat: '50.066331',
+    location_coordinate_lon: '19.928390',
+    location_city: 'Krakow',
     id: 2,
   },
   {
@@ -44,7 +48,9 @@ const sampleUsers = [
     instagram: null,
     profilePicture: 'https://f003.backblazeb2.com/file/profile-pictures-wymianka/profile-pic-3.jpg',
     password: 'testowehaslo333',
-    location: '50.067143, 20.052357',
+    location_coordinate_lat: '50.067143',
+    location_coordinate_lon: '20.052357',
+    location_city: 'Krakow',
     id: 3,
   },
   {
@@ -65,7 +71,7 @@ const sampleUsers = [
     instagram: 'testowy55555',
     profilePicture: 'https://f003.backblazeb2.com/file/profile-pictures-wymianka/profile-pic-5.jpg',
     password: 'testowehaslo555',
-    location: 'Krakow, Poland',
+    location_city: 'Krakow',
     id: 5,
   },
   {

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { SafeAreaView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, SafeAreaView, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSharedValue } from 'react-native-reanimated';
 import SwipeableCard from '../../components/SwipeableCard';
@@ -26,6 +26,7 @@ export default function Swipe() {
   const [cards, setCards] = useState<ItemData[]>([]);
   const [activeCard, setActiveCard] = useState<ItemData | null>(null);
   const [emptyCardsResponseReceived, setEmptyCardsResponseReceived] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const lockGesture = useSharedValue<boolean>(false);
 
@@ -77,19 +78,18 @@ export default function Swipe() {
           showInfo('no items available for now, try again later');
           return;
         }
-        userContext.setBlockingLoading(true);
+        setLoading(true);
         const itemsLoaded: ItemData[] = await getItemsForCards(
           sessionContext,
           cards.map((card) => card.id),
-          LOADED_ITEMS_CAPACITY,
-          userContext.data?.location
+          LOADED_ITEMS_CAPACITY
         );
         if (!itemsLoaded.length) {
           setEmptyCardsResponseReceived(true);
           return;
         }
 
-        userContext.setBlockingLoading(false);
+        setLoading(false);
         const newActiveCard = itemsLoaded.pop();
         if (!newActiveCard) {
           throw new Error('could not find active card');
@@ -119,8 +119,7 @@ export default function Swipe() {
         const itemsLoaded = await getItemsForCards(
           sessionContext,
           cards.map((card) => card.id),
-          LOADED_ITEMS_CAPACITY,
-          userContext.data?.location
+          LOADED_ITEMS_CAPACITY
         );
         if (!itemsLoaded.length) {
           setEmptyCardsResponseReceived(true);
@@ -217,7 +216,7 @@ export default function Swipe() {
     <GestureHandlerRootView>
       <SafeAreaView style={styles.container}>
         <View style={styles.container}>
-          {cards.length === 0 && !userContext.blockingLoading && (
+          {cards.length === 0 && !loading && (
             <View style={styles.noCardsWrapper}>
               <TextWrapper style={styles.noCardsLabel}>No more cards</TextWrapper>
             </View>
@@ -238,6 +237,11 @@ export default function Swipe() {
             />
           )}
         </View>
+        {loading && (
+          <View style={styles.loader}>
+            <ActivityIndicator size="large" />
+          </View>
+        )}
       </SafeAreaView>
     </GestureHandlerRootView>
   );
@@ -259,5 +263,13 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontStyle: 'italic',
     opacity: 0.5,
+  },
+  loader: {
+    position: 'absolute',
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(0, 0, 0, .7)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

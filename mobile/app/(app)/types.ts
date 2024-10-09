@@ -4,7 +4,8 @@ export type ItemData = {
   name: string;
   images: string[];
   description: string;
-  userLocation?: string;
+  distanceKm?: string;
+  ownerLocationCity?: string;
   userName?: string;
 };
 
@@ -44,7 +45,8 @@ export type UserData = {
   instagram?: string;
   facebook?: string;
   profilePicture?: string;
-  location: string;
+  userLocationCity?: string;
+  userLocationCoordinates?: string;
   verificationCode?: string;
   onboarded: string;
 };

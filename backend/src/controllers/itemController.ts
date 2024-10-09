@@ -5,6 +5,7 @@ import { getUserIdFromRequest } from '../utils';
 import { updateMatchDateUpdated } from './matchController';
 import { MAX_ITEM_PICTURES } from '../constants';
 import { StorageHandler } from '../utils/storageUtils';
+import * as QueryString from 'qs';
 
 export const createItem = async (req: AuthRequest, res: Response) => {
   const { name, description, images } = req.body;
@@ -171,50 +172,82 @@ export const getItemsForCards = async (req: AuthRequest, res: Response) => {
     const { limit, currentCardsIds } = req.query;
 
     const currentCardsIdsArr: string[] = (JSON.parse(currentCardsIds as string) as string[]) || [];
-    console.log('pulling cards excluding', currentCardsIdsArr);
 
     let additionalCondition = '';
-    let queryArgs = [userId, limit];
+    let queryArgs: Array<
+      string | QueryString.ParsedQs | string[] | QueryString.ParsedQs[] | undefined
+    > = [userId, limit];
 
     if (currentCardsIdsArr.length) {
       additionalCondition = `AND items.id NOT IN (${currentCardsIdsArr.map((_: string, i: number) => `$${i + 2}`).join(', ')})`;
       queryArgs = [userId, ...currentCardsIdsArr, limit];
     }
 
-    const query = `SELECT
+    const query = `
+      SELECT
         items.id AS id,
         items.name AS name,
         items.description AS description,
         ARRAY_AGG(items_images.url) AS images,
-        users.location AS user_location,
-        users.name AS user_name
+        target_item_owner.location_city AS owner_location_city,
+        curr_user.location_city AS current_user_location_city,
+        CAST(curr_user.location_coordinate_lat AS NUMERIC) AS user_location_lat,
+        CAST(curr_user.location_coordinate_lon AS NUMERIC) AS user_location_lon,
+        CAST(target_item_owner.location_coordinate_lat AS NUMERIC) AS target_location_lat,
+        CAST(target_item_owner.location_coordinate_lon AS NUMERIC) AS target_location_lon,
+        round(earth_distance(
+            ll_to_earth(CAST(curr_user.location_coordinate_lat AS NUMERIC), CAST(curr_user.location_coordinate_lon AS NUMERIC)),
+            ll_to_earth(CAST(target_item_owner.location_coordinate_lat AS NUMERIC), CAST(target_item_owner.location_coordinate_lon AS NUMERIC))
+        )/5000) AS distance_km
       FROM
           items
       JOIN
           items_images ON items.id = items_images.item_id
       JOIN
-          users ON users.id = items.user_id
+          users curr_user ON curr_user.id = $1
+      JOIN
+          users target_item_owner ON target_item_owner.id = items.user_id
       WHERE
           items.user_id <> $1
       AND
           items.id NOT IN (SELECT liked_id FROM likes WHERE liker_id = $1)
       ${additionalCondition}
       GROUP BY
-          items.id, items.name, items.description, users.location, users.name
+          items.id,
+          items.name,
+          items.description,
+          target_item_owner.location_city,
+          curr_user.location_coordinate_lat,
+          curr_user.location_coordinate_lon,
+          target_item_owner.location_coordinate_lat,
+          target_item_owner.location_coordinate_lon,
+          current_user_location_city
       ORDER BY
-          RANDOM()
+        CASE
+            WHEN curr_user.location_coordinate_lat <> '' AND target_item_owner.location_coordinate_lat <> '' THEN 3
+            WHEN target_item_owner.location_city = curr_user.location_city THEN 2
+            ELSE 1
+        END, distance_km DESC, RANDOM()
       LIMIT $${currentCardsIdsArr.length + 2};
-      `;
+    `;
 
     const result = await pool.query(query, queryArgs);
+
     const parsedResult = result.rows.map((row: Record<string, string>) => {
-      const userLocation = row.user_location;
-      delete row.user_location;
-      const userName = row.user_name;
-      delete row.user_name;
-      return { ...row, userLocation, userName };
+      const distanceKm = row.distance_km;
+      const ownerLocationCity = row.owner_location_city;
+
+      delete row.distance_km;
+      delete row.user_location_lat;
+      delete row.user_location_lon;
+      delete row.target_location_lat;
+      delete row.target_location_lon;
+      delete row.current_user_location_city;
+      delete row.owner_location_city;
+
+      return { ...row, distanceKm, ownerLocationCity };
     });
-    console.log('pulled cards', parsedResult);
+
     res.json(parsedResult);
   } catch (err) {
     res.status(500).send({ message: 'Server error: ' + err });

@@ -9,7 +9,8 @@ export const convertUserData = (userData: Record<string, string>): UserData => {
     facebook: userData.facebook,
     instagram: userData.instagram,
     profilePicture: userData.profile_picture,
-    location: userData.location,
+    userLocationCity: userData.location_city,
+    userLocationCoordinates: `${userData.location_coordinate_lat}, ${userData.location_coordinate_lon}`,
     verificationCode: userData.verification_code,
     onboarded: userData.onboarded,
   };

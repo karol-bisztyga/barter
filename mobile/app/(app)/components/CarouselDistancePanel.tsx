@@ -1,42 +1,18 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { useUserContext } from '../context/UserContext';
-import { getDistanceFromLatLonInKm } from '../utils/reusableStuff';
 import TextWrapper from '../genericComponents/TextWrapper';
 import { INDICATOR_HEIGHT } from './CarouselImageIndicators';
+import { ItemData } from '../types';
 
-const CarouselDistancePanel = ({ itemOwnerLocation }: { itemOwnerLocation: string }) => {
-  const userContext = useUserContext();
-
-  if (!userContext.data?.location) {
-    return null;
-  }
-
-  function isValidCoordinates(coords: string) {
-    const arr = coords.split(',');
-    if (arr.length !== 2) {
-      return false;
-    }
-    if (isNaN(Number(arr[0])) || isNaN(Number(arr[1]))) {
-      return false;
-    }
-    return true;
-  }
-
+const CarouselDistancePanel = ({ itemData }: { itemData: ItemData }) => {
   const getLabel = () => {
-    if (!userContext.data?.location) {
-      return null;
+    if (!itemData.ownerLocationCity && !itemData.distanceKm) {
+      return '';
     }
-    const distance = Math.round(
-      getDistanceFromLatLonInKm(userContext.data.location, itemOwnerLocation)
-    );
-    if (isNaN(distance)) {
-      if (isValidCoordinates(itemOwnerLocation)) {
-        return null;
-      }
-      return itemOwnerLocation;
+    if (itemData.distanceKm !== undefined && !isNaN(parseInt(itemData.distanceKm))) {
+      return `${itemData.distanceKm} km away`;
     }
-    return `${distance} km away`;
+    return itemData.ownerLocationCity;
   };
 
   const label = getLabel();

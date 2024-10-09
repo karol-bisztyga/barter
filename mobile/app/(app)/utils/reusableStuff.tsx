@@ -6,6 +6,7 @@ import { SessionContextState, useSessionContext } from '../../SessionContext';
 import { getUserMatches } from '../db_utils/getUserMatches';
 import { MatchContextState } from '../context/MatchContext';
 import { XMLParser } from 'fast-xml-parser';
+import { UserData } from '../types';
 
 export const headerBackButtonOptions = (
   beforeCallback?: () => Promise<boolean>,
@@ -56,11 +57,14 @@ export const updateMatches = async (
   matchContext.setLocalDateUpdated(dateUpdated);
 };
 
-export const formatLocation = async (locationStr?: string) => {
-  if (!locationStr) {
-    return '';
+export const formatLocation = async (userData: UserData | null): Promise<string> => {
+  if (userData?.userLocationCity) {
+    return userData.userLocationCity;
   }
-  return (await cityNameFromLocation(locationStr)) || locationStr || '';
+  if (!userData?.userLocationCoordinates) {
+    return await cityNameFromLocation(userData?.userLocationCoordinates);
+  }
+  return '';
 };
 
 export const cityNameFromLocation = async (location?: string) => {
@@ -117,4 +121,11 @@ export const sleep = async (ms: number = 1000) => {
       resolve(true);
     }, ms);
   });
+};
+
+export const getUserLocation = (userData: UserData | null) => {
+  if (!userData) {
+    return '';
+  }
+  userData.userLocationCoordinates || userData.userLocationCity;
 };

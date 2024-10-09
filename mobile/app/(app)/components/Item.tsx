@@ -66,12 +66,11 @@ export default function Item({
         ]}
       >
         <Carousel
-          images={itemData.images}
+          itemData={itemData}
           borderRadius={borderRadius}
           imageIndicatorsVisible={carouselOptions.dotsVisible}
           pressEnabled={carouselOptions.pressEnabled}
           actionPanelVisible={carouselOptions.actionPanelVisible}
-          itemOwnerLocation={itemData.userLocation}
           onPress={onPress}
         />
       </View>

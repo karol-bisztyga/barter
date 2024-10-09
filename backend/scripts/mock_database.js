@@ -67,8 +67,18 @@ const insertSampleUsers = async (hardcodedUsers = [], amount = 10) => {
     const client = await pool.connect();
 
     for (let i = 0; i < users.length; ++i) {
-      const { name, email, phone, facebook, instagram, profilePicture, password, location } =
-        users[i];
+      const {
+        name,
+        email,
+        phone,
+        facebook,
+        instagram,
+        profilePicture,
+        password,
+        location_city,
+        location_coordinate_lat,
+        location_coordinate_lon,
+      } = users[i];
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -79,13 +89,24 @@ const insertSampleUsers = async (hardcodedUsers = [], amount = 10) => {
       const result = await client.query(
         `
         INSERT INTO
-            users (name, email, phone, facebook, instagram, profile_picture, password, location)
+            users (name, email, phone, facebook, instagram, profile_picture, password, location_coordinate_lat, location_coordinate_lon, location_city)
         VALUES
-            ($1, $2, $3, $4, $5, $6, $7, $8)
+            ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
         RETURNING
             id
         `,
-        [name, email, phone, facebook, instagram, profilePicture, hashedPassword, location]
+        [
+          name,
+          email,
+          phone,
+          facebook,
+          instagram,
+          profilePicture,
+          hashedPassword,
+          location_coordinate_lat,
+          location_coordinate_lon,
+          location_city,
+        ]
       );
       const matchUpdatesResult = await client.query(
         `
@@ -229,7 +250,9 @@ const insertHardcodedUsers = async () => {
         'profile-pic-1.jpg'
       ),
       password: 'testowehaslo111',
-      location: '50.067570, 19.917868',
+      location_coordinate_lat: '50.067570',
+      location_coordinate_lon: '19.917868',
+      location_city: 'Krakow',
     },
     {
       name: 'Testowy Drugi',
@@ -239,7 +262,9 @@ const insertHardcodedUsers = async () => {
       instagram: 'testowy22',
       profilePicture: null,
       password: 'testowehaslo222',
-      location: '50.066331, 19.928390',
+      location_coordinate_lat: '50.066331',
+      location_coordinate_lon: '19.928390',
+      location_city: 'Krakow',
     },
     {
       name: 'Testowy Trzeci',
@@ -252,7 +277,9 @@ const insertHardcodedUsers = async () => {
         'profile-pic-3.jpg'
       ),
       password: 'testowehaslo333',
-      location: '50.067143, 20.052357',
+      location_coordinate_lat: '50.067143',
+      location_coordinate_lon: '20.052357',
+      location_city: 'Krakow',
     },
     {
       name: 'Testowy Czwarty',
@@ -274,7 +301,7 @@ const insertHardcodedUsers = async () => {
         'profile-pic-5.jpg'
       ),
       password: 'testowehaslo555',
-      location: 'Krakow, Poland',
+      location_city: 'Krakow',
     },
     {
       name: 'Karol B',

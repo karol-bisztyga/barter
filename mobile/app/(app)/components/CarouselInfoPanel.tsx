@@ -2,25 +2,16 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import TextWrapper from '../genericComponents/TextWrapper';
 import { LinearGradient } from 'expo-linear-gradient';
+import { ItemData } from '../types';
 
-export type CarouselInfoPanelData = {
-  itemName: string;
-  itemOwnerName?: string;
-  description: string;
-};
-
-type CarouselInfoPanelProps = {
-  data: CarouselInfoPanelData;
-};
-
-const CarouselInfoPanel = ({ data }: CarouselInfoPanelProps) => {
+const CarouselInfoPanel = ({ itemData }: { itemData: ItemData }) => {
   return (
     <LinearGradient style={styles.container} colors={['transparent', 'black']}>
-      <TextWrapper style={[styles.text, styles.itemName]}>{data.itemName}</TextWrapper>
+      <TextWrapper style={[styles.text, styles.itemName]}>{itemData.name}</TextWrapper>
       <TextWrapper style={[styles.text, styles.description]} numberOfLines={2} ellipsizeMode="tail">
-        {data.description}
+        {itemData.description}
       </TextWrapper>
-      <TextWrapper style={[styles.text, styles.itemOwnerName]}>{data.itemOwnerName}</TextWrapper>
+      <TextWrapper style={[styles.text, styles.itemOwnerName]}>{itemData.userName}</TextWrapper>
     </LinearGradient>
   );
 };

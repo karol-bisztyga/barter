@@ -54,9 +54,8 @@ export default function LocationScreen() {
   useEffect(() => {
     (async () => {
       try {
-        const persistedLocation = userContext.data?.location;
         setLocationStr(
-          (await formatLocation(persistedLocation)) ||
+          (await formatLocation(userContext.data)) ||
             'Location unspecified\n\nPlease enable location services or enter city manually'
         );
       } catch (e) {
@@ -74,12 +73,28 @@ export default function LocationScreen() {
       if (!city && !location) {
         throw new Error('neither city nor location provided');
       }
-      const locationToSave: string = location ? formatLocationCoords(location.coords) : city;
       if (!userContext.data) {
         throw new Error('no user data');
       }
-      await updateUser(sessionContext, 'location', locationToSave);
-      userContext.setData({ ...userContext.data, location: locationToSave });
+      const newUserData = { ...userContext.data };
+      if (location) {
+        const cityToSend = await cityNameFromLocation(formatLocationCoords(location.coords));
+        await updateUser(sessionContext, [
+          { field: 'location_coordinate_lat', value: `${location?.coords.latitude}` },
+          { field: 'location_coordinate_lon', value: `${location?.coords.longitude}` },
+          { field: 'location_city', value: cityToSend },
+        ]);
+        newUserData.userLocationCoordinates = formatLocationCoords(location.coords);
+        newUserData.userLocationCity = cityToSend;
+      } else {
+        await updateUser(sessionContext, [
+          { field: 'location_coordinate_lat', value: '' },
+          { field: 'location_coordinate_lon', value: '' },
+          { field: 'location_city', value: city },
+        ]);
+        newUserData.userLocationCity = city;
+      }
+      userContext.setData(newUserData);
       showSuccess('location set');
       router.back();
     } catch (e) {

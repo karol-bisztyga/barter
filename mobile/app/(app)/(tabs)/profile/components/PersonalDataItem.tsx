@@ -85,7 +85,9 @@ const EditingTools = ({
             return;
           }
           try {
-            const updateDatabaseResult = await updateUser(sessionContext, name, editingValue);
+            const updateDatabaseResult = await updateUser(sessionContext, [
+              { field: name, value: editingValue },
+            ]);
             setEditing(false);
             setValue(updateDatabaseResult[name]);
           } catch (e) {

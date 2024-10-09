@@ -1,30 +1,26 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { ItemBorderRadius } from '../types';
+import { ItemBorderRadius, ItemData } from '../types';
 import { useAssets } from 'expo-asset';
 import CarouselDistancePanel from './CarouselDistancePanel';
 import ImageWrapper from '../genericComponents/ImageWrapper';
 import CarouselImageIndicators from './CarouselImageIndicators';
-import CarouselInfoPanel, { CarouselInfoPanelData } from './CarouselInfoPanel';
+import CarouselInfoPanel from './CarouselInfoPanel';
 
 const Carousel = ({
-  images,
+  itemData,
   borderRadius = ItemBorderRadius['up-only'],
   imageIndicatorsVisible = true,
   pressEnabled = true,
   actionPanelVisible = false,
-  itemOwnerLocation = undefined,
   onPress,
-  infoPanelData,
 }: {
-  images: string[];
+  itemData: ItemData;
   borderRadius?: ItemBorderRadius;
   imageIndicatorsVisible?: boolean;
   pressEnabled?: boolean;
   actionPanelVisible?: boolean;
-  itemOwnerLocation?: string;
   onPress?: () => void;
-  infoPanelData?: CarouselInfoPanelData;
 }) => {
   const [loading, setLoading] = useState(false);
   const [imageIndex, setImageIndex] = useState<number>(0);
@@ -35,7 +31,9 @@ const Carousel = ({
     throw error;
   }
 
-  const frontImageSource = images.length ? { uri: images[imageIndex] } : noImageAsset;
+  const frontImageSource = itemData.images.length
+    ? { uri: itemData.images[imageIndex] }
+    : noImageAsset;
 
   let imageUri = undefined;
   if (!Array.isArray(frontImageSource) && frontImageSource?.uri) {
@@ -65,9 +63,9 @@ const Carousel = ({
         onError={() => setLoading(false)}
       />
 
-      {images.length > 1 && imageIndicatorsVisible && (
+      {itemData.images.length > 1 && imageIndicatorsVisible && (
         <CarouselImageIndicators
-          images={images}
+          images={itemData.images}
           actionPanelVisible={actionPanelVisible}
           imageIndex={imageIndex}
         />
@@ -82,11 +80,11 @@ const Carousel = ({
             onPress();
             return;
           }
-          if (images.length <= 1) {
+          if (itemData.images.length <= 1) {
             return;
           }
           setLoading(true);
-          setImageIndex(imageIndex === 0 ? images.length - 1 : imageIndex - 1);
+          setImageIndex(imageIndex === 0 ? itemData.images.length - 1 : imageIndex - 1);
         }}
       />
 
@@ -99,15 +97,15 @@ const Carousel = ({
             onPress();
             return;
           }
-          if (images.length <= 1) {
+          if (itemData.images.length <= 1) {
             return;
           }
           setLoading(true);
-          setImageIndex(imageIndex >= images.length - 1 ? 0 : imageIndex + 1);
+          setImageIndex(imageIndex >= itemData.images.length - 1 ? 0 : imageIndex + 1);
         }}
       />
-      {itemOwnerLocation && <CarouselDistancePanel itemOwnerLocation={itemOwnerLocation} />}
-      {infoPanelData && <CarouselInfoPanel data={infoPanelData} />}
+      <CarouselDistancePanel itemData={itemData} />
+      <CarouselInfoPanel itemData={itemData} />
     </View>
   );
 };

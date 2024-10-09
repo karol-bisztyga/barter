@@ -8,23 +8,34 @@ import { StorageHandler } from '../utils/storageUtils';
 dotenv.config();
 
 export const updateUser = async (req: AuthRequest, res: Response) => {
-  const { fieldName, fieldValue } = req.body;
+  const updates = JSON.parse(req.body.updates);
 
-  const availableFields = ['name', 'phone', 'facebook', 'instagram', 'location'];
+  const availableFields = [
+    'name',
+    'phone',
+    'facebook',
+    'instagram',
+    'location_city',
+    'location_coordinate_lat',
+    'location_coordinate_lon',
+  ];
 
   try {
-    if (availableFields.indexOf(fieldName) === -1) {
-      throw new Error('Invalid field name');
-    }
     const userId = getUserIdFromRequest(req);
 
     const currentTimestamp = new Date().getTime();
 
+    let updateQueryPart = '';
+    for (const update of updates) {
+      if (availableFields.indexOf(update.field) === -1) {
+        throw new Error('Invalid field name: ' + update.field);
+      }
+      updateQueryPart += `${update.field}='${update.value}',`;
+    }
+
     // todo this parameterized query didn't work for some reason, I was getting syntax errors
-    const result = await pool.query(
-      `UPDATE users SET ${fieldName}='${fieldValue}', date_edited = ${currentTimestamp} WHERE id=${userId} RETURNING *`,
-      []
-    );
+    const query = `UPDATE users SET ${updateQueryPart} date_edited=${currentTimestamp} WHERE id=${userId} RETURNING *`;
+    const result = await pool.query(query, []);
 
     res.json(result.rows[0]);
   } catch (err) {

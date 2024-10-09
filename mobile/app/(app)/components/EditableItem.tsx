@@ -47,9 +47,8 @@ export default function EditableItem({
         ]}
       >
         <Carousel
-          images={itemData.images}
+          itemData={itemData}
           borderRadius={borderRadius}
-          dotsVisible={true}
           pressEnabled={true}
           onPress={onPress}
         />

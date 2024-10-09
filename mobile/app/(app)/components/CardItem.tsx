@@ -21,17 +21,11 @@ export default function CardItem({ itemData, onPressMore = () => {} }: ItemProps
       ]}
     >
       <Carousel
-        images={itemData.images}
+        itemData={itemData}
         borderRadius={ItemBorderRadius['all']}
         imageIndicatorsVisible={true}
         pressEnabled={true}
         actionPanelVisible={true}
-        itemOwnerLocation={itemData.userLocation}
-        infoPanelData={{
-          itemName: itemData.name,
-          itemOwnerName: itemData.userName,
-          description: itemData.description,
-        }}
       />
       <TouchableOpacity activeOpacity={1} onPress={onPressMore}>
         <FontAwesome
