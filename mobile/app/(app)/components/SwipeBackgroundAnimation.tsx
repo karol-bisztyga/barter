@@ -112,7 +112,7 @@ const SwipeBackgroundAnimation = ({
   const [items, setItems] = useState<Item[]>([]);
   const [containerDimensions, setContainerDimensions] = useState<ViewDimensions | null>(null);
   const [regenerateItems, setRegenerateItems] = useState(false);
-  const [icon, setIcon] = useState<SwipeBackgroundAnimatedItemIconType>('');
+  const icon = useSharedValue<SwipeBackgroundAnimatedItemIconType>('');
 
   const opacity = useSharedValue(0);
   const swipeIntensity = useSharedValue(0);
@@ -126,7 +126,7 @@ const SwipeBackgroundAnimation = ({
         return;
       }
       const newIcon = getIconForSwipeDirection(prepared);
-      runOnJS(setIcon)(newIcon);
+      icon.value = newIcon;
 
       if (prepared !== null || containerDimensions === null) {
         return;

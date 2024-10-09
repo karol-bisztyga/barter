@@ -8,6 +8,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { StyleSheet } from 'react-native';
 
 export type SwipeBackgroundAnimatedItemIconType = 'bomb' | 'clock-o' | 'remove' | '';
 
@@ -22,7 +23,7 @@ interface SwipeBackgroundAnimatedItemProps {
   item: Item;
   opacity: SharedValue<number>;
   swipeIntensity: SharedValue<number>;
-  icon: SwipeBackgroundAnimatedItemIconType;
+  icon: SharedValue<SwipeBackgroundAnimatedItemIconType>;
 }
 
 const SwipeBackgroundAnimatedItem: React.FC<SwipeBackgroundAnimatedItemProps> = ({
@@ -91,9 +92,41 @@ const SwipeBackgroundAnimatedItem: React.FC<SwipeBackgroundAnimatedItemProps> = 
     };
   });
 
-  if (icon === '') {
-    return null;
-  }
+  const icons: {
+    iconName: SwipeBackgroundAnimatedItemIconType;
+    style: {
+      opacity: number;
+    };
+  }[] = [
+    {
+      iconName: 'bomb',
+      style: useAnimatedStyle(() => {
+        return { opacity: icon.value === 'bomb' ? 1 : 0 };
+      }),
+    },
+    {
+      iconName: 'clock-o',
+      style: useAnimatedStyle(() => {
+        return { opacity: icon.value === 'clock-o' ? 1 : 0 };
+      }),
+    },
+    {
+      iconName: 'remove',
+      style: useAnimatedStyle(() => {
+        return { opacity: icon.value === 'remove' ? 1 : 0 };
+      }),
+    },
+  ];
+
+  // const bombAs = useAnimatedStyle(() => {
+  //   return { opacity: icon.value === 'bomb' ? 1 : 0 };
+  // });
+  // const clockOAs = useAnimatedStyle(() => {
+  //   return { opacity: icon.value === 'clock-o' ? 1 : 0 };
+  // });
+  // const removeAS = useAnimatedStyle(() => {
+  //   return { opacity: icon.value === 'remove' ? 1 : 0 };
+  // });
 
   return (
     <Animated.View
@@ -113,9 +146,33 @@ const SwipeBackgroundAnimatedItem: React.FC<SwipeBackgroundAnimatedItemProps> = 
         },
       ]}
     >
-      <FontAwesome size={(item.size * 3) / 4} name={icon} color={'black'} />
+      {icons.map((iconItem) => {
+        if (!iconItem.iconName) {
+          return null;
+        }
+        return (
+          <Animated.View
+            style={[styles.animatedIconWrapper, iconItem.style]}
+            key={iconItem.iconName}
+          >
+            <FontAwesome size={(item.size * 3) / 4} name={iconItem.iconName} color={'black'} />
+          </Animated.View>
+        );
+      })}
+      {/* <Animated.View style={[styles.animatedIconWrapper, clockOAs]}>
+        <FontAwesome size={(item.size * 3) / 4} name={'clock-o'} color={'black'} />
+      </Animated.View>
+      <Animated.View style={[styles.animatedIconWrapper, removeAS]}>
+        <FontAwesome size={(item.size * 3) / 4} name={'remove'} color={'black'} />
+      </Animated.View> */}
     </Animated.View>
   );
 };
+
+const styles = StyleSheet.create({
+  animatedIconWrapper: {
+    position: 'absolute',
+  },
+});
 
 export default SwipeBackgroundAnimatedItem;

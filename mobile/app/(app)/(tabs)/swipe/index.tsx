@@ -102,6 +102,13 @@ export default function Swipe() {
     })();
   }, []);
 
+  useEffect(() => {
+    console.log(
+      'new cards',
+      cards.map((c) => [c.name, c.distanceKm, c.ownerLocationCity])
+    );
+  }, [cards]);
+
   const popAndLoadCard = async (): Promise<ItemData | null> => {
     console.log('popn load', activeCard?.name);
     if (activeCard === undefined) {
