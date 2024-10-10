@@ -1,13 +1,18 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import { jwtSecret } from '../config';
+import dotenv from 'dotenv';
+dotenv.config();
 
 export interface AuthRequest extends Request {
   user?: jwt.JwtPayload;
 }
 
 export const verifyToken = (token: string) => {
-  const decoded = jwt.verify(token, jwtSecret);
+  const { JWT_SECRET } = process.env;
+  if (!JWT_SECRET) {
+    throw new Error('Missing jwt secret');
+  }
+  const decoded = jwt.verify(token, JWT_SECRET);
   if (typeof decoded === 'string') {
     throw new Error('Token validation failed');
   }

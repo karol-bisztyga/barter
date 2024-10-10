@@ -2,10 +2,11 @@ import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import pool from '../db';
-import { jwtSecret } from '../config';
 import { validateEmail, validatePassword } from '../utils/validators';
 import { VERIFICATION_CODE_LENGTH } from '../constants';
 import { sendVerificationEmail } from '../utils/mailingUtils';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const generateVerificationCode = () => {
   const characters = '1234567890';
@@ -60,7 +61,11 @@ export const register = async (req: Request, res: Response) => {
 };
 
 const generateToken = (userId: string, userEmail: string) => {
-  return jwt.sign({ id: userId, username: userEmail }, jwtSecret, {
+  const { JWT_SECRET } = process.env;
+  if (!JWT_SECRET) {
+    throw new Error('Missing jwt secret');
+  }
+  return jwt.sign({ id: userId, username: userEmail }, JWT_SECRET, {
     // expiresIn: '1h', // todo do a research about token expiration
   });
 };

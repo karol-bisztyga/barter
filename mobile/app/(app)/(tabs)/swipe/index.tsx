@@ -102,15 +102,7 @@ export default function Swipe() {
     })();
   }, []);
 
-  useEffect(() => {
-    console.log(
-      'new cards',
-      cards.map((c) => [c.name, c.distanceKm, c.ownerLocationCity])
-    );
-  }, [cards]);
-
   const popAndLoadCard = async (): Promise<ItemData | null> => {
-    console.log('popn load', activeCard?.name);
     if (activeCard === undefined) {
       return null;
     }
@@ -142,15 +134,10 @@ export default function Swipe() {
     if (!newActiveCard) {
       return null;
     }
-    console.log('new active card', newActiveCard.name);
     setActiveCard(newActiveCard);
     setCards(updatedCards);
     return activeCard;
   };
-
-  useEffect(() => {
-    console.log('active card update', activeCard?.name);
-  }, [activeCard]);
 
   const sendLike = async (likedItemId: string, decision: boolean) => {
     try {
