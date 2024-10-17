@@ -10,7 +10,6 @@ import { EditImageType } from '../../types';
 import { useUserContext } from '../../context/UserContext';
 import { useEditItemContext } from '../../context/EditItemContext';
 import Actions from './components/Actions';
-import Location from './components/Location';
 import ImageWrapper from '../../genericComponents/ImageWrapper';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 import TextWrapper from '../../genericComponents/TextWrapper';
@@ -72,9 +71,6 @@ export default function Profile() {
               router.push('profile/change_password');
             }}
           />
-          <Separator style={styles.separator} />
-          <TextWrapper style={styles.title}>Location</TextWrapper>
-          <Location />
           <Separator style={styles.separator} />
           <View style={styles.titleWrapper}>
             <TextWrapper style={styles.title}>Items</TextWrapper>
