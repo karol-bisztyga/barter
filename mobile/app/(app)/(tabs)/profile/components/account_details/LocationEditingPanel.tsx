@@ -9,25 +9,16 @@ import InputWrapper from '../../../../genericComponents/InputWrapper';
 import Animated, {
   interpolate,
   runOnJS,
-  SharedValue,
   useAnimatedReaction,
   useAnimatedStyle,
 } from 'react-native-reanimated';
+import * as Location from 'expo-location';
 import ButtonWrapper from '../../../../genericComponents/ButtonWrapper';
 import { showSuccess } from '../../../../utils/notifications';
+import { cityNameFromLocation, sleep } from '../../../../utils/reusableStuff';
+import { EditingPanelProps } from './EditingPanel';
 
-export type EditingPanelProps = {
-  name: string;
-  initialValue: string;
-  editing: SharedValue<number>;
-  editingValue: string;
-  setEditingValue: React.Dispatch<React.SetStateAction<string>>;
-  setValue: React.Dispatch<React.SetStateAction<string>>;
-  setEditingIndex: React.Dispatch<React.SetStateAction<number | null>>;
-};
-
-const EditingPanel = ({
-  name,
+const LocationEditingPanel = ({
   initialValue,
   editing,
   editingValue,
@@ -53,41 +44,56 @@ const EditingPanel = ({
     }
   );
 
-  const update = async () => {
-    if (editingValue === initialValue) {
-      return;
+  const formatLocationCoords = (location: Location.LocationObjectCoords) =>
+    `${location.latitude}, ${location.longitude}`;
+
+  const obtainLocation = async () => {
+    try {
+      await sleep(2000);
+      const { status } = await Location.requestForegroundPermissionsAsync();
+      if (status !== 'granted') {
+        throw new Error(
+          'Permission to access location was denied, you may need to enable location services in settings'
+        );
+      }
+
+      return await Location.getCurrentPositionAsync({});
+    } catch (e) {
+      handleError(ErrorType.GET_LOCATION, `${e}`);
     }
+  };
+
+  const update = async () => {
     try {
       userContext.setBlockingLoading(true);
-      await updateUser(sessionContext, [{ field: name, value: editingValue }]);
+      const location = await obtainLocation();
 
-      const obj: Partial<UserData> = {};
-      obj[name as keyof UserData] = editingValue;
-      setValue(editingValue);
+      if (!location) {
+        throw new Error('could not obtain location');
+      }
+
+      const city = await cityNameFromLocation(formatLocationCoords(location.coords));
+      await updateUser(sessionContext, [
+        { field: 'location_coordinate_lat', value: `${location?.coords.latitude}` },
+        { field: 'location_coordinate_lon', value: `${location?.coords.longitude}` },
+        { field: 'location_city', value: city },
+      ]);
+
+      const obj: Partial<UserData> = {
+        userLocationCoordinates: formatLocationCoords(location.coords),
+        userLocationCity: city,
+      };
+      setValue(city);
       userContext.setData({ ...userContext.data, ...obj } as UserData);
 
       setEditingIndex(null);
-      showSuccess(`${name} updated`);
+
+      showSuccess(`location updated`);
     } catch (e) {
       handleError(ErrorType.UPDATE_USER, `${e}`);
     } finally {
       userContext.setBlockingLoading(false);
     }
-  };
-
-  const validateValue = () => {
-    if (!editingValue) {
-      return false;
-    }
-    if (editingValue === initialValue) {
-      return false;
-    }
-    if (['phone'].includes(name)) {
-      if (isNaN(parseInt(editingValue))) {
-        return false;
-      }
-    }
-    return true;
   };
 
   return (
@@ -100,10 +106,11 @@ const EditingPanel = ({
           onChangeText={(text) => {
             setEditingValue(text);
           }}
+          editable={false}
         />
       </View>
       <View style={styles.updateButtonWrapper}>
-        <ButtonWrapper title="Update" onPress={update} disabled={!validateValue()} />
+        <ButtonWrapper title="Update" onPress={update} />
       </View>
     </Animated.View>
   );
@@ -133,4 +140,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditingPanel;
+export default LocationEditingPanel;

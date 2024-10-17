@@ -11,6 +11,7 @@ import Animated, {
 import { router } from 'expo-router';
 import EditingPanel from './EditingPanel';
 import TextWrapper from '../../../../genericComponents/TextWrapper';
+import LocationEditingPanel from './LocationEditingPanel';
 
 const AccountDetailsItem = ({
   name,
@@ -107,15 +108,28 @@ const AccountDetailsItem = ({
           </Animated.View>
         </View>
       </TouchableOpacity>
-      {/* TODO */}
-      <EditingPanel
-        editing={editing}
-        editingValue={editingValue}
-        setEditingValue={setEditingValue}
-        name={name}
-        initialValue={initialValue}
-        setValue={setValue}
-      />
+
+      {name === 'userLocationCity' ? (
+        <LocationEditingPanel
+          editing={editing}
+          editingValue={editingValue}
+          setEditingValue={setEditingValue}
+          name={name}
+          initialValue={initialValue}
+          setValue={setValue}
+          setEditingIndex={setEditingIndex}
+        />
+      ) : (
+        <EditingPanel
+          editing={editing}
+          editingValue={editingValue}
+          setEditingValue={setEditingValue}
+          name={name}
+          initialValue={initialValue}
+          setValue={setValue}
+          setEditingIndex={setEditingIndex}
+        />
+      )}
     </View>
   );
 };
