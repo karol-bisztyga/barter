@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
-import { UserData } from '../../../types';
-import PersonalDataItem from './PersonalDataItem';
-import { useUserContext } from '../../../context/UserContext';
-import { ErrorType, handleError } from '../../../utils/errorHandler';
+import { UserData } from '../../../../types';
+import { useUserContext } from '../../../../context/UserContext';
+import { ErrorType, handleError } from '../../../../utils/errorHandler';
+import AccountDetailsItem from './AccountDetailsItem';
 
-const PersonalData = () => {
+const AccountDetails = () => {
   const userContext = useUserContext();
+
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   const data = { ...userContext.data };
 
@@ -18,9 +20,11 @@ const PersonalData = () => {
     return null;
   }
 
+  data.onboarded = '';
+
   delete data.id;
   delete data.profilePicture;
-  delete data.location;
+  delete data.userLocationCoordinates;
   delete data.verificationCode;
 
   return (
@@ -28,12 +32,15 @@ const PersonalData = () => {
       {Object.keys(data).map((name, index) => {
         const value = data && data[name as keyof UserData];
         return (
-          <PersonalDataItem
+          <AccountDetailsItem
             name={name}
             initialValue={value || ''}
             index={index}
             key={index}
             editable={name !== 'email'}
+            itemsLength={Object.keys(data).length}
+            editingIndex={editingIndex}
+            setEditingIndex={setEditingIndex}
           />
         );
       })}
@@ -42,7 +49,12 @@ const PersonalData = () => {
 };
 
 const styles = StyleSheet.create({
-  container: {},
+  container: {
+    backgroundColor: '#F5F5F5',
+    marginRight: 10,
+    marginLeft: 10,
+    borderRadius: 16,
+  },
 });
 
-export default PersonalData;
+export default AccountDetails;

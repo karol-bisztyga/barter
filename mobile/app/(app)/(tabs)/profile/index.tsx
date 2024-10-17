@@ -10,11 +10,11 @@ import { EditImageType } from '../../types';
 import { useUserContext } from '../../context/UserContext';
 import { useEditItemContext } from '../../context/EditItemContext';
 import Actions from './components/Actions';
-import PersonalData from './components/PersonalData';
 import Location from './components/Location';
 import ImageWrapper from '../../genericComponents/ImageWrapper';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 import TextWrapper from '../../genericComponents/TextWrapper';
+import AccountDetails from './components/account_details/AccountDetails';
 
 export default function Profile() {
   const [imageLoading, setImageLoading] = useState<boolean>(true);
@@ -62,9 +62,9 @@ export default function Profile() {
           </View>
           <Separator style={styles.separator} />
           <View style={styles.titleWrapper}>
-            <TextWrapper style={styles.title}>Personal Data</TextWrapper>
+            <TextWrapper style={styles.title}>Account Details</TextWrapper>
           </View>
-          <PersonalData />
+          <AccountDetails />
           <Separator style={styles.separator} />
           <ButtonWrapper
             title="change password"
