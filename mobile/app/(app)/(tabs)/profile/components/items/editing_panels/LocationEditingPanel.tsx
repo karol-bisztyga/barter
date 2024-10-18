@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { UserData } from '../../../../types';
-import { useUserContext } from '../../../../context/UserContext';
-import { useSessionContext } from '../../../../../SessionContext';
-import { updateUser } from '../../../../db_utils/updateUser';
-import { ErrorType, handleError } from '../../../../utils/errorHandler';
-import InputWrapper from '../../../../genericComponents/InputWrapper';
+import { UserData } from '../../../../../types';
+import { useUserContext } from '../../../../../context/UserContext';
+import { useSessionContext } from '../../../../../../SessionContext';
+import { updateUser } from '../../../../../db_utils/updateUser';
+import { ErrorType, handleError } from '../../../../../utils/errorHandler';
+import InputWrapper from '../../../../../genericComponents/InputWrapper';
 import Animated, {
   interpolate,
   runOnJS,
@@ -13,10 +13,10 @@ import Animated, {
   useAnimatedStyle,
 } from 'react-native-reanimated';
 import * as Location from 'expo-location';
-import ButtonWrapper from '../../../../genericComponents/ButtonWrapper';
-import { showSuccess } from '../../../../utils/notifications';
-import { cityNameFromLocation, sleep } from '../../../../utils/reusableStuff';
-import { EditingPanelProps } from './EditingPanel';
+import ButtonWrapper from '../../../../../genericComponents/ButtonWrapper';
+import { showSuccess } from '../../../../../utils/notifications';
+import { cityNameFromLocation, sleep } from '../../../../../utils/reusableStuff';
+import { FieldEditingPanelProps } from './FieldEditingPanel';
 
 const LocationEditingPanel = ({
   initialValue,
@@ -25,7 +25,7 @@ const LocationEditingPanel = ({
   setEditingValue,
   setValue,
   setEditingIndex,
-}: EditingPanelProps) => {
+}: FieldEditingPanelProps) => {
   const sessionContext = useSessionContext();
   const userContext = useUserContext();
 

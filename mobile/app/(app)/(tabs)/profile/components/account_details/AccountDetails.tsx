@@ -3,7 +3,9 @@ import { View, StyleSheet } from 'react-native';
 import { UserData } from '../../../../types';
 import { useUserContext } from '../../../../context/UserContext';
 import { ErrorType, handleError } from '../../../../utils/errorHandler';
-import AccountDetailsItem from './AccountDetailsItem';
+import LinkItem from '../items/LinkItem';
+import { router } from 'expo-router';
+import EditableItem from '../items/EditableItem';
 
 const AccountDetails = () => {
   const userContext = useUserContext();
@@ -31,16 +33,32 @@ const AccountDetails = () => {
     <View style={styles.container}>
       {Object.keys(data).map((name, index) => {
         const value = data && data[name as keyof UserData];
+        if (name === 'onboarded') {
+          return (
+            <LinkItem
+              name="replay onboarding"
+              index={index}
+              key={index}
+              isLast={index === Object.keys(data).length - 1}
+              onPress={() => {
+                router.replace('onboarding');
+              }}
+            />
+          );
+        }
+
+        const editingPanelType = name === 'userLocationCity' ? 'location' : 'field';
         return (
-          <AccountDetailsItem
+          <EditableItem
             name={name}
             initialValue={value || ''}
             index={index}
             key={index}
             editable={name !== 'email'}
-            itemsLength={Object.keys(data).length}
+            isLast={index === Object.keys(data).length - 1}
             editingIndex={editingIndex}
             setEditingIndex={setEditingIndex}
+            type={editingPanelType}
           />
         );
       })}

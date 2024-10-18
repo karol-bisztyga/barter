@@ -8,27 +8,34 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import { router } from 'expo-router';
-import EditingPanel from './EditingPanel';
 import TextWrapper from '../../../../genericComponents/TextWrapper';
-import LocationEditingPanel from './LocationEditingPanel';
+import FieldEditingPanel from './editing_panels/FieldEditingPanel';
+import LocationEditingPanel from './editing_panels/LocationEditingPanel';
+import SelectEditingPanel from './editing_panels/SelectEditingPanel';
+import PasswordEditingPanel from './editing_panels/PasswordEditingPanel';
 
-const AccountDetailsItem = ({
+export type EditingPanelType = 'field' | 'location' | 'select' | 'password';
+
+const EditableItem = ({
   name,
   initialValue,
   index,
-  itemsLength,
+  isLast,
   editingIndex,
   setEditingIndex,
   editable = true,
+  type = 'field',
+  options,
 }: {
   name: string;
   initialValue: string;
   index: number;
-  itemsLength: number;
+  isLast: boolean;
   editingIndex: number | null;
   setEditingIndex: React.Dispatch<React.SetStateAction<number | null>>;
   editable: boolean;
+  type: EditingPanelType;
+  options?: string[]; // only for type 'select'
 }) => {
   const [value, setValue] = useState(initialValue);
   const [editingValue, setEditingValue] = useState(value);
@@ -38,9 +45,6 @@ const AccountDetailsItem = ({
   const formatItemName = (name: string) => {
     if (name === 'userLocationCity') {
       return 'location';
-    }
-    if (name === 'onboarded') {
-      return 'replay onboarding';
     }
     return name;
   };
@@ -53,8 +57,6 @@ const AccountDetailsItem = ({
       editing.value = withTiming(0);
     }
   }, [editingIndex]);
-
-  const isLast = index === itemsLength - 1;
 
   const rotationAnimatedStyle = useAnimatedStyle(() => {
     return {
@@ -71,11 +73,6 @@ const AccountDetailsItem = ({
       return;
     }
 
-    if (name === 'onboarded') {
-      router.replace('onboarding');
-      return;
-    }
-
     if (editingIndex === index) {
       setEditingIndex(null);
     } else {
@@ -83,10 +80,53 @@ const AccountDetailsItem = ({
     }
   };
 
+  const renderEditingPanel = () => {
+    switch (type) {
+      case 'field':
+        return (
+          <FieldEditingPanel
+            editing={editing}
+            editingValue={editingValue}
+            setEditingValue={setEditingValue}
+            name={name}
+            initialValue={initialValue}
+            setValue={setValue}
+            setEditingIndex={setEditingIndex}
+          />
+        );
+      case 'location':
+        return (
+          <LocationEditingPanel
+            editing={editing}
+            editingValue={editingValue}
+            setEditingValue={setEditingValue}
+            name={name}
+            initialValue={initialValue}
+            setValue={setValue}
+            setEditingIndex={setEditingIndex}
+          />
+        );
+      case 'select':
+        return (
+          <SelectEditingPanel
+            editing={editing}
+            editingValue={editingValue}
+            setEditingValue={setEditingValue}
+            initialValue={initialValue}
+            setEditingIndex={setEditingIndex}
+            options={options || []}
+          />
+        );
+      case 'password':
+        return <PasswordEditingPanel editing={editing} setEditingIndex={setEditingIndex} />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <View>
       <TouchableOpacity
-        // disabled={!editable}
         style={[
           styles.container,
           {
@@ -109,27 +149,7 @@ const AccountDetailsItem = ({
         </View>
       </TouchableOpacity>
 
-      {name === 'userLocationCity' ? (
-        <LocationEditingPanel
-          editing={editing}
-          editingValue={editingValue}
-          setEditingValue={setEditingValue}
-          name={name}
-          initialValue={initialValue}
-          setValue={setValue}
-          setEditingIndex={setEditingIndex}
-        />
-      ) : (
-        <EditingPanel
-          editing={editing}
-          editingValue={editingValue}
-          setEditingValue={setEditingValue}
-          name={name}
-          initialValue={initialValue}
-          setValue={setValue}
-          setEditingIndex={setEditingIndex}
-        />
-      )}
+      {renderEditingPanel()}
     </View>
   );
 };
@@ -169,4 +189,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default AccountDetailsItem;
+export default EditableItem;

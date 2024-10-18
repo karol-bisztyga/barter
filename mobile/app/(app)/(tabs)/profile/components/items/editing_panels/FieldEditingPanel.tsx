@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { UserData } from '../../../../types';
-import { useUserContext } from '../../../../context/UserContext';
-import { useSessionContext } from '../../../../../SessionContext';
-import { updateUser } from '../../../../db_utils/updateUser';
-import { ErrorType, handleError } from '../../../../utils/errorHandler';
-import InputWrapper from '../../../../genericComponents/InputWrapper';
+import { UserData } from '../../../../../types';
+import { useUserContext } from '../../../../../context/UserContext';
+import { useSessionContext } from '../../../../../../SessionContext';
+import { updateUser } from '../../../../../db_utils/updateUser';
+import { ErrorType, handleError } from '../../../../../utils/errorHandler';
+import InputWrapper from '../../../../../genericComponents/InputWrapper';
 import Animated, {
   interpolate,
   runOnJS,
@@ -13,10 +13,10 @@ import Animated, {
   useAnimatedReaction,
   useAnimatedStyle,
 } from 'react-native-reanimated';
-import ButtonWrapper from '../../../../genericComponents/ButtonWrapper';
-import { showSuccess } from '../../../../utils/notifications';
+import ButtonWrapper from '../../../../../genericComponents/ButtonWrapper';
+import { showSuccess } from '../../../../../utils/notifications';
 
-export type EditingPanelProps = {
+export type FieldEditingPanelProps = {
   name: string;
   initialValue: string;
   editing: SharedValue<number>;
@@ -26,7 +26,7 @@ export type EditingPanelProps = {
   setEditingIndex: React.Dispatch<React.SetStateAction<number | null>>;
 };
 
-const EditingPanel = ({
+const FieldEditingPanel = ({
   name,
   initialValue,
   editing,
@@ -34,7 +34,7 @@ const EditingPanel = ({
   setEditingValue,
   setValue,
   setEditingIndex,
-}: EditingPanelProps) => {
+}: FieldEditingPanelProps) => {
   const sessionContext = useSessionContext();
   const userContext = useUserContext();
 
@@ -133,4 +133,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditingPanel;
+export default FieldEditingPanel;

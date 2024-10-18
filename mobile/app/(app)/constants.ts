@@ -6,6 +6,6 @@ export const PASSWORD_MINIMUM_LENGTH = 8;
 export const PROFILE_PICTURE_SIZE_LIMIT = 2 * 1024 * 1024;
 
 // colors
-export const BACKGROUND_COLOR = '#761000';
-export const FONT_COLOR = '#FFFFFF';
+export const BACKGROUND_COLOR = '#FFFFFF';
+export const FONT_COLOR = '#000000';
 export const FONT_COLOR_DISABLED = '#B0B0B0';

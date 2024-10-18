@@ -1,19 +1,17 @@
 import React, { useRef, useState } from 'react';
 import { View, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import Separator from '../../components/Separator';
-import Items from './components/Items';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
 import { EditImageType } from '../../types';
 import { useUserContext } from '../../context/UserContext';
 import { useEditItemContext } from '../../context/EditItemContext';
-import Actions from './components/Actions';
+import Settings from './components/settings/Settings';
 import ImageWrapper from '../../genericComponents/ImageWrapper';
-import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 import TextWrapper from '../../genericComponents/TextWrapper';
 import AccountDetails from './components/account_details/AccountDetails';
+import MyItems from './components/MyItems';
 
 export default function Profile() {
   const [imageLoading, setImageLoading] = useState<boolean>(true);
@@ -24,7 +22,7 @@ export default function Profile() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ flex: 1 }}>
-        <KeyboardAwareScrollView ref={scrollViewRef}>
+        <KeyboardAwareScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>
           <View style={styles.profileImageWrapper}>
             <View style={styles.profileImageInnerWrapper}>
               {userContext.data?.profilePicture && (
@@ -59,25 +57,18 @@ export default function Profile() {
               </TouchableOpacity>
             </View>
           </View>
-          <Separator style={styles.separator} />
           <View style={styles.titleWrapper}>
             <TextWrapper style={styles.title}>Account Details</TextWrapper>
           </View>
           <AccountDetails />
-          <Separator style={styles.separator} />
-          <ButtonWrapper
-            title="change password"
-            onPress={() => {
-              router.push('profile/change_password');
-            }}
-          />
-          <Separator style={styles.separator} />
           <View style={styles.titleWrapper}>
             <TextWrapper style={styles.title}>My Items</TextWrapper>
           </View>
-          <Items />
-          <Separator style={styles.separator} />
-          <Actions />
+          <MyItems />
+          <View style={styles.titleWrapper}>
+            <TextWrapper style={styles.title}>Settings</TextWrapper>
+          </View>
+          <Settings />
         </KeyboardAwareScrollView>
       </View>
     </SafeAreaView>
@@ -94,7 +85,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 50,
-    marginBottom: 50,
+    marginBottom: 20,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,

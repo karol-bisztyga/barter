@@ -1,0 +1,56 @@
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { ItemData } from '../../../types';
+import { router } from 'expo-router';
+import { MAX_ITEMS_SLOTS } from '../../../constants';
+import { useItemsContext } from '../../../context/ItemsContext';
+import { useUserContext } from '../../../context/UserContext';
+import LinkItem from './items/LinkItem';
+
+const MyItems = () => {
+  const itemsContext = useItemsContext();
+  const userContext = useUserContext();
+
+  return (
+    <View style={styles.container}>
+      {userContext.items.map((item: ItemData, index: number) => {
+        return (
+          <LinkItem
+            key={index}
+            index={index}
+            isLast={false}
+            name={item.name}
+            onPress={() => {
+              itemsContext.setUsersItemId(item.id);
+              router.push('profile/editItem');
+            }}
+            imageUrl={item.images[0]}
+          />
+        );
+      })}
+      {userContext.items.length < MAX_ITEMS_SLOTS && (
+        <LinkItem
+          key={'add-item'}
+          index={userContext.items.length}
+          isLast={true}
+          name="add new item"
+          onPress={() => {
+            itemsContext.setUsersItemId(null);
+            router.push('profile/editItem');
+          }}
+        />
+      )}
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: '#F5F5F5',
+    marginRight: 16,
+    marginLeft: 16,
+    borderRadius: 16,
+  },
+});
+
+export default MyItems;
