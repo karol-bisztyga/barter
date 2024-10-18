@@ -1,38 +1,42 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { useSessionContext } from '../../../../../SessionContext';
+import { useSessionContext } from '../../../../SessionContext';
 import { router } from 'expo-router';
-import EditableItem from '../items/EditableItem';
-import LinkItem from '../items/LinkItem';
+import EditableItem from './items/EditableItem';
+import LinkItem from './items/LinkItem';
 
-const Settings = () => {
+const Settings = ({
+  editingId,
+  setEditingId,
+}: {
+  editingId: string;
+  setEditingId: React.Dispatch<React.SetStateAction<string>>;
+}) => {
   const sessionContext = useSessionContext();
-
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   return (
     <View style={styles.container}>
       <EditableItem
         name="change language"
         initialValue="English"
-        index={0}
+        id="language"
         key={0}
         editable
         isLast={false}
-        editingIndex={editingIndex}
-        setEditingIndex={setEditingIndex}
+        editingId={editingId}
+        setEditingId={setEditingId}
         type="select"
         options={['English', 'Polish', 'Ukrainian']}
       />
       <EditableItem
         name="change password"
         initialValue="***"
-        index={1}
+        id="password"
         key={1}
         editable
         isLast={false}
-        editingIndex={editingIndex}
-        setEditingIndex={setEditingIndex}
+        editingId={editingId}
+        setEditingId={setEditingId}
         type="password"
       />
 

@@ -24,7 +24,7 @@ const LocationEditingPanel = ({
   editingValue,
   setEditingValue,
   setValue,
-  setEditingIndex,
+  setEditingId,
 }: FieldEditingPanelProps) => {
   const sessionContext = useSessionContext();
   const userContext = useUserContext();
@@ -86,7 +86,7 @@ const LocationEditingPanel = ({
       setValue(city);
       userContext.setData({ ...userContext.data, ...obj } as UserData);
 
-      setEditingIndex(null);
+      setEditingId('');
 
       showSuccess(`location updated`);
     } catch (e) {

@@ -23,7 +23,7 @@ export type FieldEditingPanelProps = {
   editingValue: string;
   setEditingValue: React.Dispatch<React.SetStateAction<string>>;
   setValue: React.Dispatch<React.SetStateAction<string>>;
-  setEditingIndex: React.Dispatch<React.SetStateAction<number | null>>;
+  setEditingId: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const FieldEditingPanel = ({
@@ -33,7 +33,7 @@ const FieldEditingPanel = ({
   editingValue,
   setEditingValue,
   setValue,
-  setEditingIndex,
+  setEditingId,
 }: FieldEditingPanelProps) => {
   const sessionContext = useSessionContext();
   const userContext = useUserContext();
@@ -66,7 +66,7 @@ const FieldEditingPanel = ({
       setValue(editingValue);
       userContext.setData({ ...userContext.data, ...obj } as UserData);
 
-      setEditingIndex(null);
+      setEditingId('');
       showSuccess(`${name} updated`);
     } catch (e) {
       handleError(ErrorType.UPDATE_USER, `${e}`);

@@ -18,10 +18,10 @@ import { changePassword } from '../../../../../db_utils/changePassword';
 
 export type PasswordEditingPanelProps = {
   editing: SharedValue<number>;
-  setEditingIndex: React.Dispatch<React.SetStateAction<number | null>>;
+  setEditingId: React.Dispatch<React.SetStateAction<string>>;
 };
 
-const PasswordEditingPanel = ({ editing, setEditingIndex }: PasswordEditingPanelProps) => {
+const PasswordEditingPanel = ({ editing, setEditingId }: PasswordEditingPanelProps) => {
   const sessionContext = useSessionContext();
   const userContext = useUserContext();
 
@@ -49,7 +49,7 @@ const PasswordEditingPanel = ({ editing, setEditingIndex }: PasswordEditingPanel
     try {
       await changePassword(sessionContext, currentPassword, newPassword);
       showSuccess('password changed');
-      setEditingIndex(null);
+      setEditingId('');
     } catch (e) {
       handleError(ErrorType.CHANGE_PASSWORD, `${e}`); // todo this alert hides behind the modal on ios
     }

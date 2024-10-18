@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { UserData } from '../../../../types';
 import { useUserContext } from '../../../../context/UserContext';
@@ -7,10 +7,14 @@ import LinkItem from '../items/LinkItem';
 import { router } from 'expo-router';
 import EditableItem from '../items/EditableItem';
 
-const AccountDetails = () => {
+const AccountDetails = ({
+  editingId,
+  setEditingId,
+}: {
+  editingId: string;
+  setEditingId: React.Dispatch<React.SetStateAction<string>>;
+}) => {
   const userContext = useUserContext();
-
-  const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   const data = { ...userContext.data };
 
@@ -52,12 +56,12 @@ const AccountDetails = () => {
           <EditableItem
             name={name}
             initialValue={value || ''}
-            index={index}
+            id={`account-${index}`}
             key={index}
             editable={name !== 'email'}
             isLast={index === Object.keys(data).length - 1}
-            editingIndex={editingIndex}
-            setEditingIndex={setEditingIndex}
+            editingId={editingId}
+            setEditingId={setEditingId}
             type={editingPanelType}
           />
         );

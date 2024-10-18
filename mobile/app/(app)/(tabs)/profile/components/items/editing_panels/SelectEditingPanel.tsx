@@ -15,7 +15,7 @@ export type SelectEditingPanelProps = {
   editing: SharedValue<number>;
   editingValue: string;
   setEditingValue: React.Dispatch<React.SetStateAction<string>>;
-  setEditingIndex: React.Dispatch<React.SetStateAction<number | null>>;
+  setEditingId: React.Dispatch<React.SetStateAction<string>>;
   options: string[];
 };
 
@@ -24,7 +24,7 @@ const SelectEditingPanel = ({
   editing,
   editingValue,
   setEditingValue,
-  setEditingIndex,
+  setEditingId,
   options,
 }: SelectEditingPanelProps) => {
   const maxHeight = 60 * options.length;
@@ -60,7 +60,7 @@ const SelectEditingPanel = ({
           disabled={editingValue === option}
           onPress={() => {
             showInfo('other languages are not yet implemented');
-            setEditingIndex(null);
+            setEditingId('');
           }}
         >
           <TextWrapper>{option}</TextWrapper>

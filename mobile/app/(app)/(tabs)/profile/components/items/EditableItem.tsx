@@ -19,20 +19,20 @@ export type EditingPanelType = 'field' | 'location' | 'select' | 'password';
 const EditableItem = ({
   name,
   initialValue,
-  index,
+  id,
   isLast,
-  editingIndex,
-  setEditingIndex,
+  editingId,
+  setEditingId,
   editable = true,
   type = 'field',
   options,
 }: {
   name: string;
   initialValue: string;
-  index: number;
+  id: string;
   isLast: boolean;
-  editingIndex: number | null;
-  setEditingIndex: React.Dispatch<React.SetStateAction<number | null>>;
+  editingId: string;
+  setEditingId: React.Dispatch<React.SetStateAction<string>>;
   editable: boolean;
   type: EditingPanelType;
   options?: string[]; // only for type 'select'
@@ -50,13 +50,13 @@ const EditableItem = ({
   };
 
   useEffect(() => {
-    const isBeingEdited = editingIndex === index;
+    const isBeingEdited = editingId === id;
     if (isBeingEdited) {
       editing.value = withTiming(1);
     } else if (editing.value === 1) {
       editing.value = withTiming(0);
     }
-  }, [editingIndex]);
+  }, [editingId]);
 
   const rotationAnimatedStyle = useAnimatedStyle(() => {
     return {
@@ -73,10 +73,10 @@ const EditableItem = ({
       return;
     }
 
-    if (editingIndex === index) {
-      setEditingIndex(null);
+    if (editingId === id) {
+      setEditingId('');
     } else {
-      setEditingIndex(index);
+      setEditingId(id);
     }
   };
 
@@ -91,7 +91,7 @@ const EditableItem = ({
             name={name}
             initialValue={initialValue}
             setValue={setValue}
-            setEditingIndex={setEditingIndex}
+            setEditingId={setEditingId}
           />
         );
       case 'location':
@@ -103,7 +103,7 @@ const EditableItem = ({
             name={name}
             initialValue={initialValue}
             setValue={setValue}
-            setEditingIndex={setEditingIndex}
+            setEditingId={setEditingId}
           />
         );
       case 'select':
@@ -113,12 +113,12 @@ const EditableItem = ({
             editingValue={editingValue}
             setEditingValue={setEditingValue}
             initialValue={initialValue}
-            setEditingIndex={setEditingIndex}
+            setEditingId={setEditingId}
             options={options || []}
           />
         );
       case 'password':
-        return <PasswordEditingPanel editing={editing} setEditingIndex={setEditingIndex} />;
+        return <PasswordEditingPanel editing={editing} setEditingId={setEditingId} />;
       default:
         return null;
     }
@@ -133,7 +133,7 @@ const EditableItem = ({
             borderBottomWidth: isLast ? 0 : 1,
           },
         ]}
-        key={index}
+        key={id}
         onLongPress={async () => {
           await Clipboard.setStringAsync(value);
           Alert.alert('Copied to Clipboard', value);

@@ -7,7 +7,7 @@ import { router } from 'expo-router';
 import { EditImageType } from '../../types';
 import { useUserContext } from '../../context/UserContext';
 import { useEditItemContext } from '../../context/EditItemContext';
-import Settings from './components/settings/Settings';
+import Settings from './components/Settings';
 import ImageWrapper from '../../genericComponents/ImageWrapper';
 import TextWrapper from '../../genericComponents/TextWrapper';
 import AccountDetails from './components/account_details/AccountDetails';
@@ -18,6 +18,8 @@ export default function Profile() {
   const scrollViewRef = useRef(null);
   const userContext = useUserContext();
   const editItemContext = useEditItemContext();
+
+  const [editingId, setEditingId] = useState<string>('');
 
   return (
     <SafeAreaView style={styles.container}>
@@ -60,7 +62,7 @@ export default function Profile() {
           <View style={styles.titleWrapper}>
             <TextWrapper style={styles.title}>Account Details</TextWrapper>
           </View>
-          <AccountDetails />
+          <AccountDetails editingId={editingId} setEditingId={setEditingId} />
           <View style={styles.titleWrapper}>
             <TextWrapper style={styles.title}>My Items</TextWrapper>
           </View>
@@ -68,7 +70,7 @@ export default function Profile() {
           <View style={styles.titleWrapper}>
             <TextWrapper style={styles.title}>Settings</TextWrapper>
           </View>
-          <Settings />
+          <Settings editingId={editingId} setEditingId={setEditingId} />
         </KeyboardAwareScrollView>
       </View>
     </SafeAreaView>
