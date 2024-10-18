@@ -51,8 +51,8 @@ const AccountDetails = () => {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#F5F5F5',
-    marginRight: 10,
-    marginLeft: 10,
+    marginRight: 16,
+    marginLeft: 16,
     borderRadius: 16,
   },
 });

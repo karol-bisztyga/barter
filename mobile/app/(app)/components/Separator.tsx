@@ -10,8 +10,8 @@ export default function Separator({ style }: { style?: StyleProp<ViewStyle> }) {
 const styles = StyleSheet.create({
   separator: {
     height: SEPARATOR_HEIGHT,
-    backgroundColor: 'black',
-    marginRight: 20,
-    marginLeft: 20,
+    backgroundColor: 'grey',
+    marginRight: 10,
+    marginLeft: 10,
   },
 });

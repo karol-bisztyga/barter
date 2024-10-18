@@ -73,7 +73,7 @@ export default function Profile() {
           />
           <Separator style={styles.separator} />
           <View style={styles.titleWrapper}>
-            <TextWrapper style={styles.title}>Items</TextWrapper>
+            <TextWrapper style={styles.title}>My Items</TextWrapper>
           </View>
           <Items />
           <Separator style={styles.separator} />
@@ -94,6 +94,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     marginTop: 50,
+    marginBottom: 50,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -120,8 +121,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   separator: {
-    marginTop: 50,
-    marginBottom: 50,
+    margin: 16,
   },
   profileImage: {
     width: 200,
@@ -135,14 +135,13 @@ const styles = StyleSheet.create({
   },
   titleWrapper: {
     height: 70,
-    justifyContent: 'center',
-    alignItems: 'center',
+    margin: 16,
   },
   title: {
     flex: 1,
     fontSize: 30,
     lineHeight: 70,
-    textAlign: 'center',
+    textAlign: 'left',
   },
   itemsWrapper: {
     height: 100,
