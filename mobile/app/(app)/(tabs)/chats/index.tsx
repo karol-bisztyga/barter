@@ -1,69 +1,17 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { View, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import Item from '../../components/Item';
-import { ItemData, ItemBorderRadius } from '../../types';
+import { ItemData } from '../../types';
 import { router } from 'expo-router';
-import Separator, { SEPARATOR_HEIGHT } from '../../components/Separator';
+import { SEPARATOR_HEIGHT } from '../../components/Separator';
 import { useItemsContext } from '../../context/ItemsContext';
 import { useUserContext } from '../../context/UserContext';
 import { useMatchContext } from '../../context/MatchContext';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import TextWrapper from '../../genericComponents/TextWrapper';
+import ChatItem from './components/ChatItem';
 
 const ITEMS_PER_SCREEN = 4;
-
-const ListItem = ({
-  height,
-  myItem,
-  theirItem,
-  registerRenderedListItem,
-}: {
-  height: number;
-  myItem: ItemData;
-  theirItem: ItemData;
-  registerRenderedListItem: (_: string) => void;
-}) => {
-  return (
-    <View
-      style={[styles.itemsWrapper, { height }]}
-      onLayout={() => {
-        registerRenderedListItem(`${myItem.id}-${theirItem.id}`);
-      }}
-    >
-      <View style={styles.itemWrapper}>
-        <View style={styles.matchingItem}>
-          <Item
-            itemData={myItem}
-            showName={false}
-            showDescription={false}
-            borderRadius={ItemBorderRadius.all}
-            carouselOptions={{
-              dotsVisible: false,
-              pressEnabled: false,
-            }}
-          />
-        </View>
-        <View style={styles.iconWrapper}>
-          <FontAwesome size={28} name="refresh" style={styles.icon} />
-        </View>
-        <View style={styles.matchedItem}>
-          <Item
-            itemData={theirItem}
-            showName={false}
-            showDescription={false}
-            borderRadius={ItemBorderRadius.all}
-            carouselOptions={{
-              dotsVisible: false,
-              pressEnabled: false,
-            }}
-          />
-        </View>
-      </View>
-    </View>
-  );
-};
 
 export default function Chats() {
   const itemsContext = useItemsContext();
@@ -89,8 +37,8 @@ export default function Chats() {
   const renderListItem = useCallback(
     (myItem: ItemData, theirItem: ItemData) => {
       return (
-        <ListItem
-          height={listItemHeight}
+        <ChatItem
+          id={`${myItem.id}-${theirItem.id}`}
           myItem={myItem}
           theirItem={theirItem}
           registerRenderedListItem={registerRenderedListItem}
@@ -120,7 +68,7 @@ export default function Chats() {
         <FlatList
           style={{ opacity: listRendered ? 1 : 0 }}
           data={matchContext.matches}
-          renderItem={({ item, index }) => {
+          renderItem={({ item }) => {
             const { matchingItem, matchedItem, id } = item;
             // recognize which item is mine matching or matched and pass it properly to the list item
             const matchingItemFoundInUserItems =
@@ -147,21 +95,17 @@ export default function Chats() {
               return null;
             }
             return (
-              <>
-                <TouchableOpacity
-                  onPress={() => {
-                    itemsContext.setUsersItemId(myItem.id);
-                    itemsContext.setOthersItem(theirItem);
-                    matchContext.setCurrentMatchId(id);
-                    // pass match id to chat screen so we can use it in socket communication
-                    router.push('chats/chat');
-                  }}
-                  activeOpacity={1}
-                >
-                  {renderListItem(myItem, theirItem)}
-                </TouchableOpacity>
-                {index < matchContext.matches.length - 1 && <Separator />}
-              </>
+              <TouchableOpacity
+                onPress={() => {
+                  itemsContext.setUsersItemId(myItem.id);
+                  itemsContext.setOthersItem(theirItem);
+                  matchContext.setCurrentMatchId(id);
+                  // pass match id to chat screen so we can use it in socket communication
+                  router.push('chats/chat');
+                }}
+              >
+                {renderListItem(myItem, theirItem)}
+              </TouchableOpacity>
             );
           }}
         />
