@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   itemTitle: {
-    fontSize: 26,
+    fontSize: 18,
     lineHeight: 60,
     marginLeft: 10,
   },

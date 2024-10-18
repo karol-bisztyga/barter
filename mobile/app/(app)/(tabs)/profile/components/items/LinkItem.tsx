@@ -48,7 +48,7 @@ const styles = StyleSheet.create({
   },
   itemTitle: {
     flex: 5,
-    fontSize: 26,
+    fontSize: 18,
     lineHeight: 60,
     marginLeft: 16,
   },
