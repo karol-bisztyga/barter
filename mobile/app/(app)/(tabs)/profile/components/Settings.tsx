@@ -19,8 +19,7 @@ const Settings = ({
       <EditableItem
         name="change language"
         initialValue="English"
-        id="language"
-        key={0}
+        id="settings-language"
         editable
         isLast={false}
         editingId={editingId}
@@ -31,8 +30,7 @@ const Settings = ({
       <EditableItem
         name="change password"
         initialValue="***"
-        id="password"
-        key={1}
+        id="settings-password"
         editable
         isLast={false}
         editingId={editingId}
@@ -42,8 +40,7 @@ const Settings = ({
 
       <LinkItem
         name="terms and conditions"
-        index={2}
-        key={2}
+        id="settings-terms-and-conditions"
         isLast={false}
         onPress={() => {
           router.push('profile/terms_and_conditions');
@@ -51,8 +48,7 @@ const Settings = ({
       />
       <LinkItem
         name="sign out"
-        index={3}
-        key={3}
+        id="settings-sign-out"
         isLast={false}
         onPress={() => {
           sessionContext.signOut();
@@ -60,8 +56,7 @@ const Settings = ({
       />
       <LinkItem
         name="delete account"
-        index={4}
-        key={4}
+        id="settings-delete-account"
         isLast={true}
         onPress={() => {
           router.push('profile/delete_account');

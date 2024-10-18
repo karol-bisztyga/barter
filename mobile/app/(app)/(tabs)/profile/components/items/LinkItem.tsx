@@ -6,13 +6,13 @@ import TextWrapper from '../../../../genericComponents/TextWrapper';
 
 export type LinkItemProps = {
   name: string;
-  index: number;
+  id: string;
   isLast: boolean;
   onPress: () => void;
   imageUrl?: string;
 };
 
-const LinkItem = ({ name, index, isLast, onPress, imageUrl }: LinkItemProps) => {
+const LinkItem = ({ name, id, isLast, onPress, imageUrl }: LinkItemProps) => {
   return (
     <TouchableOpacity
       style={[
@@ -21,7 +21,7 @@ const LinkItem = ({ name, index, isLast, onPress, imageUrl }: LinkItemProps) => 
           borderBottomWidth: isLast ? 0 : 1,
         },
       ]}
-      key={index}
+      key={id}
       onPress={onPress}
     >
       {imageUrl && (

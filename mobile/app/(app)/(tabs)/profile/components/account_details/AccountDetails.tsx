@@ -41,7 +41,7 @@ const AccountDetails = ({
           return (
             <LinkItem
               name="replay onboarding"
-              index={index}
+              id={`${index}`}
               key={index}
               isLast={index === Object.keys(data).length - 1}
               onPress={() => {

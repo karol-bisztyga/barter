@@ -17,7 +17,7 @@ const MyItems = () => {
         return (
           <LinkItem
             key={index}
-            index={index}
+            id={`my-items-${index}`}
             isLast={false}
             name={item.name}
             onPress={() => {
@@ -30,8 +30,7 @@ const MyItems = () => {
       })}
       {userContext.items.length < MAX_ITEMS_SLOTS && (
         <LinkItem
-          key={'add-item'}
-          index={userContext.items.length}
+          id="my-items-add-item"
           isLast={true}
           name="add new item"
           onPress={() => {
