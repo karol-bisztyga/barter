@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { View, StyleSheet, ActivityIndicator, TouchableOpacity } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { View, StyleSheet, ActivityIndicator, TouchableOpacity, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -13,13 +13,29 @@ import TextWrapper from '../../genericComponents/TextWrapper';
 import AccountDetails from './components/account_details/AccountDetails';
 import MyItems from './components/MyItems';
 
+const { height } = Dimensions.get('window');
+
 export default function Profile() {
   const [imageLoading, setImageLoading] = useState<boolean>(true);
-  const scrollViewRef = useRef(null);
+  const scrollViewRef = useRef<KeyboardAwareScrollView>(null);
   const userContext = useUserContext();
   const editItemContext = useEditItemContext();
 
   const [editingId, setEditingId] = useState<string>('');
+
+  useEffect(() => {
+    if (editingId && scrollViewRef.current) {
+      const targetOffsetY = editingId.split('-').at(-1);
+      if (!targetOffsetY) {
+        return;
+      }
+      const targetOffsetYNumber = parseInt(targetOffsetY);
+      if (isNaN(targetOffsetYNumber)) {
+        return;
+      }
+      scrollViewRef.current.scrollToPosition(0, targetOffsetYNumber - height / 2, true);
+    }
+  }, [editingId]);
 
   return (
     <SafeAreaView style={styles.container}>

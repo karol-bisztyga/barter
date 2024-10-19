@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import * as Clipboard from 'expo-clipboard';
@@ -39,6 +39,8 @@ const EditableItem = ({
 }) => {
   const [value, setValue] = useState(initialValue);
   const [editingValue, setEditingValue] = useState(value);
+  const [pageY, setPageY] = useState(0);
+  const viewRef = useRef<View>(null);
 
   const editing = useSharedValue(0);
 
@@ -49,8 +51,10 @@ const EditableItem = ({
     return name;
   };
 
+  const composeIdWithPageY = () => `${id}-${pageY}`;
+
   useEffect(() => {
-    const isBeingEdited = editingId === id;
+    const isBeingEdited = editingId === composeIdWithPageY();
     if (isBeingEdited) {
       editing.value = withTiming(1);
     } else if (editing.value === 1) {
@@ -73,10 +77,10 @@ const EditableItem = ({
       return;
     }
 
-    if (editingId === id) {
+    if (editingId === composeIdWithPageY()) {
       setEditingId('');
     } else {
-      setEditingId(id);
+      setEditingId(composeIdWithPageY());
     }
   };
 
@@ -125,7 +129,18 @@ const EditableItem = ({
   };
 
   return (
-    <View>
+    <View
+      onLayout={() => {
+        if (viewRef.current !== null) {
+          viewRef.current.measure((x, y, width, height, pageX, pageY) => {
+            if (!pageY) {
+              setPageY(pageY);
+            }
+          });
+        }
+      }}
+      ref={viewRef}
+    >
       <TouchableOpacity
         style={[
           styles.container,
