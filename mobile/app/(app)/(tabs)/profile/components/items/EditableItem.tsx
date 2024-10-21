@@ -132,9 +132,9 @@ const EditableItem = ({
     <View
       onLayout={() => {
         if (viewRef.current !== null) {
-          viewRef.current.measure((x, y, width, height, pageX, pageY) => {
-            if (!pageY) {
-              setPageY(pageY);
+          viewRef.current.measure((_x, _y, _width, _height, _pageX, measuredPageY) => {
+            if (!pageY && measuredPageY) {
+              setPageY(measuredPageY);
             }
           });
         }

@@ -30,7 +30,7 @@ export default function Profile() {
         return;
       }
       const targetOffsetYNumber = parseInt(targetOffsetY);
-      if (isNaN(targetOffsetYNumber)) {
+      if (isNaN(targetOffsetYNumber) || !targetOffsetYNumber) {
         return;
       }
       scrollViewRef.current.scrollToPosition(0, targetOffsetYNumber - height / 2, true);
