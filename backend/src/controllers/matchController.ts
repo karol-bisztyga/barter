@@ -26,11 +26,13 @@ export const getMatches = async (req: AuthRequest, res: Response) => {
           matching_item.id AS matching_item_id,
           matching_item.name AS matching_item_name,
           matching_item.description AS matching_item_description,
+          matching_item_user.name AS matching_item_user_name,
           ARRAY_AGG(matching_item_images.url ORDER BY matching_item_images.id) AS matching_item_images,
           
           matched_item.id AS matched_item_id,
           matched_item.name AS matched_item_name,
           matched_item.description AS matched_item_description,
+          matched_item_user.name AS matched_item_user_name,
           ARRAY_AGG(matched_item_images.url ORDER BY matched_item_images.id) AS matched_item_images
       FROM
           matches
@@ -39,18 +41,22 @@ export const getMatches = async (req: AuthRequest, res: Response) => {
           items matching_item ON matching_item.id = matches.matching_item_id
       JOIN
           items_images matching_item_images ON matching_item.id = matching_item_images.item_id
+      JOIN
+          users matching_item_user ON matching_item.user_id = matching_item_user.id
 
       JOIN
           items matched_item ON matched_item.id = matches.matched_item_id
       JOIN
           items_images matched_item_images ON matched_item.id = matched_item_images.item_id
+      JOIN
+          users matched_item_user ON matched_item.user_id = matched_item_user.id
 
       WHERE
           matching_item_id IN (SELECT id FROM items WHERE user_id = $1)
       OR
           matched_item_id IN (SELECT id FROM items WHERE user_id = $1)
       GROUP BY
-          matches.id, matching_item.id, matched_item.id
+          matches.id, matching_item.id, matched_item.id, matching_item_user.name, matched_item_user.name
       ORDER BY
           matches.date_created DESC`,
       [userId]
@@ -62,12 +68,14 @@ export const getMatches = async (req: AuthRequest, res: Response) => {
           id: row.matching_item_id,
           name: row.matching_item_name,
           description: row.matching_item_description,
+          userName: row.matching_item_user_name,
           images: [...new Set(row.matching_item_images)],
         },
         matchedItem: {
           id: row.matched_item_id,
           name: row.matched_item_name,
           description: row.matched_item_description,
+          userName: row.matched_item_user_name,
           images: [...new Set(row.matched_item_images)],
         },
       };
