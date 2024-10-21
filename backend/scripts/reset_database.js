@@ -37,23 +37,21 @@ if (!checkContainerRunning() || option === '--force') {
 } else {
   console.log(`Docker container ${POSTGRESQL_CONTAINER_NAME} is already running.`);
 }
+(async () => {
+  // Step 1: Copy database.sql into the Docker container
+  console.log(`Copying ${sqlFilePath} into the Docker container...`);
 
-// Step 1: Copy database.sql into the Docker container
-console.log(`Copying ${sqlFilePath} into the Docker container...`);
-execCommand(`docker cp ${sqlFilePath} ${POSTGRESQL_CONTAINER_NAME}:/database.sql`);
+  const commands = [
+    `docker cp ${sqlFilePath} ${POSTGRESQL_CONTAINER_NAME}:/database.sql`,
+    `docker exec -it ${POSTGRESQL_CONTAINER_NAME} psql -U ${DB_USER} -d postgres -c 'DROP DATABASE IF EXISTS ${DB_NAME};'`,
+    `docker exec -it ${POSTGRESQL_CONTAINER_NAME} psql -U ${DB_USER} -d postgres -c 'CREATE DATABASE ${DB_NAME};'`,
+    `docker exec -it ${POSTGRESQL_CONTAINER_NAME} /bin/bash -c "export PGPASSWORD=${DB_PASSWORD}; psql -v DB_NAME=${DB_NAME} -U ${DB_USER} -d ${DB_NAME} -f /database.sql"`,
+  ];
 
-execCommand(
-  `docker exec -it ${POSTGRESQL_CONTAINER_NAME} psql -U ${DB_USER} -d postgres -c 'DROP DATABASE IF EXISTS ${DB_NAME};'`,
-  3
-);
-execCommand(
-  `docker exec -it ${POSTGRESQL_CONTAINER_NAME} psql -U ${DB_USER} -d postgres -c 'CREATE DATABASE ${DB_NAME};'`,
-  3
-);
-// Step 2: Execute the database.sql script inside the container
-execCommand(
-  `docker exec -it ${POSTGRESQL_CONTAINER_NAME} /bin/bash -c "export PGPASSWORD=${DB_PASSWORD}; psql -v DB_NAME=${DB_NAME} -U ${DB_USER} -d ${DB_NAME} -f /database.sql"`,
-  3
-);
+  for (const command of commands) {
+    const out = await execCommand(command, 3);
+    console.log(`>>> COMMAND EXECUTED [${command}]: ${out}`);
+  }
 
-console.log('Database has been reset.');
+  console.log('Database has been reset.');
+})();
