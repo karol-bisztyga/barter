@@ -14,7 +14,6 @@ import { addLike } from '../../db_utils/addLike';
 import { showError, showInfo } from '../../utils/notifications';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import { executeProtectedQuery } from '../../db_utils/executeProtectedQuery';
-import TextWrapper from '../../genericComponents/TextWrapper';
 
 const LOADED_ITEMS_CAPACITY = 5;
 // when there are less items loaded than this value, new items will be fetched
@@ -210,11 +209,12 @@ export default function Swipe() {
     <GestureHandlerRootView>
       <SafeAreaView style={styles.container}>
         <View style={styles.container}>
-          {cards.length === 0 && !loading && (
+          {/* todo this was showing all the time in prod so for now just removed it but it should be handled properly */}
+          {/* {cards.length === 0 && !loading && (
             <View style={styles.noCardsWrapper}>
               <TextWrapper style={styles.noCardsLabel}>No more cards</TextWrapper>
             </View>
-          )}
+          )} */}
           {activeCard && (
             <SwipeableCard
               itemData={activeCard}
