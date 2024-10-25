@@ -107,6 +107,7 @@ const LocationEditingPanel = ({
             setEditingValue(text);
           }}
           editable={false}
+          fillColor="#F5F5F5"
         />
       </View>
       <View style={styles.updateButtonWrapper}>
@@ -124,17 +125,9 @@ const styles = StyleSheet.create({
   },
   editingInputWrapper: {
     flex: 3,
-    alignItems: 'center',
-    justifyContent: 'center',
+    height: 60,
   },
-  editingInput: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    fontSize: 30,
-    height: 40,
-  },
+  editingInput: {},
   updateButtonWrapper: {
     flex: 1,
   },

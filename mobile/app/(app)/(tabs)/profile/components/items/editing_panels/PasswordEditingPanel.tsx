@@ -16,21 +16,22 @@ import { showSuccess } from '../../../../../utils/notifications';
 import { validatePassword } from '../../../../../utils/validators';
 import { changePassword } from '../../../../../db_utils/changePassword';
 
-export type PasswordEditingPanelProps = {
+const HEIGHT = 170;
+
+export type FieldEditingPanelProps = {
   editing: SharedValue<number>;
   setEditingId: React.Dispatch<React.SetStateAction<string>>;
 };
 
-const PasswordEditingPanel = ({ editing, setEditingId }: PasswordEditingPanelProps) => {
+const FieldEditingPanel = ({ editing, setEditingId }: FieldEditingPanelProps) => {
   const sessionContext = useSessionContext();
   const userContext = useUserContext();
-
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
 
   const wrapperAnimatedStyle = useAnimatedStyle(() => {
     return {
-      height: interpolate(editing.value, [0, 1], [0, 200]),
+      height: interpolate(editing.value, [0, 1], [0, HEIGHT]),
     };
   });
 
@@ -78,6 +79,7 @@ const PasswordEditingPanel = ({ editing, setEditingId }: PasswordEditingPanelPro
           value={currentPassword}
           onChangeText={setCurrentPassword}
           secureTextEntry={true}
+          fillColor="#F5F5F5"
         />
         <InputWrapper
           style={styles.editingInput}
@@ -85,10 +87,15 @@ const PasswordEditingPanel = ({ editing, setEditingId }: PasswordEditingPanelPro
           value={newPassword}
           onChangeText={setNewPassword}
           secureTextEntry={true}
+          fillColor="#F5F5F5"
         />
-      </View>
-      <View style={styles.updateButtonWrapper}>
-        <ButtonWrapper title="Update" onPress={handlePasswordChange} disabled={!validateValue()} />
+        <View style={styles.updateButtonWrapper}>
+          <ButtonWrapper
+            title="Update"
+            onPress={handlePasswordChange}
+            disabled={!validateValue()}
+          />
+        </View>
       </View>
     </Animated.View>
   );
@@ -98,24 +105,18 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     overflow: 'hidden',
-    flexDirection: 'column',
+    flexDirection: 'row',
   },
   editingInputWrapper: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    height: HEIGHT,
+    gap: 8,
+    flexDirection: 'column',
   },
-  editingInput: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    fontSize: 30,
-    height: 40,
-  },
+  editingInput: {},
   updateButtonWrapper: {
     flex: 1,
   },
 });
 
-export default PasswordEditingPanel;
+export default FieldEditingPanel;

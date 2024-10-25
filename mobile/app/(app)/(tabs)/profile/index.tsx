@@ -33,7 +33,7 @@ export default function Profile() {
       if (isNaN(targetOffsetYNumber) || !targetOffsetYNumber) {
         return;
       }
-      scrollViewRef.current.scrollToPosition(0, targetOffsetYNumber - height / 2, true);
+      scrollViewRef.current.scrollToPosition(0, targetOffsetYNumber - height / 2 + 50, true);
     }
   }, [editingId]);
 
@@ -75,6 +75,7 @@ export default function Profile() {
               </TouchableOpacity>
             </View>
           </View>
+
           <View style={styles.titleWrapper}>
             <TextWrapper style={styles.title}>Account Details</TextWrapper>
           </View>

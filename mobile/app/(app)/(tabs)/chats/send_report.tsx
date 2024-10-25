@@ -38,6 +38,7 @@ const SendReportModal = () => {
           value={report}
           onChangeText={setReport}
           style={styles.input}
+          fillColor="white"
         />
         <ButtonWrapper title="Send report" disabled={report.length < 10} onPress={sendReport} />
       </View>
@@ -54,20 +55,11 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'column',
     padding: 10,
-    alignItems: 'center',
     position: 'absolute',
     width: '100%',
+    height: 200,
   },
   input: {
-    backgroundColor: 'white',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    fontSize: 30,
-    height: 120,
-    lineHeight: 30,
-    margin: 10,
     textAlignVertical: 'top',
   },
 });

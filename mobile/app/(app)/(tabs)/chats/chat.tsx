@@ -285,6 +285,7 @@ const Chat = () => {
             blurOnSubmit={false}
             value={newMessage}
             onChangeText={setNewMessage}
+            fillColor="white"
           />
           <View>
             <ButtonWrapper
@@ -331,12 +332,6 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 20,
-    paddingHorizontal: 10,
-    fontSize: 30,
-    height: 40,
   },
   messageLoaderWrapper: {
     margin: 20,
