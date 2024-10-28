@@ -125,23 +125,25 @@ const SingInForm = ({ loading }: { loading: boolean }) => {
         },
       ]}
     >
-      <InputWrapper
-        placeholder="email"
-        value={email}
-        style={styles.input}
-        onChangeText={setEmail}
-        autoCapitalize="none"
-        fillColor="white"
-      />
-      <InputWrapper
-        autoCapitalize="none"
-        placeholder="password"
-        secureTextEntry={true}
-        value={password}
-        onChangeText={setPassword}
-        style={styles.input}
-        fillColor="white"
-      />
+      <View style={styles.inputWrapper}>
+        <InputWrapper
+          placeholder="email"
+          value={email}
+          onChangeText={setEmail}
+          autoCapitalize="none"
+          fillColor="white"
+        />
+      </View>
+      <View style={styles.inputWrapper}>
+        <InputWrapper
+          autoCapitalize="none"
+          placeholder="password"
+          secureTextEntry={true}
+          value={password}
+          onChangeText={setPassword}
+          fillColor="white"
+        />
+      </View>
       <ButtonWrapper
         title="Sign in"
         disabled={!formValid()}
@@ -237,21 +239,15 @@ const styles = StyleSheet.create({
     backgroundColor: BACKGROUND_COLOR,
   },
   inputContainer: {
+    flex: 1,
     flexDirection: 'column',
     padding: 10,
-    alignItems: 'center',
     position: 'absolute',
     width: '100%',
+    gap: 8,
   },
-  input: {
-    backgroundColor: 'white',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    fontSize: 30,
+  inputWrapper: {
     height: 40,
-    margin: 10,
   },
   loaderWrapper: {
     position: 'absolute',

@@ -70,53 +70,67 @@ export default function Register() {
 
   return (
     <View style={styles.container}>
-      <InputWrapper
-        placeholder="email"
-        value={email}
-        onChangeText={setEmail}
-        style={styles.input}
-        autoCapitalize="none"
-      />
-      <InputWrapper
-        placeholder="password"
-        secureTextEntry={true}
-        value={password}
-        onChangeText={setPassword}
-        style={styles.input}
-        autoCapitalize="none"
-      />
-      <InputWrapper
-        placeholder="repeat password"
-        secureTextEntry={true}
-        value={passwordRepeat}
-        onChangeText={setPasswordRepeat}
-        style={styles.input}
-        autoCapitalize="none"
-      />
-      {errors.length ? (
-        <View style={styles.errorWrapper}>
-          {errors.map((error) => {
-            return (
-              <TextWrapper key={error} style={styles.errorText}>
-                {error}
-              </TextWrapper>
-            );
-          })}
+      <View style={styles.inputContainer}>
+        <View style={styles.inputWrapper}>
+          <InputWrapper
+            placeholder="email"
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+            fillColor="white"
+          />
         </View>
-      ) : null}
-      <ButtonWrapper title="Register" disabled={!formValid()} onPress={register} />
-      <ButtonWrapper
-        title="Cancel"
-        disabled={loading}
-        onPress={async () => {
-          router.replace('/login');
-        }}
-      />
-      {loading && (
-        <View style={styles.loaderWrapper}>
-          <ActivityIndicator size="large" />
+        <View style={styles.inputWrapper}>
+          <InputWrapper
+            placeholder="password"
+            secureTextEntry={true}
+            value={password}
+            onChangeText={setPassword}
+            autoCapitalize="none"
+            fillColor="white"
+          />
         </View>
-      )}
+        <View style={styles.inputWrapper}>
+          <InputWrapper
+            placeholder="repeat password"
+            secureTextEntry={true}
+            value={passwordRepeat}
+            onChangeText={setPasswordRepeat}
+            autoCapitalize="none"
+            fillColor="white"
+          />
+        </View>
+        {errors.length ? (
+          <View style={styles.errorWrapper}>
+            {errors.map((error) => {
+              return (
+                <TextWrapper key={error} style={styles.errorText}>
+                  {error}
+                </TextWrapper>
+              );
+            })}
+          </View>
+        ) : null}
+        <ButtonWrapper
+          title="Register"
+          disabled={!formValid()}
+          onPress={register}
+          fillColor="white"
+        />
+        <ButtonWrapper
+          title="Cancel"
+          disabled={loading}
+          onPress={async () => {
+            router.replace('/login');
+          }}
+          fillColor="white"
+        />
+        {loading && (
+          <View style={styles.loaderWrapper}>
+            <ActivityIndicator size="large" />
+          </View>
+        )}
+      </View>
     </View>
   );
 }
@@ -124,20 +138,21 @@ export default function Register() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
     justifyContent: 'center',
+    alignItems: 'center',
     backgroundColor: BACKGROUND_COLOR,
   },
-  input: {
-    backgroundColor: 'white',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    fontSize: 30,
+  inputContainer: {
+    flex: 1,
+    flexDirection: 'column',
+    padding: 10,
+    position: 'absolute',
+    width: '100%',
+    gap: 8,
+  },
+  inputWrapper: {
+    backgroundColor: 'red',
     height: 40,
-    margin: 10,
   },
   errorWrapper: {
     opacity: 0.6,
