@@ -122,17 +122,7 @@ const EditableItem = ({
           />
         );
       case 'password':
-        return (
-          <PasswordEditingPanel
-            editing={editing}
-            editingValue={editingValue}
-            setEditingValue={setEditingValue}
-            name={name}
-            initialValue={initialValue}
-            setValue={setValue}
-            setEditingId={setEditingId}
-          />
-        );
+        return <PasswordEditingPanel editing={editing} setEditingId={setEditingId} />;
       default:
         return null;
     }

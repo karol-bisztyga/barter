@@ -19,22 +19,20 @@ export default function Layout() {
     return <Redirect href="/verify_account" />;
   }
   return (
-    <>
-      <ItemsContextProvider>
-        <MatchContextProvider>
-          <Stack>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="onboarding" options={{ headerShown: false }} />
-          </Stack>
-          {userContext.blockingLoading && (
-            <View style={styles.blockingLoader}>
-              <ActivityIndicator size="large" />
-            </View>
-          )}
-        </MatchContextProvider>
-      </ItemsContextProvider>
-      <Joker />
-    </>
+    <ItemsContextProvider>
+      <MatchContextProvider>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="onboarding" options={{ headerShown: false }} />
+        </Stack>
+        <Joker />
+        {userContext.blockingLoading && (
+          <View style={styles.blockingLoader}>
+            <ActivityIndicator size="large" />
+          </View>
+        )}
+      </MatchContextProvider>
+    </ItemsContextProvider>
   );
 }
 

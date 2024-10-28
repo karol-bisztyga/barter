@@ -6,15 +6,15 @@ export enum AlertType {
   INFO = 'info',
 }
 
-type Alert = {
+export type JokerAlert = {
   type: AlertType;
   message: string;
 };
 
 interface JokerContextState {
-  alerts: Array<Alert>;
-  pushAlert: (alert: Alert) => void;
-  popAlert: () => Alert | undefined;
+  alerts: Array<JokerAlert>;
+  pushAlert: (alert: JokerAlert) => void;
+  popAlert: () => JokerAlert | null;
 
   showError: (message: string) => void;
   showInfo: (message: string) => void;
@@ -24,7 +24,7 @@ interface JokerContextState {
 const initialState: JokerContextState = {
   alerts: [],
   pushAlert: () => {},
-  popAlert: () => undefined,
+  popAlert: () => null,
 
   showError: () => {
     console.log('asd');
@@ -48,31 +48,31 @@ export const useJokerContext = () => {
 };
 
 export const JokerContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
-  const [alerts, setAlerts] = useState<Array<Alert>>([]);
+  const [alerts, setAlerts] = useState<Array<JokerAlert>>([]);
 
-  const pushAlert = (alert: Alert) => {
+  const pushAlert = (alert: JokerAlert) => {
     setAlerts([...alerts, alert]);
   };
 
+  const popAlert = () => {
+    if (!alerts.length) {
+      return null;
+    }
+    const result = alerts[0];
+    setAlerts(alerts.slice(1));
+    return result;
+  };
+
   const showError = (message: string) => {
-    console.log('here 1');
     pushAlert({ type: AlertType.ERROR, message });
   };
 
   const showInfo = (message: string) => {
-    console.log('here 2');
     pushAlert({ type: AlertType.INFO, message });
   };
 
   const showSuccess = (message: string) => {
-    console.log('here 3');
     pushAlert({ type: AlertType.SUCCESS, message });
-  };
-
-  const popAlert = () => {
-    const result = alerts[0];
-    setAlerts(alerts.slice(1));
-    return result;
   };
 
   return (
