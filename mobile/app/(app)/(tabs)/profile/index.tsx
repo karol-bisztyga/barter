@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, ActivityIndicator, TouchableOpacity, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
 import { EditImageType } from '../../types';
 import { useUserContext } from '../../context/UserContext';
@@ -12,6 +11,7 @@ import ImageWrapper from '../../genericComponents/ImageWrapper';
 import TextWrapper from '../../genericComponents/TextWrapper';
 import AccountDetails from './components/account_details/AccountDetails';
 import MyItems from './components/MyItems';
+import { FeatherIcon } from '../../utils/icons';
 
 const { height } = Dimensions.get('window');
 
@@ -71,7 +71,7 @@ export default function Profile() {
                   router.push('profile/addPicture');
                 }}
               >
-                <FontAwesome size={20} name="pencil" />
+                <FeatherIcon width={20} height={20} />
               </TouchableOpacity>
             </View>
           </View>

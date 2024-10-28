@@ -1,12 +1,12 @@
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
 import { SessionContextState, useSessionContext } from '../../SessionContext';
 import { getUserMatches } from '../db_utils/getUserMatches';
 import { MatchContextState } from '../context/MatchContext';
 import { XMLParser } from 'fast-xml-parser';
 import { UserData } from '../types';
+import { LisIcon } from './icons';
 
 export const headerBackButtonOptions = (
   beforeCallback?: () => Promise<boolean>,
@@ -18,7 +18,6 @@ export const headerBackButtonOptions = (
     headerBackVisible: false,
     headerLeft: () => (
       <TouchableOpacity
-        activeOpacity={1}
         onPress={async () => {
           if (beforeCallback && !(await beforeCallback())) {
             return;
@@ -31,7 +30,13 @@ export const headerBackButtonOptions = (
         disabled={disabled}
         style={{ opacity: disabled ? 0.2 : 1 }}
       >
-        <FontAwesome size={28} name="arrow-left" />
+        <LisIcon
+          width={28}
+          height={28}
+          style={{
+            transform: [{ rotate: '-90deg' }],
+          }}
+        />
       </TouchableOpacity>
     ),
   };

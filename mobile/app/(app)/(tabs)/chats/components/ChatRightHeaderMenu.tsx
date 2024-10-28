@@ -1,5 +1,4 @@
 import React from 'react';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Menu, MenuOptions, MenuOption, MenuTrigger } from 'react-native-popup-menu';
 import { Alert, StyleSheet } from 'react-native';
 import { router } from 'expo-router';
@@ -8,6 +7,9 @@ import { unmatch } from '../../../db_utils/unmatch';
 import { useSessionContext } from '../../../../SessionContext';
 import { ErrorType, handleError } from '../../../utils/errorHandler';
 import TextWrapper from '../../../genericComponents/TextWrapper';
+import { ArrowsIcon, FlagIcon, SwordsShieldIcon } from '../../../utils/icons';
+
+const MENU_ICON_SIZE = 28;
 
 const ChatRightHeaderMenu = () => {
   const sessionContext = useSessionContext();
@@ -58,16 +60,20 @@ const ChatRightHeaderMenu = () => {
     <>
       <Menu>
         <MenuTrigger>
-          <FontAwesome size={28} name="ellipsis-h" />
+          <ArrowsIcon width={MENU_ICON_SIZE} height={MENU_ICON_SIZE} />
         </MenuTrigger>
         <MenuOptions customStyles={{ optionsContainer: styles.optionsContainer }}>
           <MenuOption onSelect={unmatchHandler} style={styles.menuItemWrapper}>
-            <FontAwesome size={28} style={styles.menuItemIcon} name="trash" />
+            <FlagIcon width={MENU_ICON_SIZE} height={MENU_ICON_SIZE} style={styles.menuItemIcon} />
             <TextWrapper style={styles.menuItemLabel}>Unmatch</TextWrapper>
           </MenuOption>
 
           <MenuOption onSelect={report} style={styles.menuItemWrapper}>
-            <FontAwesome size={28} style={styles.menuItemIcon} name="exclamation" />
+            <SwordsShieldIcon
+              width={MENU_ICON_SIZE}
+              height={MENU_ICON_SIZE}
+              style={styles.menuItemIcon}
+            />
             <TextWrapper style={styles.menuItemLabel}>Report</TextWrapper>
           </MenuOption>
         </MenuOptions>

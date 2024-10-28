@@ -2,11 +2,11 @@ import React from 'react';
 import { ItemBorderRadius } from '../../../types';
 import { StyleSheet, View } from 'react-native';
 import Item from '../../../components/Item';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { router } from 'expo-router';
 import { useUserContext } from '../../../context/UserContext';
 import { useItemsContext } from '../../../context/ItemsContext';
 import { ErrorType, handleError } from '../../../utils/errorHandler';
+import { ArrowsIcon } from '../../../utils/icons';
 
 const ChatHeader = () => {
   const userContext = useUserContext();
@@ -36,7 +36,7 @@ const ChatHeader = () => {
         }}
       />
       <View style={styles.iconWrapper}>
-        <FontAwesome size={28} name="refresh" style={styles.icon} />
+        <ArrowsIcon width={28} height={28} />
       </View>
       <Item
         itemData={othersItem}
@@ -66,9 +66,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     margin: 10,
-  },
-  icon: {
-    fontSize: 50,
   },
 });
 

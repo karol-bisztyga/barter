@@ -3,8 +3,8 @@ import { Tabs } from 'expo-router';
 import { authorizeUser, updateMatches } from '../utils/reusableStuff';
 import { useMatchContext } from '../context/MatchContext';
 import { ErrorType, handleError } from '../utils/errorHandler';
-import { BACKGROUND_COLOR, FONT_COLOR, FONT_COLOR_DISABLED } from '../constants';
-import { FeatherIcon, HelmetIcon, TargetIcon } from '../utils/icons';
+import { BACKGROUND_COLOR, FONT_COLOR } from '../constants';
+import { HelmetIcon, PaperIcon, TargetIcon } from '../utils/icons';
 
 const getTabNameFromEvent = (eventName?: string): string | undefined => eventName?.split('-')[0];
 
@@ -17,7 +17,7 @@ export default function TabLayout() {
       initialRouteName="swipe"
       screenOptions={{
         tabBarActiveTintColor: FONT_COLOR,
-        tabBarInactiveTintColor: FONT_COLOR_DISABLED,
+        tabBarInactiveTintColor: 'rgba(0, 0, 0, .3)',
         headerShown: false,
         tabBarActiveBackgroundColor: BACKGROUND_COLOR,
         tabBarInactiveBackgroundColor: BACKGROUND_COLOR,
@@ -75,7 +75,7 @@ export default function TabLayout() {
         name="chats"
         options={{
           title: 'Chats',
-          tabBarIcon: ({ color }) => <FeatherIcon width={28} height={28} fill={color} />,
+          tabBarIcon: ({ color }) => <PaperIcon width={28} height={28} fill={color} />,
           /**
            * todo this is a fix for this case:
            *  when an item is deleted and a chat for this item is openend in the chat tab, the chat tab should be reset or navigated to the chat root view

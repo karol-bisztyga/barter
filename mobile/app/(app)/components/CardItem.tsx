@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import Carousel from './Carousel';
 import { ItemData, ItemBorderRadius } from '../types';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { BookIcon } from '../utils/icons';
 
 type ItemProps = {
   itemData: ItemData;
@@ -27,17 +27,19 @@ export default function CardItem({ itemData, onPressMore = () => {} }: ItemProps
         pressEnabled={true}
         actionPanelVisible={true}
       />
-      <TouchableOpacity activeOpacity={1} onPress={onPressMore}>
-        <FontAwesome
-          size={30}
-          name="info-circle"
-          color="white"
+      <TouchableOpacity onPress={onPressMore}>
+        <View
           style={{
             position: 'absolute',
-            bottom: 5,
+            bottom: 10,
             right: 10,
+            backgroundColor: 'rgba(255, 255, 255, .3)',
+            borderRadius: 100,
+            padding: 8,
           }}
-        />
+        >
+          <BookIcon width={30} height={30} color="white" />
+        </View>
       </TouchableOpacity>
     </View>
   );

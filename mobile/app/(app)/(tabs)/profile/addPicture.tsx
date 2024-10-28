@@ -196,7 +196,7 @@ const AddPicture = () => {
         <View style={styles.imageWrapper}>
           <ImageWrapper style={styles.image} uri={addPictureContext.image} />
           {warning && <TextWrapper style={styles.warningText}>{warning}</TextWrapper>}
-          <ButtonWrapper title="Add" onPress={confirm} disabled={loading} />
+          <ButtonWrapper title="Add" onPress={confirm} disabled={loading} fillColor="white" />
           {loading && (
             <View style={styles.loaderWrapper}>
               <ActivityIndicator size="large" />

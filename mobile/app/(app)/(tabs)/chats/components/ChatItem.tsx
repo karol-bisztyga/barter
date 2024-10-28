@@ -3,7 +3,7 @@ import { View, StyleSheet, Dimensions } from 'react-native';
 import TextWrapper from '../../../genericComponents/TextWrapper';
 import { ItemData } from '../../../types';
 import ImageWrapper from '../../../genericComponents/ImageWrapper';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { ArrowsIcon } from '../../../utils/icons';
 
 const { width } = Dimensions.get('window');
 
@@ -62,7 +62,7 @@ const ChatItem = ({ id, myItem, theirItem, registerRenderedListItem }: ChatItemP
         </TextWrapper>
       </View>
       <View style={styles.iconWrapper}>
-        <FontAwesome size={ICON_SIZE} name="refresh" style={styles.icon} />
+        <ArrowsIcon width={ICON_SIZE} height={ICON_SIZE} />
       </View>
     </View>
   );
@@ -122,7 +122,6 @@ const styles = StyleSheet.create({
     top: 120 / 2 - ICON_SIZE / 2,
     left: width / 2 - ICON_SIZE / 2,
   },
-  icon: {},
 });
 
 export default ChatItem;
