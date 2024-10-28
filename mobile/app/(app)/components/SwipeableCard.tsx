@@ -18,8 +18,8 @@ import { ItemData, SwipeCallbacks, SwipeDirection } from '../types';
 import { useUserContext } from '../context/UserContext';
 import { showInfo } from '../utils/notifications';
 import CardItem from './CardItem';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import SwipeBackgroundAnimation from './SwipeBackgroundAnimation';
+import { PaperIcon, ShieldIcon, TorchIcon } from '../utils/icons';
 
 const { width, height } = Dimensions.get('window');
 const SWIPE_THRESHOLD_HORIZONTAL = 0.25 * width;
@@ -434,7 +434,11 @@ const SwipeableCard = ({
             forcedControlsParametersAnimatedStyle,
           ]}
         >
-          <FontAwesome size={DECIDE_ICON_SIZE} style={styles.decideIcon} name="remove" />
+          <ShieldIcon
+            width={DECIDE_ICON_SIZE}
+            height={DECIDE_ICON_SIZE}
+            style={styles.decideIcon}
+          />
         </Animated.View>
       )}
       {/* right icon */}
@@ -451,7 +455,7 @@ const SwipeableCard = ({
             forcedControlsParametersAnimatedStyle,
           ]}
         >
-          <FontAwesome size={DECIDE_ICON_SIZE} style={styles.decideIcon} name="bomb" />
+          <PaperIcon width={DECIDE_ICON_SIZE} height={DECIDE_ICON_SIZE} style={styles.decideIcon} />
         </Animated.View>
       )}
       {/* bottom icon */}
@@ -471,7 +475,7 @@ const SwipeableCard = ({
             forcedControlsParametersAnimatedStyle,
           ]}
         >
-          <FontAwesome size={DECIDE_ICON_SIZE} style={styles.decideIcon} name="clock-o" />
+          <TorchIcon width={DECIDE_ICON_SIZE} height={DECIDE_ICON_SIZE} style={styles.decideIcon} />
         </Animated.View>
       )}
     </Animated.View>
@@ -498,7 +502,6 @@ const styles = StyleSheet.create({
   },
   decideIconWrapper: {
     position: 'absolute',
-    backgroundColor: 'white',
     borderRadius: 500,
     alignItems: 'center',
     justifyContent: 'center',

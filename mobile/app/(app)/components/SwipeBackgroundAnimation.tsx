@@ -10,22 +10,8 @@ import {
 import { SwipeDirection, ViewDimensions } from '../types';
 import SwipeBackgroundAnimatedItem, {
   Item,
-  SwipeBackgroundAnimatedItemIconType,
+  SwipeBackgroundAnimationDirection,
 } from './SwipeBackgroundAnimationItem';
-
-const getIconForSwipeDirection = (swipeDirection: SwipeDirection | null) => {
-  'worklet';
-  switch (swipeDirection) {
-    case SwipeDirection.LEFT:
-      return 'remove';
-    case SwipeDirection.RIGHT:
-      return 'bomb';
-    case SwipeDirection.DOWN:
-      return 'clock-o';
-    default:
-      return '';
-  }
-};
 
 const getRandomInt = (min: number, max: number): number =>
   Math.floor(Math.random() * (max - min + 1)) + min;
@@ -112,7 +98,7 @@ const SwipeBackgroundAnimation = ({
   const [items, setItems] = useState<Item[]>([]);
   const [containerDimensions, setContainerDimensions] = useState<ViewDimensions | null>(null);
   const [regenerateItems, setRegenerateItems] = useState(false);
-  const icon = useSharedValue<SwipeBackgroundAnimatedItemIconType>('');
+  const icon = useSharedValue<SwipeBackgroundAnimationDirection>(null);
 
   const opacity = useSharedValue(0);
   const swipeIntensity = useSharedValue(0);
@@ -125,8 +111,7 @@ const SwipeBackgroundAnimation = ({
       if (previous === prepared) {
         return;
       }
-      const newIcon = getIconForSwipeDirection(prepared);
-      icon.value = newIcon;
+      icon.value = prepared;
 
       if (prepared !== null || containerDimensions === null) {
         return;
@@ -216,7 +201,7 @@ const SwipeBackgroundAnimation = ({
           item={item}
           opacity={opacity}
           swipeIntensity={swipeIntensity}
-          icon={icon}
+          iconSV={icon}
         />
       ))}
     </View>

@@ -1,10 +1,10 @@
 import React from 'react';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Tabs } from 'expo-router';
 import { authorizeUser, updateMatches } from '../utils/reusableStuff';
 import { useMatchContext } from '../context/MatchContext';
 import { ErrorType, handleError } from '../utils/errorHandler';
 import { BACKGROUND_COLOR, FONT_COLOR, FONT_COLOR_DISABLED } from '../constants';
+import { FeatherIcon, HelmetIcon, TargetIcon } from '../utils/icons';
 
 const getTabNameFromEvent = (eventName?: string): string | undefined => eventName?.split('-')[0];
 
@@ -61,21 +61,21 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: 'Profile',
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="user" color={color} />,
+          tabBarIcon: ({ color }) => <HelmetIcon width={28} height={28} fill={color} />,
         }}
       />
       <Tabs.Screen
         name="swipe"
         options={{
           title: 'Swipe',
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="eye" color={color} />,
+          tabBarIcon: ({ color }) => <TargetIcon width={28} height={28} fill={color} />,
         }}
       />
       <Tabs.Screen
         name="chats"
         options={{
           title: 'Chats',
-          tabBarIcon: ({ color }) => <FontAwesome size={28} name="comment" color={color} />,
+          tabBarIcon: ({ color }) => <FeatherIcon width={28} height={28} fill={color} />,
           /**
            * todo this is a fix for this case:
            *  when an item is deleted and a chat for this item is openend in the chat tab, the chat tab should be reset or navigated to the chat root view

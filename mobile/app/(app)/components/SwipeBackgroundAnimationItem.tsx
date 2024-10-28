@@ -7,10 +7,11 @@ import Animated, {
   withSequence,
   withTiming,
 } from 'react-native-reanimated';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { StyleSheet } from 'react-native';
+import { PaperIcon, ShieldIcon, TorchIcon } from '../utils/icons';
+import { SwipeDirection } from '../types';
 
-export type SwipeBackgroundAnimatedItemIconType = 'bomb' | 'clock-o' | 'remove' | '';
+export type SwipeBackgroundAnimationDirection = SwipeDirection | null;
 
 export interface Item {
   x: number;
@@ -19,18 +20,32 @@ export interface Item {
   color: string;
 }
 
+export const getIconForSwipeDirection = (swipeDirection: SwipeDirection | null) => {
+  'worklet';
+  switch (swipeDirection) {
+    case SwipeDirection.LEFT:
+      return ShieldIcon;
+    case SwipeDirection.RIGHT:
+      return PaperIcon;
+    case SwipeDirection.DOWN:
+      return TorchIcon;
+    default:
+      return null;
+  }
+};
+
 interface SwipeBackgroundAnimatedItemProps {
   item: Item;
   opacity: SharedValue<number>;
   swipeIntensity: SharedValue<number>;
-  icon: SharedValue<SwipeBackgroundAnimatedItemIconType>;
+  iconSV: SharedValue<SwipeBackgroundAnimationDirection>;
 }
 
 const SwipeBackgroundAnimatedItem: React.FC<SwipeBackgroundAnimatedItemProps> = ({
   item,
   opacity,
   swipeIntensity,
-  icon,
+  iconSV,
 }) => {
   const itemTranslateX = useSharedValue(0);
   const itemTranslateY = useSharedValue(0);
@@ -93,40 +108,30 @@ const SwipeBackgroundAnimatedItem: React.FC<SwipeBackgroundAnimatedItemProps> = 
   });
 
   const icons: {
-    iconName: SwipeBackgroundAnimatedItemIconType;
+    direction: SwipeBackgroundAnimationDirection;
     style: {
       opacity: number;
     };
   }[] = [
     {
-      iconName: 'bomb',
+      direction: SwipeDirection.RIGHT,
       style: useAnimatedStyle(() => {
-        return { opacity: icon.value === 'bomb' ? 1 : 0 };
+        return { opacity: iconSV.value === SwipeDirection.RIGHT ? 1 : 0 };
       }),
     },
     {
-      iconName: 'clock-o',
+      direction: SwipeDirection.DOWN,
       style: useAnimatedStyle(() => {
-        return { opacity: icon.value === 'clock-o' ? 1 : 0 };
+        return { opacity: iconSV.value === SwipeDirection.DOWN ? 1 : 0 };
       }),
     },
     {
-      iconName: 'remove',
+      direction: SwipeDirection.LEFT,
       style: useAnimatedStyle(() => {
-        return { opacity: icon.value === 'remove' ? 1 : 0 };
+        return { opacity: iconSV.value === SwipeDirection.LEFT ? 1 : 0 };
       }),
     },
   ];
-
-  // const bombAs = useAnimatedStyle(() => {
-  //   return { opacity: icon.value === 'bomb' ? 1 : 0 };
-  // });
-  // const clockOAs = useAnimatedStyle(() => {
-  //   return { opacity: icon.value === 'clock-o' ? 1 : 0 };
-  // });
-  // const removeAS = useAnimatedStyle(() => {
-  //   return { opacity: icon.value === 'remove' ? 1 : 0 };
-  // });
 
   return (
     <Animated.View
@@ -146,25 +151,18 @@ const SwipeBackgroundAnimatedItem: React.FC<SwipeBackgroundAnimatedItemProps> = 
         },
       ]}
     >
-      {icons.map((iconItem) => {
-        if (!iconItem.iconName) {
+      {icons.map((iconItem, index) => {
+        const size = (item.size * 3) / 4;
+        const Icon = getIconForSwipeDirection(iconItem.direction);
+        if (Icon === null) {
           return null;
         }
         return (
-          <Animated.View
-            style={[styles.animatedIconWrapper, iconItem.style]}
-            key={iconItem.iconName}
-          >
-            <FontAwesome size={(item.size * 3) / 4} name={iconItem.iconName} color={'black'} />
+          <Animated.View style={[styles.animatedIconWrapper, iconItem.style]} key={index}>
+            <Icon width={size} height={size} fill="black" />
           </Animated.View>
         );
       })}
-      {/* <Animated.View style={[styles.animatedIconWrapper, clockOAs]}>
-        <FontAwesome size={(item.size * 3) / 4} name={'clock-o'} color={'black'} />
-      </Animated.View>
-      <Animated.View style={[styles.animatedIconWrapper, removeAS]}>
-        <FontAwesome size={(item.size * 3) / 4} name={'remove'} color={'black'} />
-      </Animated.View> */}
     </Animated.View>
   );
 };
