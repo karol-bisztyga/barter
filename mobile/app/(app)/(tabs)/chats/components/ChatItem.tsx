@@ -41,9 +41,6 @@ const ChatItem = ({ id, myItem, theirItem, registerRenderedListItem }: ChatItemP
           style={[styles.itemOwnerWrapper, { lineHeight: 60 }]}
           ellipsizeMode="tail"
           numberOfLines={1}
-          onLayout={(e) => {
-            console.log('eeee1', e.nativeEvent.layout);
-          }}
         >
           You
         </TextWrapper>
