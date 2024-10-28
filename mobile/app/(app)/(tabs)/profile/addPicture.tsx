@@ -13,7 +13,6 @@ import { EditImageType, UserData } from '../../types';
 import { router } from 'expo-router';
 import { useUserContext } from '../../context/UserContext';
 import { useEditItemContext } from '../../context/EditItemContext';
-import { showSuccess } from '../../utils/notifications';
 import { uploadProfilePicture } from '../../db_utils/uploadProfilePicture';
 import { useSessionContext } from '../../../SessionContext';
 import { PROFILE_PICTURE_SIZE_LIMIT } from '../../constants';
@@ -26,6 +25,7 @@ import ImageWrapper from '../../genericComponents/ImageWrapper';
 import { useAddPictureContext } from '../../context/AddPictureContext';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 import TextWrapper from '../../genericComponents/TextWrapper';
+import { useJokerContext } from '../../context/JokerContext';
 
 const { width } = Dimensions.get('window');
 
@@ -36,6 +36,7 @@ const AddPicture = () => {
   const userContext = useUserContext();
   const sessionContext = useSessionContext();
   const addPictureContext = useAddPictureContext();
+  const jokerContext = useJokerContext();
 
   const [originalFileSize, setOriginalFileSize] = useState<number | null>(null);
   const [warning, setWarning] = useState<string>('');
@@ -126,7 +127,7 @@ const AddPicture = () => {
 
   const confirm = async () => {
     if (!addPictureContext.image) {
-      handleError(ErrorType.UPLOAD_IMAGE, 'image not set');
+      handleError(jokerContext, ErrorType.UPLOAD_IMAGE, 'image not set');
       return;
     }
     setLoading(true);
@@ -156,9 +157,9 @@ const AddPicture = () => {
             ...userContext.data,
             profilePicture: response.profilePicture,
           } as UserData);
-          showSuccess('successfully uploaded image');
+          jokerContext.showSuccess('successfully uploaded image');
         } catch (e) {
-          handleError(ErrorType.UPLOAD_IMAGE, `${e}`);
+          handleError(jokerContext, ErrorType.UPLOAD_IMAGE, `${e}`);
         }
         router.back();
         break;

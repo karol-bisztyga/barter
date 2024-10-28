@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { authorizeUser } from '../../utils/reusableStuff';
-import { showSuccess } from '../../utils/notifications';
 import { router } from 'expo-router';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import { useUserContext } from '../../context/UserContext';
@@ -9,10 +8,12 @@ import { deleteAccount } from '../../db_utils/deleteAccount';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 import InputWrapper from '../../genericComponents/InputWrapper';
 import TextWrapper from '../../genericComponents/TextWrapper';
+import { useJokerContext } from '../../context/JokerContext';
 
 export default function DeleteAccount() {
   const sessionContext = authorizeUser();
   const userContext = useUserContext();
+  const jokerContext = useJokerContext();
 
   const [value, setValue] = useState<string>('');
 
@@ -22,9 +23,9 @@ export default function DeleteAccount() {
     try {
       await deleteAccount(sessionContext);
       sessionContext.signOut();
-      showSuccess('Account deleted');
+      jokerContext.showSuccess('Account deleted');
     } catch (e) {
-      handleError(ErrorType.DELETE_ACCOUNT, `${e}`);
+      handleError(jokerContext, ErrorType.DELETE_ACCOUNT, `${e}`);
     } finally {
       userContext.setBlockingLoading(false);
     }
@@ -40,12 +41,14 @@ export default function DeleteAccount() {
         onChangeText={setValue}
         style={styles.input}
         autoCapitalize="none"
+        fillColor="white"
       />
       <ButtonWrapper
         title="Delete"
         disabled={value !== 'delete'}
         onPress={handleDelete}
         color="red"
+        fillColor="white"
       />
     </View>
   );

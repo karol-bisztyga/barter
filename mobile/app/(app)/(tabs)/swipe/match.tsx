@@ -10,6 +10,7 @@ import { authorizeUser } from '../../utils/reusableStuff';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 import TextWrapper from '../../genericComponents/TextWrapper';
+import { useJokerContext } from '../../context/JokerContext';
 
 const { width } = Dimensions.get('window');
 
@@ -17,11 +18,13 @@ const Match = () => {
   const sessionContext = authorizeUser();
   const userContext = useUserContext();
   const itemsContext = useItemsContext();
+  const jokerContext = useJokerContext();
 
   const { othersItem, usersItemId, usersItemsLikedByTargetItemOwner } = itemsContext;
 
   if (!usersItemId || !usersItemsLikedByTargetItemOwner.length || !othersItem) {
     handleError(
+      jokerContext,
       ErrorType.CORRUPTED_SESSION,
       `Match screen did not receive all required data: [${!!itemsContext.usersItemId}][${!!itemsContext.usersItemsLikedByTargetItemOwner.length}][${!!itemsContext.othersItem}]`
     );
@@ -31,7 +34,11 @@ const Match = () => {
 
   const usersItem: ItemData | undefined = userContext.findItemById(usersItemId)?.item;
   if (!othersItem || !usersItem) {
-    handleError(ErrorType.CORRUPTED_SESSION, `at least on of the items has not been set`);
+    handleError(
+      jokerContext,
+      ErrorType.CORRUPTED_SESSION,
+      `at least on of the items has not been set`
+    );
     router.back();
     return null;
   }
@@ -98,12 +105,14 @@ const Match = () => {
                     router.push('swipe/switch_item');
                   }}
                   color={'red'}
+                  fillColor="white"
                 />
               </View>
             )}
             <View style={styles.singleButtonWrapper}>
               <ButtonWrapper
                 title="Proceed!"
+                fillColor="white"
                 onPress={async () => {
                   // modify newly created match if the item was switched
                   if (
@@ -118,7 +127,7 @@ const Match = () => {
                         othersItem.id
                       );
                     } catch (e) {
-                      handleError(ErrorType.UPDATE_MATCH, `${e}`);
+                      handleError(jokerContext, ErrorType.UPDATE_MATCH, `${e}`);
                       return;
                     }
                   }

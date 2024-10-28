@@ -6,6 +6,7 @@ import { ErrorType, handleError } from '../../../../utils/errorHandler';
 import LinkItem from '../items/LinkItem';
 import { router } from 'expo-router';
 import EditableItem from '../items/EditableItem';
+import { useJokerContext } from '../../../../context/JokerContext';
 
 const AccountDetails = ({
   editingId,
@@ -15,11 +16,13 @@ const AccountDetails = ({
   setEditingId: React.Dispatch<React.SetStateAction<string>>;
 }) => {
   const userContext = useUserContext();
+  const jokerContext = useJokerContext();
 
   const data = { ...userContext.data };
 
   if (!data) {
     handleError(
+      jokerContext,
       ErrorType.CORRUPTED_SESSION,
       'your session seems to be corrupted (personal data is missing), you may want to restart the app or log in again'
     );

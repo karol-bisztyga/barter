@@ -5,17 +5,18 @@ import { router } from 'expo-router';
 import { useUserContext } from './(app)/context/UserContext';
 import { useSessionContext } from './SessionContext';
 import { executeQuery } from './(app)/db_utils/executeQuery';
-import { showSuccess } from './(app)/utils/notifications';
 import { ErrorType, handleError } from './(app)/utils/errorHandler';
 import { convertUserData } from './(app)/db_utils/utils';
 import ButtonWrapper from './(app)/genericComponents/ButtonWrapper';
 import { BACKGROUND_COLOR } from './(app)/constants';
 import InputWrapper from './(app)/genericComponents/InputWrapper';
 import TextWrapper from './(app)/genericComponents/TextWrapper';
+import { useJokerContext } from './(app)/context/JokerContext';
 
 export default function Register() {
   const userContext = useUserContext();
   const sessionContext = useSessionContext();
+  const jokerContext = useJokerContext();
 
   const [verificationCode, setVerificationCode] = useState('');
 
@@ -27,7 +28,7 @@ export default function Register() {
   const verify = async () => {
     try {
       if (!userContext.data?.email) {
-        handleError(ErrorType.VERIFY, 'Email could not be found');
+        handleError(jokerContext, ErrorType.VERIFY, 'Email could not be found');
         router.replace('/login');
         return null;
       }
@@ -37,7 +38,7 @@ export default function Register() {
       });
 
       if (response.ok) {
-        showSuccess('verification successful');
+        jokerContext.showSuccess('verification successful');
         const { result, token } = response.data;
         const newUserData = convertUserData(result);
         sessionContext.setSessionWithStorage(token, newUserData);
@@ -48,7 +49,7 @@ export default function Register() {
         throw new Error(response.data.message);
       }
     } catch (e) {
-      handleError(ErrorType.VERIFY, `${e}`);
+      handleError(jokerContext, ErrorType.VERIFY, `${e}`);
     }
   };
 
@@ -66,14 +67,21 @@ export default function Register() {
         value={verificationCode}
         onChangeText={setVerificationCode}
         style={styles.input}
+        fillColor="white"
       />
-      <ButtonWrapper title="Submit" disabled={!verificationCodeValid()} onPress={verify} />
+      <ButtonWrapper
+        title="Submit"
+        disabled={!verificationCodeValid()}
+        onPress={verify}
+        fillColor="white"
+      />
       <ButtonWrapper
         title="Back"
         onPress={() => {
           sessionContext.signOut();
           router.replace('/login');
         }}
+        fillColor="white"
       />
     </View>
   );

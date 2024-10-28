@@ -5,7 +5,6 @@ import { useState } from 'react';
 import { router } from 'expo-router';
 import { validateEmail, validatePassword, validatePasswords } from './(app)/utils/validators';
 import { executeQuery } from './(app)/db_utils/executeQuery';
-import { ErrorType, handleError } from './(app)/utils/errorHandler';
 import ButtonWrapper from './(app)/genericComponents/ButtonWrapper';
 import { BACKGROUND_COLOR } from './(app)/constants';
 import InputWrapper from './(app)/genericComponents/InputWrapper';
@@ -18,7 +17,7 @@ const ERROR_MESSAGES = {
 };
 
 export default function Register() {
-  const [errors, setErrors] = useState<string[]>([]);
+  const [error, setError] = useState<string>('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [passwordRepeat, setPasswordRepeat] = useState('');
@@ -28,24 +27,20 @@ export default function Register() {
     if (!email || !password || !passwordRepeat) {
       return false;
     }
-    if (errors.length) {
+    if (error) {
       return false;
     }
     return true;
   };
 
   useEffect(() => {
-    const newErrors = [];
     if (email && !validateEmail(email)) {
-      newErrors.push(ERROR_MESSAGES.INVALID_EMAIL);
+      setError(ERROR_MESSAGES.INVALID_EMAIL);
+    } else if (password && !validatePassword(password)) {
+      setError(ERROR_MESSAGES.PASSWORD);
+    } else if (password && passwordRepeat && !validatePasswords(password, passwordRepeat)) {
+      setError(ERROR_MESSAGES.PASSWORDS_NOT_MATCH);
     }
-    if (password && !validatePassword(password)) {
-      newErrors.push(ERROR_MESSAGES.PASSWORD);
-    }
-    if (password && passwordRepeat && !validatePasswords(password, passwordRepeat)) {
-      newErrors.push(ERROR_MESSAGES.PASSWORDS_NOT_MATCH);
-    }
-    setErrors(newErrors);
   }, [email, password, passwordRepeat]);
 
   const register = async () => {
@@ -63,7 +58,7 @@ export default function Register() {
       if (response && response.status === 400) {
         errorStr += response.data.message;
       }
-      handleError(ErrorType.REGISTER, `${e}`, errorStr);
+      setError(errorStr);
       setLoading(false);
     }
   };
@@ -100,17 +95,13 @@ export default function Register() {
             fillColor="white"
           />
         </View>
-        {errors.length ? (
+        {error && (
           <View style={styles.errorWrapper}>
-            {errors.map((error) => {
-              return (
-                <TextWrapper key={error} style={styles.errorText}>
-                  {error}
-                </TextWrapper>
-              );
-            })}
+            <TextWrapper key={error} style={styles.errorText}>
+              {error}
+            </TextWrapper>
           </View>
-        ) : null}
+        )}
         <ButtonWrapper
           title="Register"
           disabled={!formValid()}

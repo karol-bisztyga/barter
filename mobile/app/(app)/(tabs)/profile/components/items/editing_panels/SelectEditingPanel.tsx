@@ -7,8 +7,8 @@ import Animated, {
   useAnimatedReaction,
   useAnimatedStyle,
 } from 'react-native-reanimated';
-import { showInfo } from '../../../../../utils/notifications';
 import TextWrapper from '../../../../../genericComponents/TextWrapper';
+import { useJokerContext } from '../../../../../context/JokerContext';
 
 export type SelectEditingPanelProps = {
   initialValue: string;
@@ -27,6 +27,8 @@ const SelectEditingPanel = ({
   setEditingId,
   options,
 }: SelectEditingPanelProps) => {
+  const jokerContext = useJokerContext();
+
   const maxHeight = 60 * options.length;
 
   const wrapperAnimatedStyle = useAnimatedStyle(() => {
@@ -59,7 +61,7 @@ const SelectEditingPanel = ({
           ]}
           disabled={editingValue === option}
           onPress={() => {
-            showInfo('other languages are not yet implemented');
+            jokerContext.showInfo('other languages are not yet implemented');
             setEditingId('');
           }}
         >

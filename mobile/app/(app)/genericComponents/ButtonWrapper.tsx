@@ -11,8 +11,8 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { BACKGROUND_COLOR } from '../constants';
 import { DimensionsType, generatePaths } from './utils';
 import { useAssets } from 'expo-asset';
-import { showError } from '../utils/notifications';
 import Svg, { Path } from 'react-native-svg';
+import { useJokerContext } from '../context/JokerContext';
 
 export const BUTTON_HEIGHT = 40;
 
@@ -26,6 +26,8 @@ type MyButtonProps = {
 };
 
 const ButtonWrapper = ({ title, icon, onPress, disabled, color, fillColor }: MyButtonProps) => {
+  const jokerContext = useJokerContext();
+
   const [dimensions, setDimensions] = useState<DimensionsType>({
     width: 0,
     height: 0,
@@ -36,7 +38,7 @@ const ButtonWrapper = ({ title, icon, onPress, disabled, color, fillColor }: MyB
 
   useEffect(() => {
     if (error) {
-      showError('Error loading assets', `${error}`);
+      jokerContext.showError(`Error loading assets ${error}`);
     }
   }, [error]);
 

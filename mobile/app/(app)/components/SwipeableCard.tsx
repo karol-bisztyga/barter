@@ -16,10 +16,10 @@ import Animated, {
 } from 'react-native-reanimated';
 import { ItemData, SwipeCallbacks, SwipeDirection } from '../types';
 import { useUserContext } from '../context/UserContext';
-import { showInfo } from '../utils/notifications';
 import CardItem from './CardItem';
 import SwipeBackgroundAnimation from './SwipeBackgroundAnimation';
 import { PaperIcon, ShieldIcon, TorchIcon } from '../utils/icons';
+import { useJokerContext } from '../context/JokerContext';
 
 const { width, height } = Dimensions.get('window');
 const SWIPE_THRESHOLD_HORIZONTAL = 0.25 * width;
@@ -50,6 +50,7 @@ const SwipeableCard = ({
   lockGesture: SharedValue<boolean>;
 }) => {
   const userContext = useUserContext();
+  const jokerContext = useJokerContext();
 
   const [wrapperWidth, setWrapperWidth] = useState<number | null>(null);
   const [wrapperHeight, setWrapperHeight] = useState<number | null>(null);
@@ -154,9 +155,8 @@ const SwipeableCard = ({
       }
       if (userContext.swipingLeftRightBlockedReason) {
         if (Math.abs(translateX.value) > SWIPE_THRESHOLD_HORIZONTAL) {
-          runOnJS(showInfo)(
-            'swiping left right blocked',
-            userContext.swipingLeftRightBlockedReason
+          runOnJS(jokerContext.showInfo)(
+            'swiping left right blocked' + userContext.swipingLeftRightBlockedReason
           );
         }
         getBackToStartingPosition();

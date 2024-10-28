@@ -24,6 +24,7 @@ import { useMatchContext } from '../../context/MatchContext';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 import InputWrapper from '../../genericComponents/InputWrapper';
+import { useJokerContext } from '../../context/JokerContext';
 
 const INPUT_WRAPPER_HEIGHT = 70;
 const ITEMS_WRPPER_HEIGHT = 200;
@@ -34,6 +35,7 @@ const NO_MESSAGES_YET_LABEL = 'No messages yet';
 
 const Chat = () => {
   const sessionContext = authorizeUser();
+  const jokerContext = useJokerContext();
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [initialScrollPerformed, setInitialScrollPerformed] = useState(false);
@@ -72,7 +74,7 @@ const Chat = () => {
         throw new Error(`match not specified`);
       }
     } catch (e) {
-      handleError(ErrorType.CHAT_INITIALIZE, `${e}`, `${e}`);
+      handleError(jokerContext, ErrorType.CHAT_INITIALIZE, `${e}`, `${e}`);
     }
     router.back();
     return null;
@@ -136,7 +138,7 @@ const Chat = () => {
         matchContext.setMatches(matchContext.matches.filter((m) => m.id !== currentMatchId));
         router.back();
       }
-      handleError(ErrorType.SOCKET, `${e}`, `${customMessage}`);
+      handleError(jokerContext, ErrorType.SOCKET, `${e}`, `${customMessage}`);
     });
 
     return () => {
@@ -172,7 +174,7 @@ const Chat = () => {
       }
       setMessages([...messages, ...newMessages]);
     } catch (e) {
-      handleError(ErrorType.LOAD_MESSAGES, `${e}`);
+      handleError(jokerContext, ErrorType.LOAD_MESSAGES, `${e}`);
     }
   };
 
@@ -181,7 +183,7 @@ const Chat = () => {
       return;
     }
     if (!socket) {
-      handleError(ErrorType.SOCKET, 'trying to use uninitialized socket');
+      handleError(jokerContext, ErrorType.SOCKET, 'trying to use uninitialized socket');
       return;
     }
     const newMessageObject: ChatMessage = {

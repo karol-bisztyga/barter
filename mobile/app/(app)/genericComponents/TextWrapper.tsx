@@ -7,7 +7,6 @@ interface TextWrapperProps extends TextProps {}
 
 const TextWrapper = ({ ...props }: TextWrapperProps) => {
   const [loadedFonts] = useFonts({
-    RokkittRegular: require('../../../assets/fonts/Rokkitt-Regular.ttf'),
     Schoolbell: require('../../../assets/fonts/Schoolbell.ttf'),
   });
 

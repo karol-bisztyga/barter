@@ -5,12 +5,14 @@ import { useMatchContext } from '../context/MatchContext';
 import { ErrorType, handleError } from '../utils/errorHandler';
 import { BACKGROUND_COLOR, FONT_COLOR } from '../constants';
 import { HelmetIcon, PaperIcon, TargetIcon } from '../utils/icons';
+import { useJokerContext } from '../context/JokerContext';
 
 const getTabNameFromEvent = (eventName?: string): string | undefined => eventName?.split('-')[0];
 
 export default function TabLayout() {
   const sessionContext = authorizeUser();
   const matchContext = useMatchContext();
+  const jokerContext = useJokerContext();
 
   return (
     <Tabs
@@ -39,14 +41,14 @@ export default function TabLayout() {
                 try {
                   await updateMatches(sessionContext, matchContext);
                 } catch (e) {
-                  handleError(ErrorType.UPDATE_MATCHES, `${e}`);
+                  handleError(jokerContext, ErrorType.UPDATE_MATCHES, `${e}`);
                 }
               })();
               break;
             case 'profile':
               break;
             default:
-              handleError(ErrorType.UNKNOWN_ROUTE, `${e}`, '', false);
+              handleError(jokerContext, ErrorType.UNKNOWN_ROUTE, `${e}`, '', false);
           }
         },
       }}

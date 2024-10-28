@@ -8,10 +8,10 @@ import { useUserContext } from './(app)/context/UserContext';
 import * as SecureStore from 'expo-secure-store';
 
 import { STORAGE_SESSION_KEY } from './constants';
-import { ErrorType, handleError } from './(app)/utils/errorHandler';
 import ButtonWrapper from './(app)/genericComponents/ButtonWrapper';
 import { BACKGROUND_COLOR } from './(app)/constants';
 import InputWrapper from './(app)/genericComponents/InputWrapper';
+import TextWrapper from './(app)/genericComponents/TextWrapper';
 
 const sampleUsers = [
   {
@@ -86,7 +86,15 @@ const sampleUsers = [
   },
 ];
 
-const SingInForm = ({ loading }: { loading: boolean }) => {
+const SingInForm = ({
+  loading,
+  error,
+  setError,
+}: {
+  loading: boolean;
+  error: string;
+  setError: (_: string) => void;
+}) => {
   const { signIn } = useSessionContext();
   const userContext = useUserContext();
 
@@ -112,7 +120,7 @@ const SingInForm = ({ loading }: { loading: boolean }) => {
       userContext.setData({ ...userData });
       router.replace('/');
     } catch (e) {
-      handleError(ErrorType.SIGN_IN, `${e}`);
+      setError(`${e}`);
     }
   };
 
@@ -144,6 +152,13 @@ const SingInForm = ({ loading }: { loading: boolean }) => {
           fillColor="white"
         />
       </View>
+      {error && (
+        <View style={styles.errorWrapper}>
+          <TextWrapper key={error} style={styles.errorText}>
+            {error}
+          </TextWrapper>
+        </View>
+      )}
       <ButtonWrapper
         title="Sign in"
         disabled={!formValid()}
@@ -193,6 +208,7 @@ export default function Login() {
   const sessionContext = useSessionContext();
   const [checkingSession, setCheckingSession] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     if (checkingSession) {
@@ -216,7 +232,7 @@ export default function Login() {
       }
       setCheckingSession(false);
     } catch (e) {
-      handleError(ErrorType.READING_FROM_STORAGE, `${e}`);
+      setError('session seemed to be malformed, please log in again');
     }
   }, []);
 
@@ -226,7 +242,7 @@ export default function Login() {
   return (
     <View style={styles.container}>
       {loading && <Loader />}
-      <SingInForm loading={loading} />
+      <SingInForm loading={loading} error={error} setError={setError} />
     </View>
   );
 }
@@ -256,5 +272,15 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     zIndex: 1,
+  },
+  errorWrapper: {
+    opacity: 0.6,
+    width: '100%',
+    padding: 10,
+  },
+  errorText: {
+    color: 'red',
+    textAlign: 'center',
+    fontStyle: 'italic',
   },
 });

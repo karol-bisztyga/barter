@@ -8,10 +8,12 @@ import { useSessionContext } from '../../../../SessionContext';
 import { ErrorType, handleError } from '../../../utils/errorHandler';
 import TextWrapper from '../../../genericComponents/TextWrapper';
 import { ArrowsIcon, FlagIcon, SwordsShieldIcon } from '../../../utils/icons';
+import { useJokerContext } from '../../../context/JokerContext';
 
 const MENU_ICON_SIZE = 28;
 
 const ChatRightHeaderMenu = () => {
+  const jokerContext = useJokerContext();
   const sessionContext = useSessionContext();
   const matchContext = useMatchContext();
 
@@ -47,7 +49,7 @@ const ChatRightHeaderMenu = () => {
         router.back();
       }
     } catch (e) {
-      handleError(ErrorType.UNMATCH_FAILED, `${e}`);
+      handleError(jokerContext, ErrorType.UNMATCH_FAILED, `${e}`);
     } finally {
       matchContext.setUnmatching(false);
     }

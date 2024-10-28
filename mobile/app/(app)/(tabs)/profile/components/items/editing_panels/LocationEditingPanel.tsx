@@ -14,9 +14,9 @@ import Animated, {
 } from 'react-native-reanimated';
 import * as Location from 'expo-location';
 import ButtonWrapper, { BUTTON_HEIGHT } from '../../../../../genericComponents/ButtonWrapper';
-import { showSuccess } from '../../../../../utils/notifications';
 import { cityNameFromLocation, sleep } from '../../../../../utils/reusableStuff';
 import { FieldEditingPanelProps } from './FieldEditingPanel';
+import { useJokerContext } from '../../../../../context/JokerContext';
 
 const LocationEditingPanel = ({
   initialValue,
@@ -28,6 +28,7 @@ const LocationEditingPanel = ({
 }: FieldEditingPanelProps) => {
   const sessionContext = useSessionContext();
   const userContext = useUserContext();
+  const jokerContext = useJokerContext();
 
   const wrapperAnimatedStyle = useAnimatedStyle(() => {
     return {
@@ -59,7 +60,7 @@ const LocationEditingPanel = ({
 
       return await Location.getCurrentPositionAsync({});
     } catch (e) {
-      handleError(ErrorType.GET_LOCATION, `${e}`);
+      handleError(jokerContext, ErrorType.GET_LOCATION, `${e}`);
     }
   };
 
@@ -88,9 +89,9 @@ const LocationEditingPanel = ({
 
       setEditingId('');
 
-      showSuccess(`location updated`);
+      jokerContext.showSuccess(`location updated`);
     } catch (e) {
-      handleError(ErrorType.UPDATE_USER, `${e}`);
+      handleError(jokerContext, ErrorType.UPDATE_USER, `${e}`);
     } finally {
       userContext.setBlockingLoading(false);
     }

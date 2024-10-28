@@ -1,4 +1,4 @@
-import { showError } from './notifications';
+import { JokerContextState } from '../context/JokerContext';
 
 export enum ErrorType {
   UNKNOWN_ERROR,
@@ -117,16 +117,24 @@ const getMessageForErrorType = (type: ErrorType) => {
 };
 
 export const handleError = (
+  jokerContext: JokerContextState,
   type: ErrorType,
   fullError: string,
   customMessage: string = '',
   showToUser: boolean = true
 ): void => {
   if (type !== ErrorType.NETWORK_ERROR && fullError.includes('Network request failed')) {
-    return handleError(ErrorType.NETWORK_ERROR, fullError, 'Network error', showToUser);
+    return handleError(
+      jokerContext,
+      ErrorType.NETWORK_ERROR,
+      fullError,
+      'Network error',
+      showToUser
+    );
   }
   if (type !== ErrorType.SESSION_EXPIRED && fullError.includes('Invalid token')) {
     return handleError(
+      jokerContext,
       ErrorType.SESSION_EXPIRED,
       fullError,
       getMessageForErrorType(type),
@@ -135,5 +143,5 @@ export const handleError = (
   }
   const message = customMessage ? customMessage : getMessageForErrorType(type);
   console.error(message, fullError);
-  showToUser && showError(message);
+  showToUser && jokerContext.showError(message);
 };

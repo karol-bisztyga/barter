@@ -21,7 +21,6 @@ import { updateItem } from '../../db_utils/updateItem';
 import { addItem } from '../../db_utils/addItem';
 import { removeItem } from '../../db_utils/removeItem';
 import { useMatchContext } from '../../context/MatchContext';
-import { showSuccess } from '../../utils/notifications';
 import { deleteItemImage } from '../../db_utils/deleteItemImage';
 import { uploadItemImage } from '../../db_utils/uploadItemImage';
 import { prepareFileToUpload } from '../../utils/storageUtils';
@@ -30,6 +29,7 @@ import ImageWrapper from '../../genericComponents/ImageWrapper';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 import InputWrapper from '../../genericComponents/InputWrapper';
 import TextWrapper from '../../genericComponents/TextWrapper';
+import { useJokerContext } from '../../context/JokerContext';
 
 const { width } = Dimensions.get('window');
 
@@ -43,6 +43,7 @@ const EditItem = () => {
 
   const editItemContext = useEditItemContext();
   const userContext = useUserContext();
+  const jokerContext = useJokerContext();
 
   const usersItem = userContext.findItemById(usersItemId);
 
@@ -89,7 +90,7 @@ const EditItem = () => {
           fileMimeType,
           fileContent
         );
-        showSuccess('Image uploaded');
+        jokerContext.showSuccess('Image uploaded');
         const newPictures = [...pictures, response.url];
         setPictures(newPictures);
         userContext.setItems(
@@ -104,7 +105,7 @@ const EditItem = () => {
           })
         );
       } catch (e) {
-        handleError(ErrorType.UPLOAD_IMAGE, `${e}`);
+        handleError(jokerContext, ErrorType.UPLOAD_IMAGE, `${e}`);
       } finally {
         setUploadingImage(false);
       }
@@ -203,7 +204,7 @@ const EditItem = () => {
       await deleteItemImage(sessionContext, usersItemId, imageToRemove);
       setRemovingImage(null);
       setPictures(newPictures);
-      showSuccess('Image removed');
+      jokerContext.showSuccess('Image removed');
       userContext.setItems(
         userContext.items.map((item) => {
           if (item.id === usersItemId) {
@@ -216,7 +217,7 @@ const EditItem = () => {
         })
       );
     } catch (e) {
-      handleError(ErrorType.REMOVE_IMAGE, `${e}`);
+      handleError(jokerContext, ErrorType.REMOVE_IMAGE, `${e}`);
       setRemovingImage(null);
     }
   };
@@ -229,6 +230,7 @@ const EditItem = () => {
           placeholder="Name"
           value={name}
           onChangeText={setName}
+          fillColor="white"
         />
         <InputWrapper
           style={[styles.descriptionInput, styles.input]}
@@ -236,6 +238,7 @@ const EditItem = () => {
           multiline={true}
           value={description}
           onChangeText={setDescription}
+          fillColor="white"
         />
         <ButtonWrapper
           title="Save"
@@ -260,14 +263,15 @@ const EditItem = () => {
               router.back();
             } catch (e) {
               if (action === 'updating') {
-                handleError(ErrorType.UPDATE_ITEM, `${e}`);
+                handleError(jokerContext, ErrorType.UPDATE_ITEM, `${e}`);
               } else if (action === 'adding') {
-                handleError(ErrorType.ADD_ITEM, `${e}`);
+                handleError(jokerContext, ErrorType.ADD_ITEM, `${e}`);
               }
             } finally {
               setUpdatingItemData(false);
             }
           }}
+          fillColor="white"
         />
 
         {updatingItemData && (
@@ -360,19 +364,20 @@ const EditItem = () => {
                     if (result) {
                       newItems.splice(usersItem.index, 1);
                       userContext.setItems(newItems);
-                      showSuccess('Item removed');
+                      jokerContext.showSuccess('Item removed');
                       router.back();
                     } else {
                       throw new Error('server error');
                     }
                   } catch (e) {
-                    handleError(ErrorType.REMOVE_ITEM, `${e}`);
+                    handleError(jokerContext, ErrorType.REMOVE_ITEM, `${e}`);
                     return;
                   } finally {
                     setRemovingUtem(false);
                   }
                 }
               }}
+              fillColor="white"
             />
           )}
           {removingItem && (

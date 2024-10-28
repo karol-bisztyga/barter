@@ -12,9 +12,9 @@ import Animated, {
   useAnimatedStyle,
 } from 'react-native-reanimated';
 import ButtonWrapper from '../../../../../genericComponents/ButtonWrapper';
-import { showSuccess } from '../../../../../utils/notifications';
 import { validatePassword } from '../../../../../utils/validators';
 import { changePassword } from '../../../../../db_utils/changePassword';
+import { useJokerContext } from '../../../../../context/JokerContext';
 
 const HEIGHT = 170;
 
@@ -28,6 +28,7 @@ const FieldEditingPanel = ({ editing, setEditingId }: FieldEditingPanelProps) =>
   const userContext = useUserContext();
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const jokerContext = useJokerContext();
 
   const wrapperAnimatedStyle = useAnimatedStyle(() => {
     return {
@@ -49,10 +50,10 @@ const FieldEditingPanel = ({ editing, setEditingId }: FieldEditingPanelProps) =>
     userContext.setBlockingLoading(true);
     try {
       await changePassword(sessionContext, currentPassword, newPassword);
-      showSuccess('password changed');
+      jokerContext.showSuccess('password changed');
       setEditingId('');
     } catch (e) {
-      handleError(ErrorType.CHANGE_PASSWORD, `${e}`); // todo this alert hides behind the modal on ios
+      handleError(jokerContext, ErrorType.CHANGE_PASSWORD, `${e}`); // todo this alert hides behind the modal on ios
     }
     userContext.setBlockingLoading(false);
   };

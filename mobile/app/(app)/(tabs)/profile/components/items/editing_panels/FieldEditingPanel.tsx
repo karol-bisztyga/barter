@@ -14,7 +14,7 @@ import Animated, {
   useAnimatedStyle,
 } from 'react-native-reanimated';
 import ButtonWrapper, { BUTTON_HEIGHT } from '../../../../../genericComponents/ButtonWrapper';
-import { showSuccess } from '../../../../../utils/notifications';
+import { useJokerContext } from '../../../../../context/JokerContext';
 
 export type FieldEditingPanelProps = {
   name: string;
@@ -37,6 +37,7 @@ const FieldEditingPanel = ({
 }: FieldEditingPanelProps) => {
   const sessionContext = useSessionContext();
   const userContext = useUserContext();
+  const jokerContext = useJokerContext();
 
   const wrapperAnimatedStyle = useAnimatedStyle(() => {
     return {
@@ -67,9 +68,9 @@ const FieldEditingPanel = ({
       userContext.setData({ ...userContext.data, ...obj } as UserData);
 
       setEditingId('');
-      showSuccess(`${name} updated`);
+      jokerContext.showSuccess(`${name} updated`);
     } catch (e) {
-      handleError(ErrorType.UPDATE_USER, `${e}`);
+      handleError(jokerContext, ErrorType.UPDATE_USER, `${e}`);
     } finally {
       userContext.setBlockingLoading(false);
     }

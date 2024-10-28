@@ -4,14 +4,15 @@ import { useItemsContext } from '../../context/ItemsContext';
 import { StyleSheet, View } from 'react-native';
 import { addReport } from '../../db_utils/addReport';
 import { authorizeUser } from '../../utils/reusableStuff';
-import { showSuccess } from '../../utils/notifications';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 import InputWrapper from '../../genericComponents/InputWrapper';
+import { useJokerContext } from '../../context/JokerContext';
 
 const SendReportModal = () => {
   const sessionContext = authorizeUser();
   const itemsContext = useItemsContext();
+  const jokerContext = useJokerContext();
 
   const [report, setReport] = useState('');
 
@@ -21,10 +22,10 @@ const SendReportModal = () => {
         throw new Error('othersItem has not been specified/set');
       }
       await addReport(sessionContext, itemsContext.othersItem.id, report);
-      showSuccess('Report sent');
+      jokerContext.showSuccess('Report sent');
       router.back();
     } catch (e) {
-      handleError(ErrorType.SEND_REPORT, `${e}`);
+      handleError(jokerContext, ErrorType.SEND_REPORT, `${e}`);
     }
   };
 

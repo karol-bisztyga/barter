@@ -11,7 +11,7 @@ export type JokerAlert = {
   message: string;
 };
 
-interface JokerContextState {
+export interface JokerContextState {
   alerts: Array<JokerAlert>;
   pushAlert: (alert: JokerAlert) => void;
   popAlert: () => JokerAlert | null;

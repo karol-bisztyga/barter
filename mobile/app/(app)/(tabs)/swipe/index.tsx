@@ -11,9 +11,9 @@ import { getUserItems } from '../../db_utils/getUserItems';
 import { authorizeUser } from '../../utils/reusableStuff';
 import { getItemsForCards } from '../../db_utils/getItemsForCards';
 import { addLike } from '../../db_utils/addLike';
-import { showError, showInfo } from '../../utils/notifications';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import { executeProtectedQuery } from '../../db_utils/executeProtectedQuery';
+import { useJokerContext } from '../../context/JokerContext';
 
 const LOADED_ITEMS_CAPACITY = 5;
 // when there are less items loaded than this value, new items will be fetched
@@ -26,6 +26,7 @@ export default function Swipe() {
   const [activeCard, setActiveCard] = useState<ItemData | null>(null);
   const [emptyCardsResponseReceived, setEmptyCardsResponseReceived] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const jokerContext = useJokerContext();
 
   const lockGesture = useSharedValue<boolean>(false);
 
@@ -45,7 +46,7 @@ export default function Swipe() {
           onboarded: 'true',
         });
       } catch (e) {
-        showError('error updating onboarding data');
+        jokerContext.showError('error updating onboarding data');
         console.error('error updating onboarding data', e);
       }
     })();
@@ -55,6 +56,7 @@ export default function Swipe() {
   useEffect(() => {
     if (!userContext.data) {
       handleError(
+        jokerContext,
         ErrorType.CORRUPTED_SESSION,
         'your session seems to be corrupted (your data is missing), you may want to restart the app or log in again'
       );
@@ -65,7 +67,7 @@ export default function Swipe() {
         userContext.setItems(items);
       })
       .catch((e) => {
-        handleError(ErrorType.LOAD_ITEMS, `${e}`);
+        handleError(jokerContext, ErrorType.LOAD_ITEMS, `${e}`);
       });
   }, []);
 
@@ -74,7 +76,7 @@ export default function Swipe() {
     (async () => {
       try {
         if (emptyCardsResponseReceived) {
-          showInfo('no items available for now, try again later');
+          jokerContext.showInfo('no items available for now, try again later');
           return;
         }
         setLoading(true);
@@ -96,7 +98,7 @@ export default function Swipe() {
         setActiveCard(newActiveCard);
         setCards(itemsLoaded);
       } catch (e) {
-        handleError(ErrorType.LOAD_CARDS, `${e}`);
+        handleError(jokerContext, ErrorType.LOAD_CARDS, `${e}`);
       }
     })();
   }, []);
@@ -111,7 +113,7 @@ export default function Swipe() {
     if (cards.length <= ITEMS_LOAD_TRESHOLD) {
       try {
         if (emptyCardsResponseReceived) {
-          showInfo('no items available for now, try again later');
+          jokerContext.showInfo('no items available for now, try again later');
           return activeCard;
         }
         const itemsLoaded = await getItemsForCards(
@@ -125,7 +127,7 @@ export default function Swipe() {
         }
         updatedCards = [...itemsLoaded, ...updatedCards];
       } catch (e) {
-        handleError(ErrorType.LOAD_CARDS, `${e}`);
+        handleError(jokerContext, ErrorType.LOAD_CARDS, `${e}`);
         return null;
       }
     }
@@ -142,14 +144,16 @@ export default function Swipe() {
     try {
       return await addLike(sessionContext, likedItemId, decision);
     } catch (e) {
-      handleError(ErrorType.SEND_LIKE, `${e}`);
+      handleError(jokerContext, ErrorType.SEND_LIKE, `${e}`);
     }
   };
 
   const handleSwipeRight = async () => {
     try {
       if (userContext.swipingLeftRightBlockedReason) {
-        showInfo('swiping left/right blocked, reason:', userContext.swipingLeftRightBlockedReason);
+        jokerContext.showInfo(
+          'swiping left/right blocked, reason:' + userContext.swipingLeftRightBlockedReason
+        );
         return;
       }
       const swipedCard = await popAndLoadCard();
@@ -168,14 +172,16 @@ export default function Swipe() {
         router.push('swipe/match');
       }
     } catch (e) {
-      handleError(ErrorType.SWIPE, `${e}`);
+      handleError(jokerContext, ErrorType.SWIPE, `${e}`);
     }
   };
 
   const handleSwipeLeft = async () => {
     try {
       if (userContext.swipingLeftRightBlockedReason) {
-        showInfo('swiping left/right blocked, reason:', userContext.swipingLeftRightBlockedReason);
+        jokerContext.showInfo(
+          'swiping left/right blocked, reason: ' + userContext.swipingLeftRightBlockedReason
+        );
         return;
       }
       const swipedCard = await popAndLoadCard();
@@ -190,7 +196,7 @@ export default function Swipe() {
         );
       }
     } catch (e) {
-      handleError(ErrorType.SWIPE, `${e}`);
+      handleError(jokerContext, ErrorType.SWIPE, `${e}`);
     }
   };
 
@@ -201,7 +207,7 @@ export default function Swipe() {
       }
       await popAndLoadCard();
     } catch (e) {
-      handleError(ErrorType.SWIPE, `${e}`);
+      handleError(jokerContext, ErrorType.SWIPE, `${e}`);
     }
   };
 

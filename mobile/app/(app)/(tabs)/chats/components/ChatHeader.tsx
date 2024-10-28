@@ -7,8 +7,10 @@ import { useUserContext } from '../../../context/UserContext';
 import { useItemsContext } from '../../../context/ItemsContext';
 import { ErrorType, handleError } from '../../../utils/errorHandler';
 import { ArrowsIcon } from '../../../utils/icons';
+import { useJokerContext } from '../../../context/JokerContext';
 
 const ChatHeader = () => {
+  const jokerContext = useJokerContext();
   const userContext = useUserContext();
   const itemsContext = useItemsContext();
   const { usersItemId, othersItem } = itemsContext;
@@ -17,6 +19,7 @@ const ChatHeader = () => {
   if (!usersItem || !othersItem) {
     // todo replace all occurences of 'your session seems to be corrupted' with a function or sth
     handleError(
+      jokerContext,
       ErrorType.CORRUPTED_SESSION,
       `your session seems to be corrupted (data for one of the items is not present), you may want to restart the app or log in again`
     );
