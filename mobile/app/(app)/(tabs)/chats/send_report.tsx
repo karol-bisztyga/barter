@@ -40,7 +40,12 @@ const SendReportModal = () => {
           style={styles.input}
           fillColor="white"
         />
-        <ButtonWrapper title="Send report" disabled={report.length < 10} onPress={sendReport} />
+        <ButtonWrapper
+          title="Send report"
+          disabled={report.length < 10}
+          onPress={sendReport}
+          fillColor="white"
+        />
       </View>
     </View>
   );

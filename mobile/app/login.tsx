@@ -86,36 +86,13 @@ const sampleUsers = [
   },
 ];
 
-const SingInForm = ({
-  loading,
-  setButtonsLoading,
-}: {
-  loading: boolean;
-  setButtonsLoading: (_: boolean) => void;
-}) => {
+const SingInForm = ({ loading }: { loading: boolean }) => {
   const { signIn } = useSessionContext();
   const userContext = useUserContext();
 
   // todo remove default values
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-
-  const [loadedButtons, setLoadedButtons] = useState({
-    signIn: false,
-    register: false,
-    mocked: [false, false, false],
-  });
-
-  useEffect(() => {
-    if (
-      !loadedButtons.signIn ||
-      !loadedButtons.register ||
-      loadedButtons.mocked.some((mocked) => !mocked)
-    ) {
-      return;
-    }
-    setButtonsLoading(false);
-  }, [loadedButtons]);
 
   const formValid = () => {
     if (!email || !password) {
@@ -154,6 +131,7 @@ const SingInForm = ({
         style={styles.input}
         onChangeText={setEmail}
         autoCapitalize="none"
+        fillColor="white"
       />
       <InputWrapper
         autoCapitalize="none"
@@ -162,6 +140,7 @@ const SingInForm = ({
         value={password}
         onChangeText={setPassword}
         style={styles.input}
+        fillColor="white"
       />
       <ButtonWrapper
         title="Sign in"
@@ -169,24 +148,14 @@ const SingInForm = ({
         onPress={async () => {
           await hadnleSignIn(email, password);
         }}
-        onLayout={() => {
-          if (loadedButtons.signIn) {
-            return;
-          }
-          setLoadedButtons({ ...loadedButtons, signIn: true });
-        }}
+        fillColor="white"
       />
       <ButtonWrapper
         title="Register"
         onPress={() => {
           router.replace('/register');
         }}
-        onLayout={() => {
-          if (loadedButtons.register) {
-            return;
-          }
-          setLoadedButtons({ ...loadedButtons, register: true });
-        }}
+        fillColor="white"
       />
       {/* TODO remove buttons below */}
       {sampleUsers.map((user, index) => {
@@ -200,14 +169,7 @@ const SingInForm = ({
             onPress={async () => {
               await hadnleSignIn(user.email, user.password);
             }}
-            onLayout={() => {
-              if (loadedButtons.mocked[index]) {
-                return;
-              }
-              const mocked = [...loadedButtons.mocked];
-              mocked[index] = true;
-              setLoadedButtons({ ...loadedButtons, mocked });
-            }}
+            fillColor="white"
           />
         );
       })}
@@ -229,14 +191,13 @@ export default function Login() {
   const sessionContext = useSessionContext();
   const [checkingSession, setCheckingSession] = useState(true);
   const [loading, setLoading] = useState(true);
-  const [buttonsLoading, setButtonsLoading] = useState(true);
 
   useEffect(() => {
-    if (checkingSession || buttonsLoading) {
+    if (checkingSession) {
       return;
     }
     setLoading(false);
-  }, [checkingSession, buttonsLoading]);
+  }, [checkingSession]);
 
   useEffect(() => {
     try {
@@ -263,7 +224,7 @@ export default function Login() {
   return (
     <View style={styles.container}>
       {loading && <Loader />}
-      <SingInForm loading={loading} setButtonsLoading={setButtonsLoading} />
+      <SingInForm loading={loading} />
     </View>
   );
 }

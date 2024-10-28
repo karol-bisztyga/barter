@@ -20,6 +20,7 @@ export default function Register() {
         onPress={() => {
           router.replace('/login');
         }}
+        fillColor="white"
       />
     </View>
   );

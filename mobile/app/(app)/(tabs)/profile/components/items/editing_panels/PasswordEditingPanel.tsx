@@ -94,6 +94,7 @@ const FieldEditingPanel = ({ editing, setEditingId }: FieldEditingPanelProps) =>
             title="Update"
             onPress={handlePasswordChange}
             disabled={!validateValue()}
+            fillColor="#F5F5F5"
           />
         </View>
       </View>

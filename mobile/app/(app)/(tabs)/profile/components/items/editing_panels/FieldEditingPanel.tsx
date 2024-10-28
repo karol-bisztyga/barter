@@ -13,7 +13,7 @@ import Animated, {
   useAnimatedReaction,
   useAnimatedStyle,
 } from 'react-native-reanimated';
-import ButtonWrapper from '../../../../../genericComponents/ButtonWrapper';
+import ButtonWrapper, { BUTTON_HEIGHT } from '../../../../../genericComponents/ButtonWrapper';
 import { showSuccess } from '../../../../../utils/notifications';
 
 export type FieldEditingPanelProps = {
@@ -104,7 +104,12 @@ const FieldEditingPanel = ({
         />
       </View>
       <View style={styles.updateButtonWrapper}>
-        <ButtonWrapper title="Update" onPress={update} disabled={!validateValue()} />
+        <ButtonWrapper
+          title="Update"
+          onPress={update}
+          disabled={!validateValue()}
+          fillColor="#F5F5F5"
+        />
       </View>
     </Animated.View>
   );
@@ -120,10 +125,13 @@ const styles = StyleSheet.create({
     flex: 3,
     height: 52,
     marginVertical: 8,
+    marginHorizontal: 8,
   },
   editingInput: {},
   updateButtonWrapper: {
     flex: 1,
+    marginVertical: 12,
+    height: BUTTON_HEIGHT,
   },
 });
 

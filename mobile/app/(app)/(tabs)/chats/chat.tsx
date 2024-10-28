@@ -294,6 +294,7 @@ const Chat = () => {
               onPress={() => {
                 sendMessage();
               }}
+              fillColor="white"
             />
           </View>
         </Animated.View>
