@@ -9,6 +9,7 @@ import FlagIcon from '../../../assets/icons/medieval_pack/029-flag-2.svg';
 import SwordsShieldIcon from '../../../assets/icons/medieval_pack/011-shield-2.svg';
 import BookIcon from '../../../assets/icons/medieval_pack/039-book.svg';
 import LisIcon from '../../../assets/icons/medieval_pack/020-lis.svg';
+import JokerIcon from '../../../assets/icons/medieval_pack/022-joker.svg';
 
 export {
   TorchIcon,
@@ -22,4 +23,5 @@ export {
   SwordsShieldIcon,
   BookIcon,
   LisIcon,
+  JokerIcon,
 };

@@ -6,6 +6,7 @@ import { Redirect } from 'expo-router';
 import { MatchContextProvider } from './context/MatchContext';
 import { useUserContext } from './context/UserContext';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import Joker from './components/Joker';
 
 export default function Layout() {
   const sessionContext = useSessionContext();
@@ -18,19 +19,22 @@ export default function Layout() {
     return <Redirect href="/verify_account" />;
   }
   return (
-    <ItemsContextProvider>
-      <MatchContextProvider>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="onboarding" options={{ headerShown: false }} />
-        </Stack>
-        {userContext.blockingLoading && (
-          <View style={styles.blockingLoader}>
-            <ActivityIndicator size="large" />
-          </View>
-        )}
-      </MatchContextProvider>
-    </ItemsContextProvider>
+    <>
+      <ItemsContextProvider>
+        <MatchContextProvider>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="onboarding" options={{ headerShown: false }} />
+          </Stack>
+          {userContext.blockingLoading && (
+            <View style={styles.blockingLoader}>
+              <ActivityIndicator size="large" />
+            </View>
+          )}
+        </MatchContextProvider>
+      </ItemsContextProvider>
+      <Joker />
+    </>
   );
 }
 
