@@ -13,7 +13,7 @@ import Animated, {
   useAnimatedStyle,
 } from 'react-native-reanimated';
 import * as Location from 'expo-location';
-import ButtonWrapper from '../../../../../genericComponents/ButtonWrapper';
+import ButtonWrapper, { BUTTON_HEIGHT } from '../../../../../genericComponents/ButtonWrapper';
 import { showSuccess } from '../../../../../utils/notifications';
 import { cityNameFromLocation, sleep } from '../../../../../utils/reusableStuff';
 import { FieldEditingPanelProps } from './FieldEditingPanel';
@@ -101,11 +101,7 @@ const LocationEditingPanel = ({
       <View style={styles.editingInputWrapper}>
         <InputWrapper
           style={styles.editingInput}
-          placeholder="new value"
-          value={editingValue}
-          onChangeText={(text) => {
-            setEditingValue(text);
-          }}
+          placeholder={editingValue}
           editable={false}
           fillColor="#F5F5F5"
         />
@@ -125,11 +121,16 @@ const styles = StyleSheet.create({
   },
   editingInputWrapper: {
     flex: 3,
-    height: 60,
+    height: 52,
+    marginVertical: 8,
+    marginHorizontal: 4,
   },
   editingInput: {},
   updateButtonWrapper: {
     flex: 1,
+    marginVertical: 12,
+    height: BUTTON_HEIGHT,
+    marginRight: 4,
   },
 });
 

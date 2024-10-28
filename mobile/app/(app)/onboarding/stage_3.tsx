@@ -13,12 +13,14 @@ export default function Onboarding() {
         onPress={() => {
           router.replace('/swipe');
         }}
+        fillColor="white"
       />
       <ButtonWrapper
         title="skip onboarding"
         onPress={() => {
           router.replace('/swipe');
         }}
+        fillColor="white"
       />
     </View>
   );
@@ -29,5 +31,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+    gap: 8,
+    paddingHorizontal: 8,
   },
 });

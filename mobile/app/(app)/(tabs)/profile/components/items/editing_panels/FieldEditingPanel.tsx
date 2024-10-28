@@ -125,13 +125,14 @@ const styles = StyleSheet.create({
     flex: 3,
     height: 52,
     marginVertical: 8,
-    marginHorizontal: 8,
+    marginHorizontal: 4,
   },
   editingInput: {},
   updateButtonWrapper: {
     flex: 1,
     marginVertical: 12,
     height: BUTTON_HEIGHT,
+    marginRight: 4,
   },
 });
 

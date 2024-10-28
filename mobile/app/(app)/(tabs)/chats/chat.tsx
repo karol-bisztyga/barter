@@ -287,7 +287,7 @@ const Chat = () => {
             onChangeText={setNewMessage}
             fillColor="white"
           />
-          <View>
+          <View style={styles.buttonWrapper}>
             <ButtonWrapper
               title="Send"
               disabled={newMessage.length === 0}
@@ -322,6 +322,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 200,
     width: '100%',
+  },
+  buttonWrapper: {
+    width: 70,
+    marginHorizontal: 4,
   },
   inputContainer: {
     flexDirection: 'row',

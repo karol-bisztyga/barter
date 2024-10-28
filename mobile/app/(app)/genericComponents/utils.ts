@@ -1,6 +1,6 @@
 export type EdgeType = 'top' | 'bottom' | 'left' | 'right';
 
-export const MIN_TRIANGLE_SIZE = 4;
+export const MIN_TRIANGLE_SIZE = 2;
 
 export const getMaxTriangleSize = (width: number, height: number) => {
   return Math.min(width, height) / 10 + MIN_TRIANGLE_SIZE;
@@ -72,8 +72,10 @@ export const generateBentTrianglePath = (edge: EdgeType, dimensions: DimensionsT
 };
 
 export const generatePaths = (dimensions: DimensionsType) => {
-  const numberOfTopTriangles = Math.floor(Math.random() * 20) + 5;
-  const numberOfBottomTriangles = Math.floor(Math.random() * 20) + 5;
+  const topBottomTrianglesFactor = Math.floor(dimensions.width / 30);
+
+  const numberOfTopTriangles = Math.floor(Math.random() * topBottomTrianglesFactor) + 2;
+  const numberOfBottomTriangles = Math.floor(Math.random() * topBottomTrianglesFactor) + 2;
 
   const numberOfRightTriangles = Math.floor(Math.random() * 3) + 3;
   const numberOfLeftTriangles = Math.floor(Math.random() * 3) + 3;
@@ -81,19 +83,15 @@ export const generatePaths = (dimensions: DimensionsType) => {
   const paths = [];
 
   for (let i = 0; i < numberOfTopTriangles; i++) {
-    // setPaths((prevPaths) => [...prevPaths, generateBentTrianglePath('top', dimensions)]);
     paths.push(generateBentTrianglePath('top', dimensions));
   }
   for (let i = 0; i < numberOfRightTriangles; i++) {
-    // setPaths((prevPaths) => [...prevPaths, generateBentTrianglePath('right', dimensions)]);
     paths.push(generateBentTrianglePath('right', dimensions));
   }
   for (let i = 0; i < numberOfBottomTriangles; i++) {
-    // setPaths((prevPaths) => [...prevPaths, generateBentTrianglePath('bottom', dimensions)]);
     paths.push(generateBentTrianglePath('bottom', dimensions));
   }
   for (let i = 0; i < numberOfLeftTriangles; i++) {
-    // setPaths((prevPaths) => [...prevPaths, generateBentTrianglePath('left', dimensions)]);
     paths.push(generateBentTrianglePath('left', dimensions));
   }
 
