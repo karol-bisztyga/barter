@@ -13,6 +13,7 @@ import FieldEditingPanel from './editing_panels/FieldEditingPanel';
 import LocationEditingPanel from './editing_panels/LocationEditingPanel';
 import SelectEditingPanel from './editing_panels/SelectEditingPanel';
 import PasswordEditingPanel from './editing_panels/PasswordEditingPanel';
+import { FONT_COLOR } from '../../../../constants';
 
 export type EditingPanelType = 'field' | 'location' | 'select' | 'password';
 
@@ -192,8 +193,7 @@ const styles = StyleSheet.create({
     height: 60,
     lineHeight: 60,
     width: 16,
-    marginRight: 10,
-    marginLeft: 10,
+    marginHorizontal: 8,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -201,6 +201,7 @@ const styles = StyleSheet.create({
     width: 16,
     height: 16,
     textAlign: 'center',
+    color: FONT_COLOR,
   },
 });
 

@@ -9,6 +9,9 @@ import Animated, {
 } from 'react-native-reanimated';
 import TextWrapper from '../../../../../genericComponents/TextWrapper';
 import { useJokerContext } from '../../../../../context/JokerContext';
+import { EDITING_PANEL_HEIGHT } from './constants';
+import Background from '../../Background';
+import { BACKGROUND_COLOR } from '../../../../../constants';
 
 export type SelectEditingPanelProps = {
   initialValue: string;
@@ -29,7 +32,7 @@ const SelectEditingPanel = ({
 }: SelectEditingPanelProps) => {
   const jokerContext = useJokerContext();
 
-  const maxHeight = 60 * options.length;
+  const maxHeight = EDITING_PANEL_HEIGHT * options.length;
 
   const wrapperAnimatedStyle = useAnimatedStyle(() => {
     return {
@@ -59,13 +62,16 @@ const SelectEditingPanel = ({
             styles.optionWrapper,
             { backgroundColor: editingValue === option ? '#ccc' : 'transparent' },
           ]}
-          disabled={editingValue === option}
+          // disabled={editingValue === option}
           onPress={() => {
-            jokerContext.showInfo('other languages are not yet implemented');
+            if (editingValue !== option) {
+              jokerContext.showInfo('other languages are not yet implemented');
+            }
             setEditingId('');
           }}
         >
-          <TextWrapper>{option}</TextWrapper>
+          <Background opacity={editingValue === option ? 1 : 0.3} />
+          <TextWrapper style={styles.label}>{option}</TextWrapper>
         </TouchableOpacity>
       ))}
     </Animated.View>
@@ -77,6 +83,7 @@ const styles = StyleSheet.create({
     width: '100%',
     overflow: 'hidden',
     flexDirection: 'column',
+    backgroundColor: BACKGROUND_COLOR,
   },
   editingInputWrapper: {
     flex: 3,
@@ -95,6 +102,12 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+    borderWidth: 1,
+    borderRadius: 10,
+    overflow: 'hidden',
+  },
+  label: {
+    fontSize: 20,
   },
 });
 

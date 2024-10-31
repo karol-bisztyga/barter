@@ -1,12 +1,13 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { UserData } from '../../../../types';
-import { useUserContext } from '../../../../context/UserContext';
-import { ErrorType, handleError } from '../../../../utils/errorHandler';
-import LinkItem from '../items/LinkItem';
+import { UserData } from '../../../types';
+import { useUserContext } from '../../../context/UserContext';
+import { ErrorType, handleError } from '../../../utils/errorHandler';
+import LinkItem from './items/LinkItem';
 import { router } from 'expo-router';
-import EditableItem from '../items/EditableItem';
-import { useJokerContext } from '../../../../context/JokerContext';
+import EditableItem from './items/EditableItem';
+import { useJokerContext } from '../../../context/JokerContext';
+import Background from './Background';
 
 const AccountDetails = ({
   editingId,
@@ -38,6 +39,7 @@ const AccountDetails = ({
 
   return (
     <View style={styles.container}>
+      <Background />
       {Object.keys(data).map((name, index) => {
         const value = data && data[name as keyof UserData];
         if (name === 'onboarded') {
@@ -79,6 +81,17 @@ const styles = StyleSheet.create({
     marginRight: 16,
     marginLeft: 16,
     borderRadius: 16,
+    overflow: 'hidden',
+  },
+  background: {
+    flex: 1,
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+  },
+  imageStyle: {
+    resizeMode: 'repeat',
+    opacity: 0.5,
   },
 });
 

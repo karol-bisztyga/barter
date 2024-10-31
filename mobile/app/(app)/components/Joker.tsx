@@ -37,8 +37,6 @@ const Joker = () => {
 
   const positionX = useSharedValue(horizontalBounds.right);
 
-  const lockGesture = useSharedValue<boolean>(false);
-
   const [jokerPressed, setJokerPressed] = useState(false);
 
   useEffect(() => {
@@ -49,17 +47,8 @@ const Joker = () => {
   }, [jokerPressed]);
 
   const gesture = Gesture.Pan()
-    .onFinalize(() => {
-      if (!dragging.value) {
-        opacity.value = withSpring(0.6, { duration: 100 }, () => {
-          opacity.value = withSpring(1, { duration: 100 });
-          runOnJS(setJokerPressed)(true);
-        });
-      }
-      dragging.value = false;
-    })
     .onUpdate((event) => {
-      if (lockGesture.value) {
+      if (currentAlert) {
         return;
       }
       dragging.value = true;
@@ -68,6 +57,9 @@ const Joker = () => {
       velocityX.value = event.velocityX;
     })
     .onEnd(() => {
+      if (currentAlert) {
+        return;
+      }
       const x = clamp(
         positionX.value + translateX.value + velocityX.value * 0.2,
         horizontalBounds.left,
@@ -76,6 +68,18 @@ const Joker = () => {
       positionX.value = withSpring(x);
       translateX.value = withSpring(0);
       translateY.value = withSpring(0);
+    })
+    .onFinalize(() => {
+      if (currentAlert) {
+        return;
+      }
+      if (!dragging.value) {
+        opacity.value = withSpring(0.6, { duration: 100 }, () => {
+          opacity.value = withSpring(1, { duration: 100 });
+          runOnJS(setJokerPressed)(true);
+        });
+      }
+      dragging.value = false;
     });
 
   const animatedStyle = useAnimatedStyle(() => {

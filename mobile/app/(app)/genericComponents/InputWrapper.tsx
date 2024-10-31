@@ -32,9 +32,6 @@ const InputWrapper = React.forwardRef<TextInput, InputWrapperProps>(({ ...props 
     setPaths(generatePaths(dimensions));
   }, [dimensions]);
 
-  if (!assets || !assets.length) {
-    return null;
-  }
   return (
     <View
       style={styles.container}
@@ -42,17 +39,19 @@ const InputWrapper = React.forwardRef<TextInput, InputWrapperProps>(({ ...props 
         setDimensions({ width: e.nativeEvent.layout.width, height: e.nativeEvent.layout.height });
       }}
     >
-      <ImageBackground
-        source={{ uri: assets[0].uri }}
-        style={styles.background}
-        imageStyle={styles.imageStyle}
-      >
-        <Svg height="100%" width="100%" style={styles.svgOverlay}>
-          {paths.map((path, index) => (
-            <Path key={index} d={path} fill={props.fillColor} />
-          ))}
-        </Svg>
-      </ImageBackground>
+      {assets && assets.length && (
+        <ImageBackground
+          source={{ uri: assets[0].uri }}
+          style={styles.background}
+          imageStyle={styles.imageStyle}
+        >
+          <Svg height="100%" width="100%" style={styles.svgOverlay}>
+            {paths.map((path, index) => (
+              <Path key={index} d={path} fill={props.fillColor} />
+            ))}
+          </Svg>
+        </ImageBackground>
+      )}
       {dimensions && (
         <TextInput
           ref={ref}

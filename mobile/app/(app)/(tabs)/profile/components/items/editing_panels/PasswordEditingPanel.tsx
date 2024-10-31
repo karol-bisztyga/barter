@@ -15,8 +15,10 @@ import ButtonWrapper from '../../../../../genericComponents/ButtonWrapper';
 import { validatePassword } from '../../../../../utils/validators';
 import { changePassword } from '../../../../../db_utils/changePassword';
 import { useJokerContext } from '../../../../../context/JokerContext';
+import { EDITING_PANEL_HEIGHT, FILL_COLOR } from './constants';
+import Background from '../../Background';
 
-const HEIGHT = 170;
+const HEIGHT = EDITING_PANEL_HEIGHT * 2.5;
 
 export type FieldEditingPanelProps = {
   editing: SharedValue<number>;
@@ -32,7 +34,7 @@ const FieldEditingPanel = ({ editing, setEditingId }: FieldEditingPanelProps) =>
 
   const wrapperAnimatedStyle = useAnimatedStyle(() => {
     return {
-      height: interpolate(editing.value, [0, 1], [0, HEIGHT]),
+      height: interpolate(editing.value, [0, 1], [0, EDITING_PANEL_HEIGHT * 2.5]),
     };
   });
 
@@ -73,6 +75,7 @@ const FieldEditingPanel = ({ editing, setEditingId }: FieldEditingPanelProps) =>
 
   return (
     <Animated.View style={[styles.container, wrapperAnimatedStyle]}>
+      <Background opacity={0.7} />
       <View style={styles.editingInputWrapper}>
         <InputWrapper
           style={styles.editingInput}
@@ -80,7 +83,7 @@ const FieldEditingPanel = ({ editing, setEditingId }: FieldEditingPanelProps) =>
           value={currentPassword}
           onChangeText={setCurrentPassword}
           secureTextEntry={true}
-          fillColor="#F5F5F5"
+          fillColor={FILL_COLOR}
         />
         <InputWrapper
           style={styles.editingInput}
@@ -88,14 +91,14 @@ const FieldEditingPanel = ({ editing, setEditingId }: FieldEditingPanelProps) =>
           value={newPassword}
           onChangeText={setNewPassword}
           secureTextEntry={true}
-          fillColor="#F5F5F5"
+          fillColor={FILL_COLOR}
         />
         <View style={styles.updateButtonWrapper}>
           <ButtonWrapper
             title="Update"
             onPress={handlePasswordChange}
             disabled={!validateValue()}
-            fillColor="#F5F5F5"
+            fillColor={FILL_COLOR}
           />
         </View>
       </View>
@@ -114,6 +117,7 @@ const styles = StyleSheet.create({
     height: HEIGHT,
     gap: 8,
     flexDirection: 'column',
+    margin: 8,
   },
   editingInput: {},
   updateButtonWrapper: {

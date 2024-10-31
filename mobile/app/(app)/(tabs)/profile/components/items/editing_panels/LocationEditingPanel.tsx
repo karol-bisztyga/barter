@@ -17,6 +17,8 @@ import ButtonWrapper, { BUTTON_HEIGHT } from '../../../../../genericComponents/B
 import { cityNameFromLocation, sleep } from '../../../../../utils/reusableStuff';
 import { FieldEditingPanelProps } from './FieldEditingPanel';
 import { useJokerContext } from '../../../../../context/JokerContext';
+import { EDITING_PANEL_HEIGHT, FILL_COLOR } from './constants';
+import Background from '../../Background';
 
 const LocationEditingPanel = ({
   initialValue,
@@ -32,7 +34,7 @@ const LocationEditingPanel = ({
 
   const wrapperAnimatedStyle = useAnimatedStyle(() => {
     return {
-      height: interpolate(editing.value, [0, 1], [0, 60]),
+      height: interpolate(editing.value, [0, 1], [0, EDITING_PANEL_HEIGHT]),
     };
   });
 
@@ -99,16 +101,17 @@ const LocationEditingPanel = ({
 
   return (
     <Animated.View style={[styles.container, wrapperAnimatedStyle]}>
+      <Background opacity={0.7} />
       <View style={styles.editingInputWrapper}>
         <InputWrapper
           style={styles.editingInput}
           placeholder={editingValue}
           editable={false}
-          fillColor="#F5F5F5"
+          fillColor={FILL_COLOR}
         />
       </View>
       <View style={styles.updateButtonWrapper}>
-        <ButtonWrapper title="Update" onPress={update} fillColor="#F5F5F5" />
+        <ButtonWrapper title="Update" onPress={update} fillColor={FILL_COLOR} />
       </View>
     </Animated.View>
   );

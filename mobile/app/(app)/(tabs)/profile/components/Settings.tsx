@@ -4,6 +4,7 @@ import { useSessionContext } from '../../../../SessionContext';
 import { router } from 'expo-router';
 import EditableItem from './items/EditableItem';
 import LinkItem from './items/LinkItem';
+import Background from './Background';
 
 const Settings = ({
   editingId,
@@ -16,6 +17,7 @@ const Settings = ({
 
   return (
     <View style={styles.container}>
+      <Background />
       <EditableItem
         name="change language"
         initialValue="English"
@@ -72,6 +74,7 @@ const styles = StyleSheet.create({
     marginRight: 16,
     marginLeft: 16,
     borderRadius: 16,
+    overflow: 'hidden',
   },
 });
 

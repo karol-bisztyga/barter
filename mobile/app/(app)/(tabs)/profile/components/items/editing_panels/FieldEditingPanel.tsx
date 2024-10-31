@@ -15,6 +15,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import ButtonWrapper, { BUTTON_HEIGHT } from '../../../../../genericComponents/ButtonWrapper';
 import { useJokerContext } from '../../../../../context/JokerContext';
+import { EDITING_PANEL_HEIGHT, FILL_COLOR } from './constants';
+import Background from '../../Background';
 
 export type FieldEditingPanelProps = {
   name: string;
@@ -41,7 +43,7 @@ const FieldEditingPanel = ({
 
   const wrapperAnimatedStyle = useAnimatedStyle(() => {
     return {
-      height: interpolate(editing.value, [0, 1], [0, 60]),
+      height: interpolate(editing.value, [0, 1], [0, EDITING_PANEL_HEIGHT]),
     };
   });
 
@@ -93,6 +95,7 @@ const FieldEditingPanel = ({
 
   return (
     <Animated.View style={[styles.container, wrapperAnimatedStyle]}>
+      <Background opacity={0.7} />
       <View style={styles.editingInputWrapper}>
         <InputWrapper
           style={styles.editingInput}
@@ -101,7 +104,7 @@ const FieldEditingPanel = ({
           onChangeText={(text) => {
             setEditingValue(text);
           }}
-          fillColor="#F5F5F5"
+          fillColor={FILL_COLOR}
         />
       </View>
       <View style={styles.updateButtonWrapper}>
@@ -109,7 +112,7 @@ const FieldEditingPanel = ({
           title="Update"
           onPress={update}
           disabled={!validateValue()}
-          fillColor="#F5F5F5"
+          fillColor={FILL_COLOR}
         />
       </View>
     </Animated.View>

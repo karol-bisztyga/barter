@@ -6,6 +6,7 @@ import { MAX_ITEMS_SLOTS } from '../../../constants';
 import { useItemsContext } from '../../../context/ItemsContext';
 import { useUserContext } from '../../../context/UserContext';
 import LinkItem from './items/LinkItem';
+import Background from './Background';
 
 const MyItems = () => {
   const itemsContext = useItemsContext();
@@ -13,6 +14,7 @@ const MyItems = () => {
 
   return (
     <View style={styles.container}>
+      <Background />
       {userContext.items.map((item: ItemData, index: number) => {
         return (
           <LinkItem
@@ -49,6 +51,7 @@ const styles = StyleSheet.create({
     marginRight: 16,
     marginLeft: 16,
     borderRadius: 16,
+    overflow: 'hidden',
   },
 });
 

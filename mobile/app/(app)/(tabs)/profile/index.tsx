@@ -9,9 +9,10 @@ import { useEditItemContext } from '../../context/EditItemContext';
 import Settings from './components/Settings';
 import ImageWrapper from '../../genericComponents/ImageWrapper';
 import TextWrapper from '../../genericComponents/TextWrapper';
-import AccountDetails from './components/account_details/AccountDetails';
+import AccountDetails from './components/AccountDetails';
 import MyItems from './components/MyItems';
 import { FeatherIcon } from '../../utils/icons';
+import Background from './components/Background';
 
 const { height } = Dimensions.get('window');
 
@@ -60,6 +61,7 @@ export default function Profile() {
                 )
               ) : (
                 <View style={styles.noProfilePictureWrapper}>
+                  <Background />
                   <TextWrapper style={styles.noProfilePictureLabel}>No profile picture</TextWrapper>
                 </View>
               )}
@@ -167,6 +169,9 @@ const styles = StyleSheet.create({
     borderRadius: 200,
     justifyContent: 'center',
     alignItems: 'center',
+    overflow: 'hidden',
   },
-  noProfilePictureLabel: {},
+  noProfilePictureLabel: {
+    fontSize: 20,
+  },
 });
