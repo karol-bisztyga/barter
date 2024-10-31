@@ -14,5 +14,4 @@ export default function Index() {
     return <Redirect href="/onboarding" />;
   }
   return <Redirect href="/swipe" />;
-  return null;
 }

@@ -62,7 +62,6 @@ const SelectEditingPanel = ({
             styles.optionWrapper,
             { backgroundColor: editingValue === option ? '#ccc' : 'transparent' },
           ]}
-          // disabled={editingValue === option}
           onPress={() => {
             if (editingValue !== option) {
               jokerContext.showInfo('other languages are not yet implemented');
