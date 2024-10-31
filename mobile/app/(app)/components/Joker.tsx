@@ -6,6 +6,7 @@ import { JokerAlert, useJokerContext } from '../context/JokerContext';
 import { JokerDialogue } from './JokerDialogue';
 import Animated, {
   clamp,
+  runOnJS,
   useAnimatedStyle,
   useSharedValue,
   withSpring,
@@ -24,7 +25,9 @@ const Joker = () => {
   const [currentAlert, setCurrentAlert] = useState<JokerAlert | null>(null);
 
   const translateX = useSharedValue(0);
+  const velocityX = useSharedValue(0);
   const translateY = useSharedValue(0);
+  const opacity = useSharedValue(1);
   const dragging = useSharedValue(false);
 
   const horizontalBounds = {
@@ -36,10 +39,24 @@ const Joker = () => {
 
   const lockGesture = useSharedValue<boolean>(false);
 
+  const [jokerPressed, setJokerPressed] = useState(false);
+
+  useEffect(() => {
+    if (jokerPressed) {
+      setJokerPressed(false);
+      pressJoker();
+    }
+  }, [jokerPressed]);
+
   const gesture = Gesture.Pan()
-    .onStart(() => {
-      translateX.value = translateX.value;
-      translateY.value = translateY.value;
+    .onFinalize(() => {
+      if (!dragging.value) {
+        opacity.value = withSpring(0.6, { duration: 100 }, () => {
+          opacity.value = withSpring(1, { duration: 100 });
+          runOnJS(setJokerPressed)(true);
+        });
+      }
+      dragging.value = false;
     })
     .onUpdate((event) => {
       if (lockGesture.value) {
@@ -48,11 +65,11 @@ const Joker = () => {
       dragging.value = true;
       translateX.value = event.translationX;
       translateY.value = event.translationY;
+      velocityX.value = event.velocityX;
     })
     .onEnd(() => {
-      dragging.value = false;
       const x = clamp(
-        positionX.value + translateX.value,
+        positionX.value + translateX.value + velocityX.value * 0.2,
         horizontalBounds.left,
         horizontalBounds.right
       );
@@ -65,11 +82,16 @@ const Joker = () => {
     return {
       left: positionX.value,
       transform: [{ translateX: translateX.value }, { translateY: translateY.value }],
+      opacity: opacity.value,
     };
   });
 
   const pressJoker = () => {
-    console.log('press joker');
+    if (currentAlert) {
+      return;
+    }
+
+    // TODO this function should do something different, probably say something like "hello I'm your assistant" etc
     const arr = ['error', 'info', 'success'];
     const rand = Math.floor(Math.random() * arr.length);
     const item = arr[rand];

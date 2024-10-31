@@ -1,4 +1,4 @@
-import { Alert, TouchableOpacity } from 'react-native';
+import { Alert, StyleSheet, TouchableOpacity } from 'react-native';
 import Constants from 'expo-constants';
 import React, { useEffect, useState } from 'react';
 import { JokerAlert } from '../context/JokerContext';
@@ -67,10 +67,7 @@ export const JokerDialogue = ({
 
   return (
     <TouchableOpacity
-      style={{
-        top: TOP_OFFSET + JOKER_SIZE,
-        margin: 8,
-      }}
+      style={styles.container}
       activeOpacity={0.9}
       onPress={onPressDialogue}
       onLongPress={async () => {
@@ -79,17 +76,30 @@ export const JokerDialogue = ({
       }}
     >
       <TextWrapper
-        style={{
-          backgroundColor: getBackgroundColor(),
-          borderWidth: 1,
-          borderRadius: 10,
-          margin: 8,
-          overflow: 'hidden',
-          padding: 8,
-        }}
+        style={[
+          styles.textWrapper,
+          {
+            backgroundColor: getBackgroundColor(),
+          },
+        ]}
       >
         {displayedText}
       </TextWrapper>
     </TouchableOpacity>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    top: TOP_OFFSET + JOKER_SIZE,
+    margin: 8,
+  },
+  textWrapper: {
+    borderWidth: 1,
+    borderRadius: 10,
+    margin: 8,
+    overflow: 'hidden',
+    padding: 8,
+    fontSize: 20,
+  },
+});
