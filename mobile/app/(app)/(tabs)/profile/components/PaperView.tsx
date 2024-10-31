@@ -116,7 +116,7 @@ const PaperView = () => {
       }}
     >
       <ImageBackground
-        source={require('../../../../../assets/paper.jpg')}
+        source={require('../../../../../assets/backgrounds/paper.jpg')}
         style={styles.background}
         imageStyle={styles.imageStyle}
       >

@@ -3,7 +3,7 @@ import { useAssets } from 'expo-asset';
 import { ImageBackground, StyleSheet } from 'react-native';
 
 const Background = ({ opacity = 0.5 }: { opacity?: number }) => {
-  const [assets, error] = useAssets([require('../../../../../assets/stone.jpg')]);
+  const [assets, error] = useAssets([require('../../../../../assets/backgrounds/stone.jpg')]);
   if (error) {
     console.error(`Error loading assets ${error}`);
   }

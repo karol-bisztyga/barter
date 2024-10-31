@@ -17,7 +17,7 @@ const InputWrapper = React.forwardRef<TextInput, InputWrapperProps>(({ ...props 
   const [dimensions, setDimensions] = useState<DimensionsType | null>(null);
   const [paths, setPaths] = useState<string[]>([]);
 
-  const [assets, error] = useAssets([require('../../../assets/paper.jpg')]);
+  const [assets, error] = useAssets([require('../../../assets/backgrounds/paper.jpg')]);
 
   useEffect(() => {
     if (error) {

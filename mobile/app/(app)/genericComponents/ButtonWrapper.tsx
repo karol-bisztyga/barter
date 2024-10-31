@@ -34,7 +34,7 @@ const ButtonWrapper = ({ title, icon, onPress, disabled, color, fillColor }: MyB
   });
   const [paths, setPaths] = useState<string[]>([]);
 
-  const [assets, error] = useAssets([require('../../../assets/wood.jpg')]);
+  const [assets, error] = useAssets([require('../../../assets/backgrounds/wood.jpg')]);
 
   useEffect(() => {
     if (error) {
