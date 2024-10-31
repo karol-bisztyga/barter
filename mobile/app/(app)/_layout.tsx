@@ -7,6 +7,7 @@ import { MatchContextProvider } from './context/MatchContext';
 import { useUserContext } from './context/UserContext';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import Joker from './components/Joker';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 export default function Layout() {
   const sessionContext = useSessionContext();
@@ -21,16 +22,18 @@ export default function Layout() {
   return (
     <ItemsContextProvider>
       <MatchContextProvider>
-        <Stack>
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen name="onboarding" options={{ headerShown: false }} />
-        </Stack>
-        <Joker />
-        {userContext.blockingLoading && (
-          <View style={styles.blockingLoader}>
-            <ActivityIndicator size="large" />
-          </View>
-        )}
+        <GestureHandlerRootView>
+          <Stack>
+            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+            <Stack.Screen name="onboarding" options={{ headerShown: false }} />
+          </Stack>
+          <Joker />
+          {userContext.blockingLoading && (
+            <View style={styles.blockingLoader}>
+              <ActivityIndicator size="large" />
+            </View>
+          )}
+        </GestureHandlerRootView>
       </MatchContextProvider>
     </ItemsContextProvider>
   );

@@ -1,100 +1,72 @@
 import { JokerIcon } from '../utils/icons';
-import { Alert, StyleSheet, TouchableOpacity, View } from 'react-native';
+import { Dimensions, StyleSheet, View } from 'react-native';
 import Constants from 'expo-constants';
 import React, { useEffect, useState } from 'react';
 import { JokerAlert, useJokerContext } from '../context/JokerContext';
-import TextWrapper from '../genericComponents/TextWrapper';
-import * as Clipboard from 'expo-clipboard';
+import { JokerDialogue } from './JokerDialogue';
+import Animated, {
+  clamp,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
+import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+
+const { width } = Dimensions.get('window');
 
 const JOKER_SIZE = 50;
 const TOP_OFFSET = Constants.statusBarHeight + 4;
-
-type JokerDialogueProps = {
-  currentAlert: JokerAlert;
-  setCurrentAlert: (alert: JokerAlert | null) => void;
-  typingDelay?: number;
-};
-
-const JokerDialogue = ({ currentAlert, setCurrentAlert, typingDelay = 0 }: JokerDialogueProps) => {
-  const [displayedText, setDisplayedText] = useState('');
-  const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
-
-  const fullText = currentAlert?.message;
-
-  useEffect(() => {
-    let index = 0;
-
-    const newIntervalId = setInterval(() => {
-      setDisplayedText((prev) => prev + fullText[index]);
-      index += 1;
-
-      if (index >= fullText.length) {
-        clearInterval(newIntervalId);
-      }
-    }, typingDelay);
-
-    setIntervalId(newIntervalId);
-
-    return () => clearInterval(newIntervalId);
-  }, [fullText, typingDelay]);
-
-  const onPressDialogue = () => {
-    if (displayedText !== fullText) {
-      setDisplayedText(fullText);
-      if (intervalId) {
-        clearInterval(intervalId);
-      }
-    } else {
-      setCurrentAlert(null);
-    }
-  };
-
-  const getBackgroundColor = () => {
-    switch (currentAlert.type) {
-      case 'error':
-        return 'red';
-      case 'info':
-        return 'aqua';
-      case 'success':
-        return 'green';
-      default:
-        return 'white';
-    }
-  };
-
-  return (
-    <TouchableOpacity
-      style={{
-        top: TOP_OFFSET + JOKER_SIZE,
-        margin: 8,
-      }}
-      activeOpacity={0.9}
-      onPress={onPressDialogue}
-      onLongPress={async () => {
-        await Clipboard.setStringAsync(displayedText);
-        Alert.alert('Copied to Clipboard', displayedText);
-      }}
-    >
-      <TextWrapper
-        style={{
-          backgroundColor: getBackgroundColor(),
-          borderWidth: 1,
-          borderRadius: 10,
-          margin: 8,
-          overflow: 'hidden',
-          padding: 8,
-        }}
-      >
-        {displayedText}
-      </TextWrapper>
-    </TouchableOpacity>
-  );
-};
+const HORIZONTAL_OFFSET = 10;
 
 const Joker = () => {
   const jokerContext = useJokerContext();
 
   const [currentAlert, setCurrentAlert] = useState<JokerAlert | null>(null);
+
+  const translateX = useSharedValue(0);
+  const translateY = useSharedValue(0);
+  const dragging = useSharedValue(false);
+
+  const horizontalBounds = {
+    left: HORIZONTAL_OFFSET,
+    right: width - JOKER_SIZE - HORIZONTAL_OFFSET,
+  };
+
+  const positionX = useSharedValue(horizontalBounds.right);
+
+  const lockGesture = useSharedValue<boolean>(false);
+
+  const gesture = Gesture.Pan()
+    .onStart(() => {
+      translateX.value = translateX.value;
+      translateY.value = translateY.value;
+    })
+    .onUpdate((event) => {
+      if (lockGesture.value) {
+        return;
+      }
+      dragging.value = true;
+      translateX.value = event.translationX;
+      translateY.value = event.translationY;
+    })
+    .onEnd(() => {
+      dragging.value = false;
+      const x = clamp(
+        positionX.value + translateX.value,
+        horizontalBounds.left,
+        horizontalBounds.right
+      );
+      positionX.value = withSpring(x);
+      translateX.value = withSpring(0);
+      translateY.value = withSpring(0);
+    });
+
+  const animatedStyle = useAnimatedStyle(() => {
+    return {
+      left: positionX.value,
+      transform: [{ translateX: translateX.value }, { translateY: translateY.value }],
+    };
+  });
 
   const pressJoker = () => {
     console.log('press joker');
@@ -137,9 +109,11 @@ const Joker = () => {
         },
       ]}
     >
-      <TouchableOpacity style={styles.joker} onPress={pressJoker}>
-        <JokerIcon width={JOKER_SIZE} height={JOKER_SIZE} />
-      </TouchableOpacity>
+      <GestureDetector gesture={gesture}>
+        <Animated.View style={[styles.joker, animatedStyle]}>
+          <JokerIcon width={JOKER_SIZE} height={JOKER_SIZE} />
+        </Animated.View>
+      </GestureDetector>
 
       {currentAlert && (
         <JokerDialogue currentAlert={currentAlert} setCurrentAlert={setCurrentAlert} />
@@ -147,6 +121,7 @@ const Joker = () => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
@@ -156,7 +131,6 @@ const styles = StyleSheet.create({
   joker: {
     position: 'absolute',
     top: TOP_OFFSET,
-    right: 0,
   },
 });
 
