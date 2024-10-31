@@ -152,7 +152,7 @@ export default function Swipe() {
     try {
       if (userContext.swipingLeftRightBlockedReason) {
         jokerContext.showInfo(
-          'swiping left/right blocked, reason:' + userContext.swipingLeftRightBlockedReason
+          'swiping left/right is blocked.\n' + userContext.swipingLeftRightBlockedReason
         );
         return;
       }
@@ -180,7 +180,7 @@ export default function Swipe() {
     try {
       if (userContext.swipingLeftRightBlockedReason) {
         jokerContext.showInfo(
-          'swiping left/right blocked, reason: ' + userContext.swipingLeftRightBlockedReason
+          'swiping left/right is blocked.\n' + userContext.swipingLeftRightBlockedReason
         );
         return;
       }

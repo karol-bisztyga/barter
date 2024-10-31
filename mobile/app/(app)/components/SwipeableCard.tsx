@@ -60,8 +60,6 @@ const SwipeableCard = ({
   const dragging = useSharedValue(false);
   const swipeDirection = useSharedValue<SwipeDirection | null>(null);
 
-  const velocityX = useSharedValue(0);
-  const velocityY = useSharedValue(0);
   const rotate = useSharedValue('0deg');
 
   const forceControlsScale = useSharedValue(1);
@@ -141,8 +139,6 @@ const SwipeableCard = ({
       translateX.value = event.translationX;
 
       translateY.value = event.translationY;
-      velocityX.value = event.velocityX;
-      velocityY.value = event.velocityY;
       rotate.value = `${translateX.value / 20}deg`;
     })
     .onEnd(() => {
@@ -156,7 +152,7 @@ const SwipeableCard = ({
       if (userContext.swipingLeftRightBlockedReason) {
         if (Math.abs(translateX.value) > SWIPE_THRESHOLD_HORIZONTAL) {
           runOnJS(jokerContext.showInfo)(
-            'swiping left right blocked' + userContext.swipingLeftRightBlockedReason
+            'swiping left/right is blocked.\n' + userContext.swipingLeftRightBlockedReason
           );
         }
         getBackToStartingPosition();

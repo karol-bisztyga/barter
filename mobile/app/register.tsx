@@ -40,6 +40,8 @@ export default function Register() {
       setError(ERROR_MESSAGES.PASSWORD);
     } else if (password && passwordRepeat && !validatePasswords(password, passwordRepeat)) {
       setError(ERROR_MESSAGES.PASSWORDS_NOT_MATCH);
+    } else {
+      setError('');
     }
   }, [email, password, passwordRepeat]);
 

@@ -26,15 +26,9 @@ const initialState: JokerContextState = {
   pushAlert: () => {},
   popAlert: () => null,
 
-  showError: () => {
-    console.log('asd');
-  },
-  showInfo: () => {
-    console.log('asd');
-  },
-  showSuccess: () => {
-    console.log('asd');
-  },
+  showError: () => {},
+  showInfo: () => {},
+  showSuccess: () => {},
 };
 
 export const JokerContext = createContext<JokerContextState | null>(initialState);
