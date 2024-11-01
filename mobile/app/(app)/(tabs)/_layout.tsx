@@ -6,6 +6,7 @@ import { ErrorType, handleError } from '../utils/errorHandler';
 import { BACKGROUND_COLOR, FONT_COLOR } from '../constants';
 import { HelmetIcon, PaperIcon, TargetIcon } from '../utils/icons';
 import { useJokerContext } from '../context/JokerContext';
+import { useSoundContext } from '../context/SoundContext';
 
 const getTabNameFromEvent = (eventName?: string): string | undefined => eventName?.split('-')[0];
 
@@ -13,6 +14,7 @@ export default function TabLayout() {
   const sessionContext = authorizeUser();
   const matchContext = useMatchContext();
   const jokerContext = useJokerContext();
+  const soundContext = useSoundContext();
 
   return (
     <Tabs
@@ -35,8 +37,10 @@ export default function TabLayout() {
           }
           switch (routeName) {
             case 'swipe':
+              soundContext.setOneShotSound('click');
               break;
             case 'chats':
+              soundContext.setOneShotSound('click');
               (async () => {
                 try {
                   await updateMatches(sessionContext, matchContext);
@@ -46,6 +50,7 @@ export default function TabLayout() {
               })();
               break;
             case 'profile':
+              soundContext.setOneShotSound('click');
               break;
             default:
               handleError(jokerContext, ErrorType.UNKNOWN_ROUTE, `${e}`, '', false);
