@@ -10,6 +10,10 @@ import SwordsShieldIcon from '../../../assets/icons/medieval_pack/011-shield-2.s
 import BookIcon from '../../../assets/icons/medieval_pack/039-book.svg';
 import LisIcon from '../../../assets/icons/medieval_pack/020-lis.svg';
 import JokerIcon from '../../../assets/icons/medieval_pack/022-joker.svg';
+import SandGlassIcon from '../../../assets/icons/sandglass.svg';
+import SpearIcon from '../../../assets/icons/medieval_pack_2/050-spear.svg';
+import MandolinIcon from '../../../assets/icons/medieval_pack_2/042-mandolin.svg';
+import TrumpetIcon from '../../../assets/icons/medieval_pack_2/020-trumpet.svg';
 
 export {
   TorchIcon,
@@ -24,4 +28,8 @@ export {
   BookIcon,
   LisIcon,
   JokerIcon,
+  SandGlassIcon,
+  SpearIcon,
+  MandolinIcon,
+  TrumpetIcon,
 };
