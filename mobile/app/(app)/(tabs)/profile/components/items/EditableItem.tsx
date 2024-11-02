@@ -3,7 +3,9 @@ import { View, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import * as Clipboard from 'expo-clipboard';
 import Animated, {
+  Easing,
   interpolate,
+  ReduceMotion,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
@@ -56,10 +58,17 @@ const EditableItem = ({
 
   useEffect(() => {
     const isBeingEdited = editingId === composeIdWithPageY();
+
+    const timingConfig = {
+      duration: 300,
+      easing: Easing.exp,
+      reduceMotion: ReduceMotion.System,
+    };
+
     if (isBeingEdited) {
-      editing.value = withTiming(1);
-    } else if (editing.value === 1) {
-      editing.value = withTiming(0);
+      editing.value = withTiming(1, timingConfig);
+    } else {
+      editing.value = withTiming(0, timingConfig);
     }
   }, [editingId]);
 
@@ -77,7 +86,9 @@ const EditableItem = ({
     if (!editable) {
       return;
     }
-
+    if (editing.value !== 0 && editing.value !== 1) {
+      return;
+    }
     if (editingId === composeIdWithPageY()) {
       setEditingId('');
     } else {

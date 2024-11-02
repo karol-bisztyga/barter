@@ -65,7 +65,7 @@ export default function EditableItem({
           </TextWrapper>
           {!showFull && (
             <View style={{ padding: 10 }}>
-              <ButtonWrapper title="more" onPress={onPressMore} />
+              <ButtonWrapper title="more" onPress={onPressMore} fillColor="white" />
             </View>
           )}
         </View>

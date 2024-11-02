@@ -32,7 +32,7 @@ Audio.setAudioModeAsync({
 type OneShotSound = keyof typeof ONE_SHOT_SOUNDS;
 type BackgroundSound = keyof typeof BACKGROUND_SOUNDS;
 
-const BACKGROUND_SOUND_VOLUME = 0.1;
+const BACKGROUND_SOUND_VOLUME = 0.3;
 
 interface SoundContextState {
   playSound: (sound: OneShotSound) => Promise<void>;
@@ -82,7 +82,6 @@ export const SoundContextProvider: FC<{ children: ReactNode }> = ({ children }) 
   const [backgroundSounFinished, setBackgroundSoundFinished] = useState(false);
 
   // for one shots
-  const [oneShotSound, setOneShotSound] = useState<keyof typeof ONE_SHOT_SOUNDS | null>(null);
   const [loadedSounds, setLoadedSounds] = useState<
     Record<keyof typeof BACKGROUND_SOUNDS | keyof typeof ONE_SHOT_SOUNDS, Audio.Sound>
   >({});
@@ -112,27 +111,6 @@ export const SoundContextProvider: FC<{ children: ReactNode }> = ({ children }) 
       });
     };
   }, []);
-
-  useEffect(() => {
-    (async () => {
-      if (!oneShotSound) {
-        return;
-      }
-      try {
-        const sound = loadedSounds[oneShotSound];
-
-        sound.setOnPlaybackStatusUpdate(async (updatedStatus: AVPlaybackStatus) => {
-          if (updatedStatus.isLoaded && updatedStatus.didJustFinish) {
-            await sound.setPositionAsync(0);
-            setOneShotSound(null);
-          }
-        });
-        await sound.playAsync();
-      } catch (e) {
-        console.error('sound error', oneShotSound, e);
-      }
-    })();
-  }, [oneShotSound]);
 
   useEffect(() => {
     let sound: Audio.Sound | null = null;
@@ -234,7 +212,6 @@ export const SoundContextProvider: FC<{ children: ReactNode }> = ({ children }) 
     soundObject.setOnPlaybackStatusUpdate(async (updatedStatus: AVPlaybackStatus) => {
       if (updatedStatus.isLoaded && updatedStatus.didJustFinish) {
         await soundObject.setPositionAsync(0);
-        setOneShotSound(null);
       }
     });
     await soundObject.playAsync();

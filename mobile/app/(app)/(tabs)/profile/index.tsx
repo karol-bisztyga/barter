@@ -28,7 +28,6 @@ export default function Profile() {
   const [editingIdInitialized, setEditingIdInitialized] = useState<boolean>(false);
 
   useEffect(() => {
-    console.log('new editing id', editingId);
     if (editingIdInitialized) {
       soundContext.playSound('stone');
     } else {
