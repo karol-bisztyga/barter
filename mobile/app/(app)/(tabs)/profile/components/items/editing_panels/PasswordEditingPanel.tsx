@@ -16,7 +16,7 @@ import { validatePassword } from '../../../../../utils/validators';
 import { changePassword } from '../../../../../db_utils/changePassword';
 import { useJokerContext } from '../../../../../context/JokerContext';
 import { EDITING_PANEL_HEIGHT, FILL_COLOR } from './constants';
-import Background from '../../Background';
+import Background from '../../../../../components/Background';
 
 const HEIGHT = EDITING_PANEL_HEIGHT * 2.5;
 
@@ -75,7 +75,7 @@ const FieldEditingPanel = ({ editing, setEditingId }: FieldEditingPanelProps) =>
 
   return (
     <Animated.View style={[styles.container, wrapperAnimatedStyle]}>
-      <Background opacity={0.7} />
+      <Background tile="stone" opacity={0.7} />
       <View style={styles.editingInputWrapper}>
         <InputWrapper
           style={styles.editingInput}

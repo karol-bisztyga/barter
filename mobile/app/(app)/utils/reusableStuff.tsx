@@ -7,11 +7,14 @@ import { MatchContextState } from '../context/MatchContext';
 import { XMLParser } from 'fast-xml-parser';
 import { UserData } from '../types';
 import { LisIcon } from './icons';
+import { useSoundContext } from '../context/SoundContext';
 
 export const headerBackButtonOptions = (
   beforeCallback?: () => Promise<boolean>,
   disabled: boolean = false
 ) => {
+  const soundContext = useSoundContext();
+
   return {
     headerShown: true,
     headerTitle: () => <></>,
@@ -25,6 +28,7 @@ export const headerBackButtonOptions = (
           if (disabled) {
             return;
           }
+          soundContext.playSound('click');
           router.back();
         }}
         disabled={disabled}

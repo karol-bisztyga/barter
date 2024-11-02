@@ -9,6 +9,7 @@ import { ErrorType, handleError } from '../../../utils/errorHandler';
 import TextWrapper from '../../../genericComponents/TextWrapper';
 import { ArrowsIcon, FlagIcon, SwordsShieldIcon } from '../../../utils/icons';
 import { useJokerContext } from '../../../context/JokerContext';
+import { useSoundContext } from '../../../context/SoundContext';
 
 const MENU_ICON_SIZE = 28;
 
@@ -16,9 +17,11 @@ const ChatRightHeaderMenu = () => {
   const jokerContext = useJokerContext();
   const sessionContext = useSessionContext();
   const matchContext = useMatchContext();
+  const soundContext = useSoundContext();
 
   const unmatchHandler = async () => {
     try {
+      soundContext.playSound('click');
       const decision: boolean = await new Promise((resolve) => {
         Alert.alert(
           'Do you really want to unmatch these items?',
@@ -55,13 +58,18 @@ const ChatRightHeaderMenu = () => {
     }
   };
   const report = async () => {
+    soundContext.playSound('click');
     router.push('chats/send_report');
   };
 
   return (
     <>
       <Menu>
-        <MenuTrigger>
+        <MenuTrigger
+          onPress={() => {
+            soundContext.playSound('click');
+          }}
+        >
           <ArrowsIcon width={MENU_ICON_SIZE} height={MENU_ICON_SIZE} />
         </MenuTrigger>
         <MenuOptions customStyles={{ optionsContainer: styles.optionsContainer }}>

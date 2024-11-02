@@ -20,6 +20,8 @@ import CardItem from './CardItem';
 import SwipeBackgroundAnimation from './SwipeBackgroundAnimation';
 import { PaperIcon, SandGlassIcon, TorchIcon } from '../utils/icons';
 import { useJokerContext } from '../context/JokerContext';
+import { generateHarmonicColor, TargetColor } from '../utils/harmonicColors';
+import { SWIPE_BASE_BACKGROUND_COLOR } from '../../constants';
 
 const { width, height } = Dimensions.get('window');
 const SWIPE_THRESHOLD_HORIZONTAL = 0.25 * width;
@@ -32,10 +34,10 @@ const END_ANIMATION_DURATION = 200;
 const DECIDE_ICON_SIZE = 100;
 
 const DECISION_COLORS = {
-  LEFT: 'red',
-  RIGHT: 'green',
-  BOTTOM: 'yellow',
-  NONE: 'black',
+  LEFT: generateHarmonicColor(SWIPE_BASE_BACKGROUND_COLOR, TargetColor.RED),
+  RIGHT: generateHarmonicColor(SWIPE_BASE_BACKGROUND_COLOR, TargetColor.GREEN),
+  BOTTOM: generateHarmonicColor(SWIPE_BASE_BACKGROUND_COLOR, TargetColor.YELLOW),
+  NONE: '',
 };
 
 const SwipeableCard = ({
@@ -490,10 +492,9 @@ const styles = StyleSheet.create({
     backgroundColor: 'black',
     borderRadius: 5,
     position: 'absolute',
-    shadowColor: '#000',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
-    shadowRadius: 10,
+    shadowRadius: 20,
     elevation: 30,
   },
   decideIconWrapper: {

@@ -7,15 +7,17 @@ import { EditImageType } from '../../types';
 import { useUserContext } from '../../context/UserContext';
 import { useEditItemContext } from '../../context/EditItemContext';
 import Settings from './components/Settings';
-import ImageWrapper from '../../genericComponents/ImageWrapper';
 import TextWrapper from '../../genericComponents/TextWrapper';
 import AccountDetails from './components/AccountDetails';
 import MyItems from './components/MyItems';
 import { FeatherIcon } from '../../utils/icons';
-import Background from './components/Background';
 import { useSoundContext } from '../../context/SoundContext';
+import Background from '../../components/Background';
+import ProfilePicture, { PROFILE_PICTURE_SIZE } from './components/ProfilePicture';
 
 const { height } = Dimensions.get('window');
+
+const PROFILE_PICTURE_WRAPPER_PADDING = 20;
 
 export default function Profile() {
   const [imageLoading, setImageLoading] = useState<boolean>(true);
@@ -48,67 +50,69 @@ export default function Profile() {
   }, [editingId]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={{ flex: 1 }}>
-        <KeyboardAwareScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>
-          <View style={styles.profileImageWrapper}>
-            <View style={styles.profileImageInnerWrapper}>
-              {userContext.data?.profilePicture && (
-                <ImageWrapper
-                  style={styles.profileImage}
-                  uri={userContext.data.profilePicture}
-                  onLoadEnd={() => {
-                    setImageLoading(false);
-                  }}
-                />
-              )}
-              {userContext.data?.profilePicture ? (
-                imageLoading && (
-                  <View style={styles.profileImageLoader}>
-                    <ActivityIndicator size="large" color="black" />
+    <>
+      <Background tile="sword" />
+      <SafeAreaView>
+        <View>
+          <KeyboardAwareScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>
+            <View style={styles.profileImageWrapper}>
+              <View style={styles.profileImageInnerWrapper}>
+                <Background tile="stone" opacity={1} style={[styles.profileImageBackground]} />
+                {userContext.data?.profilePicture && (
+                  <ProfilePicture
+                    onLoadEnd={() => {
+                      setImageLoading(false);
+                    }}
+                    uri={userContext.data.profilePicture}
+                  />
+                )}
+                {userContext.data?.profilePicture ? (
+                  imageLoading && (
+                    <View style={styles.profileImageLoader}>
+                      <ActivityIndicator size="large" color="black" />
+                    </View>
+                  )
+                ) : (
+                  <View style={styles.noProfilePictureWrapper}>
+                    <Background tile="stone" />
+                    <TextWrapper style={styles.noProfilePictureLabel}>
+                      No profile picture
+                    </TextWrapper>
                   </View>
-                )
-              ) : (
-                <View style={styles.noProfilePictureWrapper}>
-                  <Background />
-                  <TextWrapper style={styles.noProfilePictureLabel}>No profile picture</TextWrapper>
-                </View>
-              )}
-              <TouchableOpacity
-                style={styles.editProfileImageWrapper}
-                activeOpacity={1}
-                onPress={() => {
-                  editItemContext.setImageType(EditImageType.profile);
-                  router.push('profile/addPicture');
-                }}
-              >
-                <FeatherIcon width={20} height={20} />
-              </TouchableOpacity>
+                )}
+                <TouchableOpacity
+                  style={styles.editProfileImageWrapper}
+                  onPress={() => {
+                    soundContext.playSound('click');
+                    editItemContext.setImageType(EditImageType.profile);
+                    router.push('profile/addPicture');
+                  }}
+                >
+                  <FeatherIcon width={20} height={20} />
+                </TouchableOpacity>
+              </View>
             </View>
-          </View>
 
-          <View style={styles.titleWrapper}>
-            <TextWrapper style={styles.title}>Account Details</TextWrapper>
-          </View>
-          <AccountDetails editingId={editingId} setEditingId={setEditingId} />
-          <View style={styles.titleWrapper}>
-            <TextWrapper style={styles.title}>My Items</TextWrapper>
-          </View>
-          <MyItems />
-          <View style={styles.titleWrapper}>
-            <TextWrapper style={styles.title}>Settings</TextWrapper>
-          </View>
-          <Settings editingId={editingId} setEditingId={setEditingId} />
-        </KeyboardAwareScrollView>
-      </View>
-    </SafeAreaView>
+            <View style={styles.titleWrapper}>
+              <TextWrapper style={styles.title}>Account Details</TextWrapper>
+            </View>
+            <AccountDetails editingId={editingId} setEditingId={setEditingId} />
+            <View style={styles.titleWrapper}>
+              <TextWrapper style={styles.title}>My Items</TextWrapper>
+            </View>
+            <MyItems />
+            <View style={styles.titleWrapper}>
+              <TextWrapper style={styles.title}>Settings</TextWrapper>
+            </View>
+            <Settings editingId={editingId} setEditingId={setEditingId} />
+          </KeyboardAwareScrollView>
+        </View>
+      </SafeAreaView>
+    </>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
   profileImageWrapper: {
     width: '100%',
     height: 200,
@@ -118,36 +122,41 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     shadowColor: '#000',
     shadowOffset: {
-      width: 0,
+      width: 10,
       height: 10,
     },
-    shadowOpacity: 0.51,
-    shadowRadius: 13.16,
+    shadowOpacity: 0.4,
+    shadowRadius: 12,
 
     elevation: 20,
   },
   profileImageInnerWrapper: {
-    width: 200,
-    height: 200,
+    width: PROFILE_PICTURE_SIZE + PROFILE_PICTURE_WRAPPER_PADDING * 2,
+    height: PROFILE_PICTURE_SIZE + PROFILE_PICTURE_WRAPPER_PADDING * 2,
+    padding: PROFILE_PICTURE_WRAPPER_PADDING,
+    borderRadius: PROFILE_PICTURE_SIZE,
+  },
+  profileImageBackground: {
+    width: PROFILE_PICTURE_SIZE + PROFILE_PICTURE_WRAPPER_PADDING * 2,
+    height: PROFILE_PICTURE_SIZE + PROFILE_PICTURE_WRAPPER_PADDING * 2,
+    padding: PROFILE_PICTURE_WRAPPER_PADDING,
+    borderRadius: PROFILE_PICTURE_SIZE,
+    opacity: 0.3,
+    overflow: 'hidden',
   },
   editProfileImageWrapper: {
     position: 'absolute',
     width: 40,
     height: 40,
     backgroundColor: 'white',
-    bottom: 0,
-    right: 0,
+    bottom: 20,
+    right: 20,
     borderRadius: 50,
     justifyContent: 'center',
     alignItems: 'center',
   },
   separator: {
     margin: 16,
-  },
-  profileImage: {
-    width: 200,
-    height: 200,
-    borderRadius: 200,
   },
   profileImageLoader: {
     ...StyleSheet.absoluteFillObject,

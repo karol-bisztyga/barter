@@ -6,7 +6,7 @@ import { MAX_ITEMS_SLOTS } from '../../../constants';
 import { useItemsContext } from '../../../context/ItemsContext';
 import { useUserContext } from '../../../context/UserContext';
 import LinkItem from './items/LinkItem';
-import Background from './Background';
+import Background from '../../../components/Background';
 
 const MyItems = () => {
   const itemsContext = useItemsContext();
@@ -14,7 +14,7 @@ const MyItems = () => {
 
   return (
     <View style={styles.container}>
-      <Background />
+      <Background tile="stone" />
       {userContext.items.map((item: ItemData, index: number) => {
         return (
           <LinkItem

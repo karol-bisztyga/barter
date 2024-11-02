@@ -14,6 +14,8 @@ import { addLike } from '../../db_utils/addLike';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import { executeProtectedQuery } from '../../db_utils/executeProtectedQuery';
 import { useJokerContext } from '../../context/JokerContext';
+import Background from '../../components/Background';
+import { useSoundContext } from '../../context/SoundContext';
 
 const LOADED_ITEMS_CAPACITY = 5;
 // when there are less items loaded than this value, new items will be fetched
@@ -21,6 +23,7 @@ const ITEMS_LOAD_TRESHOLD = 3;
 
 export default function Swipe() {
   const sessionContext = authorizeUser();
+  const soundContext = useSoundContext();
 
   const [cards, setCards] = useState<ItemData[]>([]);
   const [activeCard, setActiveCard] = useState<ItemData | null>(null);
@@ -213,6 +216,7 @@ export default function Swipe() {
 
   return (
     <GestureHandlerRootView>
+      <Background tile="sword" opacity={0.3} />
       <SafeAreaView style={styles.container}>
         <View style={styles.container}>
           {/* todo this was showing all the time in prod so for now just removed it but it should be handled properly */}
@@ -231,6 +235,7 @@ export default function Swipe() {
               }}
               lockGesture={lockGesture}
               onPressMore={() => {
+                soundContext.playSound('click');
                 itemsContext.setOthersItem(activeCard);
                 router.push({ pathname: 'swipe/item', params: { whosItem: 'other' } });
               }}

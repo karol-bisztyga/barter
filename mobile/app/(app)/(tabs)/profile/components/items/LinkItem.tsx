@@ -3,6 +3,7 @@ import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import ImageWrapper from '../../../../genericComponents/ImageWrapper';
 import TextWrapper from '../../../../genericComponents/TextWrapper';
+import { useSoundContext } from '../../../../context/SoundContext';
 
 export type LinkItemProps = {
   name: string;
@@ -13,6 +14,8 @@ export type LinkItemProps = {
 };
 
 const LinkItem = ({ name, id, isLast, onPress, imageUrl }: LinkItemProps) => {
+  const soundContext = useSoundContext();
+
   return (
     <TouchableOpacity
       style={[
@@ -22,7 +25,10 @@ const LinkItem = ({ name, id, isLast, onPress, imageUrl }: LinkItemProps) => {
         },
       ]}
       key={id}
-      onPress={onPress}
+      onPress={() => {
+        soundContext.playSound('click');
+        onPress();
+      }}
     >
       {imageUrl && (
         <View style={styles.imageWrapper}>

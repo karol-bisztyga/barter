@@ -18,7 +18,7 @@ import { cityNameFromLocation, sleep } from '../../../../../utils/reusableStuff'
 import { FieldEditingPanelProps } from './FieldEditingPanel';
 import { useJokerContext } from '../../../../../context/JokerContext';
 import { EDITING_PANEL_HEIGHT, FILL_COLOR } from './constants';
-import Background from '../../Background';
+import Background from '../../../../../components/Background';
 
 const LocationEditingPanel = ({
   initialValue,
@@ -101,7 +101,7 @@ const LocationEditingPanel = ({
 
   return (
     <Animated.View style={[styles.container, wrapperAnimatedStyle]}>
-      <Background opacity={0.7} />
+      <Background tile="stone" opacity={0.7} />
       <View style={styles.editingInputWrapper}>
         <InputWrapper
           style={styles.editingInput}

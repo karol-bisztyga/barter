@@ -7,7 +7,7 @@ import LinkItem from './items/LinkItem';
 import { router } from 'expo-router';
 import EditableItem from './items/EditableItem';
 import { useJokerContext } from '../../../context/JokerContext';
-import Background from './Background';
+import Background from '../../../components/Background';
 
 const AccountDetails = ({
   editingId,
@@ -39,7 +39,7 @@ const AccountDetails = ({
 
   return (
     <View style={styles.container}>
-      <Background />
+      <Background tile="stone" />
       {Object.keys(data).map((name, index) => {
         const value = data && data[name as keyof UserData];
         if (name === 'onboarded') {

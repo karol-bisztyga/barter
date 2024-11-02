@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { JokerAlert } from '../context/JokerContext';
 import TextWrapper from '../genericComponents/TextWrapper';
 import * as Clipboard from 'expo-clipboard';
+import { useSoundContext } from '../context/SoundContext';
 
 const JOKER_SIZE = 50;
 const TOP_OFFSET = Constants.statusBarHeight + 4;
@@ -21,6 +22,7 @@ export const JokerDialogue = ({
 }: JokerDialogueProps) => {
   const [displayedText, setDisplayedText] = useState('');
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
+  const soundContext = useSoundContext();
 
   const fullText = currentAlert?.message;
 
@@ -42,6 +44,7 @@ export const JokerDialogue = ({
   }, [fullText, typingDelay]);
 
   const onPressDialogue = () => {
+    soundContext.playSound('whooshHi');
     if (displayedText !== fullText) {
       setDisplayedText(fullText);
       if (intervalId) {
@@ -71,6 +74,7 @@ export const JokerDialogue = ({
       activeOpacity={0.9}
       onPress={onPressDialogue}
       onLongPress={async () => {
+        soundContext.playSound('click');
         await Clipboard.setStringAsync(displayedText);
         Alert.alert('Copied to Clipboard', displayedText);
       }}

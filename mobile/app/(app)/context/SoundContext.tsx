@@ -4,8 +4,6 @@ import { Audio, AVPlaybackSource, AVPlaybackStatus } from 'expo-av';
 export const BACKGROUND_SOUNDS: Record<string, AVPlaybackSource> = {
   marketplace: require('../../../assets/sounds/background/marketplace.wav'),
   music: require('../../../assets/sounds/background/music.wav'),
-  music2: require('../../../assets/sounds/background/music2.wav'),
-  music3: require('../../../assets/sounds/background/music3.wav'),
   musicMarketBells: require('../../../assets/sounds/background/music_market_bells.wav'),
   village: require('../../../assets/sounds/background/village.wav'),
 };

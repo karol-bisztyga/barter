@@ -4,10 +4,10 @@ import { useSessionContext } from '../../../../SessionContext';
 import { router } from 'expo-router';
 import EditableItem from './items/EditableItem';
 import LinkItem from './items/LinkItem';
-import Background from './Background';
 import ToggleItem from './items/ToggleItem';
 import { MandolinIcon, TrumpetIcon } from '../../../utils/icons';
 import { useSoundContext } from '../../../context/SoundContext';
+import Background from '../../../components/Background';
 
 const Settings = ({
   editingId,
@@ -21,7 +21,7 @@ const Settings = ({
 
   return (
     <View style={styles.container}>
-      <Background />
+      <Background tile="stone" />
       <ToggleItem
         id="settings-music"
         isLast={false}

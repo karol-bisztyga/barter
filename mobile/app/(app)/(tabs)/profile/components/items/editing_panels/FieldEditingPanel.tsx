@@ -16,7 +16,7 @@ import Animated, {
 import ButtonWrapper, { BUTTON_HEIGHT } from '../../../../../genericComponents/ButtonWrapper';
 import { useJokerContext } from '../../../../../context/JokerContext';
 import { EDITING_PANEL_HEIGHT, FILL_COLOR } from './constants';
-import Background from '../../Background';
+import Background from '../../../../../components/Background';
 
 export type FieldEditingPanelProps = {
   name: string;
@@ -95,7 +95,7 @@ const FieldEditingPanel = ({
 
   return (
     <Animated.View style={[styles.container, wrapperAnimatedStyle]}>
-      <Background opacity={0.7} />
+      <Background tile="stone" opacity={0.7} />
       <View style={styles.editingInputWrapper}>
         <InputWrapper
           style={styles.editingInput}

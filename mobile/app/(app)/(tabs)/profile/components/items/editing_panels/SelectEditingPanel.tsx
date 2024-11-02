@@ -10,8 +10,8 @@ import Animated, {
 import TextWrapper from '../../../../../genericComponents/TextWrapper';
 import { useJokerContext } from '../../../../../context/JokerContext';
 import { EDITING_PANEL_HEIGHT } from './constants';
-import Background from '../../Background';
 import { BACKGROUND_COLOR } from '../../../../../constants';
+import Background from '../../../../../components/Background';
 
 export type SelectEditingPanelProps = {
   initialValue: string;
@@ -69,7 +69,7 @@ const SelectEditingPanel = ({
             setEditingId('');
           }}
         >
-          <Background opacity={editingValue === option ? 1 : 0.3} />
+          <Background tile="stone" opacity={editingValue === option ? 1 : 0.3} />
           <TextWrapper style={styles.label}>{option}</TextWrapper>
         </TouchableOpacity>
       ))}

@@ -12,18 +12,11 @@ import SwipeBackgroundAnimatedItem, {
   Item,
   SwipeBackgroundAnimationDirection,
 } from './SwipeBackgroundAnimationItem';
+import { generateRandomHarmonicColor } from '../utils/harmonicColors';
+import { SWIPE_BASE_BACKGROUND_COLOR } from '../../constants';
 
 const getRandomInt = (min: number, max: number): number =>
   Math.floor(Math.random() * (max - min + 1)) + min;
-
-const getRandomColor = (): string => {
-  const letters = '0123456789ABCDEF';
-  let color = '#';
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
-};
 
 const isColliding = (
   x: number,
@@ -69,7 +62,7 @@ const generateNonCollidingItems = (containerDimensions: ViewDimensions): Item[] 
       !isColliding(x, y, size, items, DISTANCE) &&
       checkIfFitsInScreen(x, y, size, containerDimensions)
     ) {
-      items.push({ x, y, size, color: getRandomColor() });
+      items.push({ x, y, size, color: generateRandomHarmonicColor(SWIPE_BASE_BACKGROUND_COLOR) });
     } else {
       attempts++;
     }

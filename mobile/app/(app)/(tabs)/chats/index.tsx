@@ -10,6 +10,8 @@ import { useMatchContext } from '../../context/MatchContext';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import TextWrapper from '../../genericComponents/TextWrapper';
 import ChatItem from './components/ChatItem';
+import { useJokerContext } from '../../context/JokerContext';
+import { useSoundContext } from '../../context/SoundContext';
 
 const ITEMS_PER_SCREEN = 4;
 
@@ -17,6 +19,8 @@ export default function Chats() {
   const itemsContext = useItemsContext();
   const userContext = useUserContext();
   const matchContext = useMatchContext();
+  const jokerContext = useJokerContext();
+  const soundContext = useSoundContext();
 
   const [listItemHeight, setListItemHeight] = useState<number>(0);
   const [listRendered, setListRendered] = useState(false);
@@ -91,12 +95,13 @@ export default function Chats() {
                 throw new Error(`neither matching nor matched item has been found in user's items`);
               }
             } catch (e) {
-              handleError(ErrorType.LOAD_MATCHES, `${e}`);
+              handleError(jokerContext, ErrorType.LOAD_MATCHES, `${e}`);
               return null;
             }
             return (
               <TouchableOpacity
                 onPress={() => {
+                  soundContext.playSound('click');
                   itemsContext.setUsersItemId(myItem.id);
                   itemsContext.setOthersItem(theirItem);
                   matchContext.setCurrentMatchId(id);
