@@ -5,6 +5,9 @@ import { router } from 'expo-router';
 import EditableItem from './items/EditableItem';
 import LinkItem from './items/LinkItem';
 import Background from './Background';
+import ToggleItem from './items/ToggleItem';
+import { MandolinIcon, TrumpetIcon } from '../../../utils/icons';
+import { useSoundContext } from '../../../context/SoundContext';
 
 const Settings = ({
   editingId,
@@ -14,10 +17,32 @@ const Settings = ({
   setEditingId: React.Dispatch<React.SetStateAction<string>>;
 }) => {
   const sessionContext = useSessionContext();
+  const soundContext = useSoundContext();
 
   return (
     <View style={styles.container}>
       <Background />
+      <ToggleItem
+        id="settings-music"
+        isLast={false}
+        onPress={() => {
+          soundContext.setMusicOn(!soundContext.musicOn);
+          if (soundContext.soundsOn) {
+            soundContext.playSound('click');
+          }
+        }}
+        Icon={MandolinIcon}
+        disabled={!soundContext.musicOn}
+      />
+      <ToggleItem
+        id="settings-sounds"
+        isLast={false}
+        onPress={() => {
+          soundContext.setSoundsOn(!soundContext.soundsOn);
+        }}
+        Icon={TrumpetIcon}
+        disabled={!soundContext.soundsOn}
+      />
       <EditableItem
         name="change language"
         initialValue="English"

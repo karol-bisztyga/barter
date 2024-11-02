@@ -13,6 +13,7 @@ import AccountDetails from './components/AccountDetails';
 import MyItems from './components/MyItems';
 import { FeatherIcon } from '../../utils/icons';
 import Background from './components/Background';
+import { useSoundContext } from '../../context/SoundContext';
 
 const { height } = Dimensions.get('window');
 
@@ -21,10 +22,19 @@ export default function Profile() {
   const scrollViewRef = useRef<KeyboardAwareScrollView>(null);
   const userContext = useUserContext();
   const editItemContext = useEditItemContext();
+  const soundContext = useSoundContext();
 
   const [editingId, setEditingId] = useState<string>('');
+  const [editingIdInitialized, setEditingIdInitialized] = useState<boolean>(false);
 
   useEffect(() => {
+    console.log('new editing id', editingId);
+    if (editingIdInitialized) {
+      soundContext.playSound('stone');
+    } else {
+      setEditingIdInitialized(true);
+    }
+
     if (editingId && scrollViewRef.current) {
       const targetOffsetY = editingId.split('-').at(-1);
       if (!targetOffsetY) {

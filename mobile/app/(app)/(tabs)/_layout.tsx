@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Tabs } from 'expo-router';
 import { authorizeUser, updateMatches } from '../utils/reusableStuff';
 import { useMatchContext } from '../context/MatchContext';
@@ -15,6 +15,10 @@ export default function TabLayout() {
   const matchContext = useMatchContext();
   const jokerContext = useJokerContext();
   const soundContext = useSoundContext();
+
+  useEffect(() => {
+    soundContext.playBackgroundSound();
+  }, []);
 
   return (
     <Tabs
@@ -37,10 +41,10 @@ export default function TabLayout() {
           }
           switch (routeName) {
             case 'swipe':
-              soundContext.setOneShotSound('click');
+              soundContext.playSound('click');
               break;
             case 'chats':
-              soundContext.setOneShotSound('click');
+              soundContext.playSound('click');
               (async () => {
                 try {
                   await updateMatches(sessionContext, matchContext);
@@ -50,7 +54,7 @@ export default function TabLayout() {
               })();
               break;
             case 'profile':
-              soundContext.setOneShotSound('click');
+              soundContext.playSound('click');
               break;
             default:
               handleError(jokerContext, ErrorType.UNKNOWN_ROUTE, `${e}`, '', false);
