@@ -18,7 +18,7 @@ import { ItemData, SwipeCallbacks, SwipeDirection } from '../types';
 import { useUserContext } from '../context/UserContext';
 import CardItem from './CardItem';
 import SwipeBackgroundAnimation from './SwipeBackgroundAnimation';
-import { PaperIcon, ShieldIcon, TorchIcon } from '../utils/icons';
+import { PaperIcon, SandGlassIcon, TorchIcon } from '../utils/icons';
 import { useJokerContext } from '../context/JokerContext';
 
 const { width, height } = Dimensions.get('window');
@@ -430,11 +430,7 @@ const SwipeableCard = ({
             forcedControlsParametersAnimatedStyle,
           ]}
         >
-          <ShieldIcon
-            width={DECIDE_ICON_SIZE}
-            height={DECIDE_ICON_SIZE}
-            style={styles.decideIcon}
-          />
+          <TorchIcon width={DECIDE_ICON_SIZE} height={DECIDE_ICON_SIZE} style={styles.decideIcon} />
         </Animated.View>
       )}
       {/* right icon */}
@@ -461,7 +457,7 @@ const SwipeableCard = ({
             styles.decideIconWrapper,
             {
               left: wrapperWidth / 2 - DECIDE_ICON_SIZE / 2,
-              top: wrapperHeight - DECIDE_ICON_SIZE / 2,
+              bottom: -DECIDE_ICON_SIZE / 4,
               width: DECIDE_ICON_SIZE,
               height: DECIDE_ICON_SIZE,
             },
@@ -471,7 +467,11 @@ const SwipeableCard = ({
             forcedControlsParametersAnimatedStyle,
           ]}
         >
-          <TorchIcon width={DECIDE_ICON_SIZE} height={DECIDE_ICON_SIZE} style={styles.decideIcon} />
+          <SandGlassIcon
+            width={DECIDE_ICON_SIZE}
+            height={DECIDE_ICON_SIZE}
+            style={styles.decideIcon}
+          />
         </Animated.View>
       )}
     </Animated.View>

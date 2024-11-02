@@ -8,7 +8,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { StyleSheet } from 'react-native';
-import { PaperIcon, ShieldIcon, TorchIcon } from '../utils/icons';
+import { PaperIcon, SandGlassIcon, TorchIcon } from '../utils/icons';
 import { SwipeDirection } from '../types';
 
 export type SwipeBackgroundAnimationDirection = SwipeDirection | null;
@@ -24,11 +24,11 @@ export const getIconForSwipeDirection = (swipeDirection: SwipeDirection | null) 
   'worklet';
   switch (swipeDirection) {
     case SwipeDirection.LEFT:
-      return ShieldIcon;
+      return TorchIcon;
     case SwipeDirection.RIGHT:
       return PaperIcon;
     case SwipeDirection.DOWN:
-      return TorchIcon;
+      return SandGlassIcon;
     default:
       return null;
   }
