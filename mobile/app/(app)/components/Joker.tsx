@@ -25,7 +25,7 @@ const Joker = () => {
   const jokerContext = useJokerContext();
   const soundContext = useSoundContext();
 
-  const [currentAlert, setCurrentAlert] = useState<JokerAlert | null>(null);
+  const [currentMessage, setCurrentMessage] = useState<JokerAlert | null>(null);
 
   const translateX = useSharedValue(0);
   const velocityX = useSharedValue(0);
@@ -51,7 +51,7 @@ const Joker = () => {
 
   const gesture = Gesture.Pan()
     .onUpdate((event) => {
-      if (currentAlert) {
+      if (currentMessage) {
         return;
       }
       dragging.value = true;
@@ -60,7 +60,7 @@ const Joker = () => {
       velocityX.value = event.velocityX;
     })
     .onEnd(() => {
-      if (currentAlert) {
+      if (currentMessage) {
         return;
       }
       let finalX = clamp(
@@ -78,7 +78,7 @@ const Joker = () => {
       translateY.value = withSpring(0);
     })
     .onFinalize(() => {
-      if (currentAlert) {
+      if (currentMessage) {
         return;
       }
       if (!dragging.value) {
@@ -99,13 +99,21 @@ const Joker = () => {
   });
 
   const pressJoker = () => {
-    if (currentAlert) {
+    if (currentMessage) {
       return;
     }
     soundContext.playSound('click');
 
     // TODO this function should do something different, probably say something like "hello I'm your assistant" etc
     const arr = ['error', 'info', 'success'];
+
+    if (Math.floor(Math.random() * 2)) {
+      jokerContext.showNonBlockingInfo(
+        `Non blocking info! This is an info message, lorem ipsum ${Date.now()}`
+      );
+      return;
+    }
+
     const rand = Math.floor(Math.random() * arr.length);
     const item = arr[rand];
 
@@ -125,22 +133,23 @@ const Joker = () => {
   };
 
   useEffect(() => {
-    if (jokerContext.alerts.length && !currentAlert) {
+    if (jokerContext.alerts.length && !currentMessage) {
       const newAlert = jokerContext.popAlert();
       if (!newAlert) {
         return;
       }
-      setCurrentAlert(newAlert);
+      setCurrentMessage(newAlert);
     }
-  }, [jokerContext.alerts, currentAlert]);
+  }, [jokerContext.alerts, currentMessage]);
 
   return (
     <View
       style={[
         styles.container,
         {
-          height: currentAlert ? '100%' : 'auto',
-          backgroundColor: 'rgba(0, 0, 0, .5)',
+          height: currentMessage && currentMessage.blocking ? '100%' : 'auto',
+          backgroundColor:
+            currentMessage && currentMessage.blocking ? 'rgba(0, 0, 0, .5)' : 'transparent',
         },
       ]}
     >
@@ -150,8 +159,8 @@ const Joker = () => {
         </Animated.View>
       </GestureDetector>
 
-      {currentAlert && (
-        <JokerDialogue currentAlert={currentAlert} setCurrentAlert={setCurrentAlert} />
+      {currentMessage && (
+        <JokerDialogue currentMessage={currentMessage} setCurrentMessage={setCurrentMessage} />
       )}
     </View>
   );

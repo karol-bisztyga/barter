@@ -8,23 +8,26 @@ import { useSoundContext } from '../context/SoundContext';
 
 const JOKER_SIZE = 50;
 const TOP_OFFSET = Constants.statusBarHeight + 4;
+const MESSAGE_DISAPPEAR_TIMEOUT = 1000;
 
 type JokerDialogueProps = {
-  currentAlert: JokerAlert;
-  setCurrentAlert: (alert: JokerAlert | null) => void;
+  currentMessage: JokerAlert;
+  setCurrentMessage: (alert: JokerAlert | null) => void;
   typingDelay?: number;
 };
 
 export const JokerDialogue = ({
-  currentAlert,
-  setCurrentAlert,
+  currentMessage,
+  setCurrentMessage,
   typingDelay = 0,
 }: JokerDialogueProps) => {
   const [displayedText, setDisplayedText] = useState('');
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
+  const [printingInterrupted, setPrintingInterrupted] = useState(false);
+
   const soundContext = useSoundContext();
 
-  const fullText = currentAlert?.message;
+  const fullText = currentMessage?.message;
 
   useEffect(() => {
     let index = 0;
@@ -43,20 +46,34 @@ export const JokerDialogue = ({
     return () => clearInterval(newIntervalId);
   }, [fullText, typingDelay]);
 
+  useEffect(() => {
+    if (displayedText === fullText) {
+      if (!printingInterrupted && !currentMessage?.blocking) {
+        setTimeout(() => {
+          if (currentMessage) {
+            setCurrentMessage(null);
+          }
+        }, MESSAGE_DISAPPEAR_TIMEOUT);
+      }
+      setPrintingInterrupted(false);
+    }
+  }, [displayedText]);
+
   const onPressDialogue = () => {
     soundContext.playSound('whooshHi');
     if (displayedText !== fullText) {
       setDisplayedText(fullText);
+      setPrintingInterrupted(true);
       if (intervalId) {
         clearInterval(intervalId);
       }
     } else {
-      setCurrentAlert(null);
+      setCurrentMessage(null);
     }
   };
 
   const getBackgroundColor = () => {
-    switch (currentAlert.type) {
+    switch (currentMessage.type) {
       case 'error':
         return 'red';
       case 'info':

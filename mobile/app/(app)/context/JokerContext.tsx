@@ -9,6 +9,7 @@ export enum AlertType {
 export type JokerAlert = {
   type: AlertType;
   message: string;
+  blocking: boolean;
 };
 
 export interface JokerContextState {
@@ -19,6 +20,7 @@ export interface JokerContextState {
   showError: (message: string) => void;
   showInfo: (message: string) => void;
   showSuccess: (message: string) => void;
+  showNonBlockingInfo: (message: string) => void;
 }
 
 const initialState: JokerContextState = {
@@ -29,6 +31,7 @@ const initialState: JokerContextState = {
   showError: () => {},
   showInfo: () => {},
   showSuccess: () => {},
+  showNonBlockingInfo: () => {},
 };
 
 export const JokerContext = createContext<JokerContextState | null>(initialState);
@@ -58,15 +61,19 @@ export const JokerContextProvider: FC<{ children: ReactNode }> = ({ children }) 
   };
 
   const showError = (message: string) => {
-    pushAlert({ type: AlertType.ERROR, message });
+    pushAlert({ type: AlertType.ERROR, message, blocking: true });
   };
 
   const showInfo = (message: string) => {
-    pushAlert({ type: AlertType.INFO, message });
+    pushAlert({ type: AlertType.INFO, message, blocking: true });
   };
 
   const showSuccess = (message: string) => {
-    pushAlert({ type: AlertType.SUCCESS, message });
+    pushAlert({ type: AlertType.SUCCESS, message, blocking: true });
+  };
+
+  const showNonBlockingInfo = (message: string) => {
+    pushAlert({ type: AlertType.INFO, message, blocking: false });
   };
 
   return (
@@ -78,6 +85,7 @@ export const JokerContextProvider: FC<{ children: ReactNode }> = ({ children }) 
         showError,
         showInfo,
         showSuccess,
+        showNonBlockingInfo,
       }}
     >
       {children}
