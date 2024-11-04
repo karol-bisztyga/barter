@@ -16,6 +16,7 @@ import { executeProtectedQuery } from '../../db_utils/executeProtectedQuery';
 import { useJokerContext } from '../../context/JokerContext';
 import Background from '../../components/Background';
 import { useSoundContext } from '../../context/SoundContext';
+import Reload from './components/Reload';
 
 const LOADED_ITEMS_CAPACITY = 5;
 // when there are less items loaded than this value, new items will be fetched
@@ -74,14 +75,20 @@ export default function Swipe() {
       });
   }, []);
 
+  useEffect(() => {
+    if (!emptyCardsResponseReceived || activeCard) {
+      return;
+    }
+
+    jokerContext.showInfo('no items available for now, try again later');
+    setEmptyCardsResponseReceived(false);
+    setLoading(false);
+  }, [emptyCardsResponseReceived, activeCard]);
+
   // load cards initially
   useEffect(() => {
     (async () => {
       try {
-        if (emptyCardsResponseReceived) {
-          jokerContext.showInfo('no items available for now, try again later');
-          return;
-        }
         setLoading(true);
         const itemsLoaded: ItemData[] = await getItemsForCards(
           sessionContext,
@@ -93,6 +100,7 @@ export default function Swipe() {
           return;
         }
 
+        setEmptyCardsResponseReceived(false);
         setLoading(false);
         const newActiveCard = itemsLoaded.pop();
         if (!newActiveCard) {
@@ -128,6 +136,7 @@ export default function Swipe() {
           setEmptyCardsResponseReceived(true);
           return activeCard;
         }
+        setEmptyCardsResponseReceived(false);
         updatedCards = [...itemsLoaded, ...updatedCards];
       } catch (e) {
         handleError(jokerContext, ErrorType.LOAD_CARDS, `${e}`);
@@ -143,6 +152,19 @@ export default function Swipe() {
     return activeCard;
   };
 
+  const loadCards = async () => {
+    setLoading(true);
+    const itemsLoaded = await getItemsForCards(
+      sessionContext,
+      cards.map((card) => card.id),
+      LOADED_ITEMS_CAPACITY
+    );
+    if (!itemsLoaded.length) {
+      setEmptyCardsResponseReceived(true);
+    }
+    setLoading(false);
+  };
+
   const sendLike = async (likedItemId: string, decision: boolean) => {
     try {
       return await addLike(sessionContext, likedItemId, decision);
@@ -153,6 +175,7 @@ export default function Swipe() {
 
   const handleSwipeRight = async () => {
     try {
+      soundContext.playSound('writing');
       if (userContext.swipingLeftRightBlockedReason) {
         jokerContext.showInfo(
           'swiping left/right is blocked.\n' + userContext.swipingLeftRightBlockedReason
@@ -181,6 +204,7 @@ export default function Swipe() {
 
   const handleSwipeLeft = async () => {
     try {
+      soundContext.playSound('fire');
       if (userContext.swipingLeftRightBlockedReason) {
         jokerContext.showInfo(
           'swiping left/right is blocked.\n' + userContext.swipingLeftRightBlockedReason
@@ -205,6 +229,7 @@ export default function Swipe() {
 
   const handleSwipeDown = async () => {
     try {
+      soundContext.playSound('whooshLo');
       if (!activeCard) {
         throw new Error('could not find swiped card');
       }
@@ -213,6 +238,16 @@ export default function Swipe() {
       handleError(jokerContext, ErrorType.SWIPE, `${e}`);
     }
   };
+
+  if (!activeCard && !loading) {
+    return (
+      <Reload
+        onPress={() => {
+          loadCards();
+        }}
+      />
+    );
+  }
 
   return (
     <GestureHandlerRootView>

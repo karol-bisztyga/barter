@@ -14,6 +14,7 @@ import SandGlassIcon from '../../../assets/icons/sandglass.svg';
 import SpearIcon from '../../../assets/icons/medieval_pack_2/050-spear.svg';
 import MandolinIcon from '../../../assets/icons/medieval_pack_2/042-mandolin.svg';
 import TrumpetIcon from '../../../assets/icons/medieval_pack_2/020-trumpet.svg';
+import CannonIcon from '../../../assets/icons/medieval_pack_2/030-cannon.svg';
 
 export {
   TorchIcon,
@@ -32,4 +33,5 @@ export {
   SpearIcon,
   MandolinIcon,
   TrumpetIcon,
+  CannonIcon,
 };

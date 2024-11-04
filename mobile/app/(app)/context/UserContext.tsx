@@ -86,7 +86,7 @@ export const UserContextProvider: FC<{ children: ReactNode }> = ({ children }) =
     }
     let itemIndex = null;
     const item = items.find((item, index) => {
-      if (item.id === id) {
+      if (`${item.id}` === `${id}`) {
         itemIndex = index;
         return true;
       }

@@ -1,8 +1,7 @@
 import React, { useRef } from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
-import Item from '../../components/Item';
+import { View, StyleSheet, Dimensions, Image, SafeAreaView } from 'react-native';
 import { router } from 'expo-router';
-import { ItemData, ItemBorderRadius } from '../../types';
+import { ItemData } from '../../types';
 import { useItemsContext } from '../../context/ItemsContext';
 import { useUserContext } from '../../context/UserContext';
 import { updateMatchMatchingItem } from '../../db_utils/updateMatchMatchingItem';
@@ -11,6 +10,8 @@ import { ErrorType, handleError } from '../../utils/errorHandler';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 import TextWrapper from '../../genericComponents/TextWrapper';
 import { useJokerContext } from '../../context/JokerContext';
+import Background from '../../components/Background';
+import { FILL_COLOR } from '../profile/components/items/editing_panels/constants';
 
 const { width } = Dimensions.get('window');
 
@@ -33,6 +34,7 @@ const Match = () => {
   const myDefaultItemId = useRef(itemsContext.usersItemId);
 
   const usersItem: ItemData | undefined = userContext.findItemById(usersItemId)?.item;
+
   if (!othersItem || !usersItem) {
     handleError(
       jokerContext,
@@ -44,154 +46,135 @@ const Match = () => {
   }
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
+      <Background tile="sword" forceFullScreen />
       <TextWrapper style={styles.matchedLabel}>Items matched!</TextWrapper>
-      <View
-        style={[
-          styles.itemsWrapper,
-          {
-            height: width,
-            width: width,
-            paddingLeft: 10,
-            paddingRight: 10,
-          },
-        ]}
-      >
-        <View style={[styles.itemsImagesWrapper, { height: width }]}>
-          <View style={styles.usersItem}>
-            <Item
-              itemData={usersItem}
-              borderRadius={ItemBorderRadius.all}
-              carouselOptions={{
-                dotsVisible: false,
-                pressEnabled: false,
+      <View style={styles.imagesWrapper}>
+        {/* Left Image */}
+        <View style={styles.imageContainer}>
+          <Image source={{ uri: usersItem.images[0] }} style={[styles.image, styles.leftImage]} />
+        </View>
+
+        {/* Right Image */}
+        <View style={[styles.imageContainer, styles.rightImageContainer]}>
+          <Image source={{ uri: othersItem.images[0] }} style={[styles.image, styles.rightImage]} />
+        </View>
+      </View>
+
+      <View style={styles.infoWrapper}>
+        <Background tile="stone" opacity={0.8} />
+        <TextWrapper style={styles.infoLabel}>I give you</TextWrapper>
+        <TextWrapper style={[styles.infoLabel, styles.infoLabelItemName]}>
+          {usersItem.name}
+        </TextWrapper>
+        <TextWrapper style={styles.infoLabel}>and you give me</TextWrapper>
+        <TextWrapper style={[styles.infoLabel, styles.infoLabelItemName]}>
+          {othersItem.name}
+        </TextWrapper>
+
+        <View style={styles.buttonsWrapper}>
+          <View style={styles.singleButtonWrapper}>
+            <ButtonWrapper
+              title="Switch my item"
+              onPress={() => {
+                router.push('swipe/switch_item');
               }}
-              showDescription={false}
-              showName={false}
+              color={'red'}
+              fillColor={FILL_COLOR}
             />
           </View>
-          <View style={styles.matchedItem}>
-            <Item
-              itemData={othersItem}
-              borderRadius={ItemBorderRadius.all}
-              carouselOptions={{
-                dotsVisible: false,
-                pressEnabled: false,
-              }}
-              showDescription={false}
-              showName={false}
-            />
-          </View>
-        </View>
-        <View style={styles.itemsLabelsWrapper}>
-          <View style={styles.usersItem}>
-            <TextWrapper style={[styles.itemsLabel, { paddingRight: 10 }]}>
-              {usersItem.name}
-            </TextWrapper>
-          </View>
-          <View style={styles.matchedItem}>
-            <TextWrapper style={[styles.itemsLabel, { paddingLeft: 10 }]}>
-              {othersItem.name}
-            </TextWrapper>
-          </View>
-        </View>
-        <View style={styles.bottomSectionWrapper}>
-          <View style={styles.buttonsWrapper}>
-            {itemsContext.usersItemsLikedByTargetItemOwner.length > 1 && (
-              <View style={styles.singleButtonWrapper}>
-                <ButtonWrapper
-                  title="Switch my item"
-                  onPress={() => {
-                    router.push('swipe/switch_item');
-                  }}
-                  color={'red'}
-                  fillColor="white"
-                />
-              </View>
-            )}
-            <View style={styles.singleButtonWrapper}>
-              <ButtonWrapper
-                title="Proceed!"
-                fillColor="white"
-                onPress={async () => {
-                  // modify newly created match if the item was switched
-                  if (
-                    myDefaultItemId.current &&
-                    myDefaultItemId.current !== itemsContext.usersItemId
-                  ) {
-                    try {
-                      await updateMatchMatchingItem(
-                        sessionContext,
-                        usersItemId,
-                        myDefaultItemId.current,
-                        othersItem.id
-                      );
-                    } catch (e) {
-                      handleError(jokerContext, ErrorType.UPDATE_MATCH, `${e}`);
-                      return;
-                    }
+          <View style={styles.singleButtonWrapper}>
+            <ButtonWrapper
+              title="Proceed!"
+              fillColor={FILL_COLOR}
+              onPress={async () => {
+                // modify newly created match if the item was switched
+                if (
+                  myDefaultItemId.current &&
+                  myDefaultItemId.current !== itemsContext.usersItemId
+                ) {
+                  try {
+                    await updateMatchMatchingItem(
+                      sessionContext,
+                      usersItemId,
+                      myDefaultItemId.current,
+                      othersItem.id
+                    );
+                  } catch (e) {
+                    handleError(jokerContext, ErrorType.UPDATE_MATCH, `${e}`);
+                    return;
                   }
-                  router.back();
-                }}
-                color={'green'}
-              />
-            </View>
+                }
+                router.back();
+              }}
+              color={'lightgreen'}
+            />
           </View>
         </View>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingTop: 100,
-  },
-  itemsWrapper: {
-    flex: 1,
-    flexDirection: 'column',
-  },
-  itemsImagesWrapper: {
-    flex: 1,
-    height: 200,
-    flexDirection: 'row',
-  },
-  usersItem: {
-    flex: 1,
-  },
-  matchedItem: {
-    flex: 1,
-  },
-  itemsLabelsWrapper: {
-    flex: 1,
-    flexDirection: 'row',
-  },
-  itemsLabel: {
-    fontSize: 30,
-    textAlign: 'center',
+    height: '100%',
   },
   matchedLabel: {
     fontSize: 50,
     textAlign: 'center',
   },
-  bottomSectionWrapper: {
-    position: 'absolute',
-    width: '100%',
-    bottom: 50,
-  },
-  buttonsWrapper: {
+  imagesWrapper: {
+    marginTop: 20,
     flexDirection: 'row',
+    alignItems: 'flex-end',
     justifyContent: 'center',
   },
+  imageContainer: {
+    position: 'relative',
+  },
+  image: {
+    width: width / 2, // Adjust width as needed
+    height: width / 2, // Adjust height as needed
+    resizeMode: 'contain',
+    borderWidth: 2,
+    borderColor: 'white',
+  },
+  leftImage: {
+    transform: [{ rotate: '-5deg' }], // Adjust rotation as needed
+  },
+  rightImageContainer: {
+    marginLeft: -10, // Overlap adjustment, change as needed
+  },
+  rightImage: {
+    transform: [{ rotate: '15deg' }, { translateY: 60 }], // Adjust rotation as needed
+  },
+
+  infoWrapper: {
+    marginTop: 100,
+    marginHorizontal: 20,
+    borderRadius: 20,
+    overflow: 'hidden',
+    backgroundColor: 'black',
+  },
+  infoLabel: {
+    fontSize: 16,
+    textAlign: 'center',
+    padding: 4,
+  },
+  infoLabelItemName: {
+    fontSize: 24,
+  },
+
+  buttonsWrapper: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginVertical: 20,
+  },
   singleButtonWrapper: {
-    marginLeft: 10,
-    marginRight: 10,
-    padding: 10,
-    paddingLeft: 30,
-    paddingRight: 30,
+    flex: 1,
+    marginHorizontal: 10,
   },
 });
 

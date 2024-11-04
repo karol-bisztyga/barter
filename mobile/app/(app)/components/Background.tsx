@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAssets } from 'expo-asset';
-import { ImageBackground, StyleSheet } from 'react-native';
+import { Dimensions, ImageBackground, StyleSheet } from 'react-native';
 
 export type BackgroundTile = 'sword' | 'stone';
 
@@ -8,9 +8,12 @@ type BackgroundProps = {
   tile: BackgroundTile;
   opacity?: number;
   style?: object;
+  forceFullScreen?: boolean;
 };
 
-const Background = ({ tile, style = {}, opacity = 0.5 }: BackgroundProps) => {
+const { height } = Dimensions.get('window');
+
+const Background = ({ tile, style = {}, opacity = 0.5, forceFullScreen }: BackgroundProps) => {
   const [assets, error] = useAssets([
     require('../../../assets/backgrounds/sword.jpg'),
     require('../../../assets/backgrounds/stone.jpg'),
@@ -36,7 +39,7 @@ const Background = ({ tile, style = {}, opacity = 0.5 }: BackgroundProps) => {
   return (
     <ImageBackground
       source={{ uri: assets[getAssetIndexForBackgroundTile(tile)].uri }}
-      style={[styles.background, { opacity }, style]}
+      style={[styles.background, { opacity, height: forceFullScreen ? height : '100%' }, style]}
       imageStyle={styles.imageStyle}
     />
   );
@@ -46,7 +49,6 @@ const styles = StyleSheet.create({
   background: {
     position: 'absolute',
     width: '100%',
-    height: '100%',
   },
   imageStyle: {
     resizeMode: 'repeat',

@@ -13,6 +13,7 @@ import { DimensionsType, generatePaths } from './utils';
 import { useAssets } from 'expo-asset';
 import Svg, { Path } from 'react-native-svg';
 import { useJokerContext } from '../context/JokerContext';
+import { useSoundContext } from '../context/SoundContext';
 
 export const BUTTON_HEIGHT = 40;
 
@@ -27,6 +28,7 @@ type MyButtonProps = {
 
 const ButtonWrapper = ({ title, icon, onPress, disabled, color, fillColor }: MyButtonProps) => {
   const jokerContext = useJokerContext();
+  const soundContext = useSoundContext();
 
   const [dimensions, setDimensions] = useState<DimensionsType>({
     width: 0,
@@ -62,7 +64,10 @@ const ButtonWrapper = ({ title, icon, onPress, disabled, color, fillColor }: MyB
     >
       <TouchableOpacity
         activeOpacity={0.8}
-        onPress={onPress}
+        onPress={() => {
+          soundContext.playSound('click');
+          onPress();
+        }}
         style={[
           styles.button,
           icon ? styles.buttonWithIcon : styles.buttonWithoutIcon,

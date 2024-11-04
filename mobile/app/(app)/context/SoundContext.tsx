@@ -16,6 +16,8 @@ export const ONE_SHOT_SOUNDS: Record<string, AVPlaybackSource> = {
   sword: require('../../../assets/sounds/one_shot/sword.mp3'),
   whooshHi: require('../../../assets/sounds/one_shot/whoosh_hi.wav'),
   whooshLo: require('../../../assets/sounds/one_shot/whoosh_lo.wav'),
+  writing: require('../../../assets/sounds/one_shot/writing.wav'),
+  fire: require('../../../assets/sounds/one_shot/fire.wav'),
 };
 
 // TODO review this config
@@ -205,6 +207,10 @@ export const SoundContextProvider: FC<{ children: ReactNode }> = ({ children }) 
     const soundObject = loadedSounds[sound];
     if (!soundObject) {
       return;
+    }
+    const currentStatus = await soundObject.getStatusAsync();
+    if (currentStatus.isLoaded && currentStatus.isPlaying) {
+      await soundObject.stopAsync();
     }
 
     soundObject.setOnPlaybackStatusUpdate(async (updatedStatus: AVPlaybackStatus) => {
