@@ -1,10 +1,17 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Tabs } from 'expo-router';
 import { authorizeUser, updateMatches } from '../utils/reusableStuff';
 import { useMatchContext } from '../context/MatchContext';
 import { ErrorType, handleError } from '../utils/errorHandler';
 import { BACKGROUND_COLOR, FONT_COLOR } from '../constants';
-import { HelmetIcon, PaperIcon, TargetIcon } from '../utils/icons';
+import {
+  HelmetIcon,
+  HelmetLinealIcon,
+  PaperIcon,
+  PaperLinealIcon,
+  TargetIcon,
+  TargetLinealIcon,
+} from '../utils/icons';
 import { useJokerContext } from '../context/JokerContext';
 import { useSoundContext } from '../context/SoundContext';
 
@@ -15,6 +22,8 @@ export default function TabLayout() {
   const matchContext = useMatchContext();
   const jokerContext = useJokerContext();
   const soundContext = useSoundContext();
+
+  const [routeName, setRouteName] = useState<string>('swipe');
 
   useEffect(() => {
     soundContext.playBackgroundSound();
@@ -39,6 +48,7 @@ export default function TabLayout() {
           if (!routeName) {
             return;
           }
+          setRouteName(routeName);
           switch (routeName) {
             case 'swipe':
               soundContext.playSound('click');
@@ -72,21 +82,30 @@ export default function TabLayout() {
         name="profile"
         options={{
           title: 'Profile',
-          tabBarIcon: ({ color }) => <HelmetIcon width={28} height={28} fill={color} />,
+          tabBarIcon: ({ color }) => {
+            const Icon = routeName === 'profile' ? HelmetIcon : HelmetLinealIcon;
+            return <Icon width={28} height={28} fill={color} />;
+          },
         }}
       />
       <Tabs.Screen
         name="swipe"
         options={{
           title: 'Swipe',
-          tabBarIcon: ({ color }) => <TargetIcon width={28} height={28} fill={color} />,
+          tabBarIcon: ({ color }) => {
+            const Icon = routeName === 'swipe' ? TargetIcon : TargetLinealIcon;
+            return <Icon width={28} height={28} fill={color} />;
+          },
         }}
       />
       <Tabs.Screen
         name="chats"
         options={{
           title: 'Chats',
-          tabBarIcon: ({ color }) => <PaperIcon width={28} height={28} fill={color} />,
+          tabBarIcon: ({ color }) => {
+            const Icon = routeName === 'chats' ? PaperIcon : PaperLinealIcon;
+            return <Icon width={28} height={28} fill={color} />;
+          },
           /**
            * todo this is a fix for this case:
            *  when an item is deleted and a chat for this item is openend in the chat tab, the chat tab should be reset or navigated to the chat root view

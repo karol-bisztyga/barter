@@ -1,9 +1,14 @@
+import PaperIcon from '../../../assets/icons/medieval_pack/017-paper.svg';
+import HelmetIcon from '../../../assets/icons/medieval_pack/025-helmet-1.svg';
+import TargetIcon from '../../../assets/icons/medieval_pack/006-target.svg';
+
+import PaperLinealIcon from '../../../assets/icons/medieval_pack/017-paper-lineal.svg';
+import HelmetLinealIcon from '../../../assets/icons/medieval_pack/025-helmet-1-lineal.svg';
+import TargetLinealIcon from '../../../assets/icons/medieval_pack/006-target-lineal.svg';
+
 import TorchIcon from '../../../assets/icons/medieval_pack/005-torch.svg';
 import ShieldIcon from '../../../assets/icons/medieval_pack/013-shield.svg';
-import PaperIcon from '../../../assets/icons/medieval_pack/017-paper.svg';
-import TargetIcon from '../../../assets/icons/medieval_pack/006-target.svg';
 import FeatherIcon from '../../../assets/icons/medieval_pack/032-feather.svg';
-import HelmetIcon from '../../../assets/icons/medieval_pack/025-helmet-1.svg';
 import ArrowsIcon from '../../../assets/icons/medieval_pack/046-arrows-1.svg';
 import FlagIcon from '../../../assets/icons/medieval_pack/029-flag-2.svg';
 import SwordsShieldIcon from '../../../assets/icons/medieval_pack/011-shield-2.svg';
@@ -34,4 +39,7 @@ export {
   MandolinIcon,
   TrumpetIcon,
   CannonIcon,
+  PaperLinealIcon,
+  HelmetLinealIcon,
+  TargetLinealIcon,
 };
