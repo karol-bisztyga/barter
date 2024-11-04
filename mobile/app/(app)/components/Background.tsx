@@ -15,7 +15,7 @@ const { height } = Dimensions.get('window');
 
 const Background = ({ tile, style = {}, opacity = 0.5, forceFullScreen }: BackgroundProps) => {
   const [assets, error] = useAssets([
-    require('../../../assets/backgrounds/sword.jpg'),
+    require('../../../assets/backgrounds/sword_small_500.jpg'),
     require('../../../assets/backgrounds/stone.jpg'),
   ]);
 
