@@ -10,6 +10,13 @@ const JOKER_SIZE = 50;
 const TOP_OFFSET = Constants.statusBarHeight + 4;
 const MESSAGE_DISAPPEAR_TIMEOUT = 1000;
 
+enum STATE {
+  IDLE,
+  TYPING,
+  DISPLAYED,
+  INTERRUPTED,
+}
+
 type JokerDialogueProps = {
   currentMessage: JokerAlert;
   setCurrentMessage: (alert: JokerAlert | null) => void;
@@ -23,7 +30,8 @@ export const JokerDialogue = ({
 }: JokerDialogueProps) => {
   const [displayedText, setDisplayedText] = useState('');
   const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
-  const [printingInterrupted, setPrintingInterrupted] = useState(false);
+  const [state, setState] = useState<STATE>(STATE.IDLE);
+  const [closeTimeout, setCloseTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const soundContext = useSoundContext();
 
@@ -31,6 +39,8 @@ export const JokerDialogue = ({
 
   useEffect(() => {
     let index = 0;
+
+    setState(STATE.TYPING);
 
     const newIntervalId = setInterval(() => {
       setDisplayedText((prev) => prev + fullText[index]);
@@ -44,30 +54,40 @@ export const JokerDialogue = ({
     setIntervalId(newIntervalId);
 
     return () => clearInterval(newIntervalId);
-  }, [fullText, typingDelay]);
+  }, [fullText]);
 
   useEffect(() => {
     if (displayedText === fullText) {
-      if (!printingInterrupted && !currentMessage?.blocking) {
-        setTimeout(() => {
+      if (state === STATE.TYPING) {
+        setState(STATE.DISPLAYED);
+      }
+      if (!currentMessage?.blocking && state !== STATE.INTERRUPTED) {
+        const newCloseTimeout = setTimeout(() => {
           if (currentMessage) {
+            soundContext.playSound('whooshHi');
             setCurrentMessage(null);
+            setState(STATE.IDLE);
           }
         }, MESSAGE_DISAPPEAR_TIMEOUT);
+        setCloseTimeout(newCloseTimeout);
       }
-      setPrintingInterrupted(false);
     }
   }, [displayedText]);
 
   const onPressDialogue = () => {
     soundContext.playSound('whooshHi');
+    if (closeTimeout) {
+      clearTimeout(closeTimeout);
+      setCloseTimeout(null);
+    }
     if (displayedText !== fullText) {
       setDisplayedText(fullText);
-      setPrintingInterrupted(true);
+      setState(STATE.INTERRUPTED);
       if (intervalId) {
         clearInterval(intervalId);
       }
     } else {
+      setState(STATE.IDLE);
       setCurrentMessage(null);
     }
   };
