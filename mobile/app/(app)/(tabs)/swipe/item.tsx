@@ -5,10 +5,13 @@ import { useItemsContext } from '../../context/ItemsContext';
 import { ItemData } from '../../types';
 import { useUserContext } from '../../context/UserContext';
 import { ErrorType, handleError } from '../../utils/errorHandler';
+import { useJokerContext } from '../../context/JokerContext';
 
 const ItemModal = () => {
   const itemsContext = useItemsContext();
   const userContext = useUserContext();
+  const jokerContext = useJokerContext();
+
   const { whosItem } = useLocalSearchParams();
 
   let item: ItemData | null = null;
@@ -18,12 +21,12 @@ const ItemModal = () => {
     item = itemsContext.othersItem;
   }
   if (!item) {
-    handleError(ErrorType.ITEM_UNKNOWN, `item has not been specified/set`);
+    handleError(jokerContext, ErrorType.ITEM_UNKNOWN, `item has not been specified/set`);
     router.back();
     return null;
   }
 
-  return <Item itemData={item} showFull={true} />;
+  return <Item itemData={item} showFull={true} showDescription={false} showName={false} />;
 };
 
 export default ItemModal;

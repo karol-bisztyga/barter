@@ -12,6 +12,8 @@ import TextWrapper from '../../genericComponents/TextWrapper';
 import { useJokerContext } from '../../context/JokerContext';
 import Background from '../../components/Background';
 import { FILL_COLOR } from '../profile/components/items/editing_panels/constants';
+import { SWIPE_BASE_BACKGROUND_COLOR } from '../../constants';
+import { hexToRgbaString } from '../../utils/harmonicColors';
 
 const { width } = Dimensions.get('window');
 
@@ -140,6 +142,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     borderWidth: 2,
     borderColor: 'white',
+    backgroundColor: hexToRgbaString(SWIPE_BASE_BACKGROUND_COLOR, 0.5),
   },
   leftImage: {
     transform: [{ rotate: '-5deg' }], // Adjust rotation as needed

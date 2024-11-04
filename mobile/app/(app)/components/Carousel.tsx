@@ -14,6 +14,7 @@ const Carousel = ({
   pressEnabled = true,
   actionPanelVisible = false,
   onPress,
+  showInfo = true,
 }: {
   itemData: ItemData;
   borderRadius?: ItemBorderRadius;
@@ -21,6 +22,7 @@ const Carousel = ({
   pressEnabled?: boolean;
   actionPanelVisible?: boolean;
   onPress?: () => void;
+  showInfo?: boolean;
 }) => {
   const [loading, setLoading] = useState(false);
   const [imageIndex, setImageIndex] = useState<number>(0);
@@ -73,7 +75,6 @@ const Carousel = ({
 
       <TouchableOpacity
         disabled={!pressEnabled}
-        activeOpacity={1}
         style={styles.leftButton}
         onPress={() => {
           if (onPress) {
@@ -105,7 +106,7 @@ const Carousel = ({
         }}
       />
       <CarouselDistancePanel itemData={itemData} />
-      <CarouselInfoPanel itemData={itemData} />
+      {showInfo && <CarouselInfoPanel itemData={itemData} />}
     </View>
   );
 };

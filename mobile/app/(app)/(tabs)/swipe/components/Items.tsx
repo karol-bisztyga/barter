@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity, Image } from 'react-native';
-import { ItemData } from '../../../types';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { ItemBorderRadius, ItemData, ItemNamePlacement } from '../../../types';
 import { useItemsContext } from '../../../context/ItemsContext';
 import Background from '../../../components/Background';
 import TextWrapper from '../../../genericComponents/TextWrapper';
 import { useSoundContext } from '../../../context/SoundContext';
+import Item from '../../../components/Item';
 
 const Items = () => {
   const itemsContext = useItemsContext();
@@ -14,7 +15,7 @@ const Items = () => {
 
   return (
     <View style={styles.container}>
-      <Background tile="sword" forceFullScreen />
+      <Background tile="sword" />
       {items.map((item: ItemData, index: number) => {
         const borderWidth = itemsContext.usersItemId === item.id ? 5 : 0;
         return (
@@ -30,9 +31,18 @@ const Items = () => {
               itemsContext.setUsersItemId(item.id);
             }}
           >
-            <Background tile="stone" style={styles.background} opacity={1} />
             <View style={styles.itemInnerWrapper}>
-              <Image source={{ uri: item.images[0] }} style={styles.image} />
+              <Item
+                itemData={item}
+                showDescription={false}
+                carouselOptions={{
+                  dotsVisible: false,
+                  pressEnabled: false,
+                }}
+                borderRadius={ItemBorderRadius.all}
+                namePlacement={ItemNamePlacement.above}
+                showName={false}
+              />
               <TextWrapper style={styles.labelName}>{item.name}</TextWrapper>
             </View>
           </TouchableOpacity>
@@ -51,16 +61,9 @@ const styles = StyleSheet.create({
     borderColor: 'green',
     borderRadius: 20,
   },
-  background: {
-    borderRadius: 20,
-  },
   itemInnerWrapper: {
     flex: 1,
     padding: 10,
-  },
-  image: {
-    flex: 1,
-    borderRadius: 20,
   },
   labelName: {
     textAlign: 'center',

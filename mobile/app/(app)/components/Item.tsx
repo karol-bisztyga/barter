@@ -72,14 +72,15 @@ export default function Item({
           pressEnabled={carouselOptions.pressEnabled}
           actionPanelVisible={carouselOptions.actionPanelVisible}
           onPress={onPress}
+          showInfo={showName && showDescription}
         />
       </View>
-      {showName && namePlacement === ItemNamePlacement.below && (
+      {(showName || showFull) && namePlacement === ItemNamePlacement.below && (
         <View style={styles.nameWrapper}>
           <TextWrapper style={styles.name}>{itemData.name}</TextWrapper>
         </View>
       )}
-      {showDescription && (
+      {(showDescription || showFull) && (
         <View style={styles.descriptionWrapper}>
           <TextWrapper
             style={styles.description}
