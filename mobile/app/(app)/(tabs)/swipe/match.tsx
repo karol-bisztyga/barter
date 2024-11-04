@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     resizeMode: 'contain',
     borderWidth: 2,
     borderColor: 'white',
-    backgroundColor: hexToRgbaString(SWIPE_BASE_BACKGROUND_COLOR, 0.5),
+    backgroundColor: hexToRgbaString(SWIPE_BASE_BACKGROUND_COLOR, 0.3),
   },
   leftImage: {
     transform: [{ rotate: '-5deg' }], // Adjust rotation as needed

@@ -23,7 +23,7 @@ export default function Layout() {
     <ItemsContextProvider>
       <MatchContextProvider>
         <GestureHandlerRootView>
-          <Stack>
+          <Stack screenOptions={{ animation: 'none' }}>
             <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
             <Stack.Screen name="onboarding" options={{ headerShown: false }} />
           </Stack>

@@ -6,6 +6,7 @@ import { ItemData } from '../../types';
 import { useUserContext } from '../../context/UserContext';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import { useJokerContext } from '../../context/JokerContext';
+import Background from '../../components/Background';
 
 const ItemModal = () => {
   const itemsContext = useItemsContext();
@@ -26,7 +27,12 @@ const ItemModal = () => {
     return null;
   }
 
-  return <Item itemData={item} showFull={true} showDescription={false} showName={false} />;
+  return (
+    <>
+      <Background tile="sword" forceFullScreen />
+      <Item itemData={item} showFull={true} showDescription={false} showName={false} />
+    </>
+  );
 };
 
 export default ItemModal;

@@ -55,9 +55,11 @@ const ButtonWrapper = ({ title, icon, onPress, disabled, color, fillColor }: MyB
     color: color ? color : BACKGROUND_COLOR,
   };
 
+  const borderRadius = Math.floor(Math.random() * 8 + 4);
+
   return (
     <View
-      style={styles.container}
+      style={[styles.container, { borderRadius }]}
       onLayout={(e) => {
         setDimensions({ width: e.nativeEvent.layout.width, height: e.nativeEvent.layout.height });
       }}
@@ -104,6 +106,7 @@ const ButtonWrapper = ({ title, icon, onPress, disabled, color, fillColor }: MyB
 const styles = StyleSheet.create({
   container: {
     width: '100%',
+    overflow: 'hidden',
   },
   button: {
     height: BUTTON_HEIGHT,

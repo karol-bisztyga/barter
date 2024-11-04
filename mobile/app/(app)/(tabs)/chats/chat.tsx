@@ -25,8 +25,7 @@ import { ErrorType, handleError } from '../../utils/errorHandler';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 import InputWrapper from '../../genericComponents/InputWrapper';
 import { useJokerContext } from '../../context/JokerContext';
-import Background from '../../components/Background';
-import { FILL_COLOR } from '../profile/components/items/editing_panels/constants';
+import { SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY } from '../../constants';
 
 const INPUT_WRAPPER_HEIGHT = 70;
 const ITEMS_WRPPER_HEIGHT = 200;
@@ -239,7 +238,6 @@ const Chat = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Background tile="sword" forceFullScreen />
       <View style={styles.scrollViewContent}>
         <ChatHeader />
         <Animated.View style={[styles.messageList, messageListAnimatedStyle]}>
@@ -284,7 +282,6 @@ const Chat = () => {
             inputWrapperPosition.value = e.nativeEvent.layout.y;
           }}
         >
-          <Background tile="stone" opacity={1} />
           <View style={styles.inputContainerInner}>
             <InputWrapper
               style={styles.input}
@@ -292,7 +289,7 @@ const Chat = () => {
               blurOnSubmit={false}
               value={newMessage}
               onChangeText={setNewMessage}
-              fillColor={FILL_COLOR}
+              fillColor={SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY}
             />
             <View style={styles.buttonWrapper}>
               <ButtonWrapper
@@ -301,7 +298,7 @@ const Chat = () => {
                 onPress={() => {
                   sendMessage();
                 }}
-                fillColor={FILL_COLOR}
+                fillColor={SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY}
               />
             </View>
           </View>

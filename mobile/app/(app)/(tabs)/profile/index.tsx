@@ -51,7 +51,6 @@ export default function Profile() {
 
   return (
     <>
-      <Background tile="sword" />
       <SafeAreaView>
         <View>
           <KeyboardAwareScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>

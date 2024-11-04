@@ -10,6 +10,7 @@ export default function Layout() {
         headerShown: false,
         headerStyle: { backgroundColor: SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY },
         contentStyle: { backgroundColor: SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY },
+        animation: 'none',
       }}
     >
       <Stack.Screen name="index" />

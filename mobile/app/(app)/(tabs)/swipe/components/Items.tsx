@@ -6,6 +6,8 @@ import Background from '../../../components/Background';
 import TextWrapper from '../../../genericComponents/TextWrapper';
 import { useSoundContext } from '../../../context/SoundContext';
 import Item from '../../../components/Item';
+import { generateHarmonicColor, hexToRgbaString, TargetColor } from '../../../utils/harmonicColors';
+import { SWIPE_BASE_BACKGROUND_COLOR } from '../../../constants';
 
 const Items = () => {
   const itemsContext = useItemsContext();
@@ -58,7 +60,10 @@ const styles = StyleSheet.create({
     height: 300,
     margin: 20,
     overflow: 'hidden',
-    borderColor: 'green',
+    borderColor: hexToRgbaString(
+      generateHarmonicColor(SWIPE_BASE_BACKGROUND_COLOR, TargetColor.GREEN),
+      0.7
+    ),
     borderRadius: 20,
   },
   itemInnerWrapper: {

@@ -5,6 +5,7 @@ import { Alert } from 'react-native';
 import { EditItemContextProvider, useEditItemContext } from '../../context/EditItemContext';
 import { AddPictureContextProvider } from '../../context/AddPictureContext';
 import { SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY } from '../../constants';
+import Background from '../../components/Background';
 
 export default function Wrapper() {
   return (
@@ -19,11 +20,13 @@ function Layout() {
 
   return (
     <AddPictureContextProvider>
+      <Background tile="sword" />
       <Stack
         screenOptions={{
           headerShown: false,
           headerStyle: { backgroundColor: SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY },
           contentStyle: { backgroundColor: SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY },
+          animation: 'none',
         }}
       >
         <Stack.Screen name="index" options={{ title: '' }} />

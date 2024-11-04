@@ -95,7 +95,7 @@ const FieldEditingPanel = ({
 
   return (
     <Animated.View style={[styles.container, wrapperAnimatedStyle]}>
-      <Background tile="stone" opacity={0.7} />
+      <Background tile="stone" opacity={0.3} />
       <View style={styles.editingInputWrapper}>
         <InputWrapper
           style={styles.editingInput}
