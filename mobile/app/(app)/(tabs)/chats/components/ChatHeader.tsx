@@ -8,11 +8,14 @@ import { useItemsContext } from '../../../context/ItemsContext';
 import { ErrorType, handleError } from '../../../utils/errorHandler';
 import { ArrowsIcon } from '../../../utils/icons';
 import { useJokerContext } from '../../../context/JokerContext';
+import { useSoundContext } from '../../../context/SoundContext';
 
 const ChatHeader = () => {
   const jokerContext = useJokerContext();
   const userContext = useUserContext();
   const itemsContext = useItemsContext();
+  const soundContext = useSoundContext();
+
   const { usersItemId, othersItem } = itemsContext;
 
   const usersItem = userContext.findItemById(usersItemId);
@@ -28,29 +31,35 @@ const ChatHeader = () => {
 
   return (
     <View style={styles.itemsWrapper}>
-      <Item
-        itemData={usersItem.item}
-        carouselOptions={{ dotsVisible: false }}
-        showDescription={false}
-        showName={false}
-        borderRadius={ItemBorderRadius.all}
-        onPress={() => {
-          router.push({ pathname: 'chats/item', params: { whosItem: 'self' } });
-        }}
-      />
+      <View style={styles.imageWrapper}>
+        <Item
+          itemData={usersItem.item}
+          carouselOptions={{ dotsVisible: false }}
+          showDescription={false}
+          showName={false}
+          borderRadius={ItemBorderRadius.all}
+          onPress={() => {
+            soundContext.playSound('click');
+            router.push({ pathname: 'chats/item', params: { whosItem: 'self' } });
+          }}
+        />
+      </View>
       <View style={styles.iconWrapper}>
         <ArrowsIcon width={28} height={28} />
       </View>
-      <Item
-        itemData={othersItem}
-        carouselOptions={{ dotsVisible: false }}
-        showDescription={false}
-        showName={false}
-        borderRadius={ItemBorderRadius.all}
-        onPress={() => {
-          router.push({ pathname: 'chats/item', params: { whosItem: 'other' } });
-        }}
-      />
+      <View style={styles.imageWrapper}>
+        <Item
+          itemData={othersItem}
+          carouselOptions={{ dotsVisible: false }}
+          showDescription={false}
+          showName={false}
+          borderRadius={ItemBorderRadius.all}
+          onPress={() => {
+            soundContext.playSound('click');
+            router.push({ pathname: 'chats/item', params: { whosItem: 'other' } });
+          }}
+        />
+      </View>
     </View>
   );
 };
@@ -66,9 +75,19 @@ const styles = StyleSheet.create({
     borderColor: 'gray',
   },
   iconWrapper: {
+    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
     margin: 10,
+  },
+  imageWrapper: {
+    flex: 4,
+    margin: 4,
+    borderRadius: 16,
+  },
+  image: {
+    flex: 1,
+    borderRadius: 16,
   },
 });
 

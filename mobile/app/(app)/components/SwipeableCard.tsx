@@ -21,7 +21,7 @@ import SwipeBackgroundAnimation from './SwipeBackgroundAnimation';
 import { PaperIcon, SandGlassIcon, TorchIcon } from '../utils/icons';
 import { useJokerContext } from '../context/JokerContext';
 import { generateHarmonicColor, TargetColor } from '../utils/harmonicColors';
-import { SWIPE_BASE_BACKGROUND_COLOR } from '../../constants';
+import { SWIPE_BASE_BACKGROUND_COLOR } from '../constants';
 
 const { width, height } = Dimensions.get('window');
 const SWIPE_THRESHOLD_HORIZONTAL = 0.25 * width;

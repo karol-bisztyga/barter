@@ -25,6 +25,8 @@ import { ErrorType, handleError } from '../../utils/errorHandler';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 import InputWrapper from '../../genericComponents/InputWrapper';
 import { useJokerContext } from '../../context/JokerContext';
+import Background from '../../components/Background';
+import { FILL_COLOR } from '../profile/components/items/editing_panels/constants';
 
 const INPUT_WRAPPER_HEIGHT = 70;
 const ITEMS_WRPPER_HEIGHT = 200;
@@ -237,6 +239,7 @@ const Chat = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Background tile="sword" forceFullScreen />
       <View style={styles.scrollViewContent}>
         <ChatHeader />
         <Animated.View style={[styles.messageList, messageListAnimatedStyle]}>
@@ -281,23 +284,26 @@ const Chat = () => {
             inputWrapperPosition.value = e.nativeEvent.layout.y;
           }}
         >
-          <InputWrapper
-            style={styles.input}
-            placeholder="Type a message"
-            blurOnSubmit={false}
-            value={newMessage}
-            onChangeText={setNewMessage}
-            fillColor="white"
-          />
-          <View style={styles.buttonWrapper}>
-            <ButtonWrapper
-              title="Send"
-              disabled={newMessage.length === 0}
-              onPress={() => {
-                sendMessage();
-              }}
-              fillColor="white"
+          <Background tile="stone" opacity={1} />
+          <View style={styles.inputContainerInner}>
+            <InputWrapper
+              style={styles.input}
+              placeholder="Type a message"
+              blurOnSubmit={false}
+              value={newMessage}
+              onChangeText={setNewMessage}
+              fillColor={FILL_COLOR}
             />
+            <View style={styles.buttonWrapper}>
+              <ButtonWrapper
+                title="Send"
+                disabled={newMessage.length === 0}
+                onPress={() => {
+                  sendMessage();
+                }}
+                fillColor={FILL_COLOR}
+              />
+            </View>
           </View>
         </Animated.View>
       </View>
@@ -330,12 +336,14 @@ const styles = StyleSheet.create({
     marginHorizontal: 4,
   },
   inputContainer: {
-    flexDirection: 'row',
-    padding: 10,
-    alignItems: 'center',
-    height: INPUT_WRAPPER_HEIGHT,
     position: 'absolute',
     width: '100%',
+  },
+  inputContainerInner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    height: INPUT_WRAPPER_HEIGHT,
+    padding: 10,
   },
   input: {
     flex: 1,

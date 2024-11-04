@@ -4,7 +4,7 @@ import { headerBackButtonOptions } from '../../utils/reusableStuff';
 import { Alert } from 'react-native';
 import { EditItemContextProvider, useEditItemContext } from '../../context/EditItemContext';
 import { AddPictureContextProvider } from '../../context/AddPictureContext';
-import { BACKGROUND_COLOR } from '../../constants';
+import { SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY } from '../../constants';
 
 export default function Wrapper() {
   return (
@@ -22,8 +22,8 @@ function Layout() {
       <Stack
         screenOptions={{
           headerShown: false,
-          headerStyle: { backgroundColor: BACKGROUND_COLOR },
-          contentStyle: { backgroundColor: BACKGROUND_COLOR },
+          headerStyle: { backgroundColor: SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY },
+          contentStyle: { backgroundColor: SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY },
         }}
       >
         <Stack.Screen name="index" options={{ title: '' }} />

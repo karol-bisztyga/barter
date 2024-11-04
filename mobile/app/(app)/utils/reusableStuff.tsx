@@ -32,7 +32,9 @@ export const headerBackButtonOptions = (
           router.back();
         }}
         disabled={disabled}
-        style={{ opacity: disabled ? 0.2 : 1 }}
+        style={{
+          opacity: disabled ? 0.2 : 1,
+        }}
       >
         <LisIcon
           width={28}

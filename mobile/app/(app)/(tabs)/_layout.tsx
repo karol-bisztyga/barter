@@ -3,7 +3,7 @@ import { Tabs } from 'expo-router';
 import { authorizeUser, updateMatches } from '../utils/reusableStuff';
 import { useMatchContext } from '../context/MatchContext';
 import { ErrorType, handleError } from '../utils/errorHandler';
-import { BACKGROUND_COLOR, FONT_COLOR } from '../constants';
+import { FONT_COLOR, SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY } from '../constants';
 import {
   HelmetIcon,
   HelmetLinealIcon,
@@ -36,10 +36,10 @@ export default function TabLayout() {
         tabBarActiveTintColor: FONT_COLOR,
         tabBarInactiveTintColor: 'rgba(0, 0, 0, .3)',
         headerShown: false,
-        tabBarActiveBackgroundColor: BACKGROUND_COLOR,
-        tabBarInactiveBackgroundColor: BACKGROUND_COLOR,
+        tabBarActiveBackgroundColor: SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY,
+        tabBarInactiveBackgroundColor: SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY,
         tabBarStyle: {
-          backgroundColor: BACKGROUND_COLOR,
+          backgroundColor: SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY,
         },
       }}
       screenListeners={{

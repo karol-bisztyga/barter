@@ -13,7 +13,7 @@ import SwipeBackgroundAnimatedItem, {
   SwipeBackgroundAnimationDirection,
 } from './SwipeBackgroundAnimationItem';
 import { generateRandomHarmonicColor } from '../utils/harmonicColors';
-import { SWIPE_BASE_BACKGROUND_COLOR } from '../../constants';
+import { SWIPE_BASE_BACKGROUND_COLOR } from '../constants';
 
 const getRandomInt = (min: number, max: number): number =>
   Math.floor(Math.random() * (max - min + 1)) + min;

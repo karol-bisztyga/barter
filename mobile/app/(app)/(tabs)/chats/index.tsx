@@ -12,6 +12,7 @@ import TextWrapper from '../../genericComponents/TextWrapper';
 import ChatItem from './components/ChatItem';
 import { useJokerContext } from '../../context/JokerContext';
 import { useSoundContext } from '../../context/SoundContext';
+import Background from '../../components/Background';
 
 const ITEMS_PER_SCREEN = 4;
 
@@ -54,6 +55,7 @@ export default function Chats() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Background tile="sword" forceFullScreen />
       <View
         style={styles.container}
         onLayout={(event) => {

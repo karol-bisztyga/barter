@@ -3,7 +3,7 @@ import { Stack } from 'expo-router';
 import { headerBackButtonOptions } from '../../utils/reusableStuff';
 import ChatRightHeaderMenu from './components/ChatRightHeaderMenu';
 import { useMatchContext } from '../../context/MatchContext';
-import { BACKGROUND_COLOR } from '../../constants';
+import { SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY } from '../../constants';
 
 export default function Layout() {
   const matchContext = useMatchContext();
@@ -11,8 +11,8 @@ export default function Layout() {
     <Stack
       screenOptions={{
         headerShown: false,
-        headerStyle: { backgroundColor: BACKGROUND_COLOR },
-        contentStyle: { backgroundColor: BACKGROUND_COLOR },
+        headerStyle: { backgroundColor: SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY },
+        contentStyle: { backgroundColor: SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY },
       }}
     >
       <Stack.Screen

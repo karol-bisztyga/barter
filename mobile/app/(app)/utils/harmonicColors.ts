@@ -28,6 +28,16 @@ function hexToRgb(hex: string): RGB {
   };
 }
 
+export function hexToRgbString(hex: string): string {
+  const { r, g, b } = hexToRgb(hex);
+  return `rgb(${r}, ${g}, ${b})`;
+}
+
+export function hexToRgbaString(hex: string, alpha: number): string {
+  const { r, g, b } = hexToRgb(hex);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
 // Helper function to convert RGB to HSL
 function rgbToHsl({ r, g, b }: RGB): HSL {
   r /= 255;
