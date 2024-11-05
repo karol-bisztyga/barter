@@ -17,6 +17,7 @@ import { useJokerContext } from '../../context/JokerContext';
 import Background from '../../components/Background';
 import { useSoundContext } from '../../context/SoundContext';
 import Reload from './components/Reload';
+import { useTranslation } from 'react-i18next';
 
 const LOADED_ITEMS_CAPACITY = 5;
 // when there are less items loaded than this value, new items will be fetched
@@ -36,6 +37,18 @@ export default function Swipe() {
 
   const itemsContext = useItemsContext();
   const userContext = useUserContext();
+
+  const { t, i18n } = useTranslation();
+
+  useEffect(() => {
+    // todo remove this and replace strings in the app with translations
+    i18n.changeLanguage('en');
+    console.log('here', t('welcome'));
+    console.log('here2', t('greeting', { name: 'siema123' }));
+    i18n.changeLanguage('pl');
+    console.log('here', t('welcome'));
+    console.log('here2', t('greeting', { name: 'siema123' }));
+  }, []);
 
   // onboarding
   useEffect(() => {
@@ -175,7 +188,6 @@ export default function Swipe() {
 
   const handleSwipeRight = async () => {
     try {
-      soundContext.playSound('writing');
       if (userContext.swipingLeftRightBlockedReason) {
         jokerContext.showInfo(
           'swiping left/right is blocked.\n' + userContext.swipingLeftRightBlockedReason
@@ -204,7 +216,6 @@ export default function Swipe() {
 
   const handleSwipeLeft = async () => {
     try {
-      soundContext.playSound('fire');
       if (userContext.swipingLeftRightBlockedReason) {
         jokerContext.showInfo(
           'swiping left/right is blocked.\n' + userContext.swipingLeftRightBlockedReason
@@ -229,7 +240,6 @@ export default function Swipe() {
 
   const handleSwipeDown = async () => {
     try {
-      soundContext.playSound('whooshLo');
       if (!activeCard) {
         throw new Error('could not find swiped card');
       }

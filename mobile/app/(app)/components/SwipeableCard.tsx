@@ -24,6 +24,7 @@ import { generateHarmonicColor, TargetColor } from '../utils/harmonicColors';
 import { SWIPE_BASE_BACKGROUND_COLOR } from '../constants';
 import Constants from 'expo-constants';
 import { BottomTabBarHeightContext } from '@react-navigation/bottom-tabs';
+import { useSoundContext } from '../context/SoundContext';
 
 const { width, height } = Dimensions.get('window');
 const SWIPE_THRESHOLD_HORIZONTAL = 0.25 * width;
@@ -60,6 +61,7 @@ const SwipeableCard = ({
 }) => {
   const userContext = useUserContext();
   const jokerContext = useJokerContext();
+  const soundContext = useSoundContext();
 
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
@@ -160,6 +162,7 @@ const SwipeableCard = ({
     .onEnd(() => {
       dragging.value = false;
       if (translateY.value > SWIPE_THRESHOLD_VERTICAL) {
+        runOnJS(soundContext.playSound)('whooshLo');
         translateY.value = withTiming(height * 2, { duration: END_ANIMATION_DURATION }, () => {
           runOnJS(swipeCallbacks.onSwipeDown)();
         });
@@ -180,11 +183,13 @@ const SwipeableCard = ({
       }
       if (translateX.value > SWIPE_THRESHOLD_HORIZONTAL) {
         lockGesture.value = true;
+        runOnJS(soundContext.playSound)('writing');
         translateX.value = withTiming(width * 2, { duration: END_ANIMATION_DURATION }, () => {
           runOnJS(swipeCallbacks.onSwipeRight)();
         });
       } else if (translateX.value < -SWIPE_THRESHOLD_HORIZONTAL) {
         lockGesture.value = true;
+        runOnJS(soundContext.playSound)('fire');
         translateX.value = withTiming(-(width * 2), { duration: END_ANIMATION_DURATION }, () => {
           runOnJS(swipeCallbacks.onSwipeLeft)();
         });

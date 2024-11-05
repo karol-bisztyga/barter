@@ -6,6 +6,8 @@ import { MenuProvider } from 'react-native-popup-menu';
 import { JokerContextProvider } from './(app)/context/JokerContext';
 import { SoundContextProvider } from './(app)/context/SoundContext';
 
+import '../i18n';
+
 export default function Root() {
   // Set up the auth context and render our layout inside of it.
   return (
