@@ -3,7 +3,7 @@ import { Stack } from 'expo-router';
 import { headerBackButtonOptions } from '../../utils/reusableStuff';
 import { Alert } from 'react-native';
 import { EditItemContextProvider, useEditItemContext } from '../../context/EditItemContext';
-import { AddPictureContextProvider } from '../../context/AddPictureContext';
+import { useAddPictureContext } from '../../context/AddPictureContext';
 import { SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY } from '../../constants';
 import Background from '../../components/Background';
 
@@ -17,9 +17,10 @@ export default function Wrapper() {
 
 function Layout() {
   const editItemContext = useEditItemContext();
+  const addPictureContext = useAddPictureContext();
 
   return (
-    <AddPictureContextProvider>
+    <>
       <Background tile="sword" />
       <Stack
         screenOptions={{
@@ -57,12 +58,18 @@ function Layout() {
             return discard;
           })}
         />
-        <Stack.Screen name="addPicture" options={headerBackButtonOptions()} />
+        <Stack.Screen
+          name="add_picture"
+          options={headerBackButtonOptions(async () => {
+            addPictureContext.setImage(null);
+            return true;
+          })}
+        />
         <Stack.Screen name="camera" options={headerBackButtonOptions()} />
         <Stack.Screen name="delete_account" options={headerBackButtonOptions()} />
         <Stack.Screen name="terms_and_conditions" options={headerBackButtonOptions()} />
         <Stack.Screen name="credits" options={headerBackButtonOptions()} />
       </Stack>
-    </AddPictureContextProvider>
+    </>
   );
 }

@@ -84,7 +84,7 @@ export default function Profile() {
                   onPress={() => {
                     soundContext.playSound('click');
                     editItemContext.setImageType(EditImageType.profile);
-                    router.push('profile/addPicture');
+                    router.push('profile/add_picture');
                   }}
                 >
                   <FeatherIcon width={20} height={20} />

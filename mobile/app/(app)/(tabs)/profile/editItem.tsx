@@ -39,6 +39,7 @@ import { TorchIcon } from '../../utils/icons';
 const { width } = Dimensions.get('window');
 
 const IMAGE_SIZE = (width * 3) / 4;
+const REMOVE_IMAGE_ICON_SIZE = 50;
 
 const EditItem = () => {
   const sessionContext = authorizeUser();
@@ -259,7 +260,7 @@ const EditItem = () => {
   const addImage = () => {
     editItemContext.setImageType(EditImageType.item);
     editItemContext.setItemId(usersItem?.item.id || null);
-    router.push('profile/addPicture');
+    router.push('profile/add_picture');
   };
 
   const removeItemPress = async () => {
@@ -428,7 +429,7 @@ const styles = StyleSheet.create({
   },
   imageSlot: {
     flex: 1,
-    margin: 10,
+    marginVertical: 10,
     borderRadius: 10,
     width: IMAGE_SIZE,
     height: IMAGE_SIZE,
@@ -440,14 +441,14 @@ const styles = StyleSheet.create({
   },
   removeImageWrapper: {
     position: 'absolute',
-    width: 50,
-    height: 50,
-    backgroundColor: FILL_COLOR,
+    width: REMOVE_IMAGE_ICON_SIZE,
+    height: REMOVE_IMAGE_ICON_SIZE,
     bottom: 0,
-    right: 0,
-    borderRadius: 50,
+    right: -REMOVE_IMAGE_ICON_SIZE / 4,
+    borderRadius: REMOVE_IMAGE_ICON_SIZE,
     borderWidth: 3,
     borderColor: SWIPE_BASE_BACKGROUND_COLOR,
+    backgroundColor: FILL_COLOR,
     justifyContent: 'center',
     alignItems: 'center',
   },

@@ -7,7 +7,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import * as ImagePicker from 'expo-image-picker';
 import { EditImageType, UserData } from '../../types';
 import { router } from 'expo-router';
@@ -26,10 +25,13 @@ import { useAddPictureContext } from '../../context/AddPictureContext';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 import TextWrapper from '../../genericComponents/TextWrapper';
 import { useJokerContext } from '../../context/JokerContext';
+import { BarrelIcon, Feather2Icon } from '../../utils/icons';
 
 const { width } = Dimensions.get('window');
 
 type ImageDimensions = { width: number; height: number };
+
+const ICON_SIZE = 50;
 
 const AddPicture = () => {
   const { imageType, tempImage, setTempImage } = useEditItemContext();
@@ -152,7 +154,6 @@ const AddPicture = () => {
             fileContent
           );
           setLoading(false);
-          console.log('prof pic', response.profilePicture);
           userContext.setData({
             ...userContext.data,
             profilePicture: response.profilePicture,
@@ -182,7 +183,8 @@ const AddPicture = () => {
           router.push('profile/camera');
         }}
       >
-        <FontAwesome size={30} name="camera" />
+        <Feather2Icon width={ICON_SIZE} height={ICON_SIZE} />
+        <TextWrapper style={styles.label}>Draw a new picture</TextWrapper>
       </TouchableOpacity>
       <TouchableOpacity
         activeOpacity={1}
@@ -191,7 +193,8 @@ const AddPicture = () => {
           pickImage();
         }}
       >
-        <FontAwesome size={30} name="upload" />
+        <BarrelIcon width={ICON_SIZE} height={ICON_SIZE} />
+        <TextWrapper style={styles.label}>Bring something from the storage</TextWrapper>
       </TouchableOpacity>
       {addPictureContext.image && (
         <View style={styles.imageWrapper}>
@@ -212,6 +215,9 @@ const AddPicture = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  label: {
+    fontSize: 20,
   },
   iconWrapper: {
     height: width / 4,
