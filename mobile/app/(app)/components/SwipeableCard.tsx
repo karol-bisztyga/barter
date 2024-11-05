@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Dimensions } from 'react-native';
+import React, { useContext, useEffect } from 'react';
+import { StyleSheet, Dimensions, Platform, StatusBar } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
@@ -22,6 +22,8 @@ import { PaperIcon, SandGlassIcon, TorchIcon } from '../utils/icons';
 import { useJokerContext } from '../context/JokerContext';
 import { generateHarmonicColor, TargetColor } from '../utils/harmonicColors';
 import { SWIPE_BASE_BACKGROUND_COLOR } from '../constants';
+import Constants from 'expo-constants';
+import { BottomTabBarHeightContext } from '@react-navigation/bottom-tabs';
 
 const { width, height } = Dimensions.get('window');
 const SWIPE_THRESHOLD_HORIZONTAL = 0.25 * width;
@@ -32,6 +34,11 @@ export const SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL = 50;
 const MAX_RADIUS = 30;
 const END_ANIMATION_DURATION = 200;
 const DECIDE_ICON_SIZE = 100;
+
+const CARD_DIMENSIONS = {
+  width: width - 36, // ratio 2
+  height: (3 / 2) * (width - 36), // ratio 3};
+};
 
 const DECISION_COLORS = {
   LEFT: generateHarmonicColor(SWIPE_BASE_BACKGROUND_COLOR, TargetColor.RED),
@@ -54,9 +61,6 @@ const SwipeableCard = ({
   const userContext = useUserContext();
   const jokerContext = useJokerContext();
 
-  const [wrapperWidth, setWrapperWidth] = useState<number | null>(null);
-  const [wrapperHeight, setWrapperHeight] = useState<number | null>(null);
-
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const dragging = useSharedValue(false);
@@ -68,6 +72,16 @@ const SwipeableCard = ({
   const forceControlsOpacity = useSharedValue(1);
 
   const cardOpacity = useSharedValue(0);
+
+  const statusBarHeight =
+    Platform.select({
+      ios: Constants.statusBarHeight, // Height on iOS
+      android: StatusBar.currentHeight, // Height on Android
+    }) || 0;
+  const tabBarHeight = useContext(BottomTabBarHeightContext) || 0;
+
+  const wrapperHeight = height - statusBarHeight - tabBarHeight;
+  const wrapperWidth = width;
 
   const getBackToStartingPosition = () => {
     'worklet';
@@ -390,92 +404,78 @@ const SwipeableCard = ({
   }, [itemData]);
 
   return (
-    <Animated.View
-      style={[styles.container, opacityAnimatedStyle]}
-      onLayout={(event) => {
-        setWrapperHeight(event.nativeEvent.layout.height);
-        setWrapperWidth(event.nativeEvent.layout.width);
-      }}
-    >
+    <Animated.View style={[styles.container, opacityAnimatedStyle]}>
       <SwipeBackgroundAnimation
         swipeDirection={swipeDirection}
         cardTranslateX={translateX}
         cardTranslateY={translateY}
       />
       {/* card */}
-      {wrapperHeight && (
-        <GestureDetector gesture={gesture}>
-          <Animated.View
-            style={[
-              styles.itemWrapper,
-              {
-                marginTop: (wrapperHeight - height * 0.7) / 2,
-              },
-              cardAnimatedStyle,
-            ]}
-          >
-            <CardItem itemData={itemData} onPressMore={onPressMore} />
-          </Animated.View>
-        </GestureDetector>
-      )}
+      <GestureDetector gesture={gesture}>
+        <Animated.View
+          style={[
+            styles.itemWrapper,
+            {
+              marginTop: (height - statusBarHeight - tabBarHeight - CARD_DIMENSIONS.height) / 2,
+            },
+            cardAnimatedStyle,
+          ]}
+        >
+          <CardItem itemData={itemData} onPressMore={onPressMore} />
+        </Animated.View>
+      </GestureDetector>
       {/* left icon */}
-      {wrapperHeight && (
-        <Animated.View
-          style={[
-            styles.decideIconWrapper,
-            {
-              top: wrapperHeight / 2 - DECIDE_ICON_SIZE / 2,
-            },
-            styles.decideIconWrapperLeft,
-            decideIconLeftAnimatedStyle,
-            opacityAnimatedStyle,
-            forcedControlsParametersAnimatedStyle,
-          ]}
-        >
-          <TorchIcon width={DECIDE_ICON_SIZE} height={DECIDE_ICON_SIZE} style={styles.decideIcon} />
-        </Animated.View>
-      )}
+      <Animated.View
+        style={[
+          styles.decideIconWrapper,
+          {
+            top: wrapperHeight / 2 - DECIDE_ICON_SIZE / 2,
+          },
+          styles.decideIconWrapperLeft,
+          decideIconLeftAnimatedStyle,
+          opacityAnimatedStyle,
+          forcedControlsParametersAnimatedStyle,
+        ]}
+      >
+        <TorchIcon width={DECIDE_ICON_SIZE} height={DECIDE_ICON_SIZE} style={styles.decideIcon} />
+      </Animated.View>
       {/* right icon */}
-      {wrapperHeight && (
-        <Animated.View
-          style={[
-            styles.decideIconWrapper,
-            {
-              top: wrapperHeight / 2 - DECIDE_ICON_SIZE / 2,
-            },
-            styles.decideIconWrapperRight,
-            decideIconRightAnimatedStyle,
-            opacityAnimatedStyle,
-            forcedControlsParametersAnimatedStyle,
-          ]}
-        >
-          <PaperIcon width={DECIDE_ICON_SIZE} height={DECIDE_ICON_SIZE} style={styles.decideIcon} />
-        </Animated.View>
-      )}
+      <Animated.View
+        style={[
+          styles.decideIconWrapper,
+          {
+            top: wrapperHeight / 2 - DECIDE_ICON_SIZE / 2,
+          },
+          styles.decideIconWrapperRight,
+          decideIconRightAnimatedStyle,
+          opacityAnimatedStyle,
+          forcedControlsParametersAnimatedStyle,
+        ]}
+      >
+        <PaperIcon width={DECIDE_ICON_SIZE} height={DECIDE_ICON_SIZE} style={styles.decideIcon} />
+      </Animated.View>
       {/* bottom icon */}
-      {wrapperHeight && wrapperWidth && (
-        <Animated.View
-          style={[
-            styles.decideIconWrapper,
-            {
-              left: wrapperWidth / 2 - DECIDE_ICON_SIZE / 2,
-              bottom: -DECIDE_ICON_SIZE / 4,
-              width: DECIDE_ICON_SIZE,
-              height: DECIDE_ICON_SIZE,
-            },
-            styles.decideIconWrapperRight,
-            decideIconBottomAnimatedStyle,
-            opacityAnimatedStyle,
-            forcedControlsParametersAnimatedStyle,
-          ]}
-        >
-          <SandGlassIcon
-            width={DECIDE_ICON_SIZE}
-            height={DECIDE_ICON_SIZE}
-            style={styles.decideIcon}
-          />
-        </Animated.View>
-      )}
+      <Animated.View
+        style={[
+          styles.decideIconWrapper,
+          {
+            bottom: -DECIDE_ICON_SIZE / 2,
+          },
+          styles.decideIconWrapperBottom,
+          decideIconBottomAnimatedStyle,
+          opacityAnimatedStyle,
+          forcedControlsParametersAnimatedStyle,
+          {
+            marginRight: wrapperWidth / 2,
+          },
+        ]}
+      >
+        <SandGlassIcon
+          width={DECIDE_ICON_SIZE}
+          height={DECIDE_ICON_SIZE}
+          style={styles.decideIcon}
+        />
+      </Animated.View>
     </Animated.View>
   );
 };
@@ -487,8 +487,8 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   itemWrapper: {
-    width: '100%',
-    height: height * 0.7,
+    width: CARD_DIMENSIONS.width,
+    height: CARD_DIMENSIONS.height,
     backgroundColor: 'black',
     borderRadius: 5,
     position: 'absolute',
@@ -496,10 +496,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 20,
     elevation: 30,
+    marginHorizontal: 18,
   },
   decideIconWrapper: {
     position: 'absolute',
-    borderRadius: 500,
+    borderRadius: 100,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
@@ -512,11 +513,13 @@ const styles = StyleSheet.create({
     lineHeight: DECIDE_ICON_SIZE,
   },
   decideIconWrapperLeft: {
-    left: -(DECIDE_ICON_SIZE + 40) / 2,
+    left: -(DECIDE_ICON_SIZE + 20) / 2,
   },
   decideIconWrapperRight: {
-    right: -(DECIDE_ICON_SIZE + 40) / 2,
-    transform: [{ scaleX: -1 }],
+    right: -(DECIDE_ICON_SIZE + 20) / 2,
+  },
+  decideIconWrapperBottom: {
+    right: -(DECIDE_ICON_SIZE + 20) / 2,
   },
 });
 

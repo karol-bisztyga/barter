@@ -75,16 +75,6 @@ export default function Swipe() {
       });
   }, []);
 
-  useEffect(() => {
-    if (!emptyCardsResponseReceived || activeCard) {
-      return;
-    }
-
-    jokerContext.showInfo('no items available for now, try again later');
-    setEmptyCardsResponseReceived(false);
-    setLoading(false);
-  }, [emptyCardsResponseReceived, activeCard]);
-
   // load cards initially
   useEffect(() => {
     (async () => {
@@ -95,13 +85,13 @@ export default function Swipe() {
           cards.map((card) => card.id),
           LOADED_ITEMS_CAPACITY
         );
+        setLoading(false);
         if (!itemsLoaded.length) {
           setEmptyCardsResponseReceived(true);
           return;
         }
 
         setEmptyCardsResponseReceived(false);
-        setLoading(false);
         const newActiveCard = itemsLoaded.pop();
         if (!newActiveCard) {
           throw new Error('could not find active card');
@@ -113,6 +103,16 @@ export default function Swipe() {
       }
     })();
   }, []);
+
+  useEffect(() => {
+    if (!emptyCardsResponseReceived || activeCard) {
+      return;
+    }
+
+    jokerContext.showInfo('no items available for now, try again later');
+    setEmptyCardsResponseReceived(false);
+    setLoading(false);
+  }, [emptyCardsResponseReceived, activeCard]);
 
   const popAndLoadCard = async (): Promise<ItemData | null> => {
     if (activeCard === undefined) {
@@ -249,6 +249,12 @@ export default function Swipe() {
     );
   }
 
+  const pressMore = () => {
+    soundContext.playSound('click');
+    itemsContext.setOthersItem(activeCard);
+    router.push({ pathname: 'swipe/item', params: { whosItem: 'other' } });
+  };
+
   return (
     <GestureHandlerRootView>
       <Background tile="sword" opacity={0.3} />
@@ -269,11 +275,7 @@ export default function Swipe() {
                 onSwipeDown: handleSwipeDown,
               }}
               lockGesture={lockGesture}
-              onPressMore={() => {
-                soundContext.playSound('click');
-                itemsContext.setOthersItem(activeCard);
-                router.push({ pathname: 'swipe/item', params: { whosItem: 'other' } });
-              }}
+              onPressMore={pressMore}
             />
           )}
         </View>
