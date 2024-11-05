@@ -74,6 +74,14 @@ const Settings = ({
         }}
       />
       <LinkItem
+        name="credits"
+        id="settings-credits"
+        isLast={false}
+        onPress={() => {
+          router.push('profile/credits');
+        }}
+      />
+      <LinkItem
         name="sign out"
         id="settings-sign-out"
         isLast={false}

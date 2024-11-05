@@ -59,8 +59,9 @@ function Layout() {
         />
         <Stack.Screen name="addPicture" options={headerBackButtonOptions()} />
         <Stack.Screen name="camera" options={headerBackButtonOptions()} />
-        <Stack.Screen name="delete_account" options={{ presentation: 'modal' }} />
-        <Stack.Screen name="terms_and_conditions" options={{ presentation: 'modal' }} />
+        <Stack.Screen name="delete_account" options={headerBackButtonOptions()} />
+        <Stack.Screen name="terms_and_conditions" options={headerBackButtonOptions()} />
+        <Stack.Screen name="credits" options={headerBackButtonOptions()} />
       </Stack>
     </AddPictureContextProvider>
   );
