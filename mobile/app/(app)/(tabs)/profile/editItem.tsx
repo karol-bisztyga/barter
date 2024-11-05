@@ -11,8 +11,11 @@ import {
 import AddButton from '../../components/AddButton';
 import { EditImageType, ItemBorderRadius, ItemData } from '../../types';
 import { useItemsContext } from '../../context/ItemsContext';
-import { MAX_ITEM_PICTURES } from '../../constants';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
+import {
+  MAX_ITEM_PICTURES,
+  SWIPE_BASE_BACKGROUND_COLOR,
+  SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY,
+} from '../../constants';
 import { router } from 'expo-router';
 import { useUserContext } from '../../context/UserContext';
 import { useEditItemContext } from '../../context/EditItemContext';
@@ -30,14 +33,16 @@ import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 import InputWrapper from '../../genericComponents/InputWrapper';
 import TextWrapper from '../../genericComponents/TextWrapper';
 import { useJokerContext } from '../../context/JokerContext';
+import { FILL_COLOR } from './components/items/editing_panels/constants';
+import { TorchIcon } from '../../utils/icons';
 
 const { width } = Dimensions.get('window');
+
+const IMAGE_SIZE = (width * 3) / 4;
 
 const EditItem = () => {
   const sessionContext = authorizeUser();
   const matchContext = useMatchContext();
-
-  const imageSize = (width * 3) / 4;
 
   const { usersItemId } = useItemsContext();
 
@@ -222,57 +227,111 @@ const EditItem = () => {
     }
   };
 
+  const save = async () => {
+    const action = usersItem ? 'updating' : 'adding';
+    try {
+      if (!validateForm()) {
+        throw new Error('form invalid');
+      }
+      if (!checkIfItemEdited()) {
+        return;
+      }
+      let newItems: ItemData[];
+      setUpdatingItemData(true);
+      if (usersItem) {
+        newItems = await updateItemHandler();
+      } else {
+        newItems = await addItemHandler();
+      }
+      userContext.setItems(newItems);
+      router.back();
+    } catch (e) {
+      if (action === 'updating') {
+        handleError(jokerContext, ErrorType.UPDATE_ITEM, `${e}`);
+      } else if (action === 'adding') {
+        handleError(jokerContext, ErrorType.ADD_ITEM, `${e}`);
+      }
+    } finally {
+      setUpdatingItemData(false);
+    }
+  };
+
+  const addImage = () => {
+    editItemContext.setImageType(EditImageType.item);
+    editItemContext.setItemId(usersItem?.item.id || null);
+    router.push('profile/addPicture');
+  };
+
+  const removeItemPress = async () => {
+    const remove: boolean = await new Promise((resolve) => {
+      Alert.alert(
+        'Do you really want to remove this item?',
+        'All chats related to this item will be removed as well',
+        [
+          { text: 'Keep it', onPress: () => resolve(false) },
+          {
+            text: 'Yes, remove it',
+            onPress: () => resolve(true),
+            style: 'destructive',
+          },
+        ],
+        { cancelable: false }
+      );
+    });
+    if (remove) {
+      try {
+        if (!usersItem) {
+          throw new Error('item to remove not specified');
+        }
+        setRemovingUtem(true);
+        const newItems = [...userContext.items];
+        const result = await removeItem(sessionContext, usersItem.item.id);
+        await updateMatches(sessionContext, matchContext);
+        if (result) {
+          newItems.splice(usersItem.index, 1);
+          userContext.setItems(newItems);
+          jokerContext.showSuccess('Item removed');
+          router.back();
+        } else {
+          throw new Error('server error');
+        }
+      } catch (e) {
+        handleError(jokerContext, ErrorType.REMOVE_ITEM, `${e}`);
+        return;
+      } finally {
+        setRemovingUtem(false);
+      }
+    }
+  };
+
   return (
     <View style={styles.container}>
       <ScrollView ref={scrollRef}>
-        <InputWrapper
-          style={[styles.nameInput, styles.input]}
-          placeholder="Name"
-          value={name}
-          onChangeText={setName}
-          fillColor="white"
-        />
-        <InputWrapper
-          style={[styles.descriptionInput, styles.input]}
-          placeholder="Description"
-          multiline={true}
-          value={description}
-          onChangeText={setDescription}
-          fillColor="white"
-        />
-        <ButtonWrapper
-          title="Save"
-          disabled={!validateForm() || !checkIfItemEdited()}
-          onPress={async () => {
-            const action = usersItem ? 'updating' : 'adding';
-            try {
-              if (!validateForm()) {
-                throw new Error('form invalid');
-              }
-              if (!checkIfItemEdited()) {
-                return;
-              }
-              let newItems: ItemData[];
-              setUpdatingItemData(true);
-              if (usersItem) {
-                newItems = await updateItemHandler();
-              } else {
-                newItems = await addItemHandler();
-              }
-              userContext.setItems(newItems);
-              router.back();
-            } catch (e) {
-              if (action === 'updating') {
-                handleError(jokerContext, ErrorType.UPDATE_ITEM, `${e}`);
-              } else if (action === 'adding') {
-                handleError(jokerContext, ErrorType.ADD_ITEM, `${e}`);
-              }
-            } finally {
-              setUpdatingItemData(false);
-            }
-          }}
-          fillColor="white"
-        />
+        <View style={[styles.nameInputWrapper, styles.margins]}>
+          <InputWrapper
+            placeholder="Name"
+            value={name}
+            onChangeText={setName}
+            fillColor={SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY}
+          />
+        </View>
+        <View style={[styles.descriptionInputWrapper, styles.margins]}>
+          <InputWrapper
+            placeholder="Description"
+            multiline={true}
+            value={description}
+            onChangeText={setDescription}
+            fillColor={SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY}
+          />
+        </View>
+        <View style={[styles.addButtonWrapper, styles.margins]}>
+          <ButtonWrapper
+            title="Save"
+            disabled={!validateForm() || !checkIfItemEdited()}
+            onPress={save}
+            fillColor={FILL_COLOR}
+          />
+        </View>
 
         {updatingItemData && (
           <View style={styles.loaderWrapper}>
@@ -284,30 +343,21 @@ const EditItem = () => {
           {pictures.map((picture, index) => {
             const isCurrentImageBeingRemoved = removingImage === index;
             return (
-              <View style={[styles.imageSlot, { width: imageSize, height: imageSize }]} key={index}>
+              <View style={styles.imageSlot} key={index}>
                 <ImageWrapper
                   uri={picture}
                   style={[styles.imageSlot, { opacity: isCurrentImageBeingRemoved ? 0.3 : 1 }]}
                 />
                 {isCurrentImageBeingRemoved && (
-                  <ActivityIndicator
-                    size="large"
-                    style={{
-                      position: 'absolute',
-                      width: 100,
-                      height: 100,
-                      top: imageSize / 2 - 50,
-                      left: imageSize / 2 - 50,
-                    }}
-                  />
+                  <ActivityIndicator size="large" style={styles.imageRemoveLoader} />
                 )}
                 {pictures.length > 1 && (
                   <TouchableOpacity
-                    style={styles.editImageWrapper}
+                    style={styles.removeImageWrapper}
                     activeOpacity={1}
                     onPress={() => removePicture(index)}
                   >
-                    <FontAwesome size={30} name="trash" />
+                    <TorchIcon width={30} height={30} />
                   </TouchableOpacity>
                 )}
               </View>
@@ -319,66 +369,21 @@ const EditItem = () => {
             </View>
           )}
           {!uploadingImage && pictures.length < MAX_ITEM_PICTURES && (
-            <View style={[styles.imageSlot, { width: imageSize, height: imageSize }]}>
-              <AddButton
-                onPress={() => {
-                  editItemContext.setImageType(EditImageType.item);
-                  editItemContext.setItemId(usersItem?.item.id || null);
-                  router.push('profile/addPicture');
-                }}
-                borderRadius={ItemBorderRadius.all}
-              />
+            <View style={styles.imageSlot}>
+              <AddButton onPress={addImage} borderRadius={ItemBorderRadius.all} />
             </View>
           )}
         </View>
         <View style={styles.addButton}>
           {usersItemId && (
-            <ButtonWrapper
-              color="red"
-              title="Remove Item"
-              onPress={async () => {
-                const remove: boolean = await new Promise((resolve) => {
-                  Alert.alert(
-                    'Do you really want to remove this item?',
-                    'All chats related to this item will be removed as well',
-                    [
-                      { text: 'Keep it', onPress: () => resolve(false) },
-                      {
-                        text: 'Yes, remove it',
-                        onPress: () => resolve(true),
-                        style: 'destructive',
-                      },
-                    ],
-                    { cancelable: false }
-                  );
-                });
-                if (remove) {
-                  try {
-                    if (!usersItem) {
-                      throw new Error('item to remove not specified');
-                    }
-                    setRemovingUtem(true);
-                    const newItems = [...userContext.items];
-                    const result = await removeItem(sessionContext, usersItem.item.id);
-                    await updateMatches(sessionContext, matchContext);
-                    if (result) {
-                      newItems.splice(usersItem.index, 1);
-                      userContext.setItems(newItems);
-                      jokerContext.showSuccess('Item removed');
-                      router.back();
-                    } else {
-                      throw new Error('server error');
-                    }
-                  } catch (e) {
-                    handleError(jokerContext, ErrorType.REMOVE_ITEM, `${e}`);
-                    return;
-                  } finally {
-                    setRemovingUtem(false);
-                  }
-                }
-              }}
-              fillColor="white"
-            />
+            <View style={[styles.nameInputWrapper, styles.margins]}>
+              <ButtonWrapper
+                color="red"
+                title="Remove Item"
+                onPress={removeItemPress}
+                fillColor={FILL_COLOR}
+              />
+            </View>
           )}
           {removingItem && (
             <View
@@ -405,16 +410,17 @@ const styles = StyleSheet.create({
     padding: 10,
     fontSize: 30,
   },
-  input: {
-    margin: 10,
-    padding: 10,
-    borderWidth: 1,
-    borderRadius: 10,
+  margins: {
+    marginVertical: 8,
+    marginHorizontal: 12,
   },
-  nameInput: {},
-  descriptionInput: {
-    height: 120,
+  nameInputWrapper: {
+    height: 52,
   },
+  descriptionInputWrapper: {
+    height: 200,
+  },
+  addButtonWrapper: {},
   imageSlotsWrapper: {
     flexDirection: 'column',
     justifyContent: 'center',
@@ -424,20 +430,24 @@ const styles = StyleSheet.create({
     flex: 1,
     margin: 10,
     borderRadius: 10,
+    width: IMAGE_SIZE,
+    height: IMAGE_SIZE,
   },
   submitButton: {
     margin: 10,
     borderWidth: 1,
     borderRadius: 10,
   },
-  editImageWrapper: {
+  removeImageWrapper: {
     position: 'absolute',
     width: 50,
     height: 50,
-    backgroundColor: 'white',
+    backgroundColor: FILL_COLOR,
     bottom: 0,
     right: 0,
     borderRadius: 50,
+    borderWidth: 3,
+    borderColor: SWIPE_BASE_BACKGROUND_COLOR,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -448,6 +458,13 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  imageRemoveLoader: {
+    position: 'absolute',
+    width: 100,
+    height: 100,
+    top: IMAGE_SIZE / 2 - 50,
+    left: IMAGE_SIZE / 2 - 50,
   },
 });
 

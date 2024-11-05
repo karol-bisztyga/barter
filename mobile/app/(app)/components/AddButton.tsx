@@ -1,7 +1,11 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { ItemBorderRadius } from '../types';
+import { AlchemyIcon } from '../utils/icons';
+import TextWrapper from '../genericComponents/TextWrapper';
+import { SWIPE_BASE_BACKGROUND_COLOR } from '../constants';
+
+const ICON_SIZE = 100;
 
 const AddButton = ({
   onPress,
@@ -15,8 +19,6 @@ const AddButton = ({
       style={[
         styles.imageWrapper,
         {
-          borderTopLeftRadius: 20,
-          borderTopRightRadius: 20,
           borderRadius: borderRadius === ItemBorderRadius['all'] ? 20 : 0,
           height: '75%',
         },
@@ -24,7 +26,8 @@ const AddButton = ({
       activeOpacity={1}
       onPress={onPress}
     >
-      <FontAwesome size={50} name="plus" />
+      <TextWrapper style={styles.label}>New image</TextWrapper>
+      <AlchemyIcon width={ICON_SIZE} height={ICON_SIZE} />
     </TouchableOpacity>
   );
 };
@@ -32,10 +35,17 @@ const AddButton = ({
 const styles = StyleSheet.create({
   imageWrapper: {
     flex: 1,
-    borderColor: '#bdbda9',
-    borderWidth: 1,
+    borderColor: SWIPE_BASE_BACKGROUND_COLOR,
+    borderWidth: 3,
     justifyContent: 'center',
     alignItems: 'center',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+  },
+  label: {
+    fontSize: 35,
+    textAlign: 'center',
+    marginBottom: 12,
   },
 });
 
