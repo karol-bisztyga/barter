@@ -25,7 +25,7 @@ import { ErrorType, handleError } from '../../utils/errorHandler';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 import InputWrapper from '../../genericComponents/InputWrapper';
 import { useJokerContext } from '../../context/JokerContext';
-import { SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY } from '../../constants';
+import { FILL_COLOR } from '../profile/components/items/editing_panels/constants';
 
 const INPUT_WRAPPER_HEIGHT = 70;
 const ITEMS_WRPPER_HEIGHT = 200;
@@ -289,7 +289,7 @@ const Chat = () => {
               blurOnSubmit={false}
               value={newMessage}
               onChangeText={setNewMessage}
-              fillColor={SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY}
+              fillColor={FILL_COLOR}
             />
             <View style={styles.buttonWrapper}>
               <ButtonWrapper
@@ -298,7 +298,7 @@ const Chat = () => {
                 onPress={() => {
                   sendMessage();
                 }}
-                fillColor={SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY}
+                fillColor={FILL_COLOR}
               />
             </View>
           </View>

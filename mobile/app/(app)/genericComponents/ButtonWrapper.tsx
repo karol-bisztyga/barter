@@ -55,7 +55,7 @@ const ButtonWrapper = ({ title, icon, onPress, disabled, color, fillColor }: MyB
     color: color ? color : BACKGROUND_COLOR,
   };
 
-  const borderRadius = Math.floor(Math.random() * 8 + 4);
+  const borderRadius = Math.floor(Math.random() * 4 + 4);
 
   return (
     <View
