@@ -1,5 +1,7 @@
 import React, { createContext, useState, ReactNode, FC, useContext, useEffect } from 'react';
 import { Audio, AVPlaybackSource, AVPlaybackStatus } from 'expo-av';
+import * as SecureStore from 'expo-secure-store';
+import { STORAGE_SETTINGS_KEY } from '../../constants';
 
 export const BACKGROUND_SOUNDS: Record<string, AVPlaybackSource> = {
   marketplace: require('../../../assets/sounds/background/marketplace.wav'),
@@ -37,6 +39,8 @@ const BACKGROUND_SOUND_VOLUME = 0.3;
 interface SoundContextState {
   playSound: (sound: OneShotSound) => Promise<void>;
   playBackgroundSound: () => void;
+  stopBackgroundSound: () => void;
+  loadSettingsFromStorage: () => void;
 
   // settings
   musicOn: boolean;
@@ -48,6 +52,8 @@ interface SoundContextState {
 const initialState: SoundContextState = {
   playSound: async () => {},
   playBackgroundSound: () => {},
+  stopBackgroundSound: () => {},
+  loadSettingsFromStorage: () => {},
 
   musicOn: false,
   setMusicOn: () => {},
@@ -88,7 +94,7 @@ export const SoundContextProvider: FC<{ children: ReactNode }> = ({ children }) 
 
   // for settings
   const [musicOn, setMusicOn] = useState(false);
-  const [soundsOn, setSoundsOn] = useState(true);
+  const [soundsOn, setSoundsOn] = useState(false);
 
   useEffect(() => {
     // pre-load all one shot sounds
@@ -111,6 +117,27 @@ export const SoundContextProvider: FC<{ children: ReactNode }> = ({ children }) 
       });
     };
   }, []);
+
+  const loadSettingsFromStorage = async () => {
+    const storageStr = SecureStore.getItem(STORAGE_SETTINGS_KEY);
+    if (!storageStr) {
+      return;
+    }
+    const storageParsed = JSON.parse(storageStr);
+    if (!storageParsed) {
+      return;
+    }
+    setMusicOn(storageParsed.musicOn);
+    setSoundsOn(storageParsed.soundsOn);
+  };
+
+  useEffect(() => {
+    loadSettingsFromStorage();
+  }, []);
+
+  useEffect(() => {
+    SecureStore.setItem(STORAGE_SETTINGS_KEY, JSON.stringify({ soundsOn, musicOn }));
+  }, [soundsOn, musicOn]);
 
   useEffect(() => {
     let sound: Audio.Sound | null = null;
@@ -240,11 +267,20 @@ export const SoundContextProvider: FC<{ children: ReactNode }> = ({ children }) 
     setBackgroundSound(newBackgroundSound);
   };
 
+  const stopBackgroundSound = () => {
+    if (currentBackgroundSoundObject) {
+      currentBackgroundSoundObject.stopAsync();
+      setBackgroundSound(null);
+    }
+  };
+
   return (
     <SoundContext.Provider
       value={{
         playSound,
         playBackgroundSound,
+        stopBackgroundSound,
+        loadSettingsFromStorage,
 
         musicOn,
         setMusicOn,

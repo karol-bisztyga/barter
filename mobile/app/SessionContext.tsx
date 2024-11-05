@@ -5,6 +5,7 @@ import { UserData } from './(app)/types';
 import * as SecureStore from 'expo-secure-store';
 import { STORAGE_SESSION_KEY } from './constants';
 import { convertUserData } from './(app)/db_utils/utils';
+import { useSoundContext } from './(app)/context/SoundContext';
 
 export interface SessionContextState {
   signIn: (email: string, password: string) => Promise<UserData | null>;
@@ -36,6 +37,7 @@ export const useSessionContext = () => {
 };
 
 export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const soundContext = useSoundContext();
   const [[isLoading, session], setSession] = useStorageState('session');
 
   const setSessionWithStorage = (newSession?: string, userData?: UserData) => {
@@ -71,6 +73,7 @@ export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }
 
   const signOut = async () => {
     await setSessionWithStorage();
+    soundContext.stopBackgroundSound();
   };
 
   return (

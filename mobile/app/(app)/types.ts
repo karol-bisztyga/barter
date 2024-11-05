@@ -49,6 +49,8 @@ export type UserData = {
   userLocationCoordinates?: string;
   verificationCode?: string;
   onboarded: string;
+  musicOn?: string;
+  soundOn?: string;
 };
 
 export enum EditImageType {

@@ -26,6 +26,7 @@ export default function TabLayout() {
   const [routeName, setRouteName] = useState<string>('swipe');
 
   useEffect(() => {
+    soundContext.loadSettingsFromStorage();
     soundContext.playBackgroundSound();
   }, []);
 

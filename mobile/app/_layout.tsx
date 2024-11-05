@@ -10,15 +10,15 @@ export default function Root() {
   // Set up the auth context and render our layout inside of it.
   return (
     <JokerContextProvider>
-      <SessionContextProvider>
-        <UserContextProvider>
-          <SoundContextProvider>
+      <SoundContextProvider>
+        <SessionContextProvider>
+          <UserContextProvider>
             <MenuProvider>
               <Slot />
             </MenuProvider>
-          </SoundContextProvider>
-        </UserContextProvider>
-      </SessionContextProvider>
+          </UserContextProvider>
+        </SessionContextProvider>
+      </SoundContextProvider>
     </JokerContextProvider>
   );
 }
