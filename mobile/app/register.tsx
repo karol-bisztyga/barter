@@ -9,6 +9,9 @@ import ButtonWrapper from './(app)/genericComponents/ButtonWrapper';
 import { BACKGROUND_COLOR } from './(app)/constants';
 import InputWrapper from './(app)/genericComponents/InputWrapper';
 import TextWrapper from './(app)/genericComponents/TextWrapper';
+import { useTranslation } from 'react-i18next';
+import Background from './(app)/components/Background';
+import { SECTION_BACKGROUND } from './(app)/(tabs)/profile/components/items/editing_panels/constants';
 
 const ERROR_MESSAGES = {
   INVALID_EMAIL: 'email invalid',
@@ -17,6 +20,8 @@ const ERROR_MESSAGES = {
 };
 
 export default function Register() {
+  const { t } = useTranslation();
+
   const [error, setError] = useState<string>('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -67,34 +72,35 @@ export default function Register() {
 
   return (
     <View style={styles.container}>
+      <Background tile="sword" />
       <View style={styles.inputContainer}>
         <View style={styles.inputWrapper}>
           <InputWrapper
-            placeholder="email"
+            placeholder={t('email')}
             value={email}
             onChangeText={setEmail}
             autoCapitalize="none"
-            fillColor="white"
+            fillColor={SECTION_BACKGROUND}
           />
         </View>
         <View style={styles.inputWrapper}>
           <InputWrapper
-            placeholder="password"
+            placeholder={t('password')}
             secureTextEntry={true}
             value={password}
             onChangeText={setPassword}
             autoCapitalize="none"
-            fillColor="white"
+            fillColor={SECTION_BACKGROUND}
           />
         </View>
         <View style={styles.inputWrapper}>
           <InputWrapper
-            placeholder="repeat password"
+            placeholder={t('repeat_password')}
             secureTextEntry={true}
             value={passwordRepeat}
             onChangeText={setPasswordRepeat}
             autoCapitalize="none"
-            fillColor="white"
+            fillColor={SECTION_BACKGROUND}
           />
         </View>
         {error && (
@@ -105,18 +111,18 @@ export default function Register() {
           </View>
         )}
         <ButtonWrapper
-          title="Register"
+          title={t('confirm')}
           disabled={!formValid()}
           onPress={register}
-          fillColor="white"
+          fillColor={SECTION_BACKGROUND}
         />
         <ButtonWrapper
-          title="Cancel"
+          title={t('cancel')}
           disabled={loading}
           onPress={async () => {
             router.replace('/login');
           }}
-          fillColor="white"
+          fillColor={SECTION_BACKGROUND}
         />
         {loading && (
           <View style={styles.loaderWrapper}>

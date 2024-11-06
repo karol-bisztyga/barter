@@ -12,6 +12,9 @@ import ButtonWrapper from './(app)/genericComponents/ButtonWrapper';
 import { BACKGROUND_COLOR } from './(app)/constants';
 import InputWrapper from './(app)/genericComponents/InputWrapper';
 import TextWrapper from './(app)/genericComponents/TextWrapper';
+import { useTranslation } from 'react-i18next';
+import Background from './(app)/components/Background';
+import { SECTION_BACKGROUND } from './(app)/(tabs)/profile/components/items/editing_panels/constants';
 
 const sampleUsers = [
   {
@@ -95,6 +98,8 @@ const SingInForm = ({
   error: string;
   setError: (_: string) => void;
 }) => {
+  const { t } = useTranslation();
+
   const { signIn } = useSessionContext();
   const userContext = useUserContext();
 
@@ -135,21 +140,21 @@ const SingInForm = ({
     >
       <View style={styles.inputWrapper}>
         <InputWrapper
-          placeholder="email"
+          placeholder={t('email')}
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
-          fillColor="white"
+          fillColor={SECTION_BACKGROUND}
         />
       </View>
       <View style={styles.inputWrapper}>
         <InputWrapper
           autoCapitalize="none"
-          placeholder="password"
+          placeholder={t('password')}
           secureTextEntry={true}
           value={password}
           onChangeText={setPassword}
-          fillColor="white"
+          fillColor={SECTION_BACKGROUND}
         />
       </View>
       {error && (
@@ -160,19 +165,19 @@ const SingInForm = ({
         </View>
       )}
       <ButtonWrapper
-        title="Sign in"
+        title={t('sign_in')}
         disabled={!formValid()}
         onPress={async () => {
           await hadnleSignIn(email, password);
         }}
-        fillColor="white"
+        fillColor={SECTION_BACKGROUND}
       />
       <ButtonWrapper
-        title="Register"
+        title={t('register')}
         onPress={() => {
           router.replace('/register');
         }}
-        fillColor="white"
+        fillColor={SECTION_BACKGROUND}
       />
       {/* TODO remove buttons below */}
       {sampleUsers.map((user, index) => {
@@ -186,7 +191,7 @@ const SingInForm = ({
             onPress={async () => {
               await hadnleSignIn(user.email, user.password);
             }}
-            fillColor="white"
+            fillColor={SECTION_BACKGROUND}
           />
         );
       })}
@@ -241,8 +246,10 @@ export default function Login() {
   }
   return (
     <View style={styles.container}>
+      <Background tile="sword" />
       {loading && <Loader />}
       <SingInForm loading={loading} error={error} setError={setError} />
+      {/* todo add language choose here */}
     </View>
   );
 }

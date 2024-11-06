@@ -6,6 +6,7 @@ import * as SecureStore from 'expo-secure-store';
 import { STORAGE_SESSION_KEY } from './constants';
 import { convertUserData } from './(app)/db_utils/utils';
 import { useSoundContext } from './(app)/context/SoundContext';
+import { useTranslation } from 'react-i18next';
 
 export interface SessionContextState {
   signIn: (email: string, password: string) => Promise<UserData | null>;
@@ -37,6 +38,8 @@ export const useSessionContext = () => {
 };
 
 export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const { t } = useTranslation();
+
   const soundContext = useSoundContext();
   const [[isLoading, session], setSession] = useStorageState('session');
 
@@ -51,15 +54,18 @@ export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }
   };
 
   const signIn = async (email: string, password: string) => {
-    if (!email || !password) {
-      throw new Error('email or password is missing');
+    if (!email) {
+      throw new Error(t('email_missing'));
+    }
+    if (!password) {
+      throw new Error(t('password_missing'));
     }
 
     const response = await executeQuery('auth/login', 'POST', null, { email, password });
 
     if (response.ok) {
       if (!response.data.token) {
-        throw new Error('token is missing');
+        throw new Error(t('token_missing'));
       }
 
       const userData: UserData = convertUserData(response.data.user);
@@ -67,7 +73,7 @@ export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }
 
       return userData;
     } else {
-      throw new Error('login error: ' + response.data.message);
+      throw new Error(t('login_error', { error: response.data.message }));
     }
   };
 

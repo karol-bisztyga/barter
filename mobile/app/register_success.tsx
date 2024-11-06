@@ -5,22 +5,26 @@ import { router } from 'expo-router';
 import ButtonWrapper from './(app)/genericComponents/ButtonWrapper';
 import { BACKGROUND_COLOR } from './(app)/constants';
 import TextWrapper from './(app)/genericComponents/TextWrapper';
+import { useTranslation } from 'react-i18next';
+import { SECTION_BACKGROUND } from './(app)/(tabs)/profile/components/items/editing_panels/constants';
+import Background from './(app)/components/Background';
 
 export default function Register() {
+  const { t } = useTranslation();
+
   return (
     <View style={styles.container}>
+      <Background tile="sword" />
       <View style={styles.labelsWrapper}>
-        <TextWrapper style={styles.label}>Registered successfully!</TextWrapper>
-        <TextWrapper style={styles.label}>
-          Please check your email for the verification code :)
-        </TextWrapper>
+        <TextWrapper style={styles.label}>{t('register_successful.title')}</TextWrapper>
+        <TextWrapper style={styles.label}>{t('register_successful.subtitle')}</TextWrapper>
       </View>
       <ButtonWrapper
-        title="Proceed"
+        title={t('proceed')}
         onPress={() => {
           router.replace('/login');
         }}
-        fillColor="white"
+        fillColor={SECTION_BACKGROUND}
       />
     </View>
   );

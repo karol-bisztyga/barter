@@ -1,0 +1,27 @@
+{
+  "welcome": "Welcome",
+  "greeting": "Hello, {{name}}!",
+
+  "email": "email",
+  "password": "password",
+  "repeat_password": "repeat password",
+  "sign_in": "Sign in",
+  "register": "Register",
+  "confirm": "Confirm",
+  "cancel": "Cancel",
+  "back": "Back",
+  "proceed": "Proceed",
+
+  "email_missing": "Email is missing",
+  "password_missing": "Password is missing",
+  "token_missing": "Token is missing",
+  "login_error": "Login error, {{ error }}",
+
+  "register_successful.title": "Registered successfully!",
+  "register_successful.subtitle": "Please check your email for the verification code :)",
+
+  "verify_account.title": "You need to verify your account",
+  "verify_account.subtitle1": "Please check your email for the verification code and enter it below",
+  "verify_account.subtitle2": "Thank you",
+  "verify_account.code": "Verification code"
+}
