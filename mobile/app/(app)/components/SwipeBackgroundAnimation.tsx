@@ -9,11 +9,26 @@ import {
 } from 'react-native-reanimated';
 import { SwipeDirection, ViewDimensions } from '../types';
 import SwipeBackgroundAnimatedItem, {
+  IconName,
   Item,
   SwipeBackgroundAnimationDirection,
 } from './SwipeBackgroundAnimationItem';
 import { generateRandomHarmonicColor } from '../utils/harmonicColors';
 import { SWIPE_BASE_BACKGROUND_COLOR } from '../constants';
+
+export const getIconForSwipeDirection = (swipeDirection: SwipeDirection | null): IconName => {
+  'worklet';
+  switch (swipeDirection) {
+    case SwipeDirection.LEFT:
+      return 'TorchIcon';
+    case SwipeDirection.RIGHT:
+      return 'PaperIcon';
+    case SwipeDirection.DOWN:
+      return 'SandGlassIcon';
+    default:
+      return null;
+  }
+};
 
 const getRandomInt = (min: number, max: number): number =>
   Math.floor(Math.random() * (max - min + 1)) + min;
@@ -91,6 +106,7 @@ const SwipeBackgroundAnimation = ({
   const [items, setItems] = useState<Item[]>([]);
   const [containerDimensions, setContainerDimensions] = useState<ViewDimensions | null>(null);
   const [regenerateItems, setRegenerateItems] = useState(false);
+  const [iconName, setIconName] = React.useState<IconName>(null);
   const icon = useSharedValue<SwipeBackgroundAnimationDirection>(null);
 
   const opacity = useSharedValue(0);
@@ -163,6 +179,15 @@ const SwipeBackgroundAnimation = ({
     }
   );
 
+  useAnimatedReaction(
+    () => {
+      return swipeDirection.value;
+    },
+    (prepared) => {
+      runOnJS(setIconName)(getIconForSwipeDirection(prepared));
+    }
+  );
+
   useEffect(() => {
     if (!regenerateItems || containerDimensions === null) {
       return;
@@ -194,7 +219,7 @@ const SwipeBackgroundAnimation = ({
           item={item}
           opacity={opacity}
           swipeIntensity={swipeIntensity}
-          iconSV={icon}
+          iconName={iconName}
         />
       ))}
     </View>

@@ -11,6 +11,8 @@ import { StyleSheet } from 'react-native';
 import { PaperIcon, SandGlassIcon, TorchIcon } from '../utils/icons';
 import { SwipeDirection } from '../types';
 
+export type IconName = 'TorchIcon' | 'PaperIcon' | 'SandGlassIcon' | null;
+
 export type SwipeBackgroundAnimationDirection = SwipeDirection | null;
 
 export interface Item {
@@ -20,32 +22,18 @@ export interface Item {
   color: string;
 }
 
-export const getIconForSwipeDirection = (swipeDirection: SwipeDirection | null) => {
-  'worklet';
-  switch (swipeDirection) {
-    case SwipeDirection.LEFT:
-      return TorchIcon;
-    case SwipeDirection.RIGHT:
-      return PaperIcon;
-    case SwipeDirection.DOWN:
-      return SandGlassIcon;
-    default:
-      return null;
-  }
-};
-
 interface SwipeBackgroundAnimatedItemProps {
   item: Item;
   opacity: SharedValue<number>;
   swipeIntensity: SharedValue<number>;
-  iconSV: SharedValue<SwipeBackgroundAnimationDirection>;
+  iconName: IconName;
 }
 
 const SwipeBackgroundAnimatedItem: React.FC<SwipeBackgroundAnimatedItemProps> = ({
   item,
   opacity,
   swipeIntensity,
-  iconSV,
+  iconName,
 }) => {
   const itemTranslateX = useSharedValue(0);
   const itemTranslateY = useSharedValue(0);
@@ -107,31 +95,34 @@ const SwipeBackgroundAnimatedItem: React.FC<SwipeBackgroundAnimatedItemProps> = 
     };
   });
 
-  const icons: {
-    direction: SwipeBackgroundAnimationDirection;
-    style: {
-      opacity: number;
-    };
-  }[] = [
-    {
-      direction: SwipeDirection.RIGHT,
-      style: useAnimatedStyle(() => {
-        return { opacity: iconSV.value === SwipeDirection.RIGHT ? 1 : 0 };
-      }),
-    },
-    {
-      direction: SwipeDirection.DOWN,
-      style: useAnimatedStyle(() => {
-        return { opacity: iconSV.value === SwipeDirection.DOWN ? 1 : 0 };
-      }),
-    },
-    {
-      direction: SwipeDirection.LEFT,
-      style: useAnimatedStyle(() => {
-        return { opacity: iconSV.value === SwipeDirection.LEFT ? 1 : 0 };
-      }),
-    },
-  ];
+  const iconSize = (item.size * 3) / 4;
+
+  const renderIcon = () => {
+    let Icon = null;
+    switch (iconName) {
+      case 'TorchIcon':
+        Icon = TorchIcon;
+        break;
+      case 'PaperIcon':
+        Icon = PaperIcon;
+        break;
+      case 'SandGlassIcon':
+        Icon = SandGlassIcon;
+        break;
+    }
+    if (Icon === null) {
+      return null;
+    }
+    return (
+      <Animated.View style={styles.animatedIconWrapper}>
+        <Icon width={iconSize} height={iconSize} fill="black" />
+      </Animated.View>
+    );
+  };
+
+  if (iconName === null) {
+    return null;
+  }
 
   return (
     <Animated.View
@@ -151,18 +142,7 @@ const SwipeBackgroundAnimatedItem: React.FC<SwipeBackgroundAnimatedItemProps> = 
         },
       ]}
     >
-      {icons.map((iconItem, index) => {
-        const size = (item.size * 3) / 4;
-        const Icon = getIconForSwipeDirection(iconItem.direction);
-        if (Icon === null) {
-          return null;
-        }
-        return (
-          <Animated.View style={[styles.animatedIconWrapper, iconItem.style]} key={index}>
-            <Icon width={size} height={size} fill="black" />
-          </Animated.View>
-        );
-      })}
+      {renderIcon()}
     </Animated.View>
   );
 };
