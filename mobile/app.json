@@ -64,7 +64,7 @@
       [
         "expo-font",
         {
-          "fonts": ["assets/fonts/Rokkitt-Regular.ttf", "assets/fonts/Typefesse_Pleine.otf"]
+          "fonts": ["assets/fonts/Schoolbell.ttf"]
         }
       ]
     ],

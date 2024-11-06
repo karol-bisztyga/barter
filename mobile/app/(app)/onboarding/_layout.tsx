@@ -7,7 +7,11 @@ export default function Layout() {
   authorizeUser();
   return (
     <Stack
-      screenOptions={{ contentStyle: { backgroundColor: BACKGROUND_COLOR }, animation: 'none' }}
+      screenOptions={{
+        contentStyle: { backgroundColor: BACKGROUND_COLOR },
+        animation: 'none',
+        headerShadowVisible: false,
+      }}
     >
       <Stack.Screen name="index" options={{ headerShown: false }} />
       <Stack.Screen name="stage_1" options={{ headerShown: false }} />

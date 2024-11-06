@@ -122,7 +122,7 @@ export default function Swipe() {
       return;
     }
 
-    jokerContext.showInfo('no items available for now, try again later');
+    jokerContext.showNonBlockingInfo('no items available for now, try again later');
     setEmptyCardsResponseReceived(false);
     setLoading(false);
   }, [emptyCardsResponseReceived, activeCard]);
@@ -137,7 +137,7 @@ export default function Swipe() {
     if (cards.length <= ITEMS_LOAD_TRESHOLD) {
       try {
         if (emptyCardsResponseReceived) {
-          jokerContext.showInfo('no items available for now, try again later');
+          jokerContext.showNonBlockingInfo('no items available for now, try again later');
           return activeCard;
         }
         const itemsLoaded = await getItemsForCards(

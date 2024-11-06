@@ -9,9 +9,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import TextWrapper from '../../../../../genericComponents/TextWrapper';
 import { useJokerContext } from '../../../../../context/JokerContext';
-import { EDITING_PANEL_HEIGHT } from './constants';
-import { BACKGROUND_COLOR } from '../../../../../constants';
-import Background from '../../../../../components/Background';
+import { EDITING_PANEL_HEIGHT, SECTION_BACKGROUND } from './constants';
 
 export type SelectEditingPanelProps = {
   initialValue: string;
@@ -69,7 +67,6 @@ const SelectEditingPanel = ({
             setEditingId('');
           }}
         >
-          <Background tile="stone" opacity={editingValue === option ? 1 : 0.3} />
           <TextWrapper style={styles.label}>{option}</TextWrapper>
         </TouchableOpacity>
       ))}
@@ -82,7 +79,7 @@ const styles = StyleSheet.create({
     width: '100%',
     overflow: 'hidden',
     flexDirection: 'column',
-    backgroundColor: BACKGROUND_COLOR,
+    backgroundColor: SECTION_BACKGROUND,
   },
   editingInputWrapper: {
     flex: 3,

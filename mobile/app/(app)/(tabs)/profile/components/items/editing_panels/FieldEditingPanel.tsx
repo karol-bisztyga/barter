@@ -15,8 +15,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import ButtonWrapper, { BUTTON_HEIGHT } from '../../../../../genericComponents/ButtonWrapper';
 import { useJokerContext } from '../../../../../context/JokerContext';
-import { EDITING_PANEL_HEIGHT, FILL_COLOR } from './constants';
-import Background from '../../../../../components/Background';
+import { EDITING_PANEL_HEIGHT, SECTION_BACKGROUND } from './constants';
 
 export type FieldEditingPanelProps = {
   name: string;
@@ -95,7 +94,6 @@ const FieldEditingPanel = ({
 
   return (
     <Animated.View style={[styles.container, wrapperAnimatedStyle]}>
-      <Background tile="stone" opacity={0.3} />
       <View style={styles.editingInputWrapper}>
         <InputWrapper
           style={styles.editingInput}
@@ -104,7 +102,7 @@ const FieldEditingPanel = ({
           onChangeText={(text) => {
             setEditingValue(text);
           }}
-          fillColor={FILL_COLOR}
+          fillColor={SECTION_BACKGROUND}
         />
       </View>
       <View style={styles.updateButtonWrapper}>
@@ -112,7 +110,7 @@ const FieldEditingPanel = ({
           title="Update"
           onPress={update}
           disabled={!validateValue()}
-          fillColor={FILL_COLOR}
+          fillColor={SECTION_BACKGROUND}
         />
       </View>
     </Animated.View>
@@ -124,6 +122,7 @@ const styles = StyleSheet.create({
     width: '100%',
     overflow: 'hidden',
     flexDirection: 'row',
+    backgroundColor: SECTION_BACKGROUND,
   },
   editingInputWrapper: {
     flex: 3,

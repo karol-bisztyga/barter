@@ -17,8 +17,7 @@ import ButtonWrapper, { BUTTON_HEIGHT } from '../../../../../genericComponents/B
 import { cityNameFromLocation, sleep } from '../../../../../utils/reusableStuff';
 import { FieldEditingPanelProps } from './FieldEditingPanel';
 import { useJokerContext } from '../../../../../context/JokerContext';
-import { EDITING_PANEL_HEIGHT, FILL_COLOR } from './constants';
-import Background from '../../../../../components/Background';
+import { EDITING_PANEL_HEIGHT, SECTION_BACKGROUND } from './constants';
 
 const LocationEditingPanel = ({
   initialValue,
@@ -76,22 +75,30 @@ const LocationEditingPanel = ({
       }
 
       const city = await cityNameFromLocation(formatLocationCoords(location.coords));
-      await updateUser(sessionContext, [
+
+      const updates = [
         { field: 'location_coordinate_lat', value: `${location?.coords.latitude}` },
         { field: 'location_coordinate_lon', value: `${location?.coords.longitude}` },
-        { field: 'location_city', value: city },
-      ]);
-
-      const obj: Partial<UserData> = {
+      ];
+      const contextUpdates: Partial<UserData> = {
         userLocationCoordinates: formatLocationCoords(location.coords),
-        userLocationCity: city,
       };
-      setValue(city);
-      userContext.setData({ ...userContext.data, ...obj } as UserData);
+      let jokerMessage = 'location updated';
+
+      if (city) {
+        updates.push({ field: 'location_city', value: city });
+        contextUpdates.userLocationCity = city;
+        setValue(city);
+      } else {
+        jokerMessage += ' successfully, but city could not be determined';
+      }
+
+      await updateUser(sessionContext, updates);
+      userContext.setData({ ...userContext.data, ...contextUpdates } as UserData);
 
       setEditingId('');
 
-      jokerContext.showSuccess(`location updated`);
+      jokerContext.showSuccess(jokerMessage);
     } catch (e) {
       handleError(jokerContext, ErrorType.UPDATE_USER, `${e}`);
     } finally {
@@ -101,17 +108,16 @@ const LocationEditingPanel = ({
 
   return (
     <Animated.View style={[styles.container, wrapperAnimatedStyle]}>
-      <Background tile="stone" opacity={0.3} />
       <View style={styles.editingInputWrapper}>
         <InputWrapper
           style={styles.editingInput}
           placeholder={editingValue}
           editable={false}
-          fillColor={FILL_COLOR}
+          fillColor={SECTION_BACKGROUND}
         />
       </View>
       <View style={styles.updateButtonWrapper}>
-        <ButtonWrapper title="Update" onPress={update} fillColor={FILL_COLOR} />
+        <ButtonWrapper title="Update" onPress={update} fillColor={SECTION_BACKGROUND} />
       </View>
     </Animated.View>
   );
@@ -122,6 +128,7 @@ const styles = StyleSheet.create({
     width: '100%',
     overflow: 'hidden',
     flexDirection: 'row',
+    backgroundColor: SECTION_BACKGROUND,
   },
   editingInputWrapper: {
     flex: 3,

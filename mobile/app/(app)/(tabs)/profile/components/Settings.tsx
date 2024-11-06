@@ -8,6 +8,7 @@ import ToggleItem from './items/ToggleItem';
 import { MandolinIcon, TrumpetIcon } from '../../../utils/icons';
 import { useSoundContext } from '../../../context/SoundContext';
 import Background from '../../../components/Background';
+import { SECTION_BACKGROUND } from './items/editing_panels/constants';
 
 const Settings = ({
   editingId,
@@ -103,7 +104,7 @@ const Settings = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#F5F5F5',
+    backgroundColor: SECTION_BACKGROUND,
     marginRight: 16,
     marginLeft: 16,
     borderRadius: 16,

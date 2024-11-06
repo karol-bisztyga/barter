@@ -12,6 +12,7 @@ import FeatherIcon from '../../../assets/icons/medieval_pack/032-feather.svg';
 import Feather2Icon from '../../../assets/icons/medieval_pack_2/007-feather.svg';
 import ArrowsIcon from '../../../assets/icons/medieval_pack/046-arrows-1.svg';
 import FlagIcon from '../../../assets/icons/medieval_pack/029-flag-2.svg';
+import Flag2Icon from '../../../assets/icons/medieval_pack_2/010-flag.svg';
 import SwordsShieldIcon from '../../../assets/icons/medieval_pack/011-shield-2.svg';
 import BookIcon from '../../../assets/icons/medieval_pack/039-book.svg';
 import LisIcon from '../../../assets/icons/medieval_pack/020-lis.svg';
@@ -34,6 +35,7 @@ export {
   HelmetIcon,
   ArrowsIcon,
   FlagIcon,
+  Flag2Icon,
   SwordsShieldIcon,
   BookIcon,
   LisIcon,

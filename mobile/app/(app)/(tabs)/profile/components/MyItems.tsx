@@ -7,6 +7,7 @@ import { useItemsContext } from '../../../context/ItemsContext';
 import { useUserContext } from '../../../context/UserContext';
 import LinkItem from './items/LinkItem';
 import Background from '../../../components/Background';
+import { SECTION_BACKGROUND } from './items/editing_panels/constants';
 
 const MyItems = () => {
   const itemsContext = useItemsContext();
@@ -47,7 +48,7 @@ const MyItems = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#F5F5F5',
+    backgroundColor: SECTION_BACKGROUND,
     marginRight: 16,
     marginLeft: 16,
     borderRadius: 16,

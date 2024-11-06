@@ -15,8 +15,7 @@ import ButtonWrapper from '../../../../../genericComponents/ButtonWrapper';
 import { validatePassword } from '../../../../../utils/validators';
 import { changePassword } from '../../../../../db_utils/changePassword';
 import { useJokerContext } from '../../../../../context/JokerContext';
-import { EDITING_PANEL_HEIGHT, FILL_COLOR } from './constants';
-import Background from '../../../../../components/Background';
+import { EDITING_PANEL_HEIGHT, SECTION_BACKGROUND } from './constants';
 
 const HEIGHT = EDITING_PANEL_HEIGHT * 2.5;
 
@@ -75,7 +74,6 @@ const FieldEditingPanel = ({ editing, setEditingId }: FieldEditingPanelProps) =>
 
   return (
     <Animated.View style={[styles.container, wrapperAnimatedStyle]}>
-      <Background tile="stone" opacity={0.7} />
       <View style={styles.editingInputWrapper}>
         <InputWrapper
           style={styles.editingInput}
@@ -83,7 +81,7 @@ const FieldEditingPanel = ({ editing, setEditingId }: FieldEditingPanelProps) =>
           value={currentPassword}
           onChangeText={setCurrentPassword}
           secureTextEntry={true}
-          fillColor={FILL_COLOR}
+          fillColor={SECTION_BACKGROUND}
         />
         <InputWrapper
           style={styles.editingInput}
@@ -91,14 +89,14 @@ const FieldEditingPanel = ({ editing, setEditingId }: FieldEditingPanelProps) =>
           value={newPassword}
           onChangeText={setNewPassword}
           secureTextEntry={true}
-          fillColor={FILL_COLOR}
+          fillColor={SECTION_BACKGROUND}
         />
         <View style={styles.updateButtonWrapper}>
           <ButtonWrapper
             title="Update"
             onPress={handlePasswordChange}
             disabled={!validateValue()}
-            fillColor={FILL_COLOR}
+            fillColor={SECTION_BACKGROUND}
           />
         </View>
       </View>
@@ -111,6 +109,7 @@ const styles = StyleSheet.create({
     width: '100%',
     overflow: 'hidden',
     flexDirection: 'row',
+    backgroundColor: SECTION_BACKGROUND,
   },
   editingInputWrapper: {
     flex: 1,

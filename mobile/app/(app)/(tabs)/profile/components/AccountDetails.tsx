@@ -5,9 +5,9 @@ import { useUserContext } from '../../../context/UserContext';
 import { ErrorType, handleError } from '../../../utils/errorHandler';
 import LinkItem from './items/LinkItem';
 import { router } from 'expo-router';
-import EditableItem from './items/EditableItem';
+import EditableItem, { EditingPanelType } from './items/EditableItem';
 import { useJokerContext } from '../../../context/JokerContext';
-import Background from '../../../components/Background';
+import { SECTION_BACKGROUND } from './items/editing_panels/constants';
 
 const AccountDetails = ({
   editingId,
@@ -32,6 +32,8 @@ const AccountDetails = ({
 
   data.onboarded = '';
 
+  const coordinates = data.userLocationCoordinates;
+
   delete data.id;
   delete data.profilePicture;
   delete data.userLocationCoordinates;
@@ -39,9 +41,8 @@ const AccountDetails = ({
 
   return (
     <View style={styles.container}>
-      <Background tile="stone" />
       {Object.keys(data).map((name, index) => {
-        const value = data && data[name as keyof UserData];
+        let value = data && data[name as keyof UserData];
         if (name === 'onboarded') {
           return (
             <LinkItem
@@ -56,7 +57,13 @@ const AccountDetails = ({
           );
         }
 
-        const editingPanelType = name === 'userLocationCity' ? 'location' : 'field';
+        let editingPanelType: EditingPanelType = 'field';
+        if (name === 'userLocationCity') {
+          editingPanelType = 'location';
+          if (!value) {
+            value = coordinates;
+          }
+        }
         return (
           <EditableItem
             name={name}
@@ -77,7 +84,7 @@ const AccountDetails = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#F5F5F5',
+    backgroundColor: SECTION_BACKGROUND,
     marginRight: 16,
     marginLeft: 16,
     borderRadius: 16,

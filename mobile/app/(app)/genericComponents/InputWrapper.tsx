@@ -3,8 +3,8 @@ import { StyleSheet, ImageBackground, TextInput, TextInputProps, View } from 're
 import Svg, { Path } from 'react-native-svg';
 import { FONT_COLOR, FONT_COLOR_DISABLED } from '../constants';
 import { useAssets } from 'expo-asset';
-import { DimensionsType, generatePaths } from './utils';
-import { useJokerContext } from '../context/JokerContext';
+import { DimensionsType, generatePaths, getDefaultFont } from './utils';
+import { useFonts } from 'expo-font';
 
 interface InputWrapperProps extends TextInputProps {
   fillColor: string;
@@ -12,16 +12,20 @@ interface InputWrapperProps extends TextInputProps {
 }
 
 const InputWrapper = React.forwardRef<TextInput, InputWrapperProps>(({ ...props }, ref) => {
-  const jokerContext = useJokerContext();
-
   const [dimensions, setDimensions] = useState<DimensionsType | null>(null);
   const [paths, setPaths] = useState<string[]>([]);
 
   const [assets, error] = useAssets([require('../../../assets/backgrounds/paper.jpg')]);
 
+  const [loadedFonts] = useFonts({
+    Schoolbell: require('../../../assets/fonts/Schoolbell.ttf'),
+  });
+
+  const fontFamily = loadedFonts ? 'Schoolbell' : getDefaultFont();
+
   useEffect(() => {
     if (error) {
-      jokerContext.showError(`Error loading assets ${error}`);
+      console.error(`Error loading assets ${error}`);
     }
   }, [error]);
 
@@ -56,7 +60,7 @@ const InputWrapper = React.forwardRef<TextInput, InputWrapperProps>(({ ...props 
         <TextInput
           ref={ref}
           {...props}
-          style={[props['style'] ? props['style'] : {}, styles.input]}
+          style={[props['style'] ? props['style'] : {}, styles.input, { fontFamily }]}
           placeholderTextColor={FONT_COLOR_DISABLED}
         />
       )}
@@ -92,7 +96,6 @@ const styles = StyleSheet.create({
     padding: 5,
     paddingHorizontal: 15,
     color: FONT_COLOR,
-    fontFamily: 'Schoolbell',
     fontSize: 20,
   },
 });

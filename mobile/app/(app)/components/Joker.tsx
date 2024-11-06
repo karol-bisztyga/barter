@@ -18,7 +18,7 @@ const { width } = Dimensions.get('window');
 
 const JOKER_SIZE = 50;
 const TOP_OFFSET = Constants.statusBarHeight + 4;
-const HORIZONTAL_OFFSET = 10;
+const HORIZONTAL_OFFSET = 50;
 const FORCE_LEFT_OR_RIGHT_POSITION = false;
 
 const Joker = () => {

@@ -26,8 +26,10 @@ export const ONE_SHOT_SOUNDS: Record<string, AVPlaybackSource> = {
 Audio.setAudioModeAsync({
   allowsRecordingIOS: false,
   staysActiveInBackground: false,
-  playsInSilentModeIOS: true,
-  shouldDuckAndroid: false,
+  interruptionModeIOS: 2,
+  playsInSilentModeIOS: true, // todo should be false
+  shouldDuckAndroid: true,
+  interruptionModeAndroid: 2,
   playThroughEarpieceAndroid: false,
 });
 
@@ -207,17 +209,19 @@ export const SoundContextProvider: FC<{ children: ReactNode }> = ({ children }) 
   }, [nextBackgroundSound]);
 
   useEffect(() => {
-    if (!currentBackgroundSoundObject) {
-      if (musicOn) {
-        playBackgroundSound();
+    (async () => {
+      if (!currentBackgroundSoundObject) {
+        if (musicOn) {
+          playBackgroundSound();
+        }
+        return;
       }
-      return;
-    }
-    if (musicOn) {
-      currentBackgroundSoundObject.playAsync();
-    } else {
-      currentBackgroundSoundObject.pauseAsync();
-    }
+      if (musicOn) {
+        await currentBackgroundSoundObject.playAsync();
+      } else {
+        await currentBackgroundSoundObject.pauseAsync();
+      }
+    })();
   }, [musicOn]);
 
   useEffect(() => {
@@ -242,6 +246,8 @@ export const SoundContextProvider: FC<{ children: ReactNode }> = ({ children }) 
 
     soundObject.setOnPlaybackStatusUpdate(async (updatedStatus: AVPlaybackStatus) => {
       if (updatedStatus.isLoaded && updatedStatus.didJustFinish) {
+        // had to add explicit stop because it was looping on android
+        await soundObject.stopAsync();
         await soundObject.setPositionAsync(0);
       }
     });

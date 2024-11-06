@@ -29,6 +29,7 @@ export default function TabLayout() {
   useEffect(() => {
     soundContext.loadSettingsFromStorage();
     soundContext.playBackgroundSound();
+    jokerContext.showNonBlockingInfo('Welcome to the app!');
   }, []);
 
   return (
@@ -43,6 +44,7 @@ export default function TabLayout() {
           tabBarInactiveBackgroundColor: SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY,
           tabBarStyle: {
             backgroundColor: SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY,
+            shadowColor: 'transparent',
           },
         }}
         screenListeners={{

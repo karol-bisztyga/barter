@@ -6,12 +6,10 @@ type MyImageProps = ImageProps & {
 };
 
 const ImageWrapper = ({ uri, ...props }: MyImageProps) => {
-  if (
-    process.env.EXPO_PUBLIC_ENV_ID === 'LOCAL' &&
-    Platform.OS === 'android' &&
-    process.env.EXPO_PUBLIC_SERVER_HOST
-  ) {
-    uri = uri.replace('http://localhost', process.env.EXPO_PUBLIC_SERVER_HOST);
+  // @ts-expect-error env vars not recognized
+  const { EXPO_PUBLIC_ENV_ID, EXPO_PUBLIC_SERVER_HOST_IP } = process.env;
+  if (EXPO_PUBLIC_ENV_ID === 'LOCAL' && Platform.OS === 'android' && EXPO_PUBLIC_SERVER_HOST_IP) {
+    uri = uri.replace('http://localhost', EXPO_PUBLIC_SERVER_HOST_IP);
   }
   return <Image source={{ uri }} {...props} />;
 };

@@ -7,7 +7,7 @@ import { unmatch } from '../../../db_utils/unmatch';
 import { useSessionContext } from '../../../../SessionContext';
 import { ErrorType, handleError } from '../../../utils/errorHandler';
 import TextWrapper from '../../../genericComponents/TextWrapper';
-import { ArrowsIcon, FlagIcon, SwordsShieldIcon } from '../../../utils/icons';
+import { Flag2Icon, FlagIcon, SwordsShieldIcon } from '../../../utils/icons';
 import { useJokerContext } from '../../../context/JokerContext';
 import { useSoundContext } from '../../../context/SoundContext';
 
@@ -70,7 +70,7 @@ const ChatRightHeaderMenu = () => {
             soundContext.playSound('click');
           }}
         >
-          <ArrowsIcon width={MENU_ICON_SIZE} height={MENU_ICON_SIZE} />
+          <Flag2Icon width={MENU_ICON_SIZE} height={MENU_ICON_SIZE} />
         </MenuTrigger>
         <MenuOptions customStyles={{ optionsContainer: styles.optionsContainer }}>
           <MenuOption onSelect={unmatchHandler} style={styles.menuItemWrapper}>

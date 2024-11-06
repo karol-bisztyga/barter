@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   ColorValue,
   ImageBackground,
@@ -9,13 +9,14 @@ import {
 } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { BACKGROUND_COLOR } from '../constants';
-import { DimensionsType, generatePaths } from './utils';
+import { DimensionsType, generatePaths, getDefaultFont } from './utils';
 import { useAssets } from 'expo-asset';
 import Svg, { Path } from 'react-native-svg';
-import { useJokerContext } from '../context/JokerContext';
 import { useSoundContext } from '../context/SoundContext';
+import { useFonts } from 'expo-font';
 
 export const BUTTON_HEIGHT = 40;
+export const FALLBACK_BACKGROUND_COLOR = '#432c26';
 
 type MyButtonProps = {
   title: string;
@@ -27,7 +28,6 @@ type MyButtonProps = {
 };
 
 const ButtonWrapper = ({ title, icon, onPress, disabled, color, fillColor }: MyButtonProps) => {
-  const jokerContext = useJokerContext();
   const soundContext = useSoundContext();
 
   const [dimensions, setDimensions] = useState<DimensionsType>({
@@ -35,12 +35,19 @@ const ButtonWrapper = ({ title, icon, onPress, disabled, color, fillColor }: MyB
     height: 0,
   });
   const [paths, setPaths] = useState<string[]>([]);
+  const borderRadiusRef = useRef<number>(Math.floor(Math.random() * 4 + 4));
 
   const [assets, error] = useAssets([require('../../../assets/backgrounds/wood.jpg')]);
 
+  const [loadedFonts] = useFonts({
+    Schoolbell: require('../../../assets/fonts/Schoolbell.ttf'),
+  });
+
+  const fontFamily = loadedFonts ? 'Schoolbell' : getDefaultFont();
+
   useEffect(() => {
     if (error) {
-      jokerContext.showError(`Error loading assets ${error}`);
+      console.error(`Error loading assets ${error}`);
     }
   }, [error]);
 
@@ -55,11 +62,9 @@ const ButtonWrapper = ({ title, icon, onPress, disabled, color, fillColor }: MyB
     color: color ? color : BACKGROUND_COLOR,
   };
 
-  const borderRadius = Math.floor(Math.random() * 4 + 4);
-
   return (
     <View
-      style={[styles.container, { borderRadius }]}
+      style={[styles.container, { borderRadius: borderRadiusRef.current }]}
       onLayout={(e) => {
         setDimensions({ width: e.nativeEvent.layout.width, height: e.nativeEvent.layout.height });
       }}
@@ -70,11 +75,7 @@ const ButtonWrapper = ({ title, icon, onPress, disabled, color, fillColor }: MyB
           soundContext.playSound('click');
           onPress();
         }}
-        style={[
-          styles.button,
-          icon ? styles.buttonWithIcon : styles.buttonWithoutIcon,
-          { opacity: disabled ? 0.5 : 1 },
-        ]}
+        style={[styles.button, icon ? styles.buttonWithIcon : styles.buttonWithoutIcon]}
         disabled={disabled}
       >
         {assets && assets.length && (
@@ -93,7 +94,15 @@ const ButtonWrapper = ({ title, icon, onPress, disabled, color, fillColor }: MyB
         <View style={styles.labelWrapper}>
           {icon && <FontAwesome size={30} name={icon} style={[styles.icon, textStyle]} />}
           <Text
-            style={[styles.label, icon ? styles.labelWithIcon : styles.labelWithoutIcon, textStyle]}
+            style={[
+              styles.label,
+              icon ? styles.labelWithIcon : styles.labelWithoutIcon,
+              textStyle,
+              {
+                fontFamily,
+                opacity: disabled ? 0.5 : 1,
+              },
+            ]}
           >
             {title}
           </Text>
@@ -106,6 +115,7 @@ const ButtonWrapper = ({ title, icon, onPress, disabled, color, fillColor }: MyB
 const styles = StyleSheet.create({
   container: {
     width: '100%',
+    backgroundColor: FALLBACK_BACKGROUND_COLOR,
     overflow: 'hidden',
   },
   button: {
@@ -139,7 +149,6 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   label: {
-    fontFamily: 'Schoolbell',
     lineHeight: BUTTON_HEIGHT,
     height: BUTTON_HEIGHT,
     fontSize: 20,
