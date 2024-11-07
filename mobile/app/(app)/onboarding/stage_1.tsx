@@ -10,16 +10,16 @@ export default function Onboarding() {
 
   return (
     <View style={styles.container}>
-      <TextWrapper>{t('onboarding.stage_1.title')}</TextWrapper>
+      <TextWrapper>{t('onboarding_stage_1_title')}</TextWrapper>
       <ButtonWrapper
-        title="proceed"
+        title={t('proceed')}
         onPress={() => {
           router.navigate('/onboarding/stage_2');
         }}
         fillColor="white"
       />
       <ButtonWrapper
-        title="skip onboarding"
+        title={t('onboarding_skip')}
         onPress={() => {
           router.replace('/swipe');
         }}
