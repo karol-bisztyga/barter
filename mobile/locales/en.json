@@ -65,5 +65,10 @@
   "error_unauthorized_access": "Unauthorized access",
   "error_no_file_name": "No file name",
   "error_no_file_type": "No file type",
-  "error_file_type_invalid": "Invalid file type"
+  "error_file_type_invalid": "Invalid file type",
+
+  "onboarding_skip": "Skip onboarding",
+  "onboarding_stage_1_title": "Onboarding not implemented yet stage 1...",
+  "onboarding_stage_2_title": "Onboarding not implemented yet stage 2...",
+  "onboarding_stage_3_title": "Onboarding not implemented yet stage 3..."
 }

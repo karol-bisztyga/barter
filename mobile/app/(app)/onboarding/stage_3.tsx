@@ -3,20 +3,23 @@ import { StyleSheet, View } from 'react-native';
 import { router } from 'expo-router';
 import ButtonWrapper from '../genericComponents/ButtonWrapper';
 import TextWrapper from '../genericComponents/TextWrapper';
+import { useTranslation } from 'react-i18next';
 
 export default function Onboarding() {
+  const { t } = useTranslation();
+
   return (
     <View style={styles.container}>
-      <TextWrapper>Onboarding not implemented yet stage 3...</TextWrapper>
+      <TextWrapper>{t('onboarding_stage_3_title')}</TextWrapper>
       <ButtonWrapper
-        title="proceed"
+        title={t('proceed')}
         onPress={() => {
           router.replace('/swipe');
         }}
         fillColor="white"
       />
       <ButtonWrapper
-        title="skip onboarding"
+        title={t('onboarding_skip')}
         onPress={() => {
           router.replace('/swipe');
         }}

@@ -10,6 +10,7 @@ import { LisIcon } from './icons';
 import { useSoundContext } from '../context/SoundContext';
 import { ErrorType, getMessageForErrorType } from './errorHandler';
 import { useTranslation } from 'react-i18next';
+import { useUserContext } from '../context/UserContext';
 
 export const headerBackButtonOptions = (
   beforeCallback?: () => Promise<boolean>,
@@ -53,9 +54,10 @@ export const headerBackButtonOptions = (
 export const useAuth = () => {
   const sessionContext = useSessionContext();
   const { t } = useTranslation();
+  const userContext = useUserContext();
 
   useEffect(() => {
-    if (!sessionContext.session) {
+    if (!sessionContext.session || !userContext.data) {
       sessionContext.setAuthError(getMessageForErrorType(t, ErrorType.UNAUTHORIZED_ACCESS));
       sessionContext.signOut();
       router.replace('/login');
