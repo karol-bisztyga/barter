@@ -15,19 +15,13 @@ const InputWrapper = React.forwardRef<TextInput, InputWrapperProps>(({ ...props 
   const [dimensions, setDimensions] = useState<DimensionsType | null>(null);
   const [paths, setPaths] = useState<string[]>([]);
 
-  const [assets, error] = useAssets([require('../../../assets/backgrounds/paper.jpg')]);
+  const [assets] = useAssets([require('../../../assets/backgrounds/paper.jpg')]);
 
   const [loadedFonts] = useFonts({
     Schoolbell: require('../../../assets/fonts/Schoolbell.ttf'),
   });
 
   const fontFamily = loadedFonts ? 'Schoolbell' : getDefaultFont();
-
-  useEffect(() => {
-    if (error) {
-      console.error(`Error loading assets ${error}`);
-    }
-  }, [error]);
 
   useEffect(() => {
     if (!dimensions || (!dimensions.height && !dimensions.width) || paths.length) {
@@ -73,6 +67,7 @@ const styles = StyleSheet.create({
     flex: 1,
     width: '100%',
     height: '100%',
+    backgroundColor: '#ce9e68',
   },
   background: {
     flex: 1,
