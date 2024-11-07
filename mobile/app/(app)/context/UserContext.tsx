@@ -3,6 +3,7 @@ import { ItemData, UserData } from '../types';
 import * as SecureStore from 'expo-secure-store';
 import { STORAGE_SESSION_KEY } from '../../constants';
 import { useSessionContext } from '../../SessionContext';
+import { useTranslation } from 'react-i18next';
 
 interface UserContextState {
   data: UserData | null;
@@ -45,6 +46,8 @@ export const useUserContext = () => {
 };
 
 export const UserContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const { t } = useTranslation();
+
   const [data, setData] = useState<UserData | null>(null);
   const [items, setItems] = useState<Array<ItemData>>([]);
   const [swipingLeftRightBlockedReason, setSwipingLeftRightBlockedReason] = useState<string | null>(
@@ -55,9 +58,7 @@ export const UserContextProvider: FC<{ children: ReactNode }> = ({ children }) =
 
   useEffect(() => {
     if (!items.length) {
-      setSwipingLeftRightBlockedReason(
-        'You have no items, you will be able to swipe when you have at least one item'
-      );
+      setSwipingLeftRightBlockedReason(t('swiping_left_right_reason'));
     } else {
       setSwipingLeftRightBlockedReason(null);
     }

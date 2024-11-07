@@ -70,5 +70,7 @@
   "onboarding_skip": "Skip onboarding",
   "onboarding_stage_1_title": "Onboarding not implemented yet stage 1...",
   "onboarding_stage_2_title": "Onboarding not implemented yet stage 2...",
-  "onboarding_stage_3_title": "Onboarding not implemented yet stage 3..."
+  "onboarding_stage_3_title": "Onboarding not implemented yet stage 3...",
+
+  "swiping_left_right_reason": "You have no items, you will be able to swipe when you have at least one item"
 }
