@@ -8,7 +8,6 @@ import { ItemData } from '../../types';
 import { useItemsContext } from '../../context/ItemsContext';
 import { useUserContext } from '../../context/UserContext';
 import { getUserItems } from '../../db_utils/getUserItems';
-import { useAuth } from '../../utils/reusableStuff';
 import { getItemsForCards } from '../../db_utils/getItemsForCards';
 import { addLike } from '../../db_utils/addLike';
 import { ErrorType, handleError } from '../../utils/errorHandler';
@@ -18,12 +17,15 @@ import Background from '../../components/Background';
 import { useSoundContext } from '../../context/SoundContext';
 import Reload from './components/Reload';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../../hooks/useAuth';
 
 const LOADED_ITEMS_CAPACITY = 5;
 // when there are less items loaded than this value, new items will be fetched
 const ITEMS_LOAD_TRESHOLD = 3;
 
 export default function Swipe() {
+  const { t } = useTranslation();
+
   const sessionContext = useAuth();
   const soundContext = useSoundContext();
 
@@ -37,18 +39,6 @@ export default function Swipe() {
 
   const itemsContext = useItemsContext();
   const userContext = useUserContext();
-
-  const { t, i18n } = useTranslation();
-
-  useEffect(() => {
-    // todo remove this and replace strings in the app with translations
-    i18n.changeLanguage('en');
-    console.log('here', t('welcome'));
-    console.log('here2', t('greeting', { name: 'siema123' }));
-    i18n.changeLanguage('pl');
-    console.log('here', t('welcome'));
-    console.log('here2', t('greeting', { name: 'siema123' }));
-  }, []);
 
   // onboarding
   useEffect(() => {

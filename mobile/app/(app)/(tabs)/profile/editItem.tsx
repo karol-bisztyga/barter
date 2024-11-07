@@ -19,7 +19,7 @@ import {
 import { router } from 'expo-router';
 import { useUserContext } from '../../context/UserContext';
 import { useEditItemContext } from '../../context/EditItemContext';
-import { useAuth, updateMatches } from '../../utils/reusableStuff';
+import { updateMatches } from '../../utils/reusableStuff';
 import { updateItem } from '../../db_utils/updateItem';
 import { addItem } from '../../db_utils/addItem';
 import { removeItem } from '../../db_utils/removeItem';
@@ -36,6 +36,7 @@ import { useJokerContext } from '../../context/JokerContext';
 import { FILL_COLOR } from './components/items/editing_panels/constants';
 import { TorchIcon } from '../../utils/icons';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../../hooks/useAuth';
 
 const { width } = Dimensions.get('window');
 

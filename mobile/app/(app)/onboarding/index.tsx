@@ -1,6 +1,6 @@
 import React from 'react';
 import { Redirect } from 'expo-router';
-import { useAuth } from '../utils/reusableStuff';
+import { useAuth } from '../hooks/useAuth';
 
 export default function Onboarding() {
   useAuth();

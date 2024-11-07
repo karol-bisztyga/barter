@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Tabs } from 'expo-router';
-import { useAuth, updateMatches } from '../utils/reusableStuff';
+import { updateMatches } from '../utils/reusableStuff';
 import { useMatchContext } from '../context/MatchContext';
 import { ErrorType, handleError } from '../utils/errorHandler';
 import { FONT_COLOR, SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY } from '../constants';
@@ -16,6 +16,7 @@ import { useJokerContext } from '../context/JokerContext';
 import { useSoundContext } from '../context/SoundContext';
 import { AddPictureContextProvider } from '../context/AddPictureContext';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../hooks/useAuth';
 
 const getTabNameFromEvent = (eventName?: string): string | undefined => eventName?.split('-')[0];
 

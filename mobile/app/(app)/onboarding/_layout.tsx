@@ -1,7 +1,7 @@
 import React from 'react';
 import { Stack } from 'expo-router';
-import { useAuth } from '../utils/reusableStuff';
 import { BACKGROUND_COLOR } from '../constants';
+import { useAuth } from '../hooks/useAuth';
 
 export default function Layout() {
   useAuth();

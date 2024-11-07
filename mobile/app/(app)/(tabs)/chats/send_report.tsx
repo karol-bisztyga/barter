@@ -3,12 +3,12 @@ import { router } from 'expo-router';
 import { useItemsContext } from '../../context/ItemsContext';
 import { StyleSheet, View } from 'react-native';
 import { addReport } from '../../db_utils/addReport';
-import { useAuth } from '../../utils/reusableStuff';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 import InputWrapper from '../../genericComponents/InputWrapper';
 import { useJokerContext } from '../../context/JokerContext';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../../hooks/useAuth';
 
 const SendReportModal = () => {
   const { t } = useTranslation();

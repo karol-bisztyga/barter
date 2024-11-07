@@ -16,7 +16,6 @@ import ChatHeader from './components/ChatHeader';
 import { useItemsContext } from '../../context/ItemsContext';
 import io, { Socket } from 'socket.io-client';
 import { DefaultEventsMap } from '@socket.io/component-emitter';
-import { useAuth } from '../../utils/reusableStuff';
 import { useUserContext } from '../../context/UserContext';
 import { executeProtectedQuery } from '../../db_utils/executeProtectedQuery';
 import { getServerAddress } from '../../utils/networkUtils';
@@ -27,6 +26,7 @@ import InputWrapper from '../../genericComponents/InputWrapper';
 import { useJokerContext } from '../../context/JokerContext';
 import { FILL_COLOR } from '../profile/components/items/editing_panels/constants';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../../hooks/useAuth';
 
 const INPUT_WRAPPER_HEIGHT = 70;
 const ITEMS_WRPPER_HEIGHT = 200;

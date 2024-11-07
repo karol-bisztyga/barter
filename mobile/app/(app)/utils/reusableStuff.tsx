@@ -1,16 +1,13 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
-import { SessionContextState, useSessionContext } from '../../SessionContext';
+import { SessionContextState } from '../../SessionContext';
 import { getUserMatches } from '../db_utils/getUserMatches';
 import { MatchContextState } from '../context/MatchContext';
 import { XMLParser } from 'fast-xml-parser';
 import { UserData } from '../types';
 import { LisIcon } from './icons';
 import { useSoundContext } from '../context/SoundContext';
-import { ErrorType, getMessageForErrorType } from './errorHandler';
-import { useTranslation } from 'react-i18next';
-import { useUserContext } from '../context/UserContext';
 
 export const headerBackButtonOptions = (
   beforeCallback?: () => Promise<boolean>,
@@ -49,22 +46,6 @@ export const headerBackButtonOptions = (
       </TouchableOpacity>
     ),
   };
-};
-
-export const useAuth = () => {
-  const sessionContext = useSessionContext();
-  const { t } = useTranslation();
-  const userContext = useUserContext();
-
-  useEffect(() => {
-    if (!sessionContext.session || !userContext.data) {
-      sessionContext.setAuthError(getMessageForErrorType(t, ErrorType.UNAUTHORIZED_ACCESS));
-      sessionContext.signOut();
-      router.replace('/login');
-    }
-  }, []);
-
-  return sessionContext;
 };
 
 export const updateMatches = async (

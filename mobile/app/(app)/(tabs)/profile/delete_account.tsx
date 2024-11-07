@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { useAuth } from '../../utils/reusableStuff';
 import { router } from 'expo-router';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import { useUserContext } from '../../context/UserContext';
@@ -9,8 +8,12 @@ import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 import InputWrapper from '../../genericComponents/InputWrapper';
 import TextWrapper from '../../genericComponents/TextWrapper';
 import { useJokerContext } from '../../context/JokerContext';
+import { useAuth } from '../../hooks/useAuth';
+import { useTranslation } from 'react-i18next';
 
 export default function DeleteAccount() {
+  const { t } = useTranslation();
+
   const sessionContext = useAuth();
   const userContext = useUserContext();
   const jokerContext = useJokerContext();
@@ -25,7 +28,7 @@ export default function DeleteAccount() {
       sessionContext.signOut();
       jokerContext.showSuccess('Account deleted');
     } catch (e) {
-      handleError(jokerContext, ErrorType.DELETE_ACCOUNT, `${e}`);
+      handleError(t, jokerContext, ErrorType.DELETE_ACCOUNT, `${e}`);
     } finally {
       userContext.setBlockingLoading(false);
     }

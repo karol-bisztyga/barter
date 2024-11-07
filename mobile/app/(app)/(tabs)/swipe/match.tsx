@@ -5,7 +5,6 @@ import { ItemData } from '../../types';
 import { useItemsContext } from '../../context/ItemsContext';
 import { useUserContext } from '../../context/UserContext';
 import { updateMatchMatchingItem } from '../../db_utils/updateMatchMatchingItem';
-import { useAuth } from '../../utils/reusableStuff';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 import TextWrapper from '../../genericComponents/TextWrapper';
@@ -15,6 +14,7 @@ import { FILL_COLOR } from '../profile/components/items/editing_panels/constants
 import { SWIPE_BASE_BACKGROUND_COLOR } from '../../constants';
 import { hexToRgbaString } from '../../utils/harmonicColors';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../../hooks/useAuth';
 
 const { width } = Dimensions.get('window');
 
