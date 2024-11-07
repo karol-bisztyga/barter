@@ -16,8 +16,8 @@ export default function Register() {
     <View style={styles.container}>
       <Background tile="sword" />
       <View style={styles.labelsWrapper}>
-        <TextWrapper style={styles.label}>{t('register_successful.title')}</TextWrapper>
-        <TextWrapper style={styles.label}>{t('register_successful.subtitle')}</TextWrapper>
+        <TextWrapper style={styles.label}>{t('register_successful_title')}</TextWrapper>
+        <TextWrapper style={styles.label}>{t('register_successful_subtitle')}</TextWrapper>
       </View>
       <ButtonWrapper
         title={t('proceed')}

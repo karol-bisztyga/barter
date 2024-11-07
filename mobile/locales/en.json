@@ -17,13 +17,13 @@
   "token_missing": "Token is missing",
   "login_error": "Login error, {{ error }}",
 
-  "register_successful.title": "Registered successfully!",
-  "register_successful.subtitle": "Please check your email for the verification code :)",
+  "register_successful_title": "Registered successfully!",
+  "register_successful_subtitle": "Please check your email for the verification code :)",
 
-  "verify_account.title": "You need to verify your account",
-  "verify_account.subtitle1": "Please check your email for the verification code and enter it below",
-  "verify_account.subtitle2": "Thank you",
-  "verify_account.code": "Verification code",
+  "verify_account_title": "You need to verify your account",
+  "verify_account_subtitle_1": "Please check your email for the verification code and enter it below",
+  "verify_account_subtitle_2": "Thank you",
+  "verify_account_code": "Verification code",
 
   "error_sign_in": "Error signing in",
   "error_register": "Error registering",

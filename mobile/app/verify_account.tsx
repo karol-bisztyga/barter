@@ -78,14 +78,14 @@ export default function Register() {
       ) : (
         <>
           <View style={styles.labelsWrapper}>
-            <TextWrapper style={styles.label}>{t('verify_account.title')}</TextWrapper>
-            <TextWrapper style={styles.label}>{t('verify_account.subtitle1')}</TextWrapper>
-            <TextWrapper style={styles.label}>{t('verify_account.subtitle2')}</TextWrapper>
+            <TextWrapper style={styles.label}>{t('verify_account_title')}</TextWrapper>
+            <TextWrapper style={styles.label}>{t('verify_account_subtitle_1')}</TextWrapper>
+            <TextWrapper style={styles.label}>{t('verify_account_subtitle_2')}</TextWrapper>
           </View>
           <View>
             <View style={styles.inputWrapper}>
               <InputWrapper
-                placeholder={t('verify_account.code')}
+                placeholder={t('verify_account_code')}
                 value={verificationCode}
                 onChangeText={setVerificationCode}
                 fillColor={SECTION_BACKGROUND}
