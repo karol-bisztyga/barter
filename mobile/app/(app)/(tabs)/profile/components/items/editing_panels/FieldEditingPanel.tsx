@@ -16,6 +16,7 @@ import Animated, {
 import ButtonWrapper, { BUTTON_HEIGHT } from '../../../../../genericComponents/ButtonWrapper';
 import { useJokerContext } from '../../../../../context/JokerContext';
 import { EDITING_PANEL_HEIGHT, SECTION_BACKGROUND } from './constants';
+import { useTranslation } from 'react-i18next';
 
 export type FieldEditingPanelProps = {
   name: string;
@@ -36,6 +37,8 @@ const FieldEditingPanel = ({
   setValue,
   setEditingId,
 }: FieldEditingPanelProps) => {
+  const { t } = useTranslation();
+
   const sessionContext = useSessionContext();
   const userContext = useUserContext();
   const jokerContext = useJokerContext();
@@ -71,7 +74,7 @@ const FieldEditingPanel = ({
       setEditingId('');
       jokerContext.showSuccess(`${name} updated`);
     } catch (e) {
-      handleError(jokerContext, ErrorType.UPDATE_USER, `${e}`);
+      handleError(t, jokerContext, ErrorType.UPDATE_USER, `${e}`);
     } finally {
       userContext.setBlockingLoading(false);
     }

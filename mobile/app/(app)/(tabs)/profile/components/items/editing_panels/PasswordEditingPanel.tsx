@@ -16,6 +16,7 @@ import { validatePassword } from '../../../../../utils/validators';
 import { changePassword } from '../../../../../db_utils/changePassword';
 import { useJokerContext } from '../../../../../context/JokerContext';
 import { EDITING_PANEL_HEIGHT, SECTION_BACKGROUND } from './constants';
+import { useTranslation } from 'react-i18next';
 
 const HEIGHT = EDITING_PANEL_HEIGHT * 2.5;
 
@@ -25,6 +26,8 @@ export type FieldEditingPanelProps = {
 };
 
 const FieldEditingPanel = ({ editing, setEditingId }: FieldEditingPanelProps) => {
+  const { t } = useTranslation();
+
   const sessionContext = useSessionContext();
   const userContext = useUserContext();
   const [currentPassword, setCurrentPassword] = useState('');
@@ -54,7 +57,7 @@ const FieldEditingPanel = ({ editing, setEditingId }: FieldEditingPanelProps) =>
       jokerContext.showSuccess('password changed');
       setEditingId('');
     } catch (e) {
-      handleError(jokerContext, ErrorType.CHANGE_PASSWORD, `${e}`); // todo this alert hides behind the modal on ios
+      handleError(t, jokerContext, ErrorType.CHANGE_PASSWORD, `${e}`); // todo this alert hides behind the modal on ios
     }
     userContext.setBlockingLoading(false);
   };

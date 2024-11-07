@@ -89,19 +89,12 @@ const sampleUsers = [
   },
 ];
 
-const SingInForm = ({
-  loading,
-  error,
-  setError,
-}: {
-  loading: boolean;
-  error: string;
-  setError: (_: string) => void;
-}) => {
+const SingInForm = ({ loading }: { loading: boolean }) => {
   const { t } = useTranslation();
 
   const { signIn } = useSessionContext();
   const userContext = useUserContext();
+  const sessionContext = useSessionContext();
 
   // todo remove default values
   const [email, setEmail] = useState('');
@@ -125,7 +118,7 @@ const SingInForm = ({
       userContext.setData({ ...userData });
       router.replace('/');
     } catch (e) {
-      setError(`${e}`);
+      sessionContext.setAuthError(`${e}`);
     }
   };
 
@@ -157,10 +150,10 @@ const SingInForm = ({
           fillColor={SECTION_BACKGROUND}
         />
       </View>
-      {error && (
+      {sessionContext.authError && (
         <View style={styles.errorWrapper}>
-          <TextWrapper key={error} style={styles.errorText}>
-            {error}
+          <TextWrapper key={sessionContext.authError} style={styles.errorText}>
+            {sessionContext.authError}
           </TextWrapper>
         </View>
       )}
@@ -213,7 +206,6 @@ export default function Login() {
   const sessionContext = useSessionContext();
   const [checkingSession, setCheckingSession] = useState(true);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     if (checkingSession) {
@@ -237,7 +229,7 @@ export default function Login() {
       }
       setCheckingSession(false);
     } catch (e) {
-      setError('session seemed to be malformed, please log in again');
+      sessionContext.setAuthError('session seemed to be malformed, please log in again');
     }
   }, []);
 
@@ -248,7 +240,7 @@ export default function Login() {
     <View style={styles.container}>
       <Background tile="sword" />
       {loading && <Loader />}
-      <SingInForm loading={loading} error={error} setError={setError} />
+      <SingInForm loading={loading} />
       {/* todo add language choose here */}
     </View>
   );

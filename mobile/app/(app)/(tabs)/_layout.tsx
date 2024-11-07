@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Tabs } from 'expo-router';
-import { authorizeUser, updateMatches } from '../utils/reusableStuff';
+import { useAuth, updateMatches } from '../utils/reusableStuff';
 import { useMatchContext } from '../context/MatchContext';
 import { ErrorType, handleError } from '../utils/errorHandler';
 import { FONT_COLOR, SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY } from '../constants';
@@ -15,11 +15,14 @@ import {
 import { useJokerContext } from '../context/JokerContext';
 import { useSoundContext } from '../context/SoundContext';
 import { AddPictureContextProvider } from '../context/AddPictureContext';
+import { useTranslation } from 'react-i18next';
 
 const getTabNameFromEvent = (eventName?: string): string | undefined => eventName?.split('-')[0];
 
 export default function TabLayout() {
-  const sessionContext = authorizeUser();
+  const { t } = useTranslation();
+
+  const sessionContext = useAuth();
   const matchContext = useMatchContext();
   const jokerContext = useJokerContext();
   const soundContext = useSoundContext();
@@ -64,7 +67,7 @@ export default function TabLayout() {
                   try {
                     await updateMatches(sessionContext, matchContext);
                   } catch (e) {
-                    handleError(jokerContext, ErrorType.UPDATE_MATCHES, `${e}`);
+                    handleError(t, jokerContext, ErrorType.UPDATE_MATCHES, `${e}`);
                   }
                 })();
                 break;
@@ -72,7 +75,7 @@ export default function TabLayout() {
                 soundContext.playSound('click');
                 break;
               default:
-                handleError(jokerContext, ErrorType.UNKNOWN_ROUTE, `${e}`, '', false);
+                handleError(t, jokerContext, ErrorType.UNKNOWN_ROUTE, `${e}`, '', false);
             }
           },
         }}

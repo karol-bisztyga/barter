@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, FC, useContext } from 'react';
+import React, { createContext, ReactNode, FC, useContext, useState } from 'react';
 import { useStorageState } from './storageState';
 import { executeQuery } from './(app)/db_utils/executeQuery';
 import { UserData } from './(app)/types';
@@ -15,6 +15,9 @@ export interface SessionContextState {
   setSession: (newSession: string | null) => void;
   setSessionWithStorage: (newSession?: string, userData?: UserData) => void;
   isLoading: boolean;
+
+  authError: string;
+  setAuthError: (error: string) => void;
 }
 
 const initialState: SessionContextState = {
@@ -25,6 +28,9 @@ const initialState: SessionContextState = {
   setSession: () => null,
   setSessionWithStorage: () => null,
   isLoading: false,
+
+  authError: '',
+  setAuthError: () => null,
 };
 
 export const SessionContext = createContext<SessionContextState | null>(initialState);
@@ -42,6 +48,7 @@ export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }
 
   const soundContext = useSoundContext();
   const [[isLoading, session], setSession] = useStorageState('session');
+  const [authError, setAuthError] = useState('');
 
   const setSessionWithStorage = (newSession?: string, userData?: UserData) => {
     const userDataStr = JSON.stringify(userData || {});
@@ -54,6 +61,7 @@ export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }
   };
 
   const signIn = async (email: string, password: string) => {
+    setAuthError('');
     if (!email) {
       throw new Error(t('email_missing'));
     }
@@ -84,7 +92,16 @@ export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }
 
   return (
     <SessionContext.Provider
-      value={{ session, setSession, setSessionWithStorage, isLoading, signIn, signOut }}
+      value={{
+        session,
+        setSession,
+        setSessionWithStorage,
+        isLoading,
+        signIn,
+        signOut,
+        authError,
+        setAuthError,
+      }}
     >
       {children}
     </SessionContext.Provider>

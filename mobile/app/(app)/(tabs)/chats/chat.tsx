@@ -16,7 +16,7 @@ import ChatHeader from './components/ChatHeader';
 import { useItemsContext } from '../../context/ItemsContext';
 import io, { Socket } from 'socket.io-client';
 import { DefaultEventsMap } from '@socket.io/component-emitter';
-import { authorizeUser } from '../../utils/reusableStuff';
+import { useAuth } from '../../utils/reusableStuff';
 import { useUserContext } from '../../context/UserContext';
 import { executeProtectedQuery } from '../../db_utils/executeProtectedQuery';
 import { getServerAddress } from '../../utils/networkUtils';
@@ -26,6 +26,7 @@ import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 import InputWrapper from '../../genericComponents/InputWrapper';
 import { useJokerContext } from '../../context/JokerContext';
 import { FILL_COLOR } from '../profile/components/items/editing_panels/constants';
+import { useTranslation } from 'react-i18next';
 
 const INPUT_WRAPPER_HEIGHT = 70;
 const ITEMS_WRPPER_HEIGHT = 200;
@@ -35,7 +36,9 @@ const NO_MORE_MESSAGES_LABEL = 'No more messages';
 const NO_MESSAGES_YET_LABEL = 'No messages yet';
 
 const Chat = () => {
-  const sessionContext = authorizeUser();
+  const { t } = useTranslation();
+
+  const sessionContext = useAuth();
   const jokerContext = useJokerContext();
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
@@ -75,7 +78,7 @@ const Chat = () => {
         throw new Error(`match not specified`);
       }
     } catch (e) {
-      handleError(jokerContext, ErrorType.CHAT_INITIALIZE, `${e}`, `${e}`);
+      handleError(t, jokerContext, ErrorType.CHAT_INITIALIZE, `${e}`, `${e}`);
     }
     router.back();
     return null;
@@ -139,7 +142,7 @@ const Chat = () => {
         matchContext.setMatches(matchContext.matches.filter((m) => m.id !== currentMatchId));
         router.back();
       }
-      handleError(jokerContext, ErrorType.SOCKET, `${e}`, `${customMessage}`);
+      handleError(t, jokerContext, ErrorType.SOCKET, `${e}`, `${customMessage}`);
     });
 
     return () => {
@@ -175,7 +178,7 @@ const Chat = () => {
       }
       setMessages([...messages, ...newMessages]);
     } catch (e) {
-      handleError(jokerContext, ErrorType.LOAD_MESSAGES, `${e}`);
+      handleError(t, jokerContext, ErrorType.LOAD_MESSAGES, `${e}`);
     }
   };
 
@@ -184,7 +187,7 @@ const Chat = () => {
       return;
     }
     if (!socket) {
-      handleError(jokerContext, ErrorType.SOCKET, 'trying to use uninitialized socket');
+      handleError(t, jokerContext, ErrorType.SOCKET, 'trying to use uninitialized socket');
       return;
     }
     const newMessageObject: ChatMessage = {

@@ -3,14 +3,17 @@ import { router } from 'expo-router';
 import { useItemsContext } from '../../context/ItemsContext';
 import { StyleSheet, View } from 'react-native';
 import { addReport } from '../../db_utils/addReport';
-import { authorizeUser } from '../../utils/reusableStuff';
+import { useAuth } from '../../utils/reusableStuff';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 import InputWrapper from '../../genericComponents/InputWrapper';
 import { useJokerContext } from '../../context/JokerContext';
+import { useTranslation } from 'react-i18next';
 
 const SendReportModal = () => {
-  const sessionContext = authorizeUser();
+  const { t } = useTranslation();
+
+  const sessionContext = useAuth();
   const itemsContext = useItemsContext();
   const jokerContext = useJokerContext();
 
@@ -25,7 +28,7 @@ const SendReportModal = () => {
       jokerContext.showSuccess('Report sent');
       router.back();
     } catch (e) {
-      handleError(jokerContext, ErrorType.SEND_REPORT, `${e}`);
+      handleError(t, jokerContext, ErrorType.SEND_REPORT, `${e}`);
     }
   };
 

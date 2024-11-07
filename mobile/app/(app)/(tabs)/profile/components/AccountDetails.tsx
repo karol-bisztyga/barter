@@ -8,6 +8,7 @@ import { router } from 'expo-router';
 import EditableItem, { EditingPanelType } from './items/EditableItem';
 import { useJokerContext } from '../../../context/JokerContext';
 import { SECTION_BACKGROUND } from './items/editing_panels/constants';
+import { useTranslation } from 'react-i18next';
 
 const AccountDetails = ({
   editingId,
@@ -16,6 +17,8 @@ const AccountDetails = ({
   editingId: string;
   setEditingId: React.Dispatch<React.SetStateAction<string>>;
 }) => {
+  const { t } = useTranslation();
+
   const userContext = useUserContext();
   const jokerContext = useJokerContext();
 
@@ -23,6 +26,7 @@ const AccountDetails = ({
 
   if (!data) {
     handleError(
+      t,
       jokerContext,
       ErrorType.CORRUPTED_SESSION,
       'your session seems to be corrupted (personal data is missing), you may want to restart the app or log in again'

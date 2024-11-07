@@ -19,7 +19,7 @@ import {
 import { router } from 'expo-router';
 import { useUserContext } from '../../context/UserContext';
 import { useEditItemContext } from '../../context/EditItemContext';
-import { authorizeUser, updateMatches } from '../../utils/reusableStuff';
+import { useAuth, updateMatches } from '../../utils/reusableStuff';
 import { updateItem } from '../../db_utils/updateItem';
 import { addItem } from '../../db_utils/addItem';
 import { removeItem } from '../../db_utils/removeItem';
@@ -35,6 +35,7 @@ import TextWrapper from '../../genericComponents/TextWrapper';
 import { useJokerContext } from '../../context/JokerContext';
 import { FILL_COLOR } from './components/items/editing_panels/constants';
 import { TorchIcon } from '../../utils/icons';
+import { useTranslation } from 'react-i18next';
 
 const { width } = Dimensions.get('window');
 
@@ -42,7 +43,9 @@ const IMAGE_SIZE = (width * 3) / 4;
 const REMOVE_IMAGE_ICON_SIZE = 50;
 
 const EditItem = () => {
-  const sessionContext = authorizeUser();
+  const { t } = useTranslation();
+
+  const sessionContext = useAuth();
   const matchContext = useMatchContext();
 
   const { usersItemId } = useItemsContext();
@@ -87,7 +90,11 @@ const EditItem = () => {
 
         setUploadingImage(true);
 
-        const { fileName, fileMimeType, fileContent } = await prepareFileToUpload(imageUri);
+        const prepareFileResult = await prepareFileToUpload(t, jokerContext, imageUri);
+        if (!prepareFileResult) {
+          throw new Error('could not prepare file');
+        }
+        const { fileName, fileMimeType, fileContent } = prepareFileResult;
 
         const response = await uploadItemImage(
           sessionContext,
@@ -111,7 +118,7 @@ const EditItem = () => {
           })
         );
       } catch (e) {
-        handleError(jokerContext, ErrorType.UPLOAD_IMAGE, `${e}`);
+        handleError(t, jokerContext, ErrorType.UPLOAD_IMAGE, `${e}`);
       } finally {
         setUploadingImage(false);
       }
@@ -223,7 +230,7 @@ const EditItem = () => {
         })
       );
     } catch (e) {
-      handleError(jokerContext, ErrorType.REMOVE_IMAGE, `${e}`);
+      handleError(t, jokerContext, ErrorType.REMOVE_IMAGE, `${e}`);
       setRemovingImage(null);
     }
   };
@@ -248,9 +255,9 @@ const EditItem = () => {
       router.back();
     } catch (e) {
       if (action === 'updating') {
-        handleError(jokerContext, ErrorType.UPDATE_ITEM, `${e}`);
+        handleError(t, jokerContext, ErrorType.UPDATE_ITEM, `${e}`);
       } else if (action === 'adding') {
-        handleError(jokerContext, ErrorType.ADD_ITEM, `${e}`);
+        handleError(t, jokerContext, ErrorType.ADD_ITEM, `${e}`);
       }
     } finally {
       setUpdatingItemData(false);
@@ -297,7 +304,7 @@ const EditItem = () => {
           throw new Error('server error');
         }
       } catch (e) {
-        handleError(jokerContext, ErrorType.REMOVE_ITEM, `${e}`);
+        handleError(t, jokerContext, ErrorType.REMOVE_ITEM, `${e}`);
         return;
       } finally {
         setRemovingUtem(false);

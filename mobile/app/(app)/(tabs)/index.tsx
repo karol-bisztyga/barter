@@ -1,10 +1,10 @@
 import { Redirect } from 'expo-router';
 import React from 'react';
 import { useUserContext } from '../context/UserContext';
-import { authorizeUser } from '../utils/reusableStuff';
+import { useAuth } from '../utils/reusableStuff';
 
 export default function Index() {
-  authorizeUser();
+  useAuth();
   const userContext = useUserContext();
   const userData = userContext.data;
   if (!userData) {

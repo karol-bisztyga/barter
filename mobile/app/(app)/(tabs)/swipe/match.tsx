@@ -5,7 +5,7 @@ import { ItemData } from '../../types';
 import { useItemsContext } from '../../context/ItemsContext';
 import { useUserContext } from '../../context/UserContext';
 import { updateMatchMatchingItem } from '../../db_utils/updateMatchMatchingItem';
-import { authorizeUser } from '../../utils/reusableStuff';
+import { useAuth } from '../../utils/reusableStuff';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 import TextWrapper from '../../genericComponents/TextWrapper';
@@ -14,11 +14,14 @@ import Background from '../../components/Background';
 import { FILL_COLOR } from '../profile/components/items/editing_panels/constants';
 import { SWIPE_BASE_BACKGROUND_COLOR } from '../../constants';
 import { hexToRgbaString } from '../../utils/harmonicColors';
+import { useTranslation } from 'react-i18next';
 
 const { width } = Dimensions.get('window');
 
 const Match = () => {
-  const sessionContext = authorizeUser();
+  const { t } = useTranslation();
+
+  const sessionContext = useAuth();
   const userContext = useUserContext();
   const itemsContext = useItemsContext();
   const jokerContext = useJokerContext();
@@ -27,6 +30,7 @@ const Match = () => {
 
   if (!usersItemId || !usersItemsLikedByTargetItemOwner.length || !othersItem) {
     handleError(
+      t,
       jokerContext,
       ErrorType.CORRUPTED_SESSION,
       `Match screen did not receive all required data: [${!!itemsContext.usersItemId}][${!!itemsContext.usersItemsLikedByTargetItemOwner.length}][${!!itemsContext.othersItem}]`
@@ -39,6 +43,7 @@ const Match = () => {
 
   if (!othersItem || !usersItem) {
     handleError(
+      t,
       jokerContext,
       ErrorType.CORRUPTED_SESSION,
       `at least on of the items has not been set`
@@ -103,7 +108,7 @@ const Match = () => {
                       othersItem.id
                     );
                   } catch (e) {
-                    handleError(jokerContext, ErrorType.UPDATE_MATCH, `${e}`);
+                    handleError(t, jokerContext, ErrorType.UPDATE_MATCH, `${e}`);
                     return;
                   }
                 }

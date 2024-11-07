@@ -12,10 +12,13 @@ import TextWrapper from '../../genericComponents/TextWrapper';
 import ChatItem from './components/ChatItem';
 import { useJokerContext } from '../../context/JokerContext';
 import { useSoundContext } from '../../context/SoundContext';
+import { useTranslation } from 'react-i18next';
 
 const ITEMS_PER_SCREEN = 4;
 
 export default function Chats() {
+  const { t } = useTranslation();
+
   const itemsContext = useItemsContext();
   const userContext = useUserContext();
   const matchContext = useMatchContext();
@@ -95,7 +98,7 @@ export default function Chats() {
                 throw new Error(`neither matching nor matched item has been found in user's items`);
               }
             } catch (e) {
-              handleError(jokerContext, ErrorType.LOAD_MATCHES, `${e}`);
+              handleError(t, jokerContext, ErrorType.LOAD_MATCHES, `${e}`);
               return null;
             }
             return (

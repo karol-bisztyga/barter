@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, View } from 'react-native';
-import { authorizeUser } from '../../utils/reusableStuff';
+import { useAuth } from '../../utils/reusableStuff';
 import { router } from 'expo-router';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import { useUserContext } from '../../context/UserContext';
@@ -11,7 +11,7 @@ import TextWrapper from '../../genericComponents/TextWrapper';
 import { useJokerContext } from '../../context/JokerContext';
 
 export default function DeleteAccount() {
-  const sessionContext = authorizeUser();
+  const sessionContext = useAuth();
   const userContext = useUserContext();
   const jokerContext = useJokerContext();
 

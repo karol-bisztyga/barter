@@ -18,6 +18,7 @@ import { cityNameFromLocation, sleep } from '../../../../../utils/reusableStuff'
 import { FieldEditingPanelProps } from './FieldEditingPanel';
 import { useJokerContext } from '../../../../../context/JokerContext';
 import { EDITING_PANEL_HEIGHT, SECTION_BACKGROUND } from './constants';
+import { useTranslation } from 'react-i18next';
 
 const LocationEditingPanel = ({
   initialValue,
@@ -27,6 +28,8 @@ const LocationEditingPanel = ({
   setValue,
   setEditingId,
 }: FieldEditingPanelProps) => {
+  const { t } = useTranslation();
+
   const sessionContext = useSessionContext();
   const userContext = useUserContext();
   const jokerContext = useJokerContext();
@@ -61,7 +64,7 @@ const LocationEditingPanel = ({
 
       return await Location.getCurrentPositionAsync({});
     } catch (e) {
-      handleError(jokerContext, ErrorType.GET_LOCATION, `${e}`);
+      handleError(t, jokerContext, ErrorType.GET_LOCATION, `${e}`);
     }
   };
 
@@ -100,7 +103,7 @@ const LocationEditingPanel = ({
 
       jokerContext.showSuccess(jokerMessage);
     } catch (e) {
-      handleError(jokerContext, ErrorType.UPDATE_USER, `${e}`);
+      handleError(t, jokerContext, ErrorType.UPDATE_USER, `${e}`);
     } finally {
       userContext.setBlockingLoading(false);
     }

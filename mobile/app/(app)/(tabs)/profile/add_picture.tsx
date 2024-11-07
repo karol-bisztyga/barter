@@ -26,6 +26,7 @@ import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 import TextWrapper from '../../genericComponents/TextWrapper';
 import { useJokerContext } from '../../context/JokerContext';
 import { BarrelIcon, Feather2Icon } from '../../utils/icons';
+import { useTranslation } from 'react-i18next';
 
 const { width } = Dimensions.get('window');
 
@@ -34,6 +35,8 @@ type ImageDimensions = { width: number; height: number };
 const ICON_SIZE = 50;
 
 const AddPicture = () => {
+  const { t } = useTranslation();
+
   const { imageType, tempImage, setTempImage } = useEditItemContext();
   const userContext = useUserContext();
   const sessionContext = useSessionContext();
@@ -129,7 +132,7 @@ const AddPicture = () => {
 
   const confirm = async () => {
     if (!addPictureContext.image) {
-      handleError(jokerContext, ErrorType.UPLOAD_IMAGE, 'image not set');
+      handleError(t, jokerContext, ErrorType.UPLOAD_IMAGE, 'image not set');
       return;
     }
     setLoading(true);
@@ -144,9 +147,15 @@ const AddPicture = () => {
           if (fileInfo.size > PROFILE_PICTURE_SIZE_LIMIT) {
             throw new Error('Image is too big');
           }
-          const { fileName, fileMimeType, fileContent } = await prepareFileToUpload(
+          const prepareFileResult = await prepareFileToUpload(
+            t,
+            jokerContext,
             addPictureContext.image
           );
+          if (!prepareFileResult) {
+            throw new Error('could not prepare file');
+          }
+          const { fileName, fileMimeType, fileContent } = prepareFileResult;
           const response = await uploadProfilePicture(
             sessionContext,
             fileName,
@@ -160,7 +169,7 @@ const AddPicture = () => {
           } as UserData);
           jokerContext.showSuccess('successfully uploaded image');
         } catch (e) {
-          handleError(jokerContext, ErrorType.UPLOAD_IMAGE, `${e}`);
+          handleError(t, jokerContext, ErrorType.UPLOAD_IMAGE, `${e}`);
         }
         router.back();
         break;

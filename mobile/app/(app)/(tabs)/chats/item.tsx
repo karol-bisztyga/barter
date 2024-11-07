@@ -6,8 +6,11 @@ import { ItemData } from '../../types';
 import { useUserContext } from '../../context/UserContext';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import { useJokerContext } from '../../context/JokerContext';
+import { useTranslation } from 'react-i18next';
 
 const ItemScreen = () => {
+  const { t } = useTranslation();
+
   const itemsContext = useItemsContext();
   const userContext = useUserContext();
   const jokerContext = useJokerContext();
@@ -21,7 +24,7 @@ const ItemScreen = () => {
     item = itemsContext.othersItem;
   }
   if (!item) {
-    handleError(jokerContext, ErrorType.ITEM_UNKNOWN, 'item has not been specified/set');
+    handleError(t, jokerContext, ErrorType.ITEM_UNKNOWN, 'item has not been specified/set');
     router.back();
     return null;
   }

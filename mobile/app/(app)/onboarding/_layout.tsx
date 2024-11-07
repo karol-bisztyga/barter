@@ -1,10 +1,10 @@
 import React from 'react';
 import { Stack } from 'expo-router';
-import { authorizeUser } from '../utils/reusableStuff';
+import { useAuth } from '../utils/reusableStuff';
 import { BACKGROUND_COLOR } from '../constants';
 
 export default function Layout() {
-  authorizeUser();
+  useAuth();
   return (
     <Stack
       screenOptions={{

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
 import { SessionContextState, useSessionContext } from '../../SessionContext';
@@ -8,6 +8,8 @@ import { XMLParser } from 'fast-xml-parser';
 import { UserData } from '../types';
 import { LisIcon } from './icons';
 import { useSoundContext } from '../context/SoundContext';
+import { ErrorType, getMessageForErrorType } from './errorHandler';
+import { useTranslation } from 'react-i18next';
 
 export const headerBackButtonOptions = (
   beforeCallback?: () => Promise<boolean>,
@@ -48,11 +50,18 @@ export const headerBackButtonOptions = (
   };
 };
 
-export const authorizeUser = (): SessionContextState => {
+export const useAuth = () => {
   const sessionContext = useSessionContext();
-  if (!sessionContext.session) {
-    throw new Error('Unauthorized access'); // todo this error is not handled
-  }
+  const { t } = useTranslation();
+
+  useEffect(() => {
+    if (!sessionContext.session) {
+      sessionContext.setAuthError(getMessageForErrorType(t, ErrorType.UNAUTHORIZED_ACCESS));
+      sessionContext.signOut();
+      router.replace('/login');
+    }
+  }, []);
+
   return sessionContext;
 };
 

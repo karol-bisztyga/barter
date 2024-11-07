@@ -10,10 +10,13 @@ import TextWrapper from '../../../genericComponents/TextWrapper';
 import { Flag2Icon, FlagIcon, SwordsShieldIcon } from '../../../utils/icons';
 import { useJokerContext } from '../../../context/JokerContext';
 import { useSoundContext } from '../../../context/SoundContext';
+import { useTranslation } from 'react-i18next';
 
 const MENU_ICON_SIZE = 28;
 
 const ChatRightHeaderMenu = () => {
+  const { t } = useTranslation();
+
   const jokerContext = useJokerContext();
   const sessionContext = useSessionContext();
   const matchContext = useMatchContext();
@@ -52,7 +55,7 @@ const ChatRightHeaderMenu = () => {
         router.back();
       }
     } catch (e) {
-      handleError(jokerContext, ErrorType.UNMATCH_FAILED, `${e}`);
+      handleError(t, jokerContext, ErrorType.UNMATCH_FAILED, `${e}`);
     } finally {
       matchContext.setUnmatching(false);
     }

@@ -8,7 +8,7 @@ import { ItemData } from '../../types';
 import { useItemsContext } from '../../context/ItemsContext';
 import { useUserContext } from '../../context/UserContext';
 import { getUserItems } from '../../db_utils/getUserItems';
-import { authorizeUser } from '../../utils/reusableStuff';
+import { useAuth } from '../../utils/reusableStuff';
 import { getItemsForCards } from '../../db_utils/getItemsForCards';
 import { addLike } from '../../db_utils/addLike';
 import { ErrorType, handleError } from '../../utils/errorHandler';
@@ -24,7 +24,7 @@ const LOADED_ITEMS_CAPACITY = 5;
 const ITEMS_LOAD_TRESHOLD = 3;
 
 export default function Swipe() {
-  const sessionContext = authorizeUser();
+  const sessionContext = useAuth();
   const soundContext = useSoundContext();
 
   const [cards, setCards] = useState<ItemData[]>([]);
@@ -73,6 +73,7 @@ export default function Swipe() {
   useEffect(() => {
     if (!userContext.data) {
       handleError(
+        t,
         jokerContext,
         ErrorType.CORRUPTED_SESSION,
         'your session seems to be corrupted (your data is missing), you may want to restart the app or log in again'
@@ -84,7 +85,7 @@ export default function Swipe() {
         userContext.setItems(items);
       })
       .catch((e) => {
-        handleError(jokerContext, ErrorType.LOAD_ITEMS, `${e}`);
+        handleError(t, jokerContext, ErrorType.LOAD_ITEMS, `${e}`);
       });
   }, []);
 
@@ -112,7 +113,7 @@ export default function Swipe() {
         setActiveCard(newActiveCard);
         setCards(itemsLoaded);
       } catch (e) {
-        handleError(jokerContext, ErrorType.LOAD_CARDS, `${e}`);
+        handleError(t, jokerContext, ErrorType.LOAD_CARDS, `${e}`);
       }
     })();
   }, []);
@@ -152,7 +153,7 @@ export default function Swipe() {
         setEmptyCardsResponseReceived(false);
         updatedCards = [...itemsLoaded, ...updatedCards];
       } catch (e) {
-        handleError(jokerContext, ErrorType.LOAD_CARDS, `${e}`);
+        handleError(t, jokerContext, ErrorType.LOAD_CARDS, `${e}`);
         return null;
       }
     }
@@ -182,7 +183,7 @@ export default function Swipe() {
     try {
       return await addLike(sessionContext, likedItemId, decision);
     } catch (e) {
-      handleError(jokerContext, ErrorType.SEND_LIKE, `${e}`);
+      handleError(t, jokerContext, ErrorType.SEND_LIKE, `${e}`);
     }
   };
 
@@ -210,7 +211,7 @@ export default function Swipe() {
         router.push('swipe/match');
       }
     } catch (e) {
-      handleError(jokerContext, ErrorType.SWIPE, `${e}`);
+      handleError(t, jokerContext, ErrorType.SWIPE, `${e}`);
     }
   };
 
@@ -234,7 +235,7 @@ export default function Swipe() {
         );
       }
     } catch (e) {
-      handleError(jokerContext, ErrorType.SWIPE, `${e}`);
+      handleError(t, jokerContext, ErrorType.SWIPE, `${e}`);
     }
   };
 
@@ -245,7 +246,7 @@ export default function Swipe() {
       }
       await popAndLoadCard();
     } catch (e) {
-      handleError(jokerContext, ErrorType.SWIPE, `${e}`);
+      handleError(t, jokerContext, ErrorType.SWIPE, `${e}`);
     }
   };
 

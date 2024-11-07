@@ -1,10 +1,10 @@
 import React from 'react';
 import { Redirect } from 'expo-router';
-import { authorizeUser } from '../utils/reusableStuff';
+import { useAuth } from '../utils/reusableStuff';
 import { useUserContext } from '../context/UserContext';
 
 export default function Onboarding() {
-  const sessionContext = authorizeUser();
+  const sessionContext = useAuth();
   const userContext = useUserContext();
 
   const userData = userContext.data;
