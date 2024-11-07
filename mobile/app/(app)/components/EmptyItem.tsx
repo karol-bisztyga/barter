@@ -3,12 +3,17 @@ import { View, StyleSheet } from 'react-native';
 import { ItemBorderRadius, ItemNamePlacement } from '../types';
 import AddButton from './AddButton';
 import TextWrapper from '../genericComponents/TextWrapper';
+import { useTranslation } from 'react-i18next';
 
-const EmptySlotLabel = () => (
-  <View style={styles.nameWrapper}>
-    <TextWrapper style={styles.name}>Add Item</TextWrapper>
-  </View>
-);
+const EmptySlotLabel = () => {
+  const { t } = useTranslation();
+
+  return (
+    <View style={styles.nameWrapper}>
+      <TextWrapper style={styles.name}>{t('add_item')}</TextWrapper>
+    </View>
+  );
+};
 
 export default function EmptyItem({
   namePlacement = ItemNamePlacement['below'],

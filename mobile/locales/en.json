@@ -66,11 +66,17 @@
   "error_no_file_name": "No file name",
   "error_no_file_type": "No file type",
   "error_file_type_invalid": "Invalid file type",
+  "error_invalid_background_tile": "Invalid background tile",
 
   "onboarding_skip": "Skip onboarding",
   "onboarding_stage_1_title": "Onboarding not implemented yet stage 1...",
   "onboarding_stage_2_title": "Onboarding not implemented yet stage 2...",
   "onboarding_stage_3_title": "Onboarding not implemented yet stage 3...",
 
-  "swiping_left_right_reason": "You have no items, you will be able to swipe when you have at least one item"
+  "swiping_left_right_reason": "You have no items, you will be able to swipe when you have at least one item",
+
+  "new_image": "New image",
+  "km_away": "{{distance}} km away",
+  "add_item": "Add item",
+  "copied_to_clipboard": "Copied to clipboard"
 }

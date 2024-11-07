@@ -26,7 +26,15 @@ const Background = ({ tile, style = {}, opacity = 0.2, forceFullScreen }: Backgr
       case 'stone':
         return 1;
       default:
-        throw new Error('unrecognized background tile');
+        // might as well not throw here and just don't render the background
+        // handleError(
+        //   t,
+        //   jokerContext,
+        //   ErrorType.INVALID_BACKGROUND_TILE,
+        //   `Invalid background tile ${backgroundTile}`
+        // );
+        // for now console.error is enough
+        console.error(`Invalid background tile ${backgroundTile}`);
     }
   };
 
@@ -36,9 +44,16 @@ const Background = ({ tile, style = {}, opacity = 0.2, forceFullScreen }: Backgr
   if (!assets || !assets.length || error) {
     return null;
   }
+
+  const backgroundTileIndex = getAssetIndexForBackgroundTile(tile);
+
+  if (backgroundTileIndex === undefined) {
+    return null;
+  }
+
   return (
     <ImageBackground
-      source={{ uri: assets[getAssetIndexForBackgroundTile(tile)].uri }}
+      source={{ uri: assets[backgroundTileIndex].uri }}
       style={[styles.background, { opacity, height: forceFullScreen ? height : '100%' }, style]}
       imageStyle={styles.imageStyle}
     />

@@ -4,6 +4,7 @@ import { ItemBorderRadius } from '../types';
 import { AlchemyIcon } from '../utils/icons';
 import TextWrapper from '../genericComponents/TextWrapper';
 import { SWIPE_BASE_BACKGROUND_COLOR } from '../constants';
+import { useTranslation } from 'react-i18next';
 
 const ICON_SIZE = 100;
 
@@ -14,6 +15,8 @@ const AddButton = ({
   onPress: () => void;
   borderRadius?: ItemBorderRadius;
 }) => {
+  const { t } = useTranslation();
+
   return (
     <TouchableOpacity
       style={[
@@ -26,7 +29,7 @@ const AddButton = ({
       activeOpacity={1}
       onPress={onPress}
     >
-      <TextWrapper style={styles.label}>New image</TextWrapper>
+      <TextWrapper style={styles.label}>{t('new_image')}</TextWrapper>
       <AlchemyIcon width={ICON_SIZE} height={ICON_SIZE} />
     </TouchableOpacity>
   );

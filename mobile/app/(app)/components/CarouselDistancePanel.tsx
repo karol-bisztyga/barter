@@ -3,14 +3,17 @@ import { View, StyleSheet } from 'react-native';
 import TextWrapper from '../genericComponents/TextWrapper';
 import { INDICATOR_HEIGHT } from './CarouselImageIndicators';
 import { ItemData } from '../types';
+import { useTranslation } from 'react-i18next';
 
 const CarouselDistancePanel = ({ itemData }: { itemData: ItemData }) => {
+  const { t } = useTranslation();
+
   const getLabel = () => {
     if (!itemData.ownerLocationCity && !itemData.distanceKm) {
       return '';
     }
     if (itemData.distanceKm !== undefined && !isNaN(parseInt(itemData.distanceKm))) {
-      return `${itemData.distanceKm} km away`;
+      return t('km_away', { distance: itemData.distanceKm });
     }
     return itemData.ownerLocationCity;
   };

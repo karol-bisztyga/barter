@@ -4,14 +4,24 @@ import { ChatMessage } from '../types';
 import { useUserContext } from '../context/UserContext';
 import { ErrorType, handleError } from '../utils/errorHandler';
 import TextWrapper from '../genericComponents/TextWrapper';
+import { useJokerContext } from '../context/JokerContext';
+import { useTranslation } from 'react-i18next';
 
 const { width } = Dimensions.get('window');
 
 export default function ChatMessageComponent({ message }: { message: ChatMessage }) {
+  const { t } = useTranslation();
+
   const userContext = useUserContext();
+  const jokerContext = useJokerContext();
 
   if (!userContext.data?.id) {
-    handleError(ErrorType.CORRUPTED_SESSION, 'chat message component: user id not provided');
+    handleError(
+      t,
+      jokerContext,
+      ErrorType.CORRUPTED_SESSION,
+      'chat message component: user id not provided'
+    );
     return null;
   }
 

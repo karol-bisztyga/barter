@@ -43,6 +43,7 @@ export enum ErrorType {
   NO_FILE_NAME,
   NO_FILE_TYPE,
   FILE_TYPE_INVALID,
+  INVALID_BACKGROUND_TILE,
 }
 
 export const getMessageForErrorType = (t: TFunction, type: ErrorType) => {
@@ -127,6 +128,8 @@ export const getMessageForErrorType = (t: TFunction, type: ErrorType) => {
       return t('error_no_file_type');
     case ErrorType.FILE_TYPE_INVALID:
       return t('error_file_type_invalid');
+    case ErrorType.INVALID_BACKGROUND_TILE:
+      return t('error_invalid_background_tile');
     default:
       return t('error_unknown');
   }
