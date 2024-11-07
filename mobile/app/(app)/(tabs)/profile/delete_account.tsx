@@ -26,7 +26,7 @@ export default function DeleteAccount() {
     try {
       await deleteAccount(sessionContext);
       sessionContext.signOut();
-      jokerContext.showSuccess('Account deleted');
+      jokerContext.showSuccess(t('profile_account_deleted'));
     } catch (e) {
       handleError(t, jokerContext, ErrorType.DELETE_ACCOUNT, `${e}`);
     } finally {
@@ -36,10 +36,10 @@ export default function DeleteAccount() {
 
   return (
     <View style={styles.container}>
-      <TextWrapper style={styles.label}>If you really want to remove this account</TextWrapper>
-      <TextWrapper style={styles.label}>{`please type "delete" below`}</TextWrapper>
+      <TextWrapper style={styles.label}>{t('profile_delete_account_label_1')}</TextWrapper>
+      <TextWrapper style={styles.label}>{t('profile_delete_account_label_2')}</TextWrapper>
       <InputWrapper
-        placeholder="delete"
+        placeholder={t('delete')}
         value={value}
         onChangeText={setValue}
         style={styles.input}
@@ -47,8 +47,8 @@ export default function DeleteAccount() {
         fillColor="white"
       />
       <ButtonWrapper
-        title="Delete"
-        disabled={value !== 'delete'}
+        title={t('delete')}
+        disabled={value !== t('delete')}
         onPress={handleDelete}
         color="red"
         fillColor="white"

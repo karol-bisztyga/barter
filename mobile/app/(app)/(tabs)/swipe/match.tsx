@@ -55,7 +55,7 @@ const Match = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Background tile="sword" forceFullScreen />
-      <TextWrapper style={styles.matchedLabel}>Items matched!</TextWrapper>
+      <TextWrapper style={styles.matchedLabel}>{t('match_items_matched')}</TextWrapper>
       <View style={styles.imagesWrapper}>
         {/* Left Image */}
         <View style={styles.imageContainer}>
@@ -70,11 +70,11 @@ const Match = () => {
 
       <View style={styles.infoWrapper}>
         <Background tile="stone" opacity={0.8} />
-        <TextWrapper style={styles.infoLabel}>I give you</TextWrapper>
+        <TextWrapper style={styles.infoLabel}>{t('match_i_give_you')}</TextWrapper>
         <TextWrapper style={[styles.infoLabel, styles.infoLabelItemName]}>
           {usersItem.name}
         </TextWrapper>
-        <TextWrapper style={styles.infoLabel}>and you give me</TextWrapper>
+        <TextWrapper style={styles.infoLabel}>{t('match_you_give_me')}</TextWrapper>
         <TextWrapper style={[styles.infoLabel, styles.infoLabelItemName]}>
           {othersItem.name}
         </TextWrapper>
@@ -82,7 +82,7 @@ const Match = () => {
         <View style={styles.buttonsWrapper}>
           <View style={styles.singleButtonWrapper}>
             <ButtonWrapper
-              title="Switch my item"
+              title={t('match_switch_my_item')}
               onPress={() => {
                 router.push('swipe/switch_item');
               }}
@@ -92,7 +92,7 @@ const Match = () => {
           </View>
           <View style={styles.singleButtonWrapper}>
             <ButtonWrapper
-              title="Proceed!"
+              title={t('proceed')}
               fillColor={FILL_COLOR}
               onPress={async () => {
                 // modify newly created match if the item was switched

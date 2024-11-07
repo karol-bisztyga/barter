@@ -25,12 +25,7 @@ const AccountDetails = ({
   const data = { ...userContext.data };
 
   if (!data) {
-    handleError(
-      t,
-      jokerContext,
-      ErrorType.CORRUPTED_SESSION,
-      'your session seems to be corrupted (personal data is missing), you may want to restart the app or log in again'
-    );
+    handleError(t, jokerContext, ErrorType.CORRUPTED_SESSION);
     return null;
   }
 
@@ -50,7 +45,7 @@ const AccountDetails = ({
         if (name === 'onboarded') {
           return (
             <LinkItem
-              name="replay onboarding"
+              name={t('profile_replay_onboarding')}
               id={`${index}`}
               key={index}
               isLast={index === Object.keys(data).length - 1}

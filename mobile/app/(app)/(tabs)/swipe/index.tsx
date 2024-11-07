@@ -53,8 +53,7 @@ export default function Swipe() {
           onboarded: 'true',
         });
       } catch (e) {
-        jokerContext.showError('error updating onboarding data');
-        console.error('error updating onboarding data', e);
+        handleError(t, jokerContext, ErrorType.UPDATE_ONBOARDING, `${e}`);
       }
     })();
   }, []);
@@ -62,12 +61,7 @@ export default function Swipe() {
   // load user's items
   useEffect(() => {
     if (!userContext.data) {
-      handleError(
-        t,
-        jokerContext,
-        ErrorType.CORRUPTED_SESSION,
-        'your session seems to be corrupted (your data is missing), you may want to restart the app or log in again'
-      );
+      handleError(t, jokerContext, ErrorType.CORRUPTED_SESSION);
       return;
     }
     getUserItems(sessionContext)
@@ -113,7 +107,7 @@ export default function Swipe() {
       return;
     }
 
-    jokerContext.showNonBlockingInfo('no items available for now, try again later');
+    jokerContext.showNonBlockingInfo(t('no_items_available'));
     setEmptyCardsResponseReceived(false);
     setLoading(false);
   }, [emptyCardsResponseReceived, activeCard]);
@@ -128,7 +122,7 @@ export default function Swipe() {
     if (cards.length <= ITEMS_LOAD_TRESHOLD) {
       try {
         if (emptyCardsResponseReceived) {
-          jokerContext.showNonBlockingInfo('no items available for now, try again later');
+          jokerContext.showNonBlockingInfo(t('no_items_available'));
           return activeCard;
         }
         const itemsLoaded = await getItemsForCards(
@@ -181,7 +175,7 @@ export default function Swipe() {
     try {
       if (userContext.swipingLeftRightBlockedReason) {
         jokerContext.showInfo(
-          'swiping left/right is blocked.\n' + userContext.swipingLeftRightBlockedReason
+          t('swiping_left_right_blocked') + userContext.swipingLeftRightBlockedReason
         );
         return;
       }
@@ -209,7 +203,7 @@ export default function Swipe() {
     try {
       if (userContext.swipingLeftRightBlockedReason) {
         jokerContext.showInfo(
-          'swiping left/right is blocked.\n' + userContext.swipingLeftRightBlockedReason
+          t('swiping_left_right_blocked') + userContext.swipingLeftRightBlockedReason
         );
         return;
       }

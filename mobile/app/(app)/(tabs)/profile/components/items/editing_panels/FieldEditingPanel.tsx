@@ -72,7 +72,7 @@ const FieldEditingPanel = ({
       userContext.setData({ ...userContext.data, ...obj } as UserData);
 
       setEditingId('');
-      jokerContext.showSuccess(`${name} updated`);
+      jokerContext.showSuccess(t('updated', { name }));
     } catch (e) {
       handleError(t, jokerContext, ErrorType.UPDATE_USER, `${e}`);
     } finally {
@@ -100,7 +100,7 @@ const FieldEditingPanel = ({
       <View style={styles.editingInputWrapper}>
         <InputWrapper
           style={styles.editingInput}
-          placeholder="new value"
+          placeholder={t('profile_new_value')}
           value={editingValue}
           onChangeText={(text) => {
             setEditingValue(text);
@@ -110,7 +110,7 @@ const FieldEditingPanel = ({
       </View>
       <View style={styles.updateButtonWrapper}>
         <ButtonWrapper
-          title="Update"
+          title={t('update')}
           onPress={update}
           disabled={!validateValue()}
           fillColor={SECTION_BACKGROUND}

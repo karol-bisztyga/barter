@@ -14,12 +14,15 @@ import { FeatherIcon } from '../../utils/icons';
 import { useSoundContext } from '../../context/SoundContext';
 import Background from '../../components/Background';
 import ProfilePicture, { PROFILE_PICTURE_SIZE } from './components/ProfilePicture';
+import { useTranslation } from 'react-i18next';
 
 const { height } = Dimensions.get('window');
 
 const PROFILE_PICTURE_WRAPPER_PADDING = 20;
 
 export default function Profile() {
+  const { t } = useTranslation();
+
   const [imageLoading, setImageLoading] = useState<boolean>(true);
   const scrollViewRef = useRef<KeyboardAwareScrollView>(null);
   const userContext = useUserContext();
@@ -50,64 +53,62 @@ export default function Profile() {
   }, [editingId]);
 
   return (
-    <>
-      <SafeAreaView>
-        <View>
-          <KeyboardAwareScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>
-            <View style={styles.profileImageWrapper}>
-              <View style={styles.profileImageInnerWrapper}>
-                <Background tile="stone" opacity={1} style={[styles.profileImageBackground]} />
-                {userContext.data?.profilePicture && (
-                  <ProfilePicture
-                    onLoadEnd={() => {
-                      setImageLoading(false);
-                    }}
-                    uri={userContext.data.profilePicture}
-                  />
-                )}
-                {userContext.data?.profilePicture ? (
-                  imageLoading && (
-                    <View style={styles.profileImageLoader}>
-                      <ActivityIndicator size="large" color="black" />
-                    </View>
-                  )
-                ) : (
-                  <View style={styles.noProfilePictureWrapper}>
-                    <Background tile="stone" />
-                    <TextWrapper style={styles.noProfilePictureLabel}>
-                      No profile picture
-                    </TextWrapper>
-                  </View>
-                )}
-                <TouchableOpacity
-                  style={styles.editProfileImageWrapper}
-                  onPress={() => {
-                    soundContext.playSound('click');
-                    editItemContext.setImageType(EditImageType.profile);
-                    router.push('profile/add_picture');
+    <SafeAreaView>
+      <View>
+        <KeyboardAwareScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>
+          <View style={styles.profileImageWrapper}>
+            <View style={styles.profileImageInnerWrapper}>
+              <Background tile="stone" opacity={1} style={[styles.profileImageBackground]} />
+              {userContext.data?.profilePicture && (
+                <ProfilePicture
+                  onLoadEnd={() => {
+                    setImageLoading(false);
                   }}
-                >
-                  <FeatherIcon width={20} height={20} />
-                </TouchableOpacity>
-              </View>
+                  uri={userContext.data.profilePicture}
+                />
+              )}
+              {userContext.data?.profilePicture ? (
+                imageLoading && (
+                  <View style={styles.profileImageLoader}>
+                    <ActivityIndicator size="large" color="black" />
+                  </View>
+                )
+              ) : (
+                <View style={styles.noProfilePictureWrapper}>
+                  <Background tile="stone" />
+                  <TextWrapper style={styles.noProfilePictureLabel}>
+                    {t('profile_no_profile_picture')}
+                  </TextWrapper>
+                </View>
+              )}
+              <TouchableOpacity
+                style={styles.editProfileImageWrapper}
+                onPress={() => {
+                  soundContext.playSound('click');
+                  editItemContext.setImageType(EditImageType.profile);
+                  router.push('profile/add_picture');
+                }}
+              >
+                <FeatherIcon width={20} height={20} />
+              </TouchableOpacity>
             </View>
+          </View>
 
-            <View style={styles.titleWrapper}>
-              <TextWrapper style={styles.title}>Account Details</TextWrapper>
-            </View>
-            <AccountDetails editingId={editingId} setEditingId={setEditingId} />
-            <View style={styles.titleWrapper}>
-              <TextWrapper style={styles.title}>My Items</TextWrapper>
-            </View>
-            <MyItems />
-            <View style={styles.titleWrapper}>
-              <TextWrapper style={styles.title}>Settings</TextWrapper>
-            </View>
-            <Settings editingId={editingId} setEditingId={setEditingId} />
-          </KeyboardAwareScrollView>
-        </View>
-      </SafeAreaView>
-    </>
+          <View style={styles.titleWrapper}>
+            <TextWrapper style={styles.title}>{t('profile_account_details')}</TextWrapper>
+          </View>
+          <AccountDetails editingId={editingId} setEditingId={setEditingId} />
+          <View style={styles.titleWrapper}>
+            <TextWrapper style={styles.title}>{t('profile_my_items')}</TextWrapper>
+          </View>
+          <MyItems />
+          <View style={styles.titleWrapper}>
+            <TextWrapper style={styles.title}>{t('profile_settings')}</TextWrapper>
+          </View>
+          <Settings editingId={editingId} setEditingId={setEditingId} />
+        </KeyboardAwareScrollView>
+      </View>
+    </SafeAreaView>
   );
 }
 

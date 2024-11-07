@@ -14,7 +14,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import * as Location from 'expo-location';
 import ButtonWrapper, { BUTTON_HEIGHT } from '../../../../../genericComponents/ButtonWrapper';
-import { cityNameFromLocation, sleep } from '../../../../../utils/reusableStuff';
+import { cityNameFromLocation } from '../../../../../utils/reusableStuff';
 import { FieldEditingPanelProps } from './FieldEditingPanel';
 import { useJokerContext } from '../../../../../context/JokerContext';
 import { EDITING_PANEL_HEIGHT, SECTION_BACKGROUND } from './constants';
@@ -54,12 +54,15 @@ const LocationEditingPanel = ({
 
   const obtainLocation = async () => {
     try {
-      await sleep(2000);
       const { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== 'granted') {
-        throw new Error(
+        handleError(
+          t,
+          jokerContext,
+          ErrorType.LOCATION_PERMISSION_DENIED,
           'Permission to access location was denied, you may need to enable location services in settings'
         );
+        return null;
       }
 
       return await Location.getCurrentPositionAsync({});
@@ -74,7 +77,8 @@ const LocationEditingPanel = ({
       const location = await obtainLocation();
 
       if (!location) {
-        throw new Error('could not obtain location');
+        userContext.setBlockingLoading(false);
+        return;
       }
 
       const city = await cityNameFromLocation(formatLocationCoords(location.coords));
@@ -86,14 +90,14 @@ const LocationEditingPanel = ({
       const contextUpdates: Partial<UserData> = {
         userLocationCoordinates: formatLocationCoords(location.coords),
       };
-      let jokerMessage = 'location updated';
+      let jokerMessage = t('profile_location_updated');
 
       if (city) {
         updates.push({ field: 'location_city', value: city });
         contextUpdates.userLocationCity = city;
         setValue(city);
       } else {
-        jokerMessage += ' successfully, but city could not be determined';
+        jokerMessage += ' ' + t('profile_city_could_not_be_determined');
       }
 
       await updateUser(sessionContext, updates);
@@ -120,7 +124,7 @@ const LocationEditingPanel = ({
         />
       </View>
       <View style={styles.updateButtonWrapper}>
-        <ButtonWrapper title="Update" onPress={update} fillColor={SECTION_BACKGROUND} />
+        <ButtonWrapper title={t('update')} onPress={update} fillColor={SECTION_BACKGROUND} />
       </View>
     </Animated.View>
   );

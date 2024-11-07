@@ -1,11 +1,14 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
 import TextWrapper from '../../genericComponents/TextWrapper';
+import { useTranslation } from 'react-i18next';
 
 export default function TermsAndConditions() {
+  const { t } = useTranslation();
+
   return (
     <View style={styles.container}>
-      <TextWrapper>Not implemented yet...</TextWrapper>
+      <TextWrapper>{t('not_implemented_yet')}</TextWrapper>
     </View>
   );
 }

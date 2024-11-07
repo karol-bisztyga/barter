@@ -4,6 +4,7 @@ import TextWrapper from '../../../genericComponents/TextWrapper';
 import { ItemData } from '../../../types';
 import ImageWrapper from '../../../genericComponents/ImageWrapper';
 import { ArrowsIcon } from '../../../utils/icons';
+import { useTranslation } from 'react-i18next';
 
 const { width } = Dimensions.get('window');
 
@@ -17,6 +18,8 @@ export type ChatItemProps = {
 };
 
 const ChatItem = ({ id, myItem, theirItem, registerRenderedListItem }: ChatItemProps) => {
+  const { t } = useTranslation();
+
   const myItemImage = myItem.images[0];
   const theirItemImage = theirItem.images[0];
 
@@ -42,7 +45,7 @@ const ChatItem = ({ id, myItem, theirItem, registerRenderedListItem }: ChatItemP
           ellipsizeMode="tail"
           numberOfLines={1}
         >
-          You
+          {t('you')}
         </TextWrapper>
       </View>
       <View style={[styles.itemWrapper, styles.theirItemWrapper]}>

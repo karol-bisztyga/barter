@@ -5,6 +5,7 @@ import { CannonIcon } from '../../../utils/icons';
 import Background from '../../../components/Background';
 import TextWrapper from '../../../genericComponents/TextWrapper';
 import { useSoundContext } from '../../../context/SoundContext';
+import { useTranslation } from 'react-i18next';
 
 const ICON_SIZE = 200;
 
@@ -13,12 +14,14 @@ type ReloadProps = {
 };
 
 const Reload = ({ onPress }: ReloadProps) => {
+  const { t } = useTranslation();
+
   const soundContext = useSoundContext();
 
   return (
     <View style={styles.container}>
       <Background tile="sword" forceFullScreen />
-      <TextWrapper style={styles.label}>Reload</TextWrapper>
+      <TextWrapper style={styles.label}>{t('reload')}</TextWrapper>
       <TouchableOpacity
         onPress={() => {
           soundContext.playSound('click');

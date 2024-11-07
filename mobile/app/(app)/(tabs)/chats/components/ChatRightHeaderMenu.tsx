@@ -27,12 +27,12 @@ const ChatRightHeaderMenu = () => {
       soundContext.playSound('click');
       const decision: boolean = await new Promise((resolve) => {
         Alert.alert(
-          'Do you really want to unmatch these items?',
+          t('chats_unmatch_question_title'),
           '',
           [
-            { text: 'Keep the match', onPress: () => resolve(false) },
+            { text: t('chats_unmatch_question_no'), onPress: () => resolve(false) },
             {
-              text: 'Yes, unmatch them',
+              text: t('chats_unmatch_question_yes'),
               onPress: () => resolve(true),
               style: 'destructive',
             },
@@ -42,7 +42,6 @@ const ChatRightHeaderMenu = () => {
       });
       if (decision) {
         matchContext.setUnmatching(true);
-        console.log('unmatching...', matchContext.currentMatchId);
         if (!matchContext.currentMatchId) {
           throw new Error('could not detemine current match');
         }
@@ -51,7 +50,7 @@ const ChatRightHeaderMenu = () => {
           matchContext.matches.filter((m) => m.id !== matchContext.currentMatchId)
         );
 
-        console.log('unmatched');
+        jokerContext.showSuccess(t('chats_unmatch_success'));
         router.back();
       }
     } catch (e) {
@@ -78,7 +77,7 @@ const ChatRightHeaderMenu = () => {
         <MenuOptions customStyles={{ optionsContainer: styles.optionsContainer }}>
           <MenuOption onSelect={unmatchHandler} style={styles.menuItemWrapper}>
             <FlagIcon width={MENU_ICON_SIZE} height={MENU_ICON_SIZE} style={styles.menuItemIcon} />
-            <TextWrapper style={styles.menuItemLabel}>Unmatch</TextWrapper>
+            <TextWrapper style={styles.menuItemLabel}>{t('chats_unmatch_title')}</TextWrapper>
           </MenuOption>
 
           <MenuOption onSelect={report} style={styles.menuItemWrapper}>
@@ -87,7 +86,7 @@ const ChatRightHeaderMenu = () => {
               height={MENU_ICON_SIZE}
               style={styles.menuItemIcon}
             />
-            <TextWrapper style={styles.menuItemLabel}>Report</TextWrapper>
+            <TextWrapper style={styles.menuItemLabel}>{t('chats_report_title')}</TextWrapper>
           </MenuOption>
         </MenuOptions>
       </Menu>

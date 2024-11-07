@@ -44,6 +44,13 @@ export enum ErrorType {
   NO_FILE_TYPE,
   FILE_TYPE_INVALID,
   INVALID_BACKGROUND_TILE,
+  UPDATE_ONBOARDING,
+  LOCATION_PERMISSION_DENIED,
+  SCALE_IMAGE,
+  FILE_NOT_EXIST,
+  IMAGE_TOO_BIG,
+  PREPARE_FILE,
+  MATCH_NOT_EXIST,
 }
 
 export const getMessageForErrorType = (t: TFunction, type: ErrorType) => {
@@ -130,6 +137,14 @@ export const getMessageForErrorType = (t: TFunction, type: ErrorType) => {
       return t('error_file_type_invalid');
     case ErrorType.INVALID_BACKGROUND_TILE:
       return t('error_invalid_background_tile');
+    case ErrorType.UPDATE_ONBOARDING:
+      return t('error_update_onboarding');
+    case ErrorType.LOCATION_PERMISSION_DENIED:
+      return t('error_location_permission_denied');
+    case ErrorType.SCALE_IMAGE:
+      return t('error_scale_image');
+    case ErrorType.MATCH_NOT_EXIST:
+      return t('error_match_not_exist');
     default:
       return t('error_unknown');
   }

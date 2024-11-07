@@ -25,7 +25,7 @@ const SendReportModal = () => {
         throw new Error('othersItem has not been specified/set');
       }
       await addReport(sessionContext, itemsContext.othersItem.id, report);
-      jokerContext.showSuccess('Report sent');
+      jokerContext.showSuccess(t('chats_report_sent'));
       router.back();
     } catch (e) {
       handleError(t, jokerContext, ErrorType.SEND_REPORT, `${e}`);
@@ -45,7 +45,7 @@ const SendReportModal = () => {
           fillColor="white"
         />
         <ButtonWrapper
-          title="Send report"
+          title={t('chats_send_report')}
           disabled={report.length < 10}
           onPress={sendReport}
           fillColor="white"

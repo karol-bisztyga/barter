@@ -23,13 +23,7 @@ const ChatHeader = () => {
 
   const usersItem = userContext.findItemById(usersItemId);
   if (!usersItem || !othersItem) {
-    // todo replace all occurences of 'your session seems to be corrupted' with a function or sth
-    handleError(
-      t,
-      jokerContext,
-      ErrorType.CORRUPTED_SESSION,
-      `your session seems to be corrupted (data for one of the items is not present), you may want to restart the app or log in again`
-    );
+    handleError(t, jokerContext, ErrorType.CORRUPTED_SESSION);
     return null;
   }
 

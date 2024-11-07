@@ -64,7 +64,7 @@ const generateBentTrianglePath = (edge: EdgeType, width: number, height: number)
         Z
       `;
     default:
-      throw new Error('Invalid edge specified');
+      return '';
   }
 };
 

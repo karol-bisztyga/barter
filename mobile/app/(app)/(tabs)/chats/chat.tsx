@@ -78,7 +78,7 @@ const Chat = () => {
         throw new Error(`match not specified`);
       }
     } catch (e) {
-      handleError(t, jokerContext, ErrorType.CHAT_INITIALIZE, `${e}`, `${e}`);
+      handleError(t, jokerContext, ErrorType.CHAT_INITIALIZE, `${e}`);
     }
     router.back();
     return null;
@@ -132,17 +132,14 @@ const Chat = () => {
     });
 
     newSocket.on('error', (e) => {
-      let customMessage = '';
       if (e.name === 'TokenExpiredError') {
-        customMessage = 'Session expired';
         sessionContext.signOut();
       }
       if (e.includes && e.includes('match does not exist')) {
-        customMessage = 'Match does not exist';
+        handleError(t, jokerContext, ErrorType.MATCH_NOT_EXIST, `${e}`);
         matchContext.setMatches(matchContext.matches.filter((m) => m.id !== currentMatchId));
         router.back();
       }
-      handleError(t, jokerContext, ErrorType.SOCKET, `${e}`, `${customMessage}`);
     });
 
     return () => {
@@ -288,7 +285,7 @@ const Chat = () => {
           <View style={styles.inputContainerInner}>
             <InputWrapper
               style={styles.input}
-              placeholder="Type a message"
+              placeholder={t('chats_type_a_message')}
               blurOnSubmit={false}
               value={newMessage}
               onChangeText={setNewMessage}
@@ -296,7 +293,7 @@ const Chat = () => {
             />
             <View style={styles.buttonWrapper}>
               <ButtonWrapper
-                title="Send"
+                title={t('send')}
                 disabled={newMessage.length === 0}
                 onPress={() => {
                   sendMessage();

@@ -16,6 +16,7 @@ import LocationEditingPanel from './editing_panels/LocationEditingPanel';
 import SelectEditingPanel from './editing_panels/SelectEditingPanel';
 import PasswordEditingPanel from './editing_panels/PasswordEditingPanel';
 import { FONT_COLOR } from '../../../../constants';
+import { useTranslation } from 'react-i18next';
 
 export type EditingPanelType = 'field' | 'location' | 'select' | 'password';
 
@@ -40,6 +41,8 @@ const EditableItem = ({
   type: EditingPanelType;
   options?: string[]; // only for type 'select'
 }) => {
+  const { t } = useTranslation();
+
   const [value, setValue] = useState(initialValue);
   const [editingValue, setEditingValue] = useState(value);
   const [pageY, setPageY] = useState(0);
@@ -163,7 +166,7 @@ const EditableItem = ({
         key={id}
         onLongPress={async () => {
           await Clipboard.setStringAsync(value);
-          Alert.alert('Copied to Clipboard', value);
+          Alert.alert(t('copied_to_clipboard'), value);
         }}
         onPress={toggleEdit}
       >

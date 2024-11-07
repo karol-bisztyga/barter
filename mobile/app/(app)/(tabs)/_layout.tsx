@@ -33,7 +33,7 @@ export default function TabLayout() {
   useEffect(() => {
     soundContext.loadSettingsFromStorage();
     soundContext.playBackgroundSound();
-    jokerContext.showNonBlockingInfo('Welcome to the app!');
+    jokerContext.showNonBlockingInfo(t('welcome'));
   }, []);
 
   return (
@@ -90,7 +90,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="profile"
           options={{
-            title: 'Profile',
+            title: t('tab_profile_title'),
             tabBarIcon: ({ color }) => {
               const Icon = routeName === 'profile' ? HelmetIcon : HelmetLinealIcon;
               return <Icon width={28} height={28} fill={color} />;
@@ -100,7 +100,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="swipe"
           options={{
-            title: 'Swipe',
+            title: t('tab_swipe_title'),
             tabBarIcon: ({ color }) => {
               const Icon = routeName === 'swipe' ? TargetIcon : TargetLinealIcon;
               return <Icon width={28} height={28} fill={color} />;
@@ -110,7 +110,7 @@ export default function TabLayout() {
         <Tabs.Screen
           name="chats"
           options={{
-            title: 'Chats',
+            title: t('tab_chats_title'),
             tabBarIcon: ({ color }) => {
               const Icon = routeName === 'chats' ? PaperIcon : PaperLinealIcon;
               return <Icon width={28} height={28} fill={color} />;

@@ -44,7 +44,7 @@ const AddPicture = () => {
   const jokerContext = useJokerContext();
 
   const [originalFileSize, setOriginalFileSize] = useState<number | null>(null);
-  const [warning, setWarning] = useState<string>('');
+  const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -64,7 +64,6 @@ const AddPicture = () => {
     });
 
     if (!result.canceled) {
-      setWarning('');
       setOriginalFileSize(result.assets[0].fileSize || null);
       addPictureContext.setImage(result.assets[0].uri);
     }
@@ -108,24 +107,26 @@ const AddPicture = () => {
       fileInfo = await getInfoAsync(resizedImage.uri);
     }
     const originalFileSizeInfo = originalFileSize ? `${formatBytes(originalFileSize)}, ` : '';
-    setWarning(
-      `This image was too big (${originalFileSizeInfo}the limit is 2MB) and has been automatically scaled down, you can proceed or choose another image`
-    );
+    jokerContext.showInfo(t('profile_image_scaled', { size: originalFileSizeInfo }));
     addPictureContext.setImage(uri);
   };
 
   useEffect(() => {
+    setError('');
     (async () => {
       if (!addPictureContext.image) {
         return;
       }
       const fileInfo = await getInfoAsync(addPictureContext.image);
-
-      if (fileInfo.exists && fileInfo.size > PROFILE_PICTURE_SIZE_LIMIT) {
-        setLoading(true);
-        resizeImage();
-      } else {
-        setLoading(false);
+      try {
+        if (fileInfo.exists && fileInfo.size > PROFILE_PICTURE_SIZE_LIMIT) {
+          setLoading(true);
+          resizeImage();
+        } else {
+          setLoading(false);
+        }
+      } catch (e) {
+        handleError(t, jokerContext, ErrorType.SCALE_IMAGE, `${e}`);
       }
     })();
   }, [addPictureContext.image]);
@@ -167,7 +168,7 @@ const AddPicture = () => {
             ...userContext.data,
             profilePicture: response.profilePicture,
           } as UserData);
-          jokerContext.showSuccess('successfully uploaded image');
+          jokerContext.showSuccess(t('profile_successfully_uploaded_image'));
         } catch (e) {
           handleError(t, jokerContext, ErrorType.UPLOAD_IMAGE, `${e}`);
         }
@@ -193,7 +194,7 @@ const AddPicture = () => {
         }}
       >
         <Feather2Icon width={ICON_SIZE} height={ICON_SIZE} />
-        <TextWrapper style={styles.label}>Draw a new picture</TextWrapper>
+        <TextWrapper style={styles.label}>{t('profile_take_a_new_picture')}</TextWrapper>
       </TouchableOpacity>
       <TouchableOpacity
         activeOpacity={1}
@@ -203,13 +204,17 @@ const AddPicture = () => {
         }}
       >
         <BarrelIcon width={ICON_SIZE} height={ICON_SIZE} />
-        <TextWrapper style={styles.label}>Bring something from the storage</TextWrapper>
+        <TextWrapper style={styles.label}>{t('profile_load_image_from_disk')}</TextWrapper>
       </TouchableOpacity>
       {addPictureContext.image && (
         <View style={styles.imageWrapper}>
           <ImageWrapper style={styles.image} uri={addPictureContext.image} />
-          {warning && <TextWrapper style={styles.warningText}>{warning}</TextWrapper>}
-          <ButtonWrapper title="Add" onPress={confirm} disabled={loading} fillColor="white" />
+          <ButtonWrapper
+            title={t('add')}
+            onPress={confirm}
+            disabled={loading || !!error}
+            fillColor="white"
+          />
           {loading && (
             <View style={styles.loaderWrapper}>
               <ActivityIndicator size="large" />

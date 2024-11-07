@@ -104,7 +104,7 @@ const EditItem = () => {
           fileMimeType,
           fileContent
         );
-        jokerContext.showSuccess('Image uploaded');
+        jokerContext.showSuccess(t('profile_successfully_uploaded_image'));
         const newPictures = [...pictures, response.url];
         setPictures(newPictures);
         userContext.setItems(
@@ -193,12 +193,12 @@ const EditItem = () => {
 
       const remove: boolean = await new Promise((resolve) => {
         Alert.alert(
-          'Do you really want to remove this image?',
+          t('profile_remove_picture_question'),
           '',
           [
-            { text: 'Keep it', onPress: () => resolve(false) },
+            { text: t('profile_remove_picture_no'), onPress: () => resolve(false) },
             {
-              text: 'Yes, remove it',
+              text: t('profile_remove_picture_yes'),
               onPress: () => resolve(true),
               style: 'destructive',
             },
@@ -218,7 +218,7 @@ const EditItem = () => {
       await deleteItemImage(sessionContext, usersItemId, imageToRemove);
       setRemovingImage(null);
       setPictures(newPictures);
-      jokerContext.showSuccess('Image removed');
+      jokerContext.showSuccess(t('profile_image_removed'));
       userContext.setItems(
         userContext.items.map((item) => {
           if (item.id === usersItemId) {
@@ -274,12 +274,12 @@ const EditItem = () => {
   const removeItemPress = async () => {
     const remove: boolean = await new Promise((resolve) => {
       Alert.alert(
-        'Do you really want to remove this item?',
-        'All chats related to this item will be removed as well',
+        t('profile_remove_item_question_title'),
+        t('profile_remove_item_question_subtitle'),
         [
-          { text: 'Keep it', onPress: () => resolve(false) },
+          { text: t('profile_remove_item_question_no'), onPress: () => resolve(false) },
           {
-            text: 'Yes, remove it',
+            text: t('profile_remove_item_question_yes'),
             onPress: () => resolve(true),
             style: 'destructive',
           },
@@ -299,7 +299,7 @@ const EditItem = () => {
         if (result) {
           newItems.splice(usersItem.index, 1);
           userContext.setItems(newItems);
-          jokerContext.showSuccess('Item removed');
+          jokerContext.showSuccess(t('profile_item_removed'));
           router.back();
         } else {
           throw new Error('server error');
@@ -318,7 +318,7 @@ const EditItem = () => {
       <ScrollView ref={scrollRef}>
         <View style={[styles.nameInputWrapper, styles.margins]}>
           <InputWrapper
-            placeholder="Name"
+            placeholder={t('profile_name_title')}
             value={name}
             onChangeText={setName}
             fillColor={SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY}
@@ -326,7 +326,7 @@ const EditItem = () => {
         </View>
         <View style={[styles.descriptionInputWrapper, styles.margins]}>
           <InputWrapper
-            placeholder="Description"
+            placeholder={t('profile_description_title')}
             multiline={true}
             value={description}
             onChangeText={setDescription}
@@ -335,7 +335,7 @@ const EditItem = () => {
         </View>
         <View style={[styles.addButtonWrapper, styles.margins]}>
           <ButtonWrapper
-            title="Save"
+            title={t('save')}
             disabled={!validateForm() || !checkIfItemEdited()}
             onPress={save}
             fillColor={FILL_COLOR}
@@ -347,7 +347,7 @@ const EditItem = () => {
             <ActivityIndicator size="large" />
           </View>
         )}
-        <TextWrapper style={styles.sectionTitle}>Pictures</TextWrapper>
+        <TextWrapper style={styles.sectionTitle}>{t('profile_pictures_title')}</TextWrapper>
         <View style={styles.imageSlotsWrapper}>
           {pictures.map((picture, index) => {
             const isCurrentImageBeingRemoved = removingImage === index;
@@ -388,7 +388,7 @@ const EditItem = () => {
             <View style={[styles.nameInputWrapper, styles.margins]}>
               <ButtonWrapper
                 color="red"
-                title="Remove Item"
+                title={t('profile_remove_item_title')}
                 onPress={removeItemPress}
                 fillColor={FILL_COLOR}
               />

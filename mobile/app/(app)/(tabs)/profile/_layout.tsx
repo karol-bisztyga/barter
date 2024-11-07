@@ -6,6 +6,7 @@ import { EditItemContextProvider, useEditItemContext } from '../../context/EditI
 import { useAddPictureContext } from '../../context/AddPictureContext';
 import { SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY } from '../../constants';
 import Background from '../../components/Background';
+import { useTranslation } from 'react-i18next';
 
 export default function Wrapper() {
   return (
@@ -16,6 +17,8 @@ export default function Wrapper() {
 }
 
 function Layout() {
+  const { t } = useTranslation();
+
   const editItemContext = useEditItemContext();
   const addPictureContext = useAddPictureContext();
 
@@ -40,12 +43,12 @@ function Layout() {
             }
             const discard: boolean = await new Promise((resolve) => {
               Alert.alert(
-                'Do you want to discard unsaved changes?',
+                t('profile_discard_changes_question'),
                 '',
                 [
-                  { text: 'Stay', onPress: () => resolve(false) },
+                  { text: t('profile_discard_changes_no'), onPress: () => resolve(false) },
                   {
-                    text: 'Discard',
+                    text: t('profile_discard_changes_yes'),
                     onPress: () => resolve(true),
                     style: 'destructive',
                   },

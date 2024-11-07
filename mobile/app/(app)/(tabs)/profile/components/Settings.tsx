@@ -9,6 +9,7 @@ import { MandolinIcon, TrumpetIcon } from '../../../utils/icons';
 import { useSoundContext } from '../../../context/SoundContext';
 import Background from '../../../components/Background';
 import { SECTION_BACKGROUND } from './items/editing_panels/constants';
+import { useTranslation } from 'react-i18next';
 
 const Settings = ({
   editingId,
@@ -17,6 +18,8 @@ const Settings = ({
   editingId: string;
   setEditingId: React.Dispatch<React.SetStateAction<string>>;
 }) => {
+  const { t } = useTranslation();
+
   const sessionContext = useSessionContext();
   const soundContext = useSoundContext();
 
@@ -45,7 +48,7 @@ const Settings = ({
         disabled={!soundContext.soundsOn}
       />
       <EditableItem
-        name="change language"
+        name={t('profile_change_language')}
         initialValue="English"
         id="settings-language"
         editable
@@ -56,7 +59,7 @@ const Settings = ({
         options={['English', 'Polish', 'Ukrainian']}
       />
       <EditableItem
-        name="change password"
+        name={t('profile_change_password')}
         initialValue="***"
         id="settings-password"
         editable
@@ -67,7 +70,7 @@ const Settings = ({
       />
 
       <LinkItem
-        name="terms and conditions"
+        name={t('profile_terms_and_conditions')}
         id="settings-terms-and-conditions"
         isLast={false}
         onPress={() => {
@@ -75,7 +78,7 @@ const Settings = ({
         }}
       />
       <LinkItem
-        name="credits"
+        name={t('profile_credits')}
         id="settings-credits"
         isLast={false}
         onPress={() => {
@@ -83,7 +86,7 @@ const Settings = ({
         }}
       />
       <LinkItem
-        name="sign out"
+        name={t('sign_out')}
         id="settings-sign-out"
         isLast={false}
         onPress={() => {
@@ -91,7 +94,7 @@ const Settings = ({
         }}
       />
       <LinkItem
-        name="delete account"
+        name={t('profile_delete_account')}
         id="settings-delete-account"
         isLast={true}
         onPress={() => {

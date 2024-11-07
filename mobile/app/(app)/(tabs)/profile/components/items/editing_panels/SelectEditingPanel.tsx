@@ -10,6 +10,7 @@ import Animated, {
 import TextWrapper from '../../../../../genericComponents/TextWrapper';
 import { useJokerContext } from '../../../../../context/JokerContext';
 import { EDITING_PANEL_HEIGHT, SECTION_BACKGROUND } from './constants';
+import { useTranslation } from 'react-i18next';
 
 export type SelectEditingPanelProps = {
   initialValue: string;
@@ -28,6 +29,8 @@ const SelectEditingPanel = ({
   setEditingId,
   options,
 }: SelectEditingPanelProps) => {
+  const { t } = useTranslation();
+
   const jokerContext = useJokerContext();
 
   const maxHeight = EDITING_PANEL_HEIGHT * options.length;
@@ -62,7 +65,7 @@ const SelectEditingPanel = ({
           ]}
           onPress={() => {
             if (editingValue !== option) {
-              jokerContext.showInfo('other languages are not yet implemented');
+              jokerContext.showInfo(t('profile_language_not_supported'));
             }
             setEditingId('');
           }}

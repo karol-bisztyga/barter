@@ -69,7 +69,7 @@ export default function Chats() {
         </View>
         {matchContext.matches.length === 0 && listRendered && (
           <View style={styles.noChatsWrapper}>
-            <TextWrapper style={styles.noChatsLabel}>No chats</TextWrapper>
+            <TextWrapper style={styles.noChatsLabel}>{t('chats_no_chats')}</TextWrapper>
           </View>
         )}
         <FlatList

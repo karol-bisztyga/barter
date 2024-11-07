@@ -54,7 +54,7 @@ const FieldEditingPanel = ({ editing, setEditingId }: FieldEditingPanelProps) =>
     userContext.setBlockingLoading(true);
     try {
       await changePassword(sessionContext, currentPassword, newPassword);
-      jokerContext.showSuccess('password changed');
+      jokerContext.showSuccess(t('profile_password_changed'));
       setEditingId('');
     } catch (e) {
       handleError(t, jokerContext, ErrorType.CHANGE_PASSWORD, `${e}`); // todo this alert hides behind the modal on ios
@@ -80,7 +80,7 @@ const FieldEditingPanel = ({ editing, setEditingId }: FieldEditingPanelProps) =>
       <View style={styles.editingInputWrapper}>
         <InputWrapper
           style={styles.editingInput}
-          placeholder="old password"
+          placeholder={t('profile_old_password')}
           value={currentPassword}
           onChangeText={setCurrentPassword}
           secureTextEntry={true}
@@ -88,7 +88,7 @@ const FieldEditingPanel = ({ editing, setEditingId }: FieldEditingPanelProps) =>
         />
         <InputWrapper
           style={styles.editingInput}
-          placeholder="new password"
+          placeholder={t('profile_new_password')}
           value={newPassword}
           onChangeText={setNewPassword}
           secureTextEntry={true}
@@ -96,7 +96,7 @@ const FieldEditingPanel = ({ editing, setEditingId }: FieldEditingPanelProps) =>
         />
         <View style={styles.updateButtonWrapper}>
           <ButtonWrapper
-            title="Update"
+            title={t('update')}
             onPress={handlePasswordChange}
             disabled={!validateValue()}
             fillColor={SECTION_BACKGROUND}
