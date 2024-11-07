@@ -6,6 +6,8 @@ import TextWrapper from '../genericComponents/TextWrapper';
 import * as Clipboard from 'expo-clipboard';
 import { useSoundContext } from '../context/SoundContext';
 import { useTranslation } from 'react-i18next';
+import { generateHarmonicColor, TargetColor } from '../utils/harmonicColors';
+import { SWIPE_BASE_BACKGROUND_COLOR } from '../constants';
 
 const JOKER_SIZE = 50;
 const TOP_OFFSET = Constants.statusBarHeight + 4;
@@ -98,11 +100,11 @@ export const JokerDialogue = ({
   const getBackgroundColor = () => {
     switch (currentMessage.type) {
       case 'error':
-        return 'red';
+        return generateHarmonicColor(SWIPE_BASE_BACKGROUND_COLOR, TargetColor.RED);
       case 'info':
-        return 'aqua';
+        return generateHarmonicColor(SWIPE_BASE_BACKGROUND_COLOR, TargetColor.BLUE);
       case 'success':
-        return 'green';
+        return generateHarmonicColor(SWIPE_BASE_BACKGROUND_COLOR, TargetColor.GREEN);
       default:
         return 'white';
     }
@@ -145,5 +147,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     padding: 8,
     fontSize: 20,
+    color: 'white',
   },
 });

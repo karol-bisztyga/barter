@@ -48,7 +48,10 @@ export default function Profile() {
       if (isNaN(targetOffsetYNumber) || !targetOffsetYNumber) {
         return;
       }
-      scrollViewRef.current.scrollToPosition(0, targetOffsetYNumber - height / 2 + 50, true);
+      const position = targetOffsetYNumber - height / 2 + 50;
+      if (position >= 0) {
+        scrollViewRef.current.scrollToPosition(0, position, true);
+      }
     }
   }, [editingId]);
 

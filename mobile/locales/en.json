@@ -26,6 +26,7 @@
   "password_missing": "Password is missing",
   "token_missing": "Token is missing",
   "login_error": "Login error, {{ error }}",
+  "verification_successful": "Verification successful",
 
   "register_successful_title": "Registered successfully!",
   "register_successful_subtitle": "Please check your email for the verification code :)",

@@ -136,6 +136,7 @@ export enum TargetColor {
   GREEN = 'Green',
   YELLOW = 'Yellow',
   RED = 'Red',
+  BLUE = 'Blue',
 }
 
 export function generateHarmonicColor(baseColor: string, target: TargetColor): string {
@@ -151,6 +152,9 @@ export function generateHarmonicColor(baseColor: string, target: TargetColor): s
       break;
     case TargetColor.RED:
       targetHue = 0;
+      break;
+    case TargetColor.BLUE:
+      targetHue = 240;
       break;
     default:
       throw new Error('Invalid target color');

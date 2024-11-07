@@ -69,7 +69,7 @@ export const JokerContextProvider: FC<{ children: ReactNode }> = ({ children }) 
   };
 
   const showSuccess = (message: string) => {
-    pushAlert({ type: AlertType.SUCCESS, message, blocking: true });
+    pushAlert({ type: AlertType.SUCCESS, message, blocking: false });
   };
 
   const showNonBlockingInfo = (message: string) => {

@@ -43,7 +43,7 @@ export default function Register() {
       });
 
       if (response.ok) {
-        jokerContext.showSuccess('verification successful');
+        jokerContext.showSuccess(t('verification_successful'));
         const { result, token } = response.data;
         const newUserData = convertUserData(result);
         sessionContext.setSessionWithStorage(token, newUserData);
