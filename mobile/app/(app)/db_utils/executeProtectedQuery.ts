@@ -1,5 +1,4 @@
 import { SessionContextState } from '../../SessionContext';
-import { ErrorType, handleError } from '../utils/errorHandler';
 import { executeQuery } from './executeQuery';
 
 export type RestMethod = 'GET' | 'OPTIONS' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
@@ -13,7 +12,12 @@ export const executeProtectedQuery = async (
 ) => {
   try {
     if (rawUrl.at(0) === '/') {
-      throw new Error('url should not start with /');
+      return {
+        ok: false,
+        data: {
+          message: 'url should not start with /',
+        },
+      };
     }
     const result = await executeQuery(
       rawUrl,
@@ -25,11 +29,20 @@ export const executeProtectedQuery = async (
 
     if (!result.ok && result.data.message.includes('Invalid token')) {
       sessionContext.signOut();
-      throw new Error(result.data.message);
+      return {
+        ok: false,
+        data: {
+          message: result.data.message,
+        },
+      };
     }
     return result;
   } catch (e) {
-    handleError(ErrorType.SERVER_ERROR, `${e}`);
-    throw e;
+    return {
+      ok: false,
+      data: {
+        message: `${e}`,
+      },
+    };
   }
 };
