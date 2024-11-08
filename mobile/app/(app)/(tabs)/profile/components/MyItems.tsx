@@ -8,8 +8,11 @@ import { useUserContext } from '../../../context/UserContext';
 import LinkItem from './items/LinkItem';
 import Background from '../../../components/Background';
 import { SECTION_BACKGROUND } from './items/editing_panels/constants';
+import { useTranslation } from 'react-i18next';
 
 const MyItems = () => {
+  const { t } = useTranslation();
+
   const itemsContext = useItemsContext();
   const userContext = useUserContext();
 
@@ -35,7 +38,7 @@ const MyItems = () => {
         <LinkItem
           id="my-items-add-item"
           isLast={true}
-          name="add new item"
+          name={t('profile_add_new_item')}
           onPress={() => {
             itemsContext.setUsersItemId(null);
             router.push('profile/editItem');

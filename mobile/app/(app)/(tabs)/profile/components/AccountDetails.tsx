@@ -38,6 +38,21 @@ const AccountDetails = ({
   delete data.userLocationCoordinates;
   delete data.verificationCode;
 
+  const getTranslationForName = (name: string) => {
+    switch (name) {
+      case 'email':
+        return t('profile_email');
+      case 'name':
+        return t('profile_name');
+      case 'phone':
+        return t('profile_phone');
+      case 'userLocationCity':
+        return t('profile_location');
+      default:
+        return name;
+    }
+  };
+
   return (
     <View style={styles.container}>
       {Object.keys(data).map((name, index) => {
@@ -65,7 +80,7 @@ const AccountDetails = ({
         }
         return (
           <EditableItem
-            name={name}
+            name={getTranslationForName(name)}
             initialValue={value || ''}
             id={`account-${index}`}
             key={index}
