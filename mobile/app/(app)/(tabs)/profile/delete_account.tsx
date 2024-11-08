@@ -10,6 +10,8 @@ import TextWrapper from '../../genericComponents/TextWrapper';
 import { useJokerContext } from '../../context/JokerContext';
 import { useAuth } from '../../hooks/useAuth';
 import { useTranslation } from 'react-i18next';
+import { SWIPE_BASE_BACKGROUND_COLOR } from '../../constants';
+import { hexToRgbaString } from '../../utils/harmonicColors';
 
 export default function DeleteAccount() {
   const { t } = useTranslation();
@@ -36,23 +38,28 @@ export default function DeleteAccount() {
 
   return (
     <View style={styles.container}>
-      <TextWrapper style={styles.label}>{t('profile_delete_account_label_1')}</TextWrapper>
-      <TextWrapper style={styles.label}>{t('profile_delete_account_label_2')}</TextWrapper>
-      <InputWrapper
-        placeholder={t('delete')}
-        value={value}
-        onChangeText={setValue}
-        style={styles.input}
-        autoCapitalize="none"
-        fillColor="white"
-      />
-      <ButtonWrapper
-        title={t('delete')}
-        disabled={value !== t('delete')}
-        onPress={handleDelete}
-        color="red"
-        fillColor="white"
-      />
+      <View style={styles.labelsWrapper}>
+        <TextWrapper style={styles.label}>{t('profile_delete_account_label_1')}</TextWrapper>
+        <TextWrapper style={styles.label}>{t('profile_delete_account_label_2')}</TextWrapper>
+      </View>
+      <View style={styles.inputsWrapper}>
+        <InputWrapper
+          placeholder={t('delete')}
+          value={value}
+          onChangeText={setValue}
+          autoCapitalize="none"
+          fillColor={hexToRgbaString(SWIPE_BASE_BACKGROUND_COLOR, 0.4)}
+        />
+      </View>
+
+      <View style={styles.buttonsWrapper}>
+        <ButtonWrapper
+          title={t('delete')}
+          disabled={value !== t('delete')}
+          onPress={handleDelete}
+          fillColor={hexToRgbaString(SWIPE_BASE_BACKGROUND_COLOR, 0.4)}
+        />
+      </View>
     </View>
   );
 }
@@ -61,22 +68,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
+  },
+  labelsWrapper: {
+    flex: 1,
+    justifyContent: 'flex-end',
+  },
+  inputsWrapper: {
+    height: 60,
+    padding: 10,
+  },
+  buttonsWrapper: {
+    flex: 1,
+    gap: 12,
+    padding: 12,
   },
   label: {
     margin: 5,
     textAlign: 'center',
-  },
-  input: {
-    backgroundColor: 'white',
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 10,
-    paddingHorizontal: 10,
-    fontSize: 30,
-    height: 40,
-    margin: 10,
-    textAlign: 'center',
+    fontSize: 20,
   },
 });

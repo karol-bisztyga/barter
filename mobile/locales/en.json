@@ -162,5 +162,7 @@
   "chats_type_a_message": "Type a message",
   "chats_no_chats": "No chats",
   "chats_report_sent": "Report sent",
-  "chats_send_report": "Send report"
+  "chats_send_report": "Send report",
+
+  "send_report_reason": "reason"
 }

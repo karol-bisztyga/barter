@@ -4,6 +4,7 @@ import Carousel from './Carousel';
 import { ItemData, ItemBorderRadius, ItemNamePlacement } from '../types';
 import ButtonWrapper from '../genericComponents/ButtonWrapper';
 import TextWrapper from '../genericComponents/TextWrapper';
+import { SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY } from '../constants';
 
 const { height } = Dimensions.get('window');
 
@@ -65,7 +66,11 @@ export default function EditableItem({
           </TextWrapper>
           {!showFull && (
             <View style={{ padding: 10 }}>
-              <ButtonWrapper title="more" onPress={onPressMore} fillColor="white" />
+              <ButtonWrapper
+                title="more"
+                onPress={onPressMore}
+                fillColor={SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY}
+              />
             </View>
           )}
         </View>

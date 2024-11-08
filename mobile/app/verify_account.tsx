@@ -82,15 +82,13 @@ export default function Register() {
             <TextWrapper style={styles.label}>{t('verify_account_subtitle_1')}</TextWrapper>
             <TextWrapper style={styles.label}>{t('verify_account_subtitle_2')}</TextWrapper>
           </View>
-          <View>
-            <View style={styles.inputWrapper}>
-              <InputWrapper
-                placeholder={t('verify_account_code')}
-                value={verificationCode}
-                onChangeText={setVerificationCode}
-                fillColor={SECTION_BACKGROUND}
-              />
-            </View>
+          <View style={styles.inputsWrapper}>
+            <InputWrapper
+              placeholder={t('verify_account_code')}
+              value={verificationCode}
+              onChangeText={setVerificationCode}
+              fillColor={SECTION_BACKGROUND}
+            />
           </View>
           <View style={styles.buttonsWrapper}>
             <ButtonWrapper
@@ -123,7 +121,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
   },
-  inputWrapper: {
+  inputsWrapper: {
     height: 60,
     padding: 10,
   },

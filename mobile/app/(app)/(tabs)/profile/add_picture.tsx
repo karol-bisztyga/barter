@@ -14,7 +14,10 @@ import { useUserContext } from '../../context/UserContext';
 import { useEditItemContext } from '../../context/EditItemContext';
 import { uploadProfilePicture } from '../../db_utils/uploadProfilePicture';
 import { useSessionContext } from '../../../SessionContext';
-import { PROFILE_PICTURE_SIZE_LIMIT } from '../../constants';
+import {
+  PROFILE_PICTURE_SIZE_LIMIT,
+  SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY,
+} from '../../constants';
 import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import { getInfoAsync } from 'expo-file-system';
 import { formatBytes } from '../../utils/reusableStuff';
@@ -213,7 +216,7 @@ const AddPicture = () => {
             title={t('add')}
             onPress={confirm}
             disabled={loading || !!error}
-            fillColor="white"
+            fillColor={SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY}
           />
           {loading && (
             <View style={styles.loaderWrapper}>

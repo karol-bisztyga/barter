@@ -8,7 +8,7 @@ export default function Credits() {
 
   return (
     <View style={styles.container}>
-      <TextWrapper>{t('not_implemented_yet')}</TextWrapper>
+      <TextWrapper style={{ fontSize: 32 }}>{t('not_implemented_yet')}</TextWrapper>
     </View>
   );
 }

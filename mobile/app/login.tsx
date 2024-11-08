@@ -256,7 +256,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flex: 1,
     flexDirection: 'column',
-    padding: 10,
+    padding: 12,
     position: 'absolute',
     width: '100%',
     gap: 8,
@@ -275,7 +275,7 @@ const styles = StyleSheet.create({
   errorWrapper: {
     opacity: 0.6,
     width: '100%',
-    padding: 10,
+    padding: 12,
   },
   errorText: {
     color: 'red',

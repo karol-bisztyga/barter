@@ -9,6 +9,7 @@ import InputWrapper from '../../genericComponents/InputWrapper';
 import { useJokerContext } from '../../context/JokerContext';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
+import { SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY } from '../../constants';
 
 const SendReportModal = () => {
   const { t } = useTranslation();
@@ -37,18 +38,18 @@ const SendReportModal = () => {
       <View style={styles.inputContainer}>
         <InputWrapper
           multiline={true}
-          placeholder="reason"
+          placeholder={t('send_report_reason')}
           secureTextEntry={true}
           value={report}
           onChangeText={setReport}
           style={styles.input}
-          fillColor="white"
+          fillColor={SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY}
         />
         <ButtonWrapper
           title={t('chats_send_report')}
           disabled={report.length < 10}
           onPress={sendReport}
-          fillColor="white"
+          fillColor={SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY}
         />
       </View>
     </View>
@@ -63,10 +64,11 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flexDirection: 'column',
-    padding: 10,
+    padding: 12,
     position: 'absolute',
     width: '100%',
     height: 200,
+    gap: 12,
   },
   input: {
     textAlignVertical: 'top',
