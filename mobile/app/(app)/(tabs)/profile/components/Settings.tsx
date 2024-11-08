@@ -5,7 +5,13 @@ import { router } from 'expo-router';
 import EditableItem from './items/EditableItem';
 import LinkItem from './items/LinkItem';
 import ToggleItem from './items/ToggleItem';
-import { MandolinIcon, TrumpetIcon } from '../../../utils/icons';
+import {
+  MandolinIcon,
+  PolandFlagIcon,
+  TrumpetIcon,
+  UkraineFlagIcon,
+  UnitedKingdomFlagIcon,
+} from '../../../utils/icons';
 import { useSettingsContext } from '../../../context/SettingsContext';
 import Background from '../../../components/Background';
 import { SECTION_BACKGROUND } from './items/editing_panels/constants';
@@ -13,6 +19,7 @@ import { useTranslation } from 'react-i18next';
 import { SelectConfig } from './items/editing_panels/SelectEditingPanel';
 import { useJokerContext } from '../../../context/JokerContext';
 import { LANGUAGES } from '../../../constants';
+import { SvgProps } from 'react-native-svg';
 
 const Settings = ({
   editingId,
@@ -28,11 +35,24 @@ const Settings = ({
   const sessionContext = useSessionContext();
   const settingsContext = useSettingsContext();
 
+  const getIconForLanguage = (language: string): React.FC<SvgProps> | null => {
+    switch (language) {
+      case 'language_english':
+        return UnitedKingdomFlagIcon;
+      case 'language_polish':
+        return PolandFlagIcon;
+      case 'language_ukrainian':
+        return UkraineFlagIcon;
+    }
+    return null;
+  };
+
   const languageSelectConfig: SelectConfig = {
     options: LANGUAGES.map((language) => {
       return {
         value: language,
         label: t(language),
+        Icon: getIconForLanguage(language),
       };
     }),
     onSelect: (value) => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import Animated, {
   interpolate,
   runOnJS,
@@ -9,11 +9,13 @@ import Animated, {
 } from 'react-native-reanimated';
 import TextWrapper from '../../../../../genericComponents/TextWrapper';
 import { EDITING_PANEL_HEIGHT, SECTION_BACKGROUND } from './constants';
+import { SvgProps } from 'react-native-svg';
 
 export type SelectConfig = {
   options: {
     value: string;
     label: string;
+    Icon: React.FC<SvgProps> | null;
   }[];
   onSelect: (value: string) => boolean;
   valueFormatter: (value: string) => string;
@@ -65,7 +67,7 @@ const SelectEditingPanel = ({
 
   return (
     <Animated.View style={[styles.container, wrapperAnimatedStyle]}>
-      {options.map(({ label, value }, index) => (
+      {options.map(({ label, value, Icon }, index) => (
         <TouchableOpacity
           key={index}
           style={[
@@ -79,7 +81,10 @@ const SelectEditingPanel = ({
             }
           }}
         >
-          <TextWrapper style={styles.label}>{label}</TextWrapper>
+          <View style={styles.innerWrapper}>
+            {Icon && <Icon width={20} height={20} style={styles.icon} />}
+            <TextWrapper style={styles.label}>{label}</TextWrapper>
+          </View>
         </TouchableOpacity>
       ))}
     </Animated.View>
@@ -113,10 +118,13 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderRadius: 10,
     overflow: 'hidden',
+    flexDirection: 'row',
   },
   label: {
     fontSize: 20,
   },
+  icon: { marginHorizontal: 8 },
+  innerWrapper: { flexDirection: 'row' },
 });
 
 export default SelectEditingPanel;
