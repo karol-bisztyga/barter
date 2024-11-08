@@ -41,7 +41,7 @@ const AccountDetails = ({
   const getTranslationForName = (name: string) => {
     switch (name) {
       case 'email':
-        return t('profile_email');
+        return t('email');
       case 'name':
         return t('profile_name');
       case 'phone':

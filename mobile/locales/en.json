@@ -101,7 +101,7 @@
   "no_items_available": "No items available for now, try again later",
 
   "tab_profile_title": "Profile",
-  "tab_swipe_title": "Swipe",
+  "tab_swipe_title": "Hunt",
   "tab_chats_title": "Exchanges",
 
   "match_items_matched": "Items matched!",
@@ -152,7 +152,6 @@
   "profile_my_items": "My Items",
   "profile_settings": "Settings",
   "profile_add_new_item": "Add new item",
-  "profile_email": "mail",
   "profile_name": "name",
   "profile_phone": "phone",
   "profile_location": "location",

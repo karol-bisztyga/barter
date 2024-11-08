@@ -1,0 +1,72 @@
+[
+  {
+    "name": "Testowy Pierwszy",
+    "email": "testowypierwszy@gmail.com",
+    "phone": "123456789",
+    "facebook": null,
+    "instagram": "testowyyy11",
+    "profilePicture": "https://f003.backblazeb2.com/file/profile-pictures-wymianka/profile-pic-1.jpg",
+    "password": "testowehaslo111",
+    "location_coordinate_lat": "50.067570",
+    "location_coordinate_lon": "19.917868",
+    "location_city": "Krakow",
+    "id": 1
+  },
+  {
+    "name": "Testowy Drugi",
+    "email": "testowydrugi@gmail.com",
+    "phone": "987654321",
+    "facebook": "tojatestowy2",
+    "instagram": "testowy22",
+    "profilePicture": null,
+    "password": "testowehaslo222",
+    "location_coordinate_lat": "50.066331",
+    "location_coordinate_lon": "19.928390",
+    "location_city": "Krakow",
+    "id": 2
+  },
+  {
+    "name": "Testowy Trzeci",
+    "email": "testowytrzeci@gmail.com",
+    "phone": "111222333",
+    "facebook": null,
+    "instagram": null,
+    "profilePicture": "https://f003.backblazeb2.com/file/profile-pictures-wymianka/profile-pic-3.jpg",
+    "password": "testowehaslo333",
+    "location_coordinate_lat": "50.067143",
+    "location_coordinate_lon": "20.052357",
+    "location_city": "Krakow",
+    "id": 3
+  },
+  {
+    "name": "Testowy Czwarty",
+    "email": "testowyczwarty@gmail.com",
+    "phone": "444555666",
+    "facebook": "testowyy4",
+    "instagram": "testowy44",
+    "profilePicture": null,
+    "password": "testowehaslo444",
+    "id": 4
+  },
+  {
+    "name": "Testowy Piąty",
+    "email": "testowypiaty@gmail.com",
+    "phone": "777333999",
+    "facebook": null,
+    "instagram": "testowy55555",
+    "profilePicture": "https://f003.backblazeb2.com/file/profile-pictures-wymianka/profile-pic-5.jpg",
+    "password": "testowehaslo555",
+    "location_city": "Krakow",
+    "id": 5
+  },
+  {
+    "name": "Karol B",
+    "email": "karolbisztyga@gmail.com",
+    "phone": "000000000",
+    "facebook": null,
+    "instagram": null,
+    "profilePicture": null,
+    "password": "admin123456",
+    "id": 6
+  }
+]

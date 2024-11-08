@@ -6,8 +6,9 @@ import { getUserMatches } from '../db_utils/getUserMatches';
 import { MatchContextState } from '../context/MatchContext';
 import { XMLParser } from 'fast-xml-parser';
 import { UserData } from '../types';
-import { LisIcon } from './icons';
+import { LisIcon, PolandFlagIcon, UkraineFlagIcon, UnitedKingdomFlagIcon } from './icons';
 import { useSettingsContext } from '../context/SettingsContext';
+import { SvgProps } from 'react-native-svg';
 
 export const headerBackButtonOptions = (
   beforeCallback?: () => Promise<boolean>,
@@ -131,4 +132,16 @@ export const getUserLocation = (userData: UserData | null) => {
     return '';
   }
   userData.userLocationCoordinates || userData.userLocationCity;
+};
+
+export const getIconForLanguage = (language: string): React.FC<SvgProps> | null => {
+  switch (language) {
+    case 'language_english':
+      return UnitedKingdomFlagIcon;
+    case 'language_polish':
+      return PolandFlagIcon;
+    case 'language_ukrainian':
+      return UkraineFlagIcon;
+  }
+  return null;
 };

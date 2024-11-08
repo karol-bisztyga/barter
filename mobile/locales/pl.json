@@ -2,7 +2,7 @@
   "welcome": "Witamy",
   "greeting": "Cześć, {{name}}!",
 
-  "email": "email",
+  "email": "poczta",
   "password": "hasło",
   "repeat_password": "powtórz hasło",
   "sign_in": "Zaloguj się",
@@ -152,7 +152,6 @@
   "profile_my_items": "Moje przedmioty",
   "profile_settings": "Ustawienia",
   "profile_add_new_item": "Dodaj nowy przedmiot",
-  "profile_email": "poczta",
   "profile_name": "imię",
   "profile_phone": "telefon",
   "profile_location": "lokalizacja",
