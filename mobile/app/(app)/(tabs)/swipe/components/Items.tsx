@@ -4,14 +4,14 @@ import { ItemBorderRadius, ItemData, ItemNamePlacement } from '../../../types';
 import { useItemsContext } from '../../../context/ItemsContext';
 import Background from '../../../components/Background';
 import TextWrapper from '../../../genericComponents/TextWrapper';
-import { useSoundContext } from '../../../context/SoundContext';
+import { useSettingsContext } from '../../../context/SettingsContext';
 import Item from '../../../components/Item';
 import { generateHarmonicColor, hexToRgbaString, TargetColor } from '../../../utils/harmonicColors';
 import { SWIPE_BASE_BACKGROUND_COLOR } from '../../../constants';
 
 const Items = () => {
   const itemsContext = useItemsContext();
-  const soundContext = useSoundContext();
+  const settingsContext = useSettingsContext();
 
   const items = itemsContext.usersItemsLikedByTargetItemOwner;
 
@@ -26,7 +26,7 @@ const Items = () => {
             key={index}
             activeOpacity={1}
             onPress={() => {
-              soundContext.playSound('click');
+              settingsContext.playSound('click');
               if (itemsContext.usersItemId === item.id) {
                 return;
               }

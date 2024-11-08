@@ -5,7 +5,7 @@ import { UserData } from './(app)/types';
 import * as SecureStore from 'expo-secure-store';
 import { STORAGE_SESSION_KEY } from './constants';
 import { convertUserData } from './(app)/db_utils/utils';
-import { useSoundContext } from './(app)/context/SoundContext';
+import { useSettingsContext } from './(app)/context/SettingsContext';
 import { useTranslation } from 'react-i18next';
 
 export interface SessionContextState {
@@ -46,7 +46,7 @@ export const useSessionContext = () => {
 export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { t } = useTranslation();
 
-  const soundContext = useSoundContext();
+  const settingsContext = useSettingsContext();
   const [[isLoading, session], setSession] = useStorageState('session');
   const [authError, setAuthError] = useState('');
 
@@ -87,7 +87,7 @@ export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }
 
   const signOut = async () => {
     await setSessionWithStorage();
-    soundContext.stopBackgroundSound();
+    settingsContext.stopBackgroundSound();
   };
 
   return (

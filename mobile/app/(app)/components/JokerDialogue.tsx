@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { JokerAlert } from '../context/JokerContext';
 import TextWrapper from '../genericComponents/TextWrapper';
 import * as Clipboard from 'expo-clipboard';
-import { useSoundContext } from '../context/SoundContext';
+import { useSettingsContext } from '../context/SettingsContext';
 import { useTranslation } from 'react-i18next';
 import { generateHarmonicColor, TargetColor } from '../utils/harmonicColors';
 import { SWIPE_BASE_BACKGROUND_COLOR } from '../constants';
@@ -38,7 +38,7 @@ export const JokerDialogue = ({
   const [state, setState] = useState<STATE>(STATE.IDLE);
   const [closeTimeout, setCloseTimeout] = useState<NodeJS.Timeout | null>(null);
 
-  const soundContext = useSoundContext();
+  const settingsContext = useSettingsContext();
 
   const fullText = currentMessage?.message;
 
@@ -69,7 +69,7 @@ export const JokerDialogue = ({
       if (!currentMessage?.blocking && state !== STATE.INTERRUPTED) {
         const newCloseTimeout = setTimeout(() => {
           if (currentMessage) {
-            soundContext.playSound('whooshHi');
+            settingsContext.playSound('whooshHi');
             setCurrentMessage(null);
             setState(STATE.IDLE);
           }
@@ -80,7 +80,7 @@ export const JokerDialogue = ({
   }, [displayedText]);
 
   const onPressDialogue = () => {
-    soundContext.playSound('whooshHi');
+    settingsContext.playSound('whooshHi');
     if (closeTimeout) {
       clearTimeout(closeTimeout);
       setCloseTimeout(null);
@@ -116,7 +116,7 @@ export const JokerDialogue = ({
       activeOpacity={0.9}
       onPress={onPressDialogue}
       onLongPress={async () => {
-        soundContext.playSound('click');
+        settingsContext.playSound('click');
         await Clipboard.setStringAsync(displayedText);
         Alert.alert(t('copied_to_clipboard'), displayedText);
       }}

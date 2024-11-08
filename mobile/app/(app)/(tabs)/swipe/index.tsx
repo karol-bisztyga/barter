@@ -14,7 +14,7 @@ import { ErrorType, handleError } from '../../utils/errorHandler';
 import { executeProtectedQuery } from '../../db_utils/executeProtectedQuery';
 import { useJokerContext } from '../../context/JokerContext';
 import Background from '../../components/Background';
-import { useSoundContext } from '../../context/SoundContext';
+import { useSettingsContext } from '../../context/SettingsContext';
 import Reload from './components/Reload';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
@@ -27,7 +27,7 @@ export default function Swipe() {
   const { t } = useTranslation();
 
   const sessionContext = useAuth();
-  const soundContext = useSoundContext();
+  const settingsContext = useSettingsContext();
 
   const [cards, setCards] = useState<ItemData[]>([]);
   const [activeCard, setActiveCard] = useState<ItemData | null>(null);
@@ -245,7 +245,7 @@ export default function Swipe() {
   }
 
   const pressMore = () => {
-    soundContext.playSound('click');
+    settingsContext.playSound('click');
     itemsContext.setOthersItem(activeCard);
     router.push({ pathname: 'swipe/item', params: { whosItem: 'other' } });
   };

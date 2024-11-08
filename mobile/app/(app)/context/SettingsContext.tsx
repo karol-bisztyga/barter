@@ -2,6 +2,8 @@ import React, { createContext, useState, ReactNode, FC, useContext, useEffect } 
 import { Audio, AVPlaybackSource, AVPlaybackStatus } from 'expo-av';
 import * as SecureStore from 'expo-secure-store';
 import { STORAGE_SETTINGS_KEY } from '../../constants';
+import { DEFAULT_LANGUAGE, DEFAULT_MUSIC_ON, DEFAULT_SOUND_ON } from '../constants';
+import { useTranslation } from 'react-i18next';
 
 export const BACKGROUND_SOUNDS: Record<string, AVPlaybackSource> = {
   marketplace: require('../../../assets/sounds/background/marketplace.wav'),
@@ -36,9 +38,15 @@ Audio.setAudioModeAsync({
 type OneShotSound = keyof typeof ONE_SHOT_SOUNDS;
 type BackgroundSound = keyof typeof BACKGROUND_SOUNDS;
 
+type SettingsStorageObject = {
+  soundsOn: boolean;
+  musicOn: boolean;
+  language: string;
+};
+
 const BACKGROUND_SOUND_VOLUME = 0.3;
 
-interface SoundContextState {
+interface SettingsContextState {
   playSound: (sound: OneShotSound) => Promise<void>;
   playBackgroundSound: () => void;
   stopBackgroundSound: () => void;
@@ -49,9 +57,11 @@ interface SoundContextState {
   setMusicOn: (value: boolean) => void;
   soundsOn: boolean;
   setSoundsOn: (value: boolean) => void;
+  language: string;
+  setLanguage: (value: string) => void;
 }
 
-const initialState: SoundContextState = {
+const initialState: SettingsContextState = {
   playSound: async () => {},
   playBackgroundSound: () => {},
   stopBackgroundSound: () => {},
@@ -61,19 +71,21 @@ const initialState: SoundContextState = {
   setMusicOn: () => {},
   soundsOn: false,
   setSoundsOn: () => {},
+  language: DEFAULT_LANGUAGE,
+  setLanguage: () => {},
 };
 
-export const SoundContext = createContext<SoundContextState | null>(initialState);
+export const SettingsContext = createContext<SettingsContextState | null>(initialState);
 
-export const useSoundContext = () => {
-  const context = useContext(SoundContext);
+export const useSettingsContext = () => {
+  const context = useContext(SettingsContext);
   if (!context) {
-    throw new Error('useSoundContext must be used within a SoundContextProvider');
+    throw new Error('useSettingsContext must be used within a SettingsContextProvider');
   }
   return context;
 };
 
-export const SoundContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
+export const SettingsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   // for background sounds
   const [backgroundSound, setBackgroundSound] = useState<keyof typeof BACKGROUND_SOUNDS | null>(
     null
@@ -94,10 +106,40 @@ export const SoundContextProvider: FC<{ children: ReactNode }> = ({ children }) 
     Record<keyof typeof BACKGROUND_SOUNDS | keyof typeof ONE_SHOT_SOUNDS, Audio.Sound>
   >({});
 
-  // for settings
-  const [musicOn, setMusicOn] = useState(false);
-  const [soundsOn, setSoundsOn] = useState(false);
+  const { i18n } = useTranslation();
 
+  // for settings
+  const [musicOn, setMusicOn] = useState(DEFAULT_MUSIC_ON);
+  const [soundsOn, setSoundsOn] = useState(DEFAULT_SOUND_ON);
+  const [language, setLanguage] = useState(DEFAULT_LANGUAGE);
+
+  const loadSettingsFromStorage = async () => {
+    const storageStr = SecureStore.getItem(STORAGE_SETTINGS_KEY);
+    if (!storageStr) {
+      return;
+    }
+    const storageParsed: SettingsStorageObject = JSON.parse(storageStr);
+    if (!storageParsed) {
+      return;
+    }
+    setMusicOn(storageParsed.musicOn ?? DEFAULT_MUSIC_ON);
+    setSoundsOn(storageParsed.soundsOn ?? DEFAULT_SOUND_ON);
+    setLanguage(storageParsed.language ?? DEFAULT_LANGUAGE);
+  };
+
+  const saveSettingsInStorage = () => {
+    SecureStore.setItem(STORAGE_SETTINGS_KEY, JSON.stringify({ soundsOn, musicOn, language }));
+  };
+
+  // load i18n language on language state change
+  useEffect(() => {
+    i18n.changeLanguage(language);
+  }, [language]);
+
+  // load language
+  useEffect(() => {}, []);
+
+  // load and unload sounds
   useEffect(() => {
     // pre-load all one shot sounds
     Object.keys(ONE_SHOT_SOUNDS).forEach(async (key) => {
@@ -120,26 +162,14 @@ export const SoundContextProvider: FC<{ children: ReactNode }> = ({ children }) 
     };
   }, []);
 
-  const loadSettingsFromStorage = async () => {
-    const storageStr = SecureStore.getItem(STORAGE_SETTINGS_KEY);
-    if (!storageStr) {
-      return;
-    }
-    const storageParsed = JSON.parse(storageStr);
-    if (!storageParsed) {
-      return;
-    }
-    setMusicOn(storageParsed.musicOn);
-    setSoundsOn(storageParsed.soundsOn);
-  };
-
+  // loadSettingsFromStorage
   useEffect(() => {
     loadSettingsFromStorage();
   }, []);
 
   useEffect(() => {
-    SecureStore.setItem(STORAGE_SETTINGS_KEY, JSON.stringify({ soundsOn, musicOn }));
-  }, [soundsOn, musicOn]);
+    saveSettingsInStorage();
+  }, [soundsOn, musicOn, language]);
 
   useEffect(() => {
     let sound: Audio.Sound | null = null;
@@ -230,7 +260,7 @@ export const SoundContextProvider: FC<{ children: ReactNode }> = ({ children }) 
     }
   }, [soundsOn]);
 
-  // for one shots
+  // for one shot sounds
   const playSound = async (sound: OneShotSound) => {
     if (!soundsOn) {
       return;
@@ -254,7 +284,7 @@ export const SoundContextProvider: FC<{ children: ReactNode }> = ({ children }) 
     await soundObject.playAsync();
   };
 
-  // for backgrounds
+  // for background sounds
   const getRandomBackgroundSound = (currentBackgroundSound: BackgroundSound | null) => {
     const keys = Object.keys(BACKGROUND_SOUNDS);
     let newKey = null;
@@ -281,7 +311,7 @@ export const SoundContextProvider: FC<{ children: ReactNode }> = ({ children }) 
   };
 
   return (
-    <SoundContext.Provider
+    <SettingsContext.Provider
       value={{
         playSound,
         playBackgroundSound,
@@ -292,9 +322,11 @@ export const SoundContextProvider: FC<{ children: ReactNode }> = ({ children }) 
         setMusicOn,
         soundsOn,
         setSoundsOn,
+        language,
+        setLanguage,
       }}
     >
       {children}
-    </SoundContext.Provider>
+    </SettingsContext.Provider>
   );
 };

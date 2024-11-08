@@ -13,7 +13,7 @@ import {
   TargetLinealIcon,
 } from '../utils/icons';
 import { useJokerContext } from '../context/JokerContext';
-import { useSoundContext } from '../context/SoundContext';
+import { useSettingsContext } from '../context/SettingsContext';
 import { AddPictureContextProvider } from '../context/AddPictureContext';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth';
@@ -26,13 +26,13 @@ export default function TabLayout() {
   const sessionContext = useAuth();
   const matchContext = useMatchContext();
   const jokerContext = useJokerContext();
-  const soundContext = useSoundContext();
+  const settingsContext = useSettingsContext();
 
   const [routeName, setRouteName] = useState<string>('swipe');
 
   useEffect(() => {
-    soundContext.loadSettingsFromStorage();
-    soundContext.playBackgroundSound();
+    settingsContext.loadSettingsFromStorage();
+    settingsContext.playBackgroundSound();
     jokerContext.showNonBlockingInfo(t('welcome'));
   }, []);
 
@@ -60,10 +60,10 @@ export default function TabLayout() {
             setRouteName(routeName);
             switch (routeName) {
               case 'swipe':
-                soundContext.playSound('click');
+                settingsContext.playSound('click');
                 break;
               case 'chats':
-                soundContext.playSound('click');
+                settingsContext.playSound('click');
                 (async () => {
                   try {
                     await updateMatches(sessionContext, matchContext);
@@ -73,7 +73,7 @@ export default function TabLayout() {
                 })();
                 break;
               case 'profile':
-                soundContext.playSound('click');
+                settingsContext.playSound('click');
                 break;
               default:
                 handleError(t, jokerContext, ErrorType.UNKNOWN_ROUTE, `${e}`, '', false);

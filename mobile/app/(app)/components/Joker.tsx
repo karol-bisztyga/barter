@@ -12,7 +12,7 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
-import { useSoundContext } from '../context/SoundContext';
+import { useSettingsContext } from '../context/SettingsContext';
 
 const { width } = Dimensions.get('window');
 
@@ -23,7 +23,7 @@ const FORCE_LEFT_OR_RIGHT_POSITION = false;
 
 const Joker = () => {
   const jokerContext = useJokerContext();
-  const soundContext = useSoundContext();
+  const settingsContext = useSettingsContext();
 
   const [currentMessage, setCurrentMessage] = useState<JokerAlert | null>(null);
 
@@ -102,7 +102,7 @@ const Joker = () => {
     if (currentMessage) {
       return;
     }
-    soundContext.playSound('click');
+    settingsContext.playSound('click');
 
     // TODO this function should do something different, probably say something like "hello I'm your assistant" etc
     const arr = ['error', 'info', 'success'];

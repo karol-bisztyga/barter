@@ -9,7 +9,7 @@ import { ErrorType, handleError } from '../../../utils/errorHandler';
 import TextWrapper from '../../../genericComponents/TextWrapper';
 import { Flag2Icon, FlagIcon, SwordsShieldIcon } from '../../../utils/icons';
 import { useJokerContext } from '../../../context/JokerContext';
-import { useSoundContext } from '../../../context/SoundContext';
+import { useSettingsContext } from '../../../context/SettingsContext';
 import { useTranslation } from 'react-i18next';
 
 const MENU_ICON_SIZE = 28;
@@ -20,11 +20,11 @@ const ChatRightHeaderMenu = () => {
   const jokerContext = useJokerContext();
   const sessionContext = useSessionContext();
   const matchContext = useMatchContext();
-  const soundContext = useSoundContext();
+  const settingsContext = useSettingsContext();
 
   const unmatchHandler = async () => {
     try {
-      soundContext.playSound('click');
+      settingsContext.playSound('click');
       const decision: boolean = await new Promise((resolve) => {
         Alert.alert(
           t('chats_unmatch_question_title'),
@@ -60,7 +60,7 @@ const ChatRightHeaderMenu = () => {
     }
   };
   const report = async () => {
-    soundContext.playSound('click');
+    settingsContext.playSound('click');
     router.push('chats/send_report');
   };
 
@@ -69,7 +69,7 @@ const ChatRightHeaderMenu = () => {
       <Menu>
         <MenuTrigger
           onPress={() => {
-            soundContext.playSound('click');
+            settingsContext.playSound('click');
           }}
         >
           <Flag2Icon width={MENU_ICON_SIZE} height={MENU_ICON_SIZE} />

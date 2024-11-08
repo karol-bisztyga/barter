@@ -11,7 +11,7 @@ import TextWrapper from '../../genericComponents/TextWrapper';
 import AccountDetails from './components/AccountDetails';
 import MyItems from './components/MyItems';
 import { FeatherIcon } from '../../utils/icons';
-import { useSoundContext } from '../../context/SoundContext';
+import { useSettingsContext } from '../../context/SettingsContext';
 import Background from '../../components/Background';
 import ProfilePicture, { PROFILE_PICTURE_SIZE } from './components/ProfilePicture';
 import { useTranslation } from 'react-i18next';
@@ -27,14 +27,14 @@ export default function Profile() {
   const scrollViewRef = useRef<KeyboardAwareScrollView>(null);
   const userContext = useUserContext();
   const editItemContext = useEditItemContext();
-  const soundContext = useSoundContext();
+  const settingsContext = useSettingsContext();
 
   const [editingId, setEditingId] = useState<string>('');
   const [editingIdInitialized, setEditingIdInitialized] = useState<boolean>(false);
 
   useEffect(() => {
     if (editingIdInitialized) {
-      soundContext.playSound('stone');
+      settingsContext.playSound('stone');
     } else {
       setEditingIdInitialized(true);
     }
@@ -87,7 +87,7 @@ export default function Profile() {
               <TouchableOpacity
                 style={styles.editProfileImageWrapper}
                 onPress={() => {
-                  soundContext.playSound('click');
+                  settingsContext.playSound('click');
                   editItemContext.setImageType(EditImageType.profile);
                   router.push('profile/add_picture');
                 }}

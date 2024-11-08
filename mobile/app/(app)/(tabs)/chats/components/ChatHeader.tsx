@@ -8,7 +8,7 @@ import { useItemsContext } from '../../../context/ItemsContext';
 import { ErrorType, handleError } from '../../../utils/errorHandler';
 import { ArrowsIcon } from '../../../utils/icons';
 import { useJokerContext } from '../../../context/JokerContext';
-import { useSoundContext } from '../../../context/SoundContext';
+import { useSettingsContext } from '../../../context/SettingsContext';
 import { useTranslation } from 'react-i18next';
 
 const ChatHeader = () => {
@@ -17,7 +17,7 @@ const ChatHeader = () => {
   const jokerContext = useJokerContext();
   const userContext = useUserContext();
   const itemsContext = useItemsContext();
-  const soundContext = useSoundContext();
+  const settingsContext = useSettingsContext();
 
   const { usersItemId, othersItem } = itemsContext;
 
@@ -37,7 +37,7 @@ const ChatHeader = () => {
           showName={false}
           borderRadius={ItemBorderRadius.all}
           onPress={() => {
-            soundContext.playSound('click');
+            settingsContext.playSound('click');
             router.push({ pathname: 'chats/item', params: { whosItem: 'self' } });
           }}
         />
@@ -53,7 +53,7 @@ const ChatHeader = () => {
           showName={false}
           borderRadius={ItemBorderRadius.all}
           onPress={() => {
-            soundContext.playSound('click');
+            settingsContext.playSound('click');
             router.push({ pathname: 'chats/item', params: { whosItem: 'other' } });
           }}
         />

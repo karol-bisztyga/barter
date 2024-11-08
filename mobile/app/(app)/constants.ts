@@ -18,4 +18,8 @@ export const SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY = hexToRgbaString(
   0.2
 );
 
+export const DEFAULT_SOUND_ON = false;
+export const DEFAULT_MUSIC_ON = false;
+
 export const LANGUAGES = ['language_english', 'language_polish', 'language_ukrainian'];
+export const DEFAULT_LANGUAGE = 'language_english';

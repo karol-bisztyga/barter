@@ -7,13 +7,13 @@ import { MatchContextState } from '../context/MatchContext';
 import { XMLParser } from 'fast-xml-parser';
 import { UserData } from '../types';
 import { LisIcon } from './icons';
-import { useSoundContext } from '../context/SoundContext';
+import { useSettingsContext } from '../context/SettingsContext';
 
 export const headerBackButtonOptions = (
   beforeCallback?: () => Promise<boolean>,
   disabled: boolean = false
 ) => {
-  const soundContext = useSoundContext();
+  const settingsContext = useSettingsContext();
 
   return {
     headerShown: true,
@@ -28,7 +28,7 @@ export const headerBackButtonOptions = (
           if (disabled) {
             return;
           }
-          soundContext.playSound('click');
+          settingsContext.playSound('click');
           router.back();
         }}
         disabled={disabled}

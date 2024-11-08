@@ -11,7 +11,7 @@ import { ErrorType, handleError } from '../../utils/errorHandler';
 import TextWrapper from '../../genericComponents/TextWrapper';
 import ChatItem from './components/ChatItem';
 import { useJokerContext } from '../../context/JokerContext';
-import { useSoundContext } from '../../context/SoundContext';
+import { useSettingsContext } from '../../context/SettingsContext';
 import { useTranslation } from 'react-i18next';
 
 const ITEMS_PER_SCREEN = 4;
@@ -23,7 +23,7 @@ export default function Chats() {
   const userContext = useUserContext();
   const matchContext = useMatchContext();
   const jokerContext = useJokerContext();
-  const soundContext = useSoundContext();
+  const settingsContext = useSettingsContext();
 
   const [listItemHeight, setListItemHeight] = useState<number>(0);
   const [listRendered, setListRendered] = useState(false);
@@ -104,7 +104,7 @@ export default function Chats() {
             return (
               <TouchableOpacity
                 onPress={() => {
-                  soundContext.playSound('click');
+                  settingsContext.playSound('click');
                   itemsContext.setUsersItemId(myItem.id);
                   itemsContext.setOthersItem(theirItem);
                   matchContext.setCurrentMatchId(id);

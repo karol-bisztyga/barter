@@ -4,7 +4,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { CannonIcon } from '../../../utils/icons';
 import Background from '../../../components/Background';
 import TextWrapper from '../../../genericComponents/TextWrapper';
-import { useSoundContext } from '../../../context/SoundContext';
+import { useSettingsContext } from '../../../context/SettingsContext';
 import { useTranslation } from 'react-i18next';
 
 const ICON_SIZE = 200;
@@ -16,7 +16,7 @@ type ReloadProps = {
 const Reload = ({ onPress }: ReloadProps) => {
   const { t } = useTranslation();
 
-  const soundContext = useSoundContext();
+  const settingsContext = useSettingsContext();
 
   return (
     <View style={styles.container}>
@@ -24,7 +24,7 @@ const Reload = ({ onPress }: ReloadProps) => {
       <TextWrapper style={styles.label}>{t('reload')}</TextWrapper>
       <TouchableOpacity
         onPress={() => {
-          soundContext.playSound('click');
+          settingsContext.playSound('click');
           onPress();
         }}
       >

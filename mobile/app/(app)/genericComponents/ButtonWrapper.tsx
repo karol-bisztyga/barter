@@ -12,7 +12,7 @@ import { BACKGROUND_COLOR } from '../constants';
 import { DimensionsType, generatePaths, getDefaultFont } from './utils';
 import { useAssets } from 'expo-asset';
 import Svg, { Path } from 'react-native-svg';
-import { useSoundContext } from '../context/SoundContext';
+import { useSettingsContext } from '../context/SettingsContext';
 import { useFonts } from 'expo-font';
 
 export const BUTTON_HEIGHT = 40;
@@ -28,7 +28,7 @@ type MyButtonProps = {
 };
 
 const ButtonWrapper = ({ title, icon, onPress, disabled, color, fillColor }: MyButtonProps) => {
-  const soundContext = useSoundContext();
+  const settingsContext = useSettingsContext();
 
   const [dimensions, setDimensions] = useState<DimensionsType>({
     width: 0,
@@ -72,7 +72,7 @@ const ButtonWrapper = ({ title, icon, onPress, disabled, color, fillColor }: MyB
       <TouchableOpacity
         activeOpacity={0.8}
         onPress={() => {
-          soundContext.playSound('click');
+          settingsContext.playSound('click');
           onPress();
         }}
         style={[styles.button, icon ? styles.buttonWithIcon : styles.buttonWithoutIcon]}
