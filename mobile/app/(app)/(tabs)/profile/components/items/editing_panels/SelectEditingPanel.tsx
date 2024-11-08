@@ -8,9 +8,16 @@ import Animated, {
   useAnimatedStyle,
 } from 'react-native-reanimated';
 import TextWrapper from '../../../../../genericComponents/TextWrapper';
-import { useJokerContext } from '../../../../../context/JokerContext';
 import { EDITING_PANEL_HEIGHT, SECTION_BACKGROUND } from './constants';
-import { useTranslation } from 'react-i18next';
+
+export type SelectConfig = {
+  options: {
+    value: string;
+    label: string;
+  }[];
+  onSelect: (value: string) => boolean;
+  valueFormatter: (value: string) => string;
+};
 
 export type SelectEditingPanelProps = {
   initialValue: string;
@@ -18,7 +25,8 @@ export type SelectEditingPanelProps = {
   editingValue: string;
   setEditingValue: React.Dispatch<React.SetStateAction<string>>;
   setEditingId: React.Dispatch<React.SetStateAction<string>>;
-  options: string[];
+  selectConfig: SelectConfig;
+  setValue: React.Dispatch<React.SetStateAction<string>>;
 };
 
 const SelectEditingPanel = ({
@@ -26,12 +34,10 @@ const SelectEditingPanel = ({
   editing,
   editingValue,
   setEditingValue,
-  setEditingId,
-  options,
+  selectConfig,
+  setValue,
 }: SelectEditingPanelProps) => {
-  const { t } = useTranslation();
-
-  const jokerContext = useJokerContext();
+  const { options } = selectConfig;
 
   const maxHeight = EDITING_PANEL_HEIGHT * options.length;
 
@@ -49,28 +55,31 @@ const SelectEditingPanel = ({
       }
     }
   );
+  const optionsIncludeInitialValue = options.some(({ value }) => {
+    return value === initialValue;
+  });
 
-  if (!options.length || !options.includes(initialValue)) {
+  if (!options.length || !optionsIncludeInitialValue) {
     return null;
   }
 
   return (
     <Animated.View style={[styles.container, wrapperAnimatedStyle]}>
-      {options.map((option, index) => (
+      {options.map(({ label, value }, index) => (
         <TouchableOpacity
           key={index}
           style={[
             styles.optionWrapper,
-            { backgroundColor: editingValue === option ? '#ccc' : 'transparent' },
+            { backgroundColor: editingValue === value ? '#ccc' : 'transparent' },
           ]}
           onPress={() => {
-            if (editingValue !== option) {
-              jokerContext.showInfo(t('profile_language_not_supported'));
+            const select = selectConfig.onSelect(value);
+            if (select) {
+              setValue(value);
             }
-            setEditingId('');
           }}
         >
-          <TextWrapper style={styles.label}>{option}</TextWrapper>
+          <TextWrapper style={styles.label}>{label}</TextWrapper>
         </TouchableOpacity>
       ))}
     </Animated.View>

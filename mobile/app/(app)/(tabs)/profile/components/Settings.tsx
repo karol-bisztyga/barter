@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { useSessionContext } from '../../../../SessionContext';
 import { router } from 'expo-router';
@@ -10,6 +10,10 @@ import { useSoundContext } from '../../../context/SoundContext';
 import Background from '../../../components/Background';
 import { SECTION_BACKGROUND } from './items/editing_panels/constants';
 import { useTranslation } from 'react-i18next';
+import { SelectConfig } from './items/editing_panels/SelectEditingPanel';
+import i18n from '../../../../../i18n';
+import { useJokerContext } from '../../../context/JokerContext';
+import { LANGUAGES } from '../../../constants';
 
 const Settings = ({
   editingId,
@@ -20,8 +24,38 @@ const Settings = ({
 }) => {
   const { t } = useTranslation();
 
+  const jokerContext = useJokerContext();
+
   const sessionContext = useSessionContext();
   const soundContext = useSoundContext();
+
+  const [currentLanguage, setCurrentLanguage] = useState(i18n.language);
+
+  const languageSelectConfig: SelectConfig = {
+    options: LANGUAGES.map((language) => {
+      return {
+        value: language,
+        label: t(language),
+      };
+    }),
+    onSelect: (value) => {
+      setEditingId('');
+      if (value === 'language_ukrainian') {
+        jokerContext.showNonBlockingInfo(t('profile_language_not_supported'));
+        return false;
+      }
+      if (i18n.language === value) {
+        return false;
+      }
+
+      i18n.changeLanguage(value);
+      setCurrentLanguage(value);
+      return true;
+    },
+    valueFormatter: (value) => {
+      return t(value);
+    },
+  };
 
   return (
     <View style={styles.container}>
@@ -49,14 +83,14 @@ const Settings = ({
       />
       <EditableItem
         name={t('profile_change_language')}
-        initialValue="English"
+        initialValue={currentLanguage}
         id="settings-language"
         editable
         isLast={false}
         editingId={editingId}
         setEditingId={setEditingId}
         type="select"
-        options={['English', 'Polish', 'Ukrainian']}
+        selectConfig={languageSelectConfig}
       />
       <EditableItem
         name={t('profile_change_password')}

@@ -13,7 +13,7 @@ import Animated, {
 import TextWrapper from '../../../../genericComponents/TextWrapper';
 import FieldEditingPanel from './editing_panels/FieldEditingPanel';
 import LocationEditingPanel from './editing_panels/LocationEditingPanel';
-import SelectEditingPanel from './editing_panels/SelectEditingPanel';
+import SelectEditingPanel, { SelectConfig } from './editing_panels/SelectEditingPanel';
 import PasswordEditingPanel from './editing_panels/PasswordEditingPanel';
 import { FONT_COLOR } from '../../../../constants';
 import { useTranslation } from 'react-i18next';
@@ -29,7 +29,7 @@ const EditableItem = ({
   setEditingId,
   editable = true,
   type = 'field',
-  options,
+  selectConfig,
 }: {
   name: string;
   initialValue: string;
@@ -39,7 +39,7 @@ const EditableItem = ({
   setEditingId: React.Dispatch<React.SetStateAction<string>>;
   editable: boolean;
   type: EditingPanelType;
-  options?: string[]; // only for type 'select'
+  selectConfig?: SelectConfig; // only for type 'select'
 }) => {
   const { t } = useTranslation();
 
@@ -126,6 +126,9 @@ const EditableItem = ({
           />
         );
       case 'select':
+        if (!selectConfig) {
+          return null;
+        }
         return (
           <SelectEditingPanel
             editing={editing}
@@ -133,7 +136,8 @@ const EditableItem = ({
             setEditingValue={setEditingValue}
             initialValue={initialValue}
             setEditingId={setEditingId}
-            options={options || []}
+            selectConfig={selectConfig}
+            setValue={setValue}
           />
         );
       case 'password':
@@ -142,6 +146,11 @@ const EditableItem = ({
         return null;
     }
   };
+
+  let label = value;
+  if (type === 'select' && selectConfig) {
+    label = selectConfig.valueFormatter(value);
+  }
 
   return (
     <View
@@ -171,7 +180,7 @@ const EditableItem = ({
         onPress={toggleEdit}
       >
         <TextWrapper style={styles.itemTitle}>{formatItemName(name)}</TextWrapper>
-        <TextWrapper style={[styles.itemValue]}>{value}</TextWrapper>
+        <TextWrapper style={[styles.itemValue]}>{label}</TextWrapper>
         <View style={[styles.itemArrowWrapper, { opacity: editable ? 1 : 0 }]}>
           <Animated.View style={rotationAnimatedStyle}>
             <FontAwesome size={18} style={styles.itemArrow} name="chevron-right" />

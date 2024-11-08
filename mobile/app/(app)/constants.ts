@@ -17,3 +17,5 @@ export const SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY = hexToRgbaString(
   SWIPE_BASE_BACKGROUND_COLOR,
   0.2
 );
+
+export const LANGUAGES = ['language_english', 'language_polish', 'language_ukrainian'];

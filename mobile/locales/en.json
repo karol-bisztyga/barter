@@ -22,6 +22,10 @@
   "you": "You",
   "send": "Send",
 
+  "language_english": "English",
+  "language_polish": "Polish",
+  "language_ukrainian": "Ukrainian",
+
   "email_missing": "Email is missing",
   "password_missing": "Password is missing",
   "token_missing": "Token is missing",
