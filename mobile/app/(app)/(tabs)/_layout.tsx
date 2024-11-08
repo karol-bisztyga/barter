@@ -36,7 +36,7 @@ export default function TabLayout() {
   useEffect(() => {
     settingsContext.loadSettingsFromStorage();
     settingsContext.playBackgroundSound();
-    jokerContext.showNonBlockingInfo(t('welcome'));
+    jokerContext.showRandomGreeting();
   }, []);
 
   return (

@@ -1,4 +1,5 @@
 import React, { createContext, useState, ReactNode, FC, useContext } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export enum AlertType {
   ERROR = 'error',
@@ -21,6 +22,7 @@ export interface JokerContextState {
   showInfo: (message: string) => void;
   showSuccess: (message: string) => void;
   showNonBlockingInfo: (message: string) => void;
+  showRandomGreeting: () => void;
 }
 
 const initialState: JokerContextState = {
@@ -32,6 +34,7 @@ const initialState: JokerContextState = {
   showInfo: () => {},
   showSuccess: () => {},
   showNonBlockingInfo: () => {},
+  showRandomGreeting: () => {},
 };
 
 export const JokerContext = createContext<JokerContextState | null>(initialState);
@@ -44,7 +47,10 @@ export const useJokerContext = () => {
   return context;
 };
 
+const NUMBER_OF_GREETINGS = 3;
+
 export const JokerContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const { t } = useTranslation();
   const [alerts, setAlerts] = useState<Array<JokerAlert>>([]);
 
   const pushAlert = (alert: JokerAlert) => {
@@ -76,6 +82,11 @@ export const JokerContextProvider: FC<{ children: ReactNode }> = ({ children }) 
     pushAlert({ type: AlertType.INFO, message, blocking: false });
   };
 
+  const showRandomGreeting = () => {
+    const randomGreetingIndex = Math.floor(Math.random() * NUMBER_OF_GREETINGS) + 1;
+    showNonBlockingInfo(t(`greeting_${randomGreetingIndex}`));
+  };
+
   return (
     <JokerContext.Provider
       value={{
@@ -86,6 +97,7 @@ export const JokerContextProvider: FC<{ children: ReactNode }> = ({ children }) 
         showInfo,
         showSuccess,
         showNonBlockingInfo,
+        showRandomGreeting,
       }}
     >
       {children}

@@ -1,6 +1,7 @@
 {
-  "welcome": "Witamy",
-  "greeting": "Cześć, {{name}}!",
+  "greeting_1": "Cześć i chwała!",
+  "greeting_2": "Witaj!",
+  "greeting_3": "Dzień dobry!",
 
   "email": "poczta",
   "password": "hasło",
@@ -87,9 +88,15 @@
   "error_match_not_exist": "Dopasowanie nie istnieje",
 
   "onboarding_skip": "Pomiń wprowadzenie",
-  "onboarding_stage_1_title": "Wprowadzenie nie zaimplementowane, etap 1...",
-  "onboarding_stage_2_title": "Wprowadzenie nie zaimplementowane, etap 2...",
-  "onboarding_stage_3_title": "Wprowadzenie nie zaimplementowane, etap 3...",
+  "onboarding_stage_1": "Witaj w Wymiance!",
+  "onboarding_stage_2": "Celem jest wymienianie się czymkolwiek bez udziału środków płatniczych, rzecz za rzecz, tak jak ludzie robili to dawno temu.",
+  "onboarding_stage_3": "Na początek możesz przejrzeć sobie przedmioty innych osób.",
+  "onboarding_stage_4": "Jeśli coś Ci się spodoba, przesuń kartę w prawo. Wtedy, jeśli właściciel tej rzeczy też przesunie w prawo którąś z Twoich rzeczy, będziecie mogli dogadać się co do wymianki.",
+  "onboarding_stage_5": "Jeśli dany przedmiot nie spodoba Ci się, możesz \"spalić\" go przesuwając w lewo. Najprawdopodobniej już nigdy go nie zobaczysz.",
+  "onboarding_stage_6": "Jeśli nie masz pewności co do jakiegoś przedmiotu, możesz przesunąć go w dół. Wtedy zostanie odłożony na później i pojawi się może w innym czasie.",
+  "onboarding_stage_7": "Jedna ważna rzecz: zanim będziesz w stanie przesuwać w prawo lub w lewo, musisz najpierw dodać jakiś przedmiot!",
+  "onboarding_stage_8": "Po sprawowaniu możesz umówić się z właścicielem rzeczy, która Ci się spodobała co do szczegółów wymiany na czacie.",
+  "onboarding_stage_9": "Miłej zabawy!",
 
   "swiping_left_right_blocked": "Przesuwanie w lewo/prawo jest zablokowane.\n",
   "swiping_left_right_reason": "Nie masz przedmiotów, będziesz mógł przesuwać, gdy będziesz miał co najmniej jeden przedmiot",
@@ -98,7 +105,7 @@
   "km_away": "{{distance}} km odległości",
   "add_item": "Dodaj przedmiot",
   "copied_to_clipboard": "Skopiowano do schowka",
-  "no_items_available": "Brak dostępnych przedmiotów, spróbuj ponownie później",
+  "no_items_available": "Zabrakło kart, spróbuj ponownie później",
 
   "tab_profile_title": "Profil",
   "tab_swipe_title": "Upoluj coś",

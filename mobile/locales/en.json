@@ -1,6 +1,7 @@
 {
-  "welcome": "Welcome",
-  "greeting": "Hello, {{name}}!",
+  "greeting_1": "Hail and honor!",
+  "greeting_2": "Greetings!",
+  "greeting_3": "Welcome",
 
   "email": "email",
   "password": "password",
@@ -87,9 +88,15 @@
   "error_match_not_exist": "Match does not exist",
 
   "onboarding_skip": "Skip onboarding",
-  "onboarding_stage_1_title": "Onboarding not implemented yet stage 1...",
-  "onboarding_stage_2_title": "Onboarding not implemented yet stage 2...",
-  "onboarding_stage_3_title": "Onboarding not implemented yet stage 3...",
+  "onboarding_stage_1": "Welcome to Wymianka!",
+  "onboarding_stage_2": "The goal is to exchange anything without the use of currency, item for item, just as people used to do long ago.",
+  "onboarding_stage_3": "To start, you can browse through other people's items.",
+  "onboarding_stage_4": "If you like something, swipe the card to the right. Then, if the owner of that item also swipes right on one of your items, you can arrange the details of the exchange.",
+  "onboarding_stage_5": "If you do not like a particular item, you can 'burn' it by swiping left. You will most likely never see it again.",
+  "onboarding_stage_6": "If you are unsure about an item, you can swipe it down. It will be saved for later and may appear again at another time.",
+  "onboarding_stage_7": "One important thing: before you can swipe right or left, you must first add an item!",
+  "onboarding_stage_8": "Once matched, you can arrange the details of the exchange with the owner of the item you liked through chat.",
+  "onboarding_stage_9": "Have fun!",
 
   "swiping_left_right_blocked": "swiping left/right is blocked.\n",
   "swiping_left_right_reason": "You have no items, you will be able to swipe when you have at least one item",
