@@ -1,5 +1,3 @@
-import { Platform } from 'react-native';
-
 export type EdgeType = 'top' | 'bottom' | 'left' | 'right';
 
 export const MIN_TRIANGLE_SIZE = 2;
@@ -98,14 +96,4 @@ export const generatePaths = (dimensions: DimensionsType) => {
   }
 
   return paths;
-};
-
-export const getDefaultFont = () => {
-  if (Platform.OS === 'android') {
-    return 'Roboto';
-  }
-  if (Platform.OS === 'ios') {
-    return 'SF Pro';
-  }
-  return '';
 };

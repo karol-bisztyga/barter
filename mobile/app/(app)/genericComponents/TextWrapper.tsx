@@ -1,17 +1,12 @@
 import * as React from 'react';
 import { StyleSheet, Text, TextProps } from 'react-native';
 import { FONT_COLOR } from '../constants';
-import { useFonts } from 'expo-font';
-import { getDefaultFont } from './utils';
+import { useFont } from '../hooks/useFont';
 
 interface TextWrapperProps extends TextProps {}
 
 const TextWrapper = ({ ...props }: TextWrapperProps) => {
-  const [loadedFonts] = useFonts({
-    Schoolbell: require('../../../assets/fonts/Schoolbell.ttf'),
-  });
-
-  const fontFamily = loadedFonts ? 'Schoolbell' : getDefaultFont();
+  const fontFamily = useFont();
 
   return (
     <Text

@@ -58,7 +58,6 @@ export default function Register() {
       if (!response.ok) {
         throw new Error(response.data.message);
       }
-      console.log('register response', response.data);
       router.replace('/register_success');
     } catch (e) {
       let errorStr = 'Registering failed: ';

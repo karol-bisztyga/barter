@@ -3,8 +3,8 @@ import { StyleSheet, ImageBackground, TextInput, TextInputProps, View } from 're
 import Svg, { Path } from 'react-native-svg';
 import { FONT_COLOR, FONT_COLOR_DISABLED } from '../constants';
 import { useAssets } from 'expo-asset';
-import { DimensionsType, generatePaths, getDefaultFont } from './utils';
-import { useFonts } from 'expo-font';
+import { DimensionsType, generatePaths } from './utils';
+import { useFont } from '../hooks/useFont';
 
 interface InputWrapperProps extends TextInputProps {
   fillColor: string;
@@ -17,11 +17,7 @@ const InputWrapper = React.forwardRef<TextInput, InputWrapperProps>(({ ...props 
 
   const [assets] = useAssets([require('../../../assets/backgrounds/paper.jpg')]);
 
-  const [loadedFonts] = useFonts({
-    Schoolbell: require('../../../assets/fonts/Schoolbell.ttf'),
-  });
-
-  const fontFamily = loadedFonts ? 'Schoolbell' : getDefaultFont();
+  const fontFamily = useFont();
 
   useEffect(() => {
     if (!dimensions || (!dimensions.height && !dimensions.width) || paths.length) {

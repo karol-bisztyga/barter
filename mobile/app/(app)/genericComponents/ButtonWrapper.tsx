@@ -9,11 +9,11 @@ import {
 } from 'react-native';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { BACKGROUND_COLOR } from '../constants';
-import { DimensionsType, generatePaths, getDefaultFont } from './utils';
+import { DimensionsType, generatePaths } from './utils';
 import { useAssets } from 'expo-asset';
 import Svg, { Path } from 'react-native-svg';
 import { useSettingsContext } from '../context/SettingsContext';
-import { useFonts } from 'expo-font';
+import { useFont } from '../hooks/useFont';
 
 export const BUTTON_HEIGHT = 40;
 export const FALLBACK_BACKGROUND_COLOR = '#432c26';
@@ -39,11 +39,7 @@ const ButtonWrapper = ({ title, icon, onPress, disabled, color, fillColor }: MyB
 
   const [assets, error] = useAssets([require('../../../assets/backgrounds/wood.jpg')]);
 
-  const [loadedFonts] = useFonts({
-    Schoolbell: require('../../../assets/fonts/Schoolbell.ttf'),
-  });
-
-  const fontFamily = loadedFonts ? 'Schoolbell' : getDefaultFont();
+  const fontFamily = useFont();
 
   useEffect(() => {
     if (error) {

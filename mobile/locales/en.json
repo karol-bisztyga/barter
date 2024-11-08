@@ -102,7 +102,7 @@
 
   "tab_profile_title": "Profile",
   "tab_swipe_title": "Swipe",
-  "tab_chats_title": "Chats",
+  "tab_chats_title": "Exchanges",
 
   "match_items_matched": "Items matched!",
   "match_i_give_you": "I give you",
@@ -151,6 +151,11 @@
   "profile_account_details": "Account Details",
   "profile_my_items": "My Items",
   "profile_settings": "Settings",
+  "profile_add_new_item": "Add new item",
+  "profile_email": "mail",
+  "profile_name": "name",
+  "profile_phone": "phone",
+  "profile_location": "location",
 
   "chats_unmatch_question_title": "Do you really want to unmatch these items?",
   "chats_unmatch_question_yes": "Yes, unmatch them",
@@ -163,6 +168,8 @@
   "chats_no_chats": "No chats",
   "chats_report_sent": "Report sent",
   "chats_send_report": "Send report",
+  "chats_no_messages_yet": "No messages yet",
+  "chats_no_more_messages": "No more messages",
 
   "send_report_reason": "reason"
 }

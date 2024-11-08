@@ -64,7 +64,7 @@
       [
         "expo-font",
         {
-          "fonts": ["assets/fonts/Schoolbell.ttf"]
+          "fonts": ["assets/fonts/Schoolbell.ttf", "assets/fonts/MedievalSharp.ttf"]
         }
       ]
     ],

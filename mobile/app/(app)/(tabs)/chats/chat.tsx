@@ -32,9 +32,6 @@ const INPUT_WRAPPER_HEIGHT = 70;
 const ITEMS_WRPPER_HEIGHT = 200;
 const MESSAGES_PER_CHUNK = 10;
 
-const NO_MORE_MESSAGES_LABEL = 'No more messages';
-const NO_MESSAGES_YET_LABEL = 'No messages yet';
-
 const Chat = () => {
   const { t } = useTranslation();
 
@@ -90,7 +87,7 @@ const Chat = () => {
 
   const onMessage = (message: ChatMessage) => {
     setMessages((messages) => {
-      if (messages.length === 1 && messages[0].content === NO_MESSAGES_YET_LABEL) {
+      if (messages.length === 1 && messages[0].content === t('chats_no_messages_yet')) {
         return [message];
       }
       return [message, ...messages];
@@ -99,7 +96,7 @@ const Chat = () => {
 
   const onInitialMessages = (initialMessages: ChatMessage[]) => {
     if (!initialMessages.length) {
-      setMessages([generateStatusMessage(NO_MESSAGES_YET_LABEL)]);
+      setMessages([generateStatusMessage(t('chats_no_messages_yet'))]);
     } else {
       setLoadMoreMessagesEnabled(true);
       setMessages(initialMessages);
@@ -167,10 +164,10 @@ const Chat = () => {
 
       if (
         newMessages.length < MESSAGES_PER_CHUNK &&
-        messages.at(-1)?.content !== NO_MORE_MESSAGES_LABEL &&
+        messages.at(-1)?.content !== t('chats_no_more_messages') &&
         messages.length > MESSAGES_PER_CHUNK
       ) {
-        newMessages.push(generateStatusMessage(NO_MORE_MESSAGES_LABEL));
+        newMessages.push(generateStatusMessage(t('chats_no_more_messages')));
         setLoadMoreMessagesEnabled(false);
       }
       setMessages([...messages, ...newMessages]);

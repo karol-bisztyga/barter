@@ -17,6 +17,7 @@ import { useSettingsContext } from '../context/SettingsContext';
 import { AddPictureContextProvider } from '../context/AddPictureContext';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth';
+import { useFont } from '../hooks/useFont';
 
 const getTabNameFromEvent = (eventName?: string): string | undefined => eventName?.split('-')[0];
 
@@ -27,6 +28,8 @@ export default function TabLayout() {
   const matchContext = useMatchContext();
   const jokerContext = useJokerContext();
   const settingsContext = useSettingsContext();
+
+  const fontFamily = useFont();
 
   const [routeName, setRouteName] = useState<string>('swipe');
 
@@ -50,6 +53,7 @@ export default function TabLayout() {
             backgroundColor: SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY,
             shadowColor: 'transparent',
           },
+          tabBarLabelStyle: { fontFamily },
         }}
         screenListeners={{
           tabPress: (e) => {
