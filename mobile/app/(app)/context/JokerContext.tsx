@@ -52,6 +52,7 @@ const NUMBER_OF_GREETINGS = 3;
 export const JokerContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { t } = useTranslation();
   const [alerts, setAlerts] = useState<Array<JokerAlert>>([]);
+  const [previousGreetingsIndex, setPreviousGreetingsIndex] = useState<number>(-1);
 
   const pushAlert = (alert: JokerAlert) => {
     setAlerts([...alerts, alert]);
@@ -83,7 +84,11 @@ export const JokerContextProvider: FC<{ children: ReactNode }> = ({ children }) 
   };
 
   const showRandomGreeting = () => {
-    const randomGreetingIndex = Math.floor(Math.random() * NUMBER_OF_GREETINGS) + 1;
+    let randomGreetingIndex = null;
+    while (randomGreetingIndex === null || previousGreetingsIndex === randomGreetingIndex) {
+      randomGreetingIndex = Math.floor(Math.random() * NUMBER_OF_GREETINGS) + 1;
+    }
+    setPreviousGreetingsIndex(randomGreetingIndex);
     showNonBlockingInfo(t(`greeting_${randomGreetingIndex}`));
   };
 

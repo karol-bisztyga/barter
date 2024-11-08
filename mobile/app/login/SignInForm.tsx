@@ -11,7 +11,6 @@ import InputWrapper from '../(app)/genericComponents/InputWrapper';
 import TextWrapper from '../(app)/genericComponents/TextWrapper';
 import { useTranslation } from 'react-i18next';
 import { SECTION_BACKGROUND } from '../(app)/(tabs)/profile/components/items/editing_panels/constants';
-import sampleUsers from './sampleUsers.json';
 import Settings from './Settings';
 
 export const SingInForm = ({ loading }: { loading: boolean }) => {
@@ -98,7 +97,7 @@ export const SingInForm = ({ loading }: { loading: boolean }) => {
         fillColor={SECTION_BACKGROUND}
       />
       {/* TODO remove buttons below */}
-      {sampleUsers.map((user, index) => {
+      {/* {sampleUsers.map((user, index) => {
         if (index > 2) {
           return null;
         }
@@ -112,7 +111,7 @@ export const SingInForm = ({ loading }: { loading: boolean }) => {
             fillColor={SECTION_BACKGROUND}
           />
         );
-      })}
+      })} */}
       {/* TODO remove buttons above */}
       <Settings />
     </View>

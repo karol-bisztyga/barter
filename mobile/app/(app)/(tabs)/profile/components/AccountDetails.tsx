@@ -75,7 +75,17 @@ const AccountDetails = ({
         if (name === 'userLocationCity') {
           editingPanelType = 'location';
           if (!value) {
-            value = coordinates;
+            if (coordinates) {
+              const valueSplit = coordinates.trim().split(',');
+              if (
+                valueSplit.at(0) &&
+                valueSplit.at(1) &&
+                valueSplit.at(0) !== 'null' &&
+                valueSplit.at(1) !== 'null'
+              ) {
+                value = coordinates;
+              }
+            }
           }
         }
         return (

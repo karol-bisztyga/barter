@@ -104,9 +104,9 @@ const Joker = () => {
     }
     settingsContext.playSound('click');
 
-    // TODO this function should do something different, probably say something like "hello I'm your assistant" etc
+    jokerContext.showRandomGreeting();
+    /*
     const arr = ['error', 'info', 'success'];
-
     if (Math.floor(Math.random() * 2)) {
       jokerContext.showNonBlockingInfo(
         `Non blocking info! This is an info message, lorem ipsum ${Date.now()}`
@@ -130,6 +130,7 @@ const Joker = () => {
         jokerContext.showSuccess(`This is a success message ${Date.now()}`);
         break;
     }
+    */
   };
 
   useEffect(() => {
