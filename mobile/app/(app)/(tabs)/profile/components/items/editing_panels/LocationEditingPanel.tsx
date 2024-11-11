@@ -133,7 +133,7 @@ const LocationEditingPanel = ({
         />
       </View>
       <View style={styles.updateButtonWrapper}>
-        <ButtonWrapper title={t('update')} onPress={update} fillColor={SECTION_BACKGROUND} />
+        <ButtonWrapper title={t('locate')} onPress={update} fillColor={SECTION_BACKGROUND} />
       </View>
     </Animated.View>
   );
