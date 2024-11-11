@@ -86,6 +86,9 @@
   "error_update_onboarding": "Błąd aktualizacji wprowadzania",
   "error_location_permission_denied": "Odmówiono dostępu do lokalizacji, możesz potrzebować włączyć usługi lokalizacji w ustawieniach",
   "error_match_not_exist": "Dopasowanie nie istnieje",
+  "error_email_invalid": "nieprawidłowy adres e-mail",
+  "error_password_incorrect": "nieprawidłowe hasło, musi zawierać co najmniej 8 znaków",
+  "error_passwords_do_not_match": "hasła nie pasują",
 
   "backend_error_email_invalid": "niepoprawny email",
   "backend_error_server_error": "błąd serwera: ",
@@ -103,7 +106,7 @@
   "onboarding_stage_5": "Jeśli dany przedmiot nie spodoba Ci się, możesz \"spalić\" go przesuwając w lewo. Najprawdopodobniej już nigdy go nie zobaczysz.",
   "onboarding_stage_6": "Jeśli nie masz pewności co do jakiegoś przedmiotu, możesz przesunąć go w dół. Wtedy zostanie odłożony na później i pojawi się może w innym czasie.",
   "onboarding_stage_7": "Jedna ważna rzecz: zanim będziesz w stanie przesuwać w prawo lub w lewo, musisz najpierw dodać jakiś przedmiot!",
-  "onboarding_stage_8": "Po sprawowaniu możesz umówić się z właścicielem rzeczy, która Ci się spodobała co do szczegółów wymiany na czacie.",
+  "onboarding_stage_8": "Po sparowaniu możesz umówić się z właścicielem rzeczy, która Ci się spodobała co do szczegółów wymianki na czacie.",
   "onboarding_stage_9": "Miłej zabawy!",
 
   "swiping_left_right_blocked": "Przesuwanie w lewo/prawo jest zablokowane.\n",

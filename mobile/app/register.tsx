@@ -14,9 +14,9 @@ import Background from './(app)/components/Background';
 import { SECTION_BACKGROUND } from './(app)/(tabs)/profile/components/items/editing_panels/constants';
 
 const ERROR_MESSAGES = {
-  INVALID_EMAIL: 'email invalid',
-  PASSWORD: 'password invalid, it must be at least 8 characters',
-  PASSWORDS_NOT_MATCH: 'passwords do not match',
+  INVALID_EMAIL: 'error_email_invalid',
+  PASSWORD: 'error_password_incorrect',
+  PASSWORDS_NOT_MATCH: 'error_passwords_do_not_match',
 };
 
 export default function Register() {
@@ -40,11 +40,11 @@ export default function Register() {
 
   useEffect(() => {
     if (email && !validateEmail(email)) {
-      setError(ERROR_MESSAGES.INVALID_EMAIL);
+      setError(t(ERROR_MESSAGES.INVALID_EMAIL));
     } else if (password && !validatePassword(password)) {
-      setError(ERROR_MESSAGES.PASSWORD);
+      setError(t(ERROR_MESSAGES.PASSWORD));
     } else if (password && passwordRepeat && !validatePasswords(password, passwordRepeat)) {
-      setError(ERROR_MESSAGES.PASSWORDS_NOT_MATCH);
+      setError(t(ERROR_MESSAGES.PASSWORDS_NOT_MATCH));
     } else {
       setError('');
     }
