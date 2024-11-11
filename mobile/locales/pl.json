@@ -15,7 +15,7 @@
   "proceed": "Kontynuuj",
   "reload": "Przeładuj",
   "update": "Aktualizuj",
-  "updated": "{{name}} zaktualizowany",
+  "updated": "zaktualizowano {{name}}",
   "add": "Dodaj",
   "delete": "usuń",
   "save": "zapisz",

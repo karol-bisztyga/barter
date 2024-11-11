@@ -9,16 +9,25 @@ import InputWrapper from '../../../../../genericComponents/InputWrapper';
 import Animated, {
   interpolate,
   runOnJS,
+  SharedValue,
   useAnimatedReaction,
   useAnimatedStyle,
 } from 'react-native-reanimated';
 import * as Location from 'expo-location';
 import ButtonWrapper, { BUTTON_HEIGHT } from '../../../../../genericComponents/ButtonWrapper';
 import { cityNameFromLocation } from '../../../../../utils/reusableStuff';
-import { FieldEditingPanelProps } from './FieldEditingPanel';
 import { useJokerContext } from '../../../../../context/JokerContext';
 import { EDITING_PANEL_HEIGHT, SECTION_BACKGROUND } from './constants';
 import { useTranslation } from 'react-i18next';
+
+export type LocationEditingPanelProps = {
+  initialValue: string;
+  editing: SharedValue<number>;
+  editingValue: string;
+  setEditingValue: React.Dispatch<React.SetStateAction<string>>;
+  setValue: React.Dispatch<React.SetStateAction<string>>;
+  setEditingId: React.Dispatch<React.SetStateAction<string>>;
+};
 
 const LocationEditingPanel = ({
   initialValue,
@@ -27,7 +36,7 @@ const LocationEditingPanel = ({
   setEditingValue,
   setValue,
   setEditingId,
-}: FieldEditingPanelProps) => {
+}: LocationEditingPanelProps) => {
   const { t } = useTranslation();
 
   const sessionContext = useSessionContext();

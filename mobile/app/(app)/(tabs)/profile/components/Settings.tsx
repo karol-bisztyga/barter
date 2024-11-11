@@ -80,7 +80,8 @@ const Settings = ({
         disabled={!settingsContext.soundsOn}
       />
       <EditableItem
-        name={t('profile_change_language')}
+        name="language"
+        displayName={t('profile_change_language')}
         initialValue={settingsContext.language}
         id="settings-language"
         editable
@@ -91,7 +92,8 @@ const Settings = ({
         selectConfig={languageSelectConfig}
       />
       <EditableItem
-        name={t('profile_change_password')}
+        name="password"
+        displayName={t('profile_change_password')}
         initialValue="***"
         id="settings-password"
         editable

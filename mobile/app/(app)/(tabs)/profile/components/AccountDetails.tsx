@@ -90,7 +90,8 @@ const AccountDetails = ({
         }
         return (
           <EditableItem
-            name={getTranslationForName(name)}
+            name={name}
+            displayName={getTranslationForName(name)}
             initialValue={value || ''}
             id={`account-${index}`}
             key={index}

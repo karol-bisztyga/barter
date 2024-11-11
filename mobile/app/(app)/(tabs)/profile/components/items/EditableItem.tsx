@@ -20,18 +20,9 @@ import { useTranslation } from 'react-i18next';
 
 export type EditingPanelType = 'field' | 'location' | 'select' | 'password';
 
-const EditableItem = ({
-  name,
-  initialValue,
-  id,
-  isLast,
-  editingId,
-  setEditingId,
-  editable = true,
-  type = 'field',
-  selectConfig,
-}: {
+type EditableItemProps = {
   name: string;
+  displayName: string;
   initialValue: string;
   id: string;
   isLast: boolean;
@@ -40,7 +31,20 @@ const EditableItem = ({
   editable: boolean;
   type: EditingPanelType;
   selectConfig?: SelectConfig; // only for type 'select'
-}) => {
+};
+
+const EditableItem = ({
+  name,
+  displayName,
+  initialValue,
+  id,
+  isLast,
+  editingId,
+  setEditingId,
+  editable = true,
+  type = 'field',
+  selectConfig,
+}: EditableItemProps) => {
   const { t } = useTranslation();
 
   const [value, setValue] = useState(initialValue);
@@ -108,6 +112,7 @@ const EditableItem = ({
             editingValue={editingValue}
             setEditingValue={setEditingValue}
             name={name}
+            displayName={displayName}
             initialValue={initialValue}
             setValue={setValue}
             setEditingId={setEditingId}
@@ -119,7 +124,6 @@ const EditableItem = ({
             editing={editing}
             editingValue={editingValue}
             setEditingValue={setEditingValue}
-            name={name}
             initialValue={initialValue}
             setValue={setValue}
             setEditingId={setEditingId}
@@ -179,7 +183,7 @@ const EditableItem = ({
         }}
         onPress={toggleEdit}
       >
-        <TextWrapper style={styles.itemTitle}>{formatItemName(name)}</TextWrapper>
+        <TextWrapper style={styles.itemTitle}>{formatItemName(displayName)}</TextWrapper>
         <TextWrapper style={[styles.itemValue]}>{label}</TextWrapper>
         <View style={[styles.itemArrowWrapper, { opacity: editable ? 1 : 0 }]}>
           <Animated.View style={rotationAnimatedStyle}>

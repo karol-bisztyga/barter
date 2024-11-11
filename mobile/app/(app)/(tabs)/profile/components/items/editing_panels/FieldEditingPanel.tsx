@@ -20,6 +20,7 @@ import { useTranslation } from 'react-i18next';
 
 export type FieldEditingPanelProps = {
   name: string;
+  displayName: string;
   initialValue: string;
   editing: SharedValue<number>;
   editingValue: string;
@@ -30,6 +31,7 @@ export type FieldEditingPanelProps = {
 
 const FieldEditingPanel = ({
   name,
+  displayName,
   initialValue,
   editing,
   editingValue,
@@ -72,7 +74,7 @@ const FieldEditingPanel = ({
       userContext.setData({ ...userContext.data, ...obj } as UserData);
 
       setEditingId('');
-      jokerContext.showSuccess(t('updated', { name }));
+      jokerContext.showSuccess(t('updated', { name: displayName }));
     } catch (e) {
       handleError(t, jokerContext, ErrorType.UPDATE_USER, `${e}`);
     } finally {
