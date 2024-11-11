@@ -110,7 +110,10 @@ const AddPicture = () => {
       fileInfo = await getInfoAsync(resizedImage.uri);
     }
     const originalFileSizeInfo = originalFileSize ? `${formatBytes(originalFileSize)}, ` : '';
-    jokerContext.showInfo(t('profile_image_scaled', { size: originalFileSizeInfo }));
+    const limitInfo = originalFileSizeInfo
+      ? t('profile_image_scaled_limit', { size: originalFileSizeInfo })
+      : '';
+    jokerContext.showInfo(t('profile_image_scaled', { limit_info: limitInfo }));
     addPictureContext.setImage(uri);
   };
 
@@ -167,6 +170,7 @@ const AddPicture = () => {
             fileContent
           );
           setLoading(false);
+          addPictureContext.setImage(null);
           userContext.setData({
             ...userContext.data,
             profilePicture: response.profilePicture,
@@ -181,6 +185,7 @@ const AddPicture = () => {
       case EditImageType.item: {
         setTempImage(addPictureContext.image);
         setLoading(false);
+        addPictureContext.setImage(null);
         router.back();
         break;
       }
