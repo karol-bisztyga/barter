@@ -25,7 +25,6 @@ import { SWIPE_BASE_BACKGROUND_COLOR } from '../constants';
 import Constants from 'expo-constants';
 import { BottomTabBarHeightContext } from '@react-navigation/bottom-tabs';
 import { useSettingsContext } from '../context/SettingsContext';
-import { useTranslation } from 'react-i18next';
 
 const { width, height } = Dimensions.get('window');
 const SWIPE_THRESHOLD_HORIZONTAL = 0.25 * width;
@@ -60,8 +59,6 @@ const SwipeableCard = ({
   onPressMore: () => void;
   lockGesture: SharedValue<boolean>;
 }) => {
-  const { t } = useTranslation();
-
   const userContext = useUserContext();
   const jokerContext = useJokerContext();
   const settingsContext = useSettingsContext();
@@ -173,9 +170,7 @@ const SwipeableCard = ({
       }
       if (userContext.swipingLeftRightBlockedReason) {
         if (Math.abs(translateX.value) > SWIPE_THRESHOLD_HORIZONTAL) {
-          runOnJS(jokerContext.showInfo)(
-            t('swiping_left_right_blocked') + userContext.swipingLeftRightBlockedReason
-          );
+          runOnJS(jokerContext.showInfo)(userContext.swipingLeftRightBlockedReason);
         }
         getBackToStartingPosition();
         return;

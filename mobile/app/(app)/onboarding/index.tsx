@@ -21,6 +21,10 @@ export default function Onboarding() {
     }
   }, [stage]);
 
+  if (stage > MAX_STAGE) {
+    return null;
+  }
+
   return (
     <View style={styles.container}>
       <Background tile="sword" />
