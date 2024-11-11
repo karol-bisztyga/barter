@@ -12,6 +12,7 @@ import TextWrapper from '../(app)/genericComponents/TextWrapper';
 import { useTranslation } from 'react-i18next';
 import { SECTION_BACKGROUND } from '../(app)/(tabs)/profile/components/items/editing_panels/constants';
 import Settings from './Settings';
+import { validateEmail, validatePassword } from '../(app)/utils/validators';
 
 export const SingInForm = ({ loading }: { loading: boolean }) => {
   const { t } = useTranslation();
@@ -24,14 +25,7 @@ export const SingInForm = ({ loading }: { loading: boolean }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const formValid = () => {
-    if (!email || !password) {
-      return false;
-    }
-    // todo validate email
-    // todo validate password
-    return true;
-  };
+  const formValid = () => validateEmail(email) && validatePassword(password);
 
   const hadnleSignIn = async (signInEmail: string, signInPassword: string) => {
     try {

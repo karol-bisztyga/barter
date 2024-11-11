@@ -2,6 +2,9 @@ import validator from 'validator';
 import { PASSWORD_MINIMUM_LENGTH } from '../constants';
 
 export const validateEmail = (email: string): boolean => {
+  if (!email) {
+    return false;
+  }
   return validator.isEmail(email);
 };
 
