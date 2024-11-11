@@ -7,6 +7,7 @@ import { STORAGE_SESSION_KEY } from './constants';
 import { convertUserData } from './(app)/db_utils/utils';
 import { useSettingsContext } from './(app)/context/SettingsContext';
 import { useTranslation } from 'react-i18next';
+import { translateError } from './(app)/utils/errorHandler';
 
 export interface SessionContextState {
   signIn: (email: string, password: string) => Promise<UserData | null>;
@@ -90,6 +91,11 @@ export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }
     settingsContext.stopBackgroundSound();
   };
 
+  const setAuthErrorWrapper = (newAuthError: string) => {
+    const translatedError = translateError(t, newAuthError);
+    setAuthError(translatedError);
+  };
+
   return (
     <SessionContext.Provider
       value={{
@@ -100,7 +106,7 @@ export const SessionContextProvider: FC<{ children: ReactNode }> = ({ children }
         signIn,
         signOut,
         authError,
-        setAuthError,
+        setAuthError: setAuthErrorWrapper,
       }}
     >
       {children}

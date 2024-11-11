@@ -1,6 +1,49 @@
 import { JokerContextState } from '../context/JokerContext';
 import { TFunction } from 'i18next';
 
+// this stores a map of error string patterns to their translations
+const backendErrors = [
+  {
+    server_error: 'Email invalid',
+    translation: 'backend_error_email_invalid',
+  },
+  {
+    server_error: 'Server error: ',
+    translation: 'backend_error_server_error',
+  },
+  {
+    server_error: 'no user found for this email: ',
+    translation: 'backend_error_no_user_for_mail',
+  },
+  {
+    server_error: 'password incorrect for user with email: ',
+    translation: 'backend_error_password_incorrect',
+  },
+  {
+    server_error: 'verification failed',
+    translation: 'backend_error_verification_failed',
+  },
+  {
+    server_error: 'Item not found',
+    translation: 'backend_error_item_not_found',
+  },
+  {
+    server_error: 'current password incorrect',
+    translation: 'backend_error_current_password_incorrect',
+  },
+];
+
+export const translateError = (t: TFunction, errorStr: string) => {
+  let translatedError = errorStr;
+  translatedError = translatedError.replace('Error: ', '');
+  backendErrors.forEach((error) => {
+    if (errorStr.includes(error.server_error)) {
+      translatedError = translatedError.replace(error.server_error, t(error.translation));
+    }
+  });
+  return translatedError;
+};
+
 export enum ErrorType {
   UNKNOWN_ERROR,
   SIGN_IN,
@@ -178,7 +221,8 @@ export const handleError = (
       showToUser
     );
   }
-  const message = customMessage ? customMessage : getMessageForErrorType(t, type);
+  let message = customMessage ? customMessage : getMessageForErrorType(t, type);
+  message = translateError(t, message);
   console.error(message, fullError);
   showToUser && jokerContext.showError(message);
 };

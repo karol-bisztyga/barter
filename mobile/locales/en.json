@@ -30,7 +30,7 @@
   "email_missing": "Email is missing",
   "password_missing": "Password is missing",
   "token_missing": "Token is missing",
-  "login_error": "Login error, {{ error }}",
+  "login_error": "Login error: {{ error }}",
   "verification_successful": "Verification successful",
 
   "register_successful_title": "Registered successfully!",
@@ -86,6 +86,14 @@
   "error_update_onboarding": "Update onboarding error",
   "error_location_permission_denied": "Permission to access location was denied, you may need to enable location services in settings",
   "error_match_not_exist": "Match does not exist",
+
+  "backend_error_email_invalid": "Email invalid",
+  "backend_error_server_error": "Server error: ",
+  "backend_error_no_user_for_mail": "no user found for this email: ",
+  "backend_error_password_incorrect": "password incorrect for user with email: ",
+  "backend_error_verification_failed": "verification failed",
+  "backend_error_item_not_found": "Item not found",
+  "backend_error_current_password_incorrect": "current password incorrect",
 
   "onboarding_skip": "Skip onboarding",
   "onboarding_stage_1": "Welcome to Wymianka!",

@@ -30,7 +30,7 @@
   "email_missing": "Brak adresu e-mail",
   "password_missing": "Brak hasła",
   "token_missing": "Brak tokena",
-  "login_error": "Błąd logowania, {{ error }}",
+  "login_error": "Błąd logowania: {{ error }}",
   "verification_successful": "Weryfikacja zakończona pomyślnie",
 
   "register_successful_title": "Zarejestrowano pomyślnie!",
@@ -86,6 +86,14 @@
   "error_update_onboarding": "Błąd aktualizacji wprowadzania",
   "error_location_permission_denied": "Odmówiono dostępu do lokalizacji, możesz potrzebować włączyć usługi lokalizacji w ustawieniach",
   "error_match_not_exist": "Dopasowanie nie istnieje",
+
+  "backend_error_email_invalid": "niepoprawny email",
+  "backend_error_server_error": "błąd serwera: ",
+  "backend_error_no_user_for_mail": "nie znaleziono użytkownika dla tego adresu e-mail: ",
+  "backend_error_password_incorrect": "nieprawidłowe hasło dla użytkownika z adresem e-mail: ",
+  "backend_error_verification_failed": "werifikacja nieudana",
+  "backend_error_item_not_found": "nie odnaleziono przedmiotu",
+  "backend_error_current_password_incorrect": "bieżące hasło jest nieprawidłowe",
 
   "onboarding_skip": "Pomiń wprowadzenie",
   "onboarding_stage_1": "Witaj w Wymiance!",
