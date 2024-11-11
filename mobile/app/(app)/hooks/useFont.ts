@@ -13,7 +13,7 @@ const getDefaultFont = () => {
 
 export const useFont = () => {
   const [loadedFonts] = useFonts({
-    Schoolbell: require('../../../assets/fonts/MedievalSharp.ttf'),
+    MedievalSharp: require('../../../assets/fonts/MedievalSharp.ttf'),
   });
 
   return loadedFonts ? 'MedievalSharp' : getDefaultFont();
