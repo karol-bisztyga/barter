@@ -176,9 +176,9 @@ const styles = StyleSheet.create({
   },
 
   buttonsWrapper: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
+    flexDirection: 'column',
     marginVertical: 20,
+    height: 100,
   },
   singleButtonWrapper: {
     flex: 1,

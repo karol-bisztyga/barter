@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { ItemBorderRadius, ItemData, ItemNamePlacement } from '../../../types';
 import { useItemsContext } from '../../../context/ItemsContext';
@@ -8,12 +8,21 @@ import { useSettingsContext } from '../../../context/SettingsContext';
 import Item from '../../../components/Item';
 import { generateHarmonicColor, hexToRgbaString, TargetColor } from '../../../utils/harmonicColors';
 import { SWIPE_BASE_BACKGROUND_COLOR } from '../../../constants';
+import { router } from 'expo-router';
 
 const Items = () => {
   const itemsContext = useItemsContext();
   const settingsContext = useSettingsContext();
 
   const items = itemsContext.usersItemsLikedByTargetItemOwner;
+
+  const [itemChanged, setItemChanged] = useState(false);
+
+  useEffect(() => {
+    if (itemChanged) {
+      router.back();
+    }
+  }, [itemChanged]);
 
   return (
     <View style={styles.container}>
@@ -31,6 +40,7 @@ const Items = () => {
                 return;
               }
               itemsContext.setUsersItemId(item.id);
+              setItemChanged(true);
             }}
           >
             <View style={styles.itemInnerWrapper}>
