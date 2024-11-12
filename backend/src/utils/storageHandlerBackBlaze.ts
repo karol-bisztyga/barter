@@ -111,6 +111,7 @@ export class StorageHandlerBackBlaze implements StorageHandler {
     }
     let i = 0;
     for (;;) {
+      console.log('removing file', bucketId, fileName);
       const fileResponse = await this.checkIfFileExists(bucketId, fileName);
       console.log('> checking if file exists', fileResponse?.fileName, fileResponse?.fileId);
       if (!fileResponse) {

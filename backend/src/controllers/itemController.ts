@@ -257,6 +257,7 @@ export const getItemsForCards = async (req: AuthRequest, res: Response) => {
 export const addImage = async (req: AuthRequest, res: Response) => {
   const { fileName, fileContent, itemId } = req.body;
   const { STORAGE_FILES_BASE_URL } = process.env;
+  console.log('addImage', fileName, fileContent.length, itemId, STORAGE_FILES_BASE_URL);
   try {
     const currentCountResponse = await pool.query(
       'SELECT COUNT(*) FROM items_images WHERE item_id = $1',
@@ -270,6 +271,7 @@ export const addImage = async (req: AuthRequest, res: Response) => {
     const bucketUrl = await storageHandler.composeBucketUrl('items-images');
     await storageHandler.uploadFile(bucketUrl, fileName, fileContent);
     const url = `${STORAGE_FILES_BASE_URL}/${bucketUrl}/${fileName}`;
+    console.log('>>> INSERTING IN DB', itemId, url);
     const result = await pool.query(
       `INSERT INTO items_images(item_id, url) VALUES ($1, $2) RETURNING *`,
       [itemId, url]
