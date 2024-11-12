@@ -101,7 +101,7 @@ const LocationEditingPanel = ({
       };
       let jokerMessage = t('profile_location_updated');
 
-      if (city) {
+      if (city && !city.includes('undefined')) {
         updates.push({ field: 'location_city', value: city });
         contextUpdates.userLocationCity = city;
         setValue(city);
