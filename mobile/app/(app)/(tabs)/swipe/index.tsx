@@ -18,6 +18,7 @@ import { useSettingsContext } from '../../context/SettingsContext';
 import Reload from './components/Reload';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
+import { sleep } from '../../utils/reusableStuff';
 
 const LOADED_ITEMS_CAPACITY = 5;
 // when there are less items loaded than this value, new items will be fetched
@@ -113,36 +114,40 @@ export default function Swipe() {
   }, [emptyCardsResponseReceived, activeCard]);
 
   const popAndLoadCard = async (): Promise<ItemData | null> => {
-    if (activeCard === undefined) {
+    if (!activeCard) {
       return null;
     }
 
     let updatedCards = [...cards];
 
     if (cards.length <= ITEMS_LOAD_TRESHOLD) {
-      try {
-        if (emptyCardsResponseReceived) {
-          jokerContext.showNonBlockingInfo(t('no_items_available'));
-          return activeCard;
+      await (async () => {
+        try {
+          if (emptyCardsResponseReceived) {
+            return activeCard;
+          }
+          const currentCardsWithActiveCardsIds = [...cards, activeCard].map((card) => card.id);
+          const itemsLoaded = await getItemsForCards(
+            sessionContext,
+            currentCardsWithActiveCardsIds,
+            LOADED_ITEMS_CAPACITY
+          );
+          sleep(1000);
+          if (itemsLoaded.length) {
+            setEmptyCardsResponseReceived(false);
+            updatedCards = [...itemsLoaded, ...updatedCards];
+          } else {
+            setEmptyCardsResponseReceived(true);
+          }
+        } catch (e) {
+          handleError(t, jokerContext, ErrorType.LOAD_CARDS, `${e}`);
+          return null;
         }
-        const itemsLoaded = await getItemsForCards(
-          sessionContext,
-          cards.map((card) => card.id),
-          LOADED_ITEMS_CAPACITY
-        );
-        if (!itemsLoaded.length) {
-          setEmptyCardsResponseReceived(true);
-          return activeCard;
-        }
-        setEmptyCardsResponseReceived(false);
-        updatedCards = [...itemsLoaded, ...updatedCards];
-      } catch (e) {
-        handleError(t, jokerContext, ErrorType.LOAD_CARDS, `${e}`);
-        return null;
-      }
+      })();
     }
     const newActiveCard = updatedCards.pop();
     if (!newActiveCard) {
+      setActiveCard(null);
       return null;
     }
     setActiveCard(newActiveCard);
@@ -151,6 +156,9 @@ export default function Swipe() {
   };
 
   const loadCards = async () => {
+    if (loading) {
+      return;
+    }
     setLoading(true);
     const itemsLoaded = await getItemsForCards(
       sessionContext,
@@ -159,6 +167,14 @@ export default function Swipe() {
     );
     if (!itemsLoaded.length) {
       setEmptyCardsResponseReceived(true);
+    } else {
+      const newActiveCard = itemsLoaded.pop();
+      if (!newActiveCard) {
+        setActiveCard(null);
+        return;
+      }
+      setActiveCard(newActiveCard);
+      setCards(itemsLoaded);
     }
     setLoading(false);
   };
@@ -234,6 +250,12 @@ export default function Swipe() {
     }
   };
 
+  const pressMore = () => {
+    settingsContext.playSound('click');
+    itemsContext.setOthersItem(activeCard);
+    router.push({ pathname: 'swipe/item', params: { whosItem: 'other' } });
+  };
+
   if (!activeCard && !loading) {
     return (
       <Reload
@@ -243,12 +265,6 @@ export default function Swipe() {
       />
     );
   }
-
-  const pressMore = () => {
-    settingsContext.playSound('click');
-    itemsContext.setOthersItem(activeCard);
-    router.push({ pathname: 'swipe/item', params: { whosItem: 'other' } });
-  };
 
   return (
     <GestureHandlerRootView>
