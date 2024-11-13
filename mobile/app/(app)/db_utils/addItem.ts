@@ -9,7 +9,7 @@ export const addItem = async (sessionContext: SessionContextState, item: ItemDat
     description: item.description,
   });
   if (response.ok) {
-    return { ...response.data, images: JSON.parse(response.data.images) };
+    return { ...response.data };
   } else {
     throw new Error('add item error: ' + response.data.message);
   }

@@ -96,7 +96,6 @@ const EditItem = () => {
           throw new Error('could not prepare file');
         }
         const { fileName, fileMimeType, fileContent } = prepareFileResult;
-
         const response = await uploadItemImage(
           sessionContext,
           usersItemId,
@@ -177,11 +176,31 @@ const EditItem = () => {
     const newItem: ItemData = {
       id: '',
       name,
-      images: pictures,
+      images: [],
       description,
     };
-    const result = await addItem(sessionContext, newItem);
-    newItems.push(result);
+    const addItemResult = await addItem(sessionContext, newItem);
+
+    // add images
+    const uploadedImages = [];
+    for (const picture of pictures) {
+      const prepareFileResult = await prepareFileToUpload(t, jokerContext, picture);
+      if (!prepareFileResult) {
+        throw new Error('could not prepare file');
+      }
+      const { fileName, fileMimeType, fileContent } = prepareFileResult;
+      const uploadImageResult = await uploadItemImage(
+        sessionContext,
+        addItemResult.id,
+        fileName,
+        fileMimeType,
+        fileContent
+      );
+      uploadedImages.push(uploadImageResult.url);
+    }
+
+    addItemResult.images = uploadedImages;
+    newItems.push(addItemResult);
     return newItems;
   };
 
@@ -247,10 +266,12 @@ const EditItem = () => {
       }
       let newItems: ItemData[];
       setUpdatingItemData(true);
-      if (usersItem) {
+      if (action === 'updating') {
         newItems = await updateItemHandler();
-      } else {
+      } else if (action === 'adding') {
         newItems = await addItemHandler();
+      } else {
+        throw new Error('invalid action: ' + action);
       }
       userContext.setItems(newItems);
       router.back();

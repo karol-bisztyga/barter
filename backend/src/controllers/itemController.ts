@@ -8,40 +8,19 @@ import { StorageHandler } from '../utils/storageUtils';
 import * as QueryString from 'qs';
 
 export const createItem = async (req: AuthRequest, res: Response) => {
-  const { name, description, images } = req.body;
-  const client = await pool.connect();
+  const { name, description } = req.body;
   try {
-    await client.query('BEGIN');
     const userId = getUserIdFromRequest(req);
 
-    const itemResult = await client.query(
+    const itemResult = await pool.query(
       'INSERT INTO items (name, description, user_id) VALUES ($1, $2, $3) RETURNING *',
       [name, description, userId]
     );
 
     const result = itemResult.rows[0];
-    if (images) {
-      const parsedImages = JSON.parse(images);
-      const insertQuery = `
-            INSERT INTO items_images (item_id, url)
-            VALUES ${parsedImages.map((_: [string, string], i: number) => `($${i * 2 + 1}, $${i * 2 + 2})`).join(', ')}
-            RETURNING *;
-        `;
-      const values = parsedImages.flatMap((itemImage: string) => [result.id, itemImage]);
-      const imagesResult = await client.query(insertQuery, values);
-
-      const imagesResultParsed = imagesResult.rows.map((row: Record<string, number>) => row.url);
-
-      result.images = JSON.stringify(imagesResultParsed);
-    }
-
-    await client.query('COMMIT');
     res.json(result);
   } catch (err) {
-    await client.query('ROLLBACK');
     res.status(500).send({ message: 'Server error: ' + err });
-  } finally {
-    client.release();
   }
 };
 
@@ -257,7 +236,6 @@ export const getItemsForCards = async (req: AuthRequest, res: Response) => {
 export const addImage = async (req: AuthRequest, res: Response) => {
   const { fileName, fileContent, itemId } = req.body;
   const { STORAGE_FILES_BASE_URL } = process.env;
-  console.log('addImage', fileName, fileContent.length, itemId, STORAGE_FILES_BASE_URL);
   try {
     const currentCountResponse = await pool.query(
       'SELECT COUNT(*) FROM items_images WHERE item_id = $1',
@@ -271,7 +249,6 @@ export const addImage = async (req: AuthRequest, res: Response) => {
     const bucketUrl = await storageHandler.composeBucketUrl('items-images');
     await storageHandler.uploadFile(bucketUrl, fileName, fileContent);
     const url = `${STORAGE_FILES_BASE_URL}/${bucketUrl}/${fileName}`;
-    console.log('>>> INSERTING IN DB', itemId, url);
     const result = await pool.query(
       `INSERT INTO items_images(item_id, url) VALUES ($1, $2) RETURNING *`,
       [itemId, url]
