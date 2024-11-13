@@ -14,6 +14,7 @@
     "heroku:database:dump_cloud": "heroku pg:psql postgresql-sinuous-01484 --app wymianka > db_dump.sql",
     "heroku:database:shell": "heroku pg:psql postgresql-sinuous-01484 --app wymianka",
     "heroku:database:reset": "heroku pg:psql postgresql-sinuous-01484 --app wymianka < backend/scripts/database.sql",
+    "heroku:logs": "heroku logs -n 1500 > logs.txt",
     "database:shell:local": "docker exec -it pg_barter psql -U barter_stag -d barter_staging"
   },
   "author": "",

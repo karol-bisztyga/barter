@@ -14,8 +14,8 @@
     "env:refresh:staging": "node scripts/refresh_env.js staging",
     "env:refresh:prod": "node scripts/refresh_env.js prod",
     "env:refresh:local": "node scripts/refresh_env.js local",
-    "eas:build:local:android": "eas build --platform android --local",
-    "eas:build:local:ios": "eas build --platform ios --local"
+    "eas:build:local:android": "npm run env:refresh:prod && eas build --platform android --local",
+    "eas:build:local:ios": "npm run env:refresh:prod && eas build --platform ios --local"
   },
   "dependencies": {
     "@react-native/metro-config": "^0.75.3",
