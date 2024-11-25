@@ -4,6 +4,7 @@ import * as SecureStore from 'expo-secure-store';
 import { STORAGE_SESSION_KEY } from '../../constants';
 import { useSessionContext } from '../../SessionContext';
 import { useTranslation } from 'react-i18next';
+import { useSettingsContext } from './SettingsContext';
 
 interface UserContextState {
   data: UserData | null;
@@ -48,6 +49,8 @@ export const useUserContext = () => {
 export const UserContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
   const { t } = useTranslation();
 
+  const settingsContext = useSettingsContext();
+
   const [data, setData] = useState<UserData | null>(null);
   const [items, setItems] = useState<Array<ItemData>>([]);
   const [swipingLeftRightBlockedReason, setSwipingLeftRightBlockedReason] = useState<string | null>(
@@ -58,11 +61,13 @@ export const UserContextProvider: FC<{ children: ReactNode }> = ({ children }) =
 
   useEffect(() => {
     if (!items.length) {
-      setSwipingLeftRightBlockedReason(t('swiping_left_right_reason'));
+      setSwipingLeftRightBlockedReason(
+        t('swiping_left_right_reason', { lng: settingsContext.language })
+      );
     } else {
       setSwipingLeftRightBlockedReason(null);
     }
-  }, [items]);
+  }, [items, settingsContext.language]);
 
   useEffect(() => {
     try {
