@@ -506,6 +506,8 @@ const styles = StyleSheet.create({
     borderRadius: 100,
     alignItems: 'center',
     justifyContent: 'center',
+    width: DECIDE_ICON_SIZE,
+    height: DECIDE_ICON_SIZE,
   },
   decideIcon: {
     color: 'black',
@@ -524,7 +526,7 @@ const styles = StyleSheet.create({
   },
   decideIconWrapperBottom: {
     marginBottom: 20,
-    right: -(DECIDE_ICON_SIZE + 20) / 2,
+    right: -DECIDE_ICON_SIZE / 2,
   },
 });
 
