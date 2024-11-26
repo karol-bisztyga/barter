@@ -18,7 +18,6 @@ import { useSettingsContext } from '../../context/SettingsContext';
 import Reload from './components/Reload';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
-import { sleep } from '../../utils/reusableStuff';
 
 const LOADED_ITEMS_CAPACITY = 5;
 // when there are less items loaded than this value, new items will be fetched
@@ -113,26 +112,24 @@ export default function Swipe() {
     setLoading(false);
   }, [emptyCardsResponseReceived, activeCard]);
 
-  const popAndLoadCard = async (): Promise<ItemData | null> => {
+  const popAndLoadCard = async (): Promise<void> => {
     if (!activeCard) {
-      return null;
+      return;
     }
 
     let updatedCards = [...cards];
-
     if (cards.length <= ITEMS_LOAD_TRESHOLD) {
       await (async () => {
         try {
           if (emptyCardsResponseReceived) {
-            return activeCard;
+            return;
           }
-          const currentCardsWithActiveCardsIds = [...cards, activeCard].map((card) => card.id);
+          const currentCardsWithActiveCardIds = [...cards, activeCard].map((card) => card.id);
           const itemsLoaded = await getItemsForCards(
             sessionContext,
-            currentCardsWithActiveCardsIds,
+            currentCardsWithActiveCardIds,
             LOADED_ITEMS_CAPACITY
           );
-          sleep(1000);
           if (itemsLoaded.length) {
             setEmptyCardsResponseReceived(false);
             updatedCards = [...itemsLoaded, ...updatedCards];
@@ -141,18 +138,17 @@ export default function Swipe() {
           }
         } catch (e) {
           handleError(t, jokerContext, ErrorType.LOAD_CARDS, `${e}`);
-          return null;
+          return;
         }
       })();
     }
-    const newActiveCard = updatedCards.pop();
+    const newActiveCard: ItemData | null = updatedCards.pop() || null;
     if (!newActiveCard) {
       setActiveCard(null);
-      return null;
+    } else {
+      setActiveCard(newActiveCard);
+      setCards(updatedCards);
     }
-    setActiveCard(newActiveCard);
-    setCards(updatedCards);
-    return activeCard;
   };
 
   const loadCards = async () => {
@@ -195,10 +191,11 @@ export default function Swipe() {
         );
         return;
       }
-      const swipedCard = await popAndLoadCard();
-      if (!swipedCard) {
+      const swipedCard = activeCard;
+      if (swipedCard === null) {
         throw new Error('could not find swiped card');
       }
+      await popAndLoadCard();
       const sendLikeResult = await sendLike(swipedCard.id, true);
       lockGesture.value = false;
 
@@ -223,10 +220,11 @@ export default function Swipe() {
         );
         return;
       }
-      const swipedCard = await popAndLoadCard();
-      if (!swipedCard) {
+      const swipedCard = activeCard;
+      if (swipedCard === null) {
         throw new Error('could not find swiped card');
       }
+      await popAndLoadCard();
       const sendLikeResult = await sendLike(swipedCard.id, false);
       lockGesture.value = false;
       if (sendLikeResult.matchStatus === 'match') {
