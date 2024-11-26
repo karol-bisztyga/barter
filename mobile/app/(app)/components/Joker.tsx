@@ -1,9 +1,9 @@
 import { JokerIcon } from '../utils/icons';
-import { Dimensions, StyleSheet, View } from 'react-native';
+import { Dimensions, StyleSheet, TouchableOpacity } from 'react-native';
 import Constants from 'expo-constants';
 import React, { useEffect, useState } from 'react';
 import { JokerAlert, useJokerContext } from '../context/JokerContext';
-import { JokerDialogue } from './JokerDialogue';
+import { DIALOGUE_STATE, JokerDialogue } from './JokerDialogue';
 import Animated, {
   clamp,
   runOnJS,
@@ -20,6 +20,7 @@ const JOKER_SIZE = 50;
 const TOP_OFFSET = Constants.statusBarHeight + 4;
 const HORIZONTAL_OFFSET = 50;
 const FORCE_LEFT_OR_RIGHT_POSITION = false;
+const MESSAGE_DISAPPEAR_TIMEOUT = 1000;
 
 const Joker = () => {
   const jokerContext = useJokerContext();
@@ -41,6 +42,78 @@ const Joker = () => {
   const positionX = useSharedValue(horizontalBounds.right);
 
   const [jokerPressed, setJokerPressed] = useState(false);
+
+  // state for dialogue begin
+  const [intervalId, setIntervalId] = useState<NodeJS.Timeout | null>(null);
+  const [state, setState] = useState<DIALOGUE_STATE>(DIALOGUE_STATE.IDLE);
+  const [closeTimeout, setCloseTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [displayedText, setDisplayedText] = useState('');
+
+  const fullText = currentMessage?.message || '';
+  const typingDelay = 0;
+
+  useEffect(() => {
+    if (!currentMessage) {
+      setDisplayedText('');
+      return;
+    }
+    let index = 0;
+
+    setState(DIALOGUE_STATE.TYPING);
+
+    const newIntervalId = setInterval(() => {
+      setDisplayedText((prev) => prev + fullText[index]);
+      index += 1;
+
+      if (index >= fullText.length) {
+        clearInterval(newIntervalId);
+      }
+    }, typingDelay);
+
+    setIntervalId(newIntervalId);
+
+    return () => clearInterval(newIntervalId);
+  }, [fullText]);
+
+  useEffect(() => {
+    if (!currentMessage) {
+      return;
+    }
+    if (displayedText === fullText) {
+      if (state === DIALOGUE_STATE.TYPING) {
+        setState(DIALOGUE_STATE.DISPLAYED);
+      }
+      if (!currentMessage?.blocking && state !== DIALOGUE_STATE.INTERRUPTED) {
+        const newCloseTimeout = setTimeout(() => {
+          if (currentMessage) {
+            settingsContext.playSound('whooshHi');
+            setCurrentMessage(null);
+            setState(DIALOGUE_STATE.IDLE);
+          }
+        }, MESSAGE_DISAPPEAR_TIMEOUT);
+        setCloseTimeout(newCloseTimeout);
+      }
+    }
+  }, [displayedText]);
+
+  const onPressDialogue = () => {
+    settingsContext.playSound('whooshHi');
+    if (closeTimeout) {
+      clearTimeout(closeTimeout);
+      setCloseTimeout(null);
+    }
+    if (displayedText !== fullText) {
+      setDisplayedText(fullText);
+      setState(DIALOGUE_STATE.INTERRUPTED);
+      if (intervalId) {
+        clearInterval(intervalId);
+      }
+    } else {
+      setState(DIALOGUE_STATE.IDLE);
+      setCurrentMessage(null);
+    }
+  };
+  // state for dialogue end
 
   useEffect(() => {
     if (jokerPressed) {
@@ -144,7 +217,8 @@ const Joker = () => {
   }, [jokerContext.alerts, currentMessage]);
 
   return (
-    <View
+    <TouchableOpacity
+      onPress={onPressDialogue}
       style={[
         styles.container,
         {
@@ -153,6 +227,7 @@ const Joker = () => {
             currentMessage && currentMessage.blocking ? 'rgba(0, 0, 0, .5)' : 'transparent',
         },
       ]}
+      activeOpacity={1}
     >
       <GestureDetector gesture={gesture}>
         <Animated.View style={[styles.joker, animatedStyle]}>
@@ -161,9 +236,13 @@ const Joker = () => {
       </GestureDetector>
 
       {currentMessage && (
-        <JokerDialogue currentMessage={currentMessage} setCurrentMessage={setCurrentMessage} />
+        <JokerDialogue
+          currentMessage={currentMessage}
+          onPressDialogue={onPressDialogue}
+          displayedText={displayedText}
+        />
       )}
-    </View>
+    </TouchableOpacity>
   );
 };
 
