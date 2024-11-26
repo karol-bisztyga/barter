@@ -113,6 +113,8 @@
   "swiping_left_right_blocked": "swiping left/right is blocked.\n",
   "swiping_left_right_reason": "You have no items, you will be able to swipe when you have at least one item",
 
+  "reload_card_wait": "The cannon is overheated at the moment, we have to hold for a bit",
+
   "new_image": "New image",
   "km_away": "{{distance}} km away",
   "add_item": "Add item",

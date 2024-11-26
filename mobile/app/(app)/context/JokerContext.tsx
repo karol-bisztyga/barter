@@ -55,6 +55,16 @@ export const JokerContextProvider: FC<{ children: ReactNode }> = ({ children }) 
   const [previousGreetingsIndex, setPreviousGreetingsIndex] = useState<number>(-1);
 
   const pushAlert = (alert: JokerAlert) => {
+    const lastAlert = alerts.at(-1);
+    if (lastAlert) {
+      if (
+        alert.type === lastAlert.type &&
+        alert.message === lastAlert.message &&
+        alert.blocking === lastAlert.blocking
+      ) {
+        return;
+      }
+    }
     setAlerts([...alerts, alert]);
   };
 

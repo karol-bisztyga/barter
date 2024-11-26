@@ -113,6 +113,8 @@
   "swiping_left_right_blocked": "Przesuwanie w lewo/prawo jest zablokowane.\n",
   "swiping_left_right_reason": "Nie masz przedmiotów, będziesz mógł przesuwać, gdy będziesz miał co najmniej jeden przedmiot",
 
+  "reload_card_wait": "Działo jest zbyt nagrzane, musimy trochę odczekać",
+
   "new_image": "Nowy obraz",
   "km_away": "{{distance}} km odległości",
   "add_item": "Dodaj przedmiot",
