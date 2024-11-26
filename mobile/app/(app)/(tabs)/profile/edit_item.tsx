@@ -268,8 +268,10 @@ const EditItem = () => {
       setUpdatingItemData(true);
       if (action === 'updating') {
         newItems = await updateItemHandler();
+        jokerContext.showSuccess(t('profile_item_updated'));
       } else if (action === 'adding') {
         newItems = await addItemHandler();
+        jokerContext.showSuccess(t('profile_item_added'));
       } else {
         throw new Error('invalid action: ' + action);
       }

@@ -28,7 +28,7 @@ const MyItems = () => {
             name={item.name}
             onPress={() => {
               itemsContext.setUsersItemId(item.id);
-              router.push('profile/editItem');
+              router.push('profile/edit_item');
             }}
             imageUrl={item.images[0]}
           />
@@ -41,7 +41,7 @@ const MyItems = () => {
           name={t('profile_add_new_item')}
           onPress={() => {
             itemsContext.setUsersItemId(null);
-            router.push('profile/editItem');
+            router.push('profile/edit_item');
           }}
         />
       )}

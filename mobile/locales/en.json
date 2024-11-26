@@ -164,6 +164,8 @@
   "profile_remove_item_question_yes": "Yes, remove it",
   "profile_remove_item_question_no": "Keep it",
   "profile_item_removed": "Item removed",
+  "profile_item_updated": "Item updated",
+  "profile_item_added": "Item added",
   "profile_pictures_title": "Pictures",
   "profile_name_title": "Name",
   "profile_description_title": "Description",

@@ -36,7 +36,7 @@ function Layout() {
       >
         <Stack.Screen name="index" options={{ title: '' }} />
         <Stack.Screen
-          name="editItem"
+          name="edit_item"
           options={headerBackButtonOptions(async (): Promise<boolean> => {
             if (!editItemContext.edited) {
               return true;
