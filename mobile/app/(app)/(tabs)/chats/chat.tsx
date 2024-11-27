@@ -10,15 +10,11 @@ import {
 } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { ChatMessage } from '../../types';
-import ChatMessageComponent from '../../components/ChatMessageComponent';
+import ChatMessageComponent from './components/ChatMessageComponent';
 import { router } from 'expo-router';
 import ChatHeader from './components/ChatHeader';
 import { useItemsContext } from '../../context/ItemsContext';
-import io, { Socket } from 'socket.io-client';
-import { DefaultEventsMap } from '@socket.io/component-emitter';
 import { useUserContext } from '../../context/UserContext';
-import { executeProtectedQuery } from '../../db_utils/executeProtectedQuery';
-import { getServerAddress } from '../../utils/networkUtils';
 import { useMatchContext } from '../../context/MatchContext';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
@@ -27,6 +23,8 @@ import { useJokerContext } from '../../context/JokerContext';
 import { FILL_COLOR } from '../profile/components/items/editing_panels/constants';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
+import { useSocketContext } from '../../context/SocketContext';
+import { getMessages } from '../../db_utils/getMessages';
 
 const INPUT_WRAPPER_HEIGHT = 70;
 const ITEMS_WRPPER_HEIGHT = 200;
@@ -37,12 +35,13 @@ const Chat = () => {
 
   const sessionContext = useAuth();
   const jokerContext = useJokerContext();
+  const socketContext = useSocketContext();
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [initialScrollPerformed, setInitialScrollPerformed] = useState(false);
-  const [loadMoreMessagesEnabled, setLoadMoreMessagesEnabled] = useState(false);
+  const [loadMoreMessagesEnabled, setLoadMoreMessagesEnabled] = useState(true);
   const [newMessage, setNewMessage] = useState('');
-  const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
+  const [loadingMessages, setLoadingMessages] = useState(false);
 
   const keyboardHeight = useSharedValue(0);
   const inputWrapperPosition = useSharedValue<number>(0);
@@ -55,6 +54,28 @@ const Chat = () => {
 
   const { currentMatchId } = matchContext;
   const { usersItemId, othersItem } = itemsContext;
+
+  useEffect(() => {
+    if (!usersItemId || !othersItem || !currentMatchId) {
+      return;
+    }
+    loadMoreMessages();
+
+    socketContext.joinMatch(currentMatchId);
+
+    return () => {
+      socketContext.leaveMatch();
+    };
+  }, []);
+
+  // when the message comes from the socket
+  useEffect(() => {
+    if (!socketContext.messagesFromSocket.length) {
+      return;
+    }
+    setMessages((messages) => [...socketContext.messagesFromSocket, ...messages]);
+    socketContext.setMessagesFromSocket([]);
+  }, [socketContext.messagesFromSocket]);
 
   const generateStatusMessage = (content: string): ChatMessage => {
     return {
@@ -85,82 +106,19 @@ const Chat = () => {
     flatListRef?.current?.scrollToIndex({ index: 0, animated: false });
   };
 
-  const onMessage = (message: ChatMessage) => {
-    setMessages((messages) => {
-      if (messages.length === 1 && messages[0].content === t('chats_no_messages_yet')) {
-        return [message];
-      }
-      return [message, ...messages];
-    });
-  };
-
-  const onInitialMessages = (initialMessages: ChatMessage[]) => {
-    if (!initialMessages.length) {
-      setMessages([generateStatusMessage(t('chats_no_messages_yet'))]);
-    } else {
-      setLoadMoreMessagesEnabled(true);
-      setMessages(initialMessages);
-    }
-  };
-
-  useEffect(() => {
-    const newSocket = io(getServerAddress(), {
-      auth: {
-        token: sessionContext.session,
-      },
-      query: {
-        matchId: currentMatchId,
-        userId: userContext.data?.id,
-      },
-    });
-    setSocket(newSocket);
-
-    newSocket.on('initialMessages', (initialMessages: string) => {
-      const parsedMessages: ChatMessage[] = JSON.parse(initialMessages);
-      onInitialMessages(parsedMessages);
-    });
-
-    newSocket.on('message', (message: ChatMessage) => {
-      onMessage(message);
-    });
-
-    newSocket.on('connect', () => {
-      console.log('socket connected', newSocket.connected);
-    });
-
-    newSocket.on('error', (e) => {
-      if (e.name === 'TokenExpiredError') {
-        sessionContext.signOut();
-      }
-      if (e.includes && e.includes('match does not exist')) {
-        handleError(t, jokerContext, ErrorType.MATCH_NOT_EXIST, `${e}`);
-        matchContext.setMatches(matchContext.matches.filter((m) => m.id !== currentMatchId));
-        router.back();
-      }
-    });
-
-    return () => {
-      newSocket.disconnect();
-    };
-  }, []);
-
   const loadMoreMessages = async () => {
+    setLoadingMessages(true);
     try {
       if (!loadMoreMessagesEnabled) {
         return;
       }
-      const response = await executeProtectedQuery(
+      const response = await getMessages(
         sessionContext,
-        'messages',
-        'GET',
-        {
-          matchId: currentMatchId,
-          offset: `${messages.length}`,
-          limit: `${MESSAGES_PER_CHUNK}`,
-        },
-        null
+        currentMatchId,
+        `${messages.length}`,
+        `${MESSAGES_PER_CHUNK}`
       );
-      const newMessages = response.data;
+      const newMessages = response.messages;
 
       if (
         newMessages.length < MESSAGES_PER_CHUNK &&
@@ -173,6 +131,8 @@ const Chat = () => {
       setMessages([...messages, ...newMessages]);
     } catch (e) {
       handleError(t, jokerContext, ErrorType.LOAD_MESSAGES, `${e}`);
+    } finally {
+      setLoadingMessages(false);
     }
   };
 
@@ -180,18 +140,14 @@ const Chat = () => {
     if (newMessage.length === 0) {
       return;
     }
-    if (!socket) {
-      handleError(t, jokerContext, ErrorType.SOCKET, 'trying to use uninitialized socket');
-      return;
-    }
     const newMessageObject: ChatMessage = {
       content: newMessage,
       type: 'message',
       userId: userContext.data?.id,
     };
-    setNewMessage('');
     scrollMessagesToNewest();
-    socket.emit('message', newMessageObject);
+    socketContext.sendMessage(currentMatchId, newMessageObject);
+    setNewMessage('');
   };
 
   useEffect(() => {
@@ -259,7 +215,11 @@ const Chat = () => {
             keyExtractor={(message: ChatMessage) =>
               message.id || `${message.type}-${message.content}`
             }
-            onEndReached={loadMoreMessages}
+            onEndReached={() => {
+              if (!loadingMessages) {
+                loadMoreMessages();
+              }
+            }}
             onEndReachedThreshold={0.1}
             ListFooterComponent={() => {
               if (messages.length) {

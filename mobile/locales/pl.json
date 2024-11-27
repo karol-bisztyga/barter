@@ -51,6 +51,7 @@
   "error_update_match": "Błąd aktualizacji dopasowania",
   "error_chat_initialize": "Błąd inicjalizacji czatu",
   "error_socket": "Błąd gniazda",
+  "error_socket_not_connected": "Gniazdo nie jest połączone",
   "error_load_messages": "Błąd ładowania wiadomości",
   "error_load_matches": "Błąd ładowania dopasowań",
   "error_item_unknown": "Nieznany przedmiot",

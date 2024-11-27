@@ -7,6 +7,8 @@ import { JokerContextProvider } from './(app)/context/JokerContext';
 import { SettingsContextProvider } from './(app)/context/SettingsContext';
 
 import '../i18n';
+import { SocketContextProvider } from './(app)/context/SocketContext';
+import { MatchContextProvider } from './(app)/context/MatchContext';
 
 export default function Root() {
   // Set up the auth context and render our layout inside of it.
@@ -15,9 +17,13 @@ export default function Root() {
       <SettingsContextProvider>
         <SessionContextProvider>
           <UserContextProvider>
-            <MenuProvider>
-              <Slot />
-            </MenuProvider>
+            <MatchContextProvider>
+              <SocketContextProvider>
+                <MenuProvider>
+                  <Slot />
+                </MenuProvider>
+              </SocketContextProvider>
+            </MatchContextProvider>
           </UserContextProvider>
         </SessionContextProvider>
       </SettingsContextProvider>

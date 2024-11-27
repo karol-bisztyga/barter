@@ -122,13 +122,14 @@ export const deleteItem = async (req: AuthRequest, res: Response) => {
       );
     }
     updateMatchDateUpdated(client, dateNow, userId);
-    await client.query('DELETE FROM matches WHERE matching_item_id = $1 OR matched_item_id = $1', [
-      itemId,
-    ]);
+    const matchesDeleteResult = await client.query(
+      'DELETE FROM matches WHERE matching_item_id = $1 OR matched_item_id = $1 RETURNING id',
+      [itemId]
+    );
     await client.query('DELETE FROM likes WHERE liked_id = $1', [itemId]);
     await client.query('DELETE FROM items WHERE id = $1', [itemId]);
     await client.query('COMMIT');
-    res.json(true);
+    res.json(matchesDeleteResult.rows);
   } catch (err) {
     await client.query('ROLLBACK');
     res.status(500).send({ message: 'Server error: ' + err });

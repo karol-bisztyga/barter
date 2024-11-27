@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Tabs } from 'expo-router';
-import { updateMatches } from '../utils/reusableStuff';
-import { useMatchContext } from '../context/MatchContext';
 import { ErrorType, handleError } from '../utils/errorHandler';
 import { FONT_COLOR, SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY } from '../constants';
 import {
@@ -24,8 +22,7 @@ const getTabNameFromEvent = (eventName?: string): string | undefined => eventNam
 export default function TabLayout() {
   const { t } = useTranslation();
 
-  const sessionContext = useAuth();
-  const matchContext = useMatchContext();
+  useAuth();
   const jokerContext = useJokerContext();
   const settingsContext = useSettingsContext();
 
@@ -68,13 +65,6 @@ export default function TabLayout() {
                 break;
               case 'chats':
                 settingsContext.playSound('click');
-                (async () => {
-                  try {
-                    await updateMatches(sessionContext, matchContext);
-                  } catch (e) {
-                    handleError(t, jokerContext, ErrorType.UPDATE_MATCHES, `${e}`);
-                  }
-                })();
                 break;
               case 'profile':
                 settingsContext.playSound('click');

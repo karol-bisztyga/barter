@@ -19,7 +19,6 @@ import {
 import { router } from 'expo-router';
 import { useUserContext } from '../../context/UserContext';
 import { useEditItemContext } from '../../context/EditItemContext';
-import { updateMatches } from '../../utils/reusableStuff';
 import { updateItem } from '../../db_utils/updateItem';
 import { addItem } from '../../db_utils/addItem';
 import { removeItem } from '../../db_utils/removeItem';
@@ -317,16 +316,18 @@ const EditItem = () => {
         }
         setRemovingUtem(true);
         const newItems = [...userContext.items];
-        const result = await removeItem(sessionContext, usersItem.item.id);
-        await updateMatches(sessionContext, matchContext);
-        if (result) {
-          newItems.splice(usersItem.index, 1);
-          userContext.setItems(newItems);
-          jokerContext.showSuccess(t('profile_item_removed'));
-          router.back();
-        } else {
-          throw new Error('server error');
-        }
+        const result: { id: string }[] = await removeItem(sessionContext, usersItem.item.id);
+        // update matches - removeItem returns all the removed matches' ids
+        const removedMatchesIds = result.map((item) => item.id);
+        const newMatches = [...matchContext.matches].filter(
+          (match) => !removedMatchesIds.includes(match.id)
+        );
+        matchContext.setMatches(newMatches);
+        //
+        newItems.splice(usersItem.index, 1);
+        userContext.setItems(newItems);
+        jokerContext.showSuccess(t('profile_item_removed'));
+        router.back();
       } catch (e) {
         handleError(t, jokerContext, ErrorType.REMOVE_ITEM, `${e}`);
         return;

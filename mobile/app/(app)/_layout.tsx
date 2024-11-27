@@ -3,7 +3,6 @@ import { Stack } from 'expo-router/stack';
 import { ItemsContextProvider } from './context/ItemsContext';
 import { useSessionContext } from '../SessionContext';
 import { Redirect } from 'expo-router';
-import { MatchContextProvider } from './context/MatchContext';
 import { useUserContext } from './context/UserContext';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import Joker from './components/Joker';
@@ -21,20 +20,18 @@ export default function Layout() {
   }
   return (
     <ItemsContextProvider>
-      <MatchContextProvider>
-        <GestureHandlerRootView>
-          <Stack screenOptions={{ animation: 'none', headerShadowVisible: false }}>
-            <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-            <Stack.Screen name="onboarding" options={{ headerShown: false }} />
-          </Stack>
-          <Joker />
-          {userContext.blockingLoading && (
-            <View style={styles.blockingLoader}>
-              <ActivityIndicator size="large" />
-            </View>
-          )}
-        </GestureHandlerRootView>
-      </MatchContextProvider>
+      <GestureHandlerRootView>
+        <Stack screenOptions={{ animation: 'none', headerShadowVisible: false }}>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="onboarding" options={{ headerShown: false }} />
+        </Stack>
+        <Joker />
+        {userContext.blockingLoading && (
+          <View style={styles.blockingLoader}>
+            <ActivityIndicator size="large" />
+          </View>
+        )}
+      </GestureHandlerRootView>
     </ItemsContextProvider>
   );
 }

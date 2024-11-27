@@ -1,10 +1,10 @@
 import React from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
-import { ChatMessage } from '../types';
-import { useUserContext } from '../context/UserContext';
-import { ErrorType, handleError } from '../utils/errorHandler';
-import TextWrapper from '../genericComponents/TextWrapper';
-import { useJokerContext } from '../context/JokerContext';
+import { ChatMessage } from '../../../types';
+import { useUserContext } from '../../../context/UserContext';
+import { ErrorType, handleError } from '../../../utils/errorHandler';
+import TextWrapper from '../../../genericComponents/TextWrapper';
+import { useJokerContext } from '../../../context/JokerContext';
 import { useTranslation } from 'react-i18next';
 
 const { width } = Dimensions.get('window');

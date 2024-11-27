@@ -1,6 +1,5 @@
 export type UserData = {
   userId: string;
-  matchId: string;
 };
 
 export type ChatMessageType = 'message' | 'status';

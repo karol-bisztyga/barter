@@ -1,9 +1,6 @@
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import { router } from 'expo-router';
-import { SessionContextState } from '../../SessionContext';
-import { getUserMatches } from '../db_utils/getUserMatches';
-import { MatchContextState } from '../context/MatchContext';
 import { XMLParser } from 'fast-xml-parser';
 import { UserData } from '../types';
 import { LisIcon, PolandFlagIcon, UkraineFlagIcon, UnitedKingdomFlagIcon } from './icons';
@@ -47,18 +44,6 @@ export const headerBackButtonOptions = (
       </TouchableOpacity>
     ),
   };
-};
-
-export const updateMatches = async (
-  sessionContext: SessionContextState,
-  matchContext: MatchContextState
-) => {
-  const matchesResult = await getUserMatches(sessionContext, matchContext.localDateUpdated);
-  const { matches, dateUpdated } = matchesResult;
-  if (matches) {
-    matchContext.setMatches(matches);
-  }
-  matchContext.setLocalDateUpdated(dateUpdated);
 };
 
 export const formatLocation = async (userData: UserData | null): Promise<string> => {

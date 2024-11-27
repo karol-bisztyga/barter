@@ -55,6 +55,7 @@ export enum ErrorType {
   UPDATE_MATCH,
   CHAT_INITIALIZE,
   SOCKET,
+  SOCKET_NOT_CONNECTED,
   LOAD_MESSAGES,
   LOAD_MATCHES,
   ITEM_UNKNOWN,
@@ -116,6 +117,8 @@ export const getMessageForErrorType = (t: TFunction, type: ErrorType) => {
       return t('error_chat_initialize');
     case ErrorType.SOCKET:
       return t('error_socket');
+    case ErrorType.SOCKET_NOT_CONNECTED:
+      return t('error_socket_not_connected');
     case ErrorType.LOAD_MESSAGES:
       return t('error_load_messages');
     case ErrorType.LOAD_MATCHES:
