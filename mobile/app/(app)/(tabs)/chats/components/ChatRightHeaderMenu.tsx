@@ -57,7 +57,6 @@ const ChatRightHeaderMenu = () => {
         }
 
         jokerContext.showSuccess(t('chats_unmatch_success'));
-        router.back();
       }
     } catch (e) {
       handleError(t, jokerContext, ErrorType.UNMATCH_FAILED, `${e}`);

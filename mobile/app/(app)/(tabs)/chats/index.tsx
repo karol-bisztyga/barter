@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { View, StyleSheet, FlatList, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ItemData } from '../../types';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { SEPARATOR_HEIGHT } from '../../components/Separator';
 import { useItemsContext } from '../../context/ItemsContext';
 import { useUserContext } from '../../context/UserContext';
@@ -34,6 +34,13 @@ export default function Chats() {
       previousValue.indexOf(id) === -1 ? [...previousValue, id] : previousValue
     );
   };
+
+  // This code runs every time the screen is navigated to
+  useFocusEffect(
+    useCallback(() => {
+      matchContext.setCurrentMatchId(null);
+    }, [])
+  );
 
   useEffect(() => {
     if (listItemHeight && renderedListItems.length === matchContext.matches.length) {

@@ -95,7 +95,6 @@ export const SocketContextProvider: FC<{ children: ReactNode }> = ({ children })
     });
 
     newSocket.on('removeMatches', (matchesIds: string[]) => {
-      // console.log('remove matches received', Platform.OS, matchesIds);
       matchContext.setMatches((prevMatches) => {
         const newMatches = prevMatches.filter((match) => !matchesIds.includes(match.id));
         return newMatches;

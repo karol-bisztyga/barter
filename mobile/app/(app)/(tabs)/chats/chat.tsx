@@ -52,8 +52,33 @@ const Chat = () => {
   const itemsContext = useItemsContext();
   const matchContext = useMatchContext();
 
-  const { currentMatchId } = matchContext;
+  const { currentMatchId, setCurrentMatchId, matches } = matchContext;
   const { usersItemId, othersItem } = itemsContext;
+
+  useEffect(() => {
+    // validate data on every render, if something's wrong go back to chats
+    if (!usersItemId || !othersItem || !currentMatchId) {
+      try {
+        if (!usersItemId) {
+          throw new Error(`user's item not specified`);
+        }
+        if (!othersItem) {
+          throw new Error(`other item not specified`);
+        }
+        if (!currentMatchId) {
+          throw new Error(`match not specified`);
+        }
+      } catch (e) {
+        handleError(t, jokerContext, ErrorType.CHAT_INITIALIZE, `${e}`);
+      }
+      // router.replace('chats');
+      router.back();
+    }
+    if (currentMatchId && !matches.map((m) => m.id).includes(currentMatchId)) {
+      // router.replace('chats');
+      router.back();
+    }
+  });
 
   useEffect(() => {
     if (!usersItemId || !othersItem || !currentMatchId) {
@@ -65,7 +90,7 @@ const Chat = () => {
 
     return () => {
       socketContext.leaveMatch(currentMatchId);
-      matchContext.setCurrentMatchId(null);
+      setCurrentMatchId(null);
     };
   }, []);
 
@@ -83,75 +108,6 @@ const Chat = () => {
       content: content,
       type: 'status',
     };
-  };
-
-  if (!usersItemId || !othersItem || !currentMatchId) {
-    try {
-      if (!usersItemId) {
-        throw new Error(`user's item not specified`);
-      }
-      if (!othersItem) {
-        throw new Error(`other item not specified`);
-      }
-      if (!currentMatchId) {
-        throw new Error(`match not specified`);
-      }
-    } catch (e) {
-      handleError(t, jokerContext, ErrorType.CHAT_INITIALIZE, `${e}`);
-    }
-    router.back();
-    return null;
-  }
-
-  const scrollMessagesToNewest = () => {
-    flatListRef?.current?.scrollToIndex({ index: 0, animated: false });
-  };
-
-  const loadMoreMessages = async () => {
-    setLoadingMessages(true);
-    try {
-      if (!loadMoreMessagesEnabled) {
-        return;
-      }
-      const response = await getMessages(
-        sessionContext,
-        currentMatchId,
-        `${messages.length}`,
-        `${MESSAGES_PER_CHUNK}`
-      );
-      const newMessages = response.messages;
-
-      if (
-        newMessages.length < MESSAGES_PER_CHUNK &&
-        messages.at(-1)?.content !== t('chats_no_more_messages') &&
-        messages.length > MESSAGES_PER_CHUNK
-      ) {
-        newMessages.push(generateStatusMessage(t('chats_no_more_messages')));
-        setLoadMoreMessagesEnabled(false);
-      } else if (newMessages.length === 0) {
-        newMessages.push(generateStatusMessage(t('chats_no_more_messages')));
-        setLoadMoreMessagesEnabled(false);
-      }
-      setMessages([...messages, ...newMessages]);
-    } catch (e) {
-      handleError(t, jokerContext, ErrorType.LOAD_MESSAGES, `${e}`);
-    } finally {
-      setLoadingMessages(false);
-    }
-  };
-
-  const sendMessage = () => {
-    if (newMessage.length === 0) {
-      return;
-    }
-    const newMessageObject: ChatMessage = {
-      content: newMessage,
-      type: 'message',
-      userId: userContext.data?.id,
-    };
-    scrollMessagesToNewest();
-    socketContext.sendMessage(currentMatchId, newMessageObject);
-    setNewMessage('');
   };
 
   useEffect(() => {
@@ -192,6 +148,58 @@ const Chat = () => {
       bottom,
     };
   }, [keyboardHeight]);
+
+  const scrollMessagesToNewest = () => {
+    flatListRef?.current?.scrollToIndex({ index: 0, animated: false });
+  };
+
+  const loadMoreMessages = async () => {
+    setLoadingMessages(true);
+    try {
+      if (!loadMoreMessagesEnabled || !currentMatchId) {
+        setLoadingMessages(false);
+        return;
+      }
+      const response = await getMessages(
+        sessionContext,
+        currentMatchId,
+        `${messages.length}`,
+        `${MESSAGES_PER_CHUNK}`
+      );
+      const newMessages = response.messages;
+
+      if (
+        newMessages.length < MESSAGES_PER_CHUNK &&
+        messages.at(-1)?.content !== t('chats_no_more_messages') &&
+        messages.length > MESSAGES_PER_CHUNK
+      ) {
+        newMessages.push(generateStatusMessage(t('chats_no_more_messages')));
+        setLoadMoreMessagesEnabled(false);
+      } else if (newMessages.length === 0) {
+        newMessages.push(generateStatusMessage(t('chats_no_more_messages')));
+        setLoadMoreMessagesEnabled(false);
+      }
+      setMessages([...messages, ...newMessages]);
+    } catch (e) {
+      handleError(t, jokerContext, ErrorType.LOAD_MESSAGES, `${e}`);
+    } finally {
+      setLoadingMessages(false);
+    }
+  };
+
+  const sendMessage = () => {
+    if (newMessage.length === 0 || !currentMatchId) {
+      return;
+    }
+    const newMessageObject: ChatMessage = {
+      content: newMessage,
+      type: 'message',
+      userId: userContext.data?.id,
+    };
+    scrollMessagesToNewest();
+    socketContext.sendMessage(currentMatchId, newMessageObject);
+    setNewMessage('');
+  };
 
   return (
     <SafeAreaView style={styles.container}>
