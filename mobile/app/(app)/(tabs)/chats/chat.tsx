@@ -29,6 +29,7 @@ import { getMessages } from '../../db_utils/getMessages';
 const INPUT_WRAPPER_HEIGHT = 70;
 const ITEMS_WRPPER_HEIGHT = 200;
 const MESSAGES_PER_CHUNK = 10;
+const SEND_MESSAGE_TIMEOUT = 3000;
 
 const Chat = () => {
   const { t } = useTranslation();
@@ -42,6 +43,7 @@ const Chat = () => {
   const [loadMoreMessagesEnabled, setLoadMoreMessagesEnabled] = useState(true);
   const [newMessage, setNewMessage] = useState('');
   const [loadingMessages, setLoadingMessages] = useState(false);
+  const [sendingEnabled, setSendingEnabled] = useState(true);
 
   const keyboardHeight = useSharedValue(0);
   const inputWrapperPosition = useSharedValue<number>(0);
@@ -188,9 +190,14 @@ const Chat = () => {
   };
 
   const sendMessage = () => {
+    if (!sendingEnabled) {
+      jokerContext.showNonBlockingInfo(t('chat_sending_disabled_too_often'));
+      return;
+    }
     if (newMessage.length === 0 || !currentMatchId) {
       return;
     }
+    setSendingEnabled(false);
     const newMessageObject: ChatMessage = {
       content: newMessage,
       type: 'message',
@@ -199,6 +206,9 @@ const Chat = () => {
     scrollMessagesToNewest();
     socketContext.sendMessage(currentMatchId, newMessageObject);
     setNewMessage('');
+    setTimeout(() => {
+      setSendingEnabled(true);
+    }, SEND_MESSAGE_TIMEOUT);
   };
 
   return (
@@ -263,10 +273,8 @@ const Chat = () => {
             <View style={styles.buttonWrapper}>
               <ButtonWrapper
                 title={t('send')}
-                disabled={newMessage.length === 0}
-                onPress={() => {
-                  sendMessage();
-                }}
+                disabled={newMessage.length === 0 || !sendingEnabled}
+                onPress={sendMessage}
                 fillColor={FILL_COLOR}
               />
             </View>

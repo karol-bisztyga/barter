@@ -194,6 +194,7 @@
   "chats_send_report": "Send report",
   "chats_no_messages_yet": "No messages yet",
   "chats_no_more_messages": "No more messages",
+  "chat_sending_disabled_too_often": "You are trying to send messages too often, wait a moment",
 
   "send_report_reason": "reason"
 }
