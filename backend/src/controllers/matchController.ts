@@ -160,6 +160,9 @@ export const unmatch = async (req: AuthRequest, res: Response) => {
     );
 
     const usersIds = usersIdsQueryResult.rows.map((row) => row.user_id);
+    if (usersIds.length !== 2) {
+      throw new Error('Could not find both users');
+    }
 
     await client.query('DELETE FROM messages WHERE match_id=$1', [matchId]);
     await client.query('DELETE FROM matches WHERE id = $1 RETURNING *', [matchId]);
@@ -167,7 +170,13 @@ export const unmatch = async (req: AuthRequest, res: Response) => {
       await updateMatchDateUpdated(client, dateNow, userId);
     }
     await client.query('COMMIT');
-    res.json({});
+    res.json([
+      {
+        matchId,
+        owner1Id: usersIds[0],
+        owner2Id: usersIds[1],
+      },
+    ]);
   } catch (err) {
     await client.query('ROLLBACK');
     res.status(500).send({ message: 'Server error: ' + err });

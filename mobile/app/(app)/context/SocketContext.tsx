@@ -5,7 +5,7 @@ import { useUserContext } from './UserContext';
 import io, { Socket } from 'socket.io-client';
 import { getServerAddress } from '../utils/networkUtils';
 import { DefaultEventsMap } from '@socket.io/component-emitter';
-import { ChatMessage } from '../types';
+import { ChatMessage, RemoveMatchData } from '../types';
 import { ErrorType, handleError } from '../utils/errorHandler';
 import { useJokerContext } from './JokerContext';
 import { useMatchContext } from './MatchContext';
@@ -15,9 +15,11 @@ interface SocketContextState {
   connect: () => void;
   disconnect: () => void;
   sendMessage: (matchId: string, message: ChatMessage) => void;
+  sendRemoveMatch: (data: RemoveMatchData[]) => void;
 
   joinMatch: (matchId: string) => void;
-  leaveMatch: () => void;
+  leaveMatch: (matchId: string) => void;
+
   messagesFromSocket: ChatMessage[];
   setMessagesFromSocket: React.Dispatch<React.SetStateAction<ChatMessage[]>>;
 }
@@ -26,9 +28,11 @@ const initialState: SocketContextState = {
   connect: () => {},
   disconnect: () => {},
   sendMessage: () => {},
+  sendRemoveMatch: () => {},
 
   joinMatch: () => {},
   leaveMatch: () => {},
+
   messagesFromSocket: [],
   setMessagesFromSocket: () => {},
 };
@@ -59,15 +63,17 @@ export const SocketContextProvider: FC<{ children: ReactNode }> = ({ children })
   };
 
   useEffect(() => {
-    connect();
-
     return () => {
       disconnect();
     };
   }, []);
 
   useEffect(() => {
-    connect();
+    if (sessionContext.session) {
+      connect();
+    } else {
+      disconnect();
+    }
   }, [sessionContext.session]);
 
   const connect = () => {
@@ -87,6 +93,18 @@ export const SocketContextProvider: FC<{ children: ReactNode }> = ({ children })
     newSocket.on('message', (message: ChatMessage) => {
       setMessagesFromSocket((messages) => [...messages, message]);
     });
+
+    newSocket.on('removeMatches', (matchesIds: string[]) => {
+      // console.log('remove matches received', Platform.OS, matchesIds);
+      matchContext.setMatches((prevMatches) => {
+        const newMatches = prevMatches.filter((match) => !matchesIds.includes(match.id));
+        return newMatches;
+      });
+    });
+
+    // newSocket.onAny((eventName, ...args) => {
+    //   console.log(`+++++ ANY: ${eventName}`, args);
+    // });
 
     newSocket.on('connect', async () => {
       console.log('socket connected', newSocket.connected);
@@ -123,6 +141,14 @@ export const SocketContextProvider: FC<{ children: ReactNode }> = ({ children })
     socket.emit('message', matchId, message);
   };
 
+  const sendRemoveMatch = (data: RemoveMatchData[]) => {
+    if (!socket) {
+      handleError(t, jokerContext, ErrorType.SOCKET_NOT_CONNECTED);
+      return;
+    }
+    socket.emit('removeMatches', data);
+  };
+
   const joinMatch = (matchId: string) => {
     if (!socket) {
       handleError(t, jokerContext, ErrorType.SOCKET_NOT_CONNECTED);
@@ -131,12 +157,12 @@ export const SocketContextProvider: FC<{ children: ReactNode }> = ({ children })
     socket.emit('joinMatch', matchId);
   };
 
-  const leaveMatch = () => {
+  const leaveMatch = (matchId: string) => {
     if (!socket) {
       handleError(t, jokerContext, ErrorType.SOCKET_NOT_CONNECTED);
       return;
     }
-    socket.emit('leaveMatch');
+    socket.emit('leaveMatch', matchId);
   };
 
   return (
@@ -145,9 +171,11 @@ export const SocketContextProvider: FC<{ children: ReactNode }> = ({ children })
         connect,
         disconnect,
         sendMessage,
+        sendRemoveMatch,
 
         joinMatch,
         leaveMatch,
+
         messagesFromSocket,
         setMessagesFromSocket,
       }}

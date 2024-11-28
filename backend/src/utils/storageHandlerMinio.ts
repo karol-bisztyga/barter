@@ -45,7 +45,6 @@ export class StorageHandlerMinio implements StorageHandler {
 
   async listBuckets() {
     const response = await this.client.listBuckets();
-    console.log('list buckets', response);
     return response.map((bucket: { name: string }) => {
       return { bucketName: bucket.name, bucketId: bucket.name };
     });

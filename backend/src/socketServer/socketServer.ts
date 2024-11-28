@@ -1,17 +1,21 @@
 import http from 'http';
 import { Server, Socket } from 'socket.io';
 import { verifyToken } from '../middlewares/authMiddleware';
-import { ChatMessage, UserData } from './types';
+import { ChatMessage, RemoveMatchData } from './types';
 import { addNewMessage } from './databaseOperations';
 
-const socketsToUsers: Record<string, UserData> = {};
+const socketsToUsers: Record<string, string> = {};
+const usersToSockets: Record<string, string> = {};
 
 const registerUser = (userId: string, socket: Socket) => {
   const socketId = socket.id;
-  socketsToUsers[socketId] = { userId };
+  socketsToUsers[socketId] = userId;
+  usersToSockets[userId] = socketId;
 };
 
 const unregisterUser = (socketId: string) => {
+  const userId = socketsToUsers[socketId];
+  delete usersToSockets[userId];
   delete socketsToUsers[socketId];
 };
 
@@ -38,17 +42,29 @@ const onConnection = async (server: Server, socket: Socket) => {
 
   // ON JOIN MATCH
   socket.on('joinMatch', async (matchId: string) => {
-    console.log('user', socketsToUsers[socket.id].userId, 'joining match', matchId);
+    // console.log('user', socketsToUsers[socket.id], 'joining match', matchId);
     socket.join(matchId);
   });
 
   // ON LEAVE MATCH
-  socket.on('leaveMatch', async () => {
-    console.log('user', socketsToUsers[socket.id].userId, 'leaving matches', socket.rooms);
-    // leaving all matches, there should be at most 1 match that user is in at one time
-    socket.rooms.forEach((room) => {
-      socket.leave(room);
-    });
+  socket.on('leaveMatch', async (matchId: string) => {
+    // console.log(
+    //   'user',
+    //   socketsToUsers[socket.id],
+    //   'leaving match',
+    //   matchId,
+    //   ', current matches matches',
+    //   socket.rooms
+    // );
+    socket.leave(matchId);
+    // console.log(
+    //   'user',
+    //   socketsToUsers[socket.id],
+    //   'left match ',
+    //   matchId,
+    //   ', current matches',
+    //   socket.rooms
+    // );
   });
 
   // ON MESSAGE
@@ -62,6 +78,36 @@ const onConnection = async (server: Server, socket: Socket) => {
     } catch (e) {
       sendError(server, socket, `error sending message: ${e}`);
     }
+  });
+
+  // ON REMOVE MATCHES
+  socket.on('removeMatches', async (data: RemoveMatchData[]) => {
+    // ownerId => [matchId1, matchId2, ...]
+    const matchesIdsToRemoveForOwners: Record<string, Array<string>> = {};
+    data.forEach((match) => {
+      if (!matchesIdsToRemoveForOwners[match.owner1Id]) {
+        matchesIdsToRemoveForOwners[match.owner1Id] = [];
+      }
+      if (!matchesIdsToRemoveForOwners[match.owner2Id]) {
+        matchesIdsToRemoveForOwners[match.owner2Id] = [];
+      }
+      matchesIdsToRemoveForOwners[match.owner1Id].push(match.matchId);
+      matchesIdsToRemoveForOwners[match.owner2Id].push(match.matchId);
+    });
+    Object.keys(matchesIdsToRemoveForOwners).forEach((ownerId) => {
+      if (!usersToSockets[ownerId]) {
+        return;
+      }
+      // console.log(
+      //   'sending remove matches ',
+      //   matchesIdsToRemoveForOwners[ownerId],
+      //   ' to',
+      //   usersToSockets[ownerId]
+      // );
+      server
+        .to(usersToSockets[ownerId])
+        .emit('removeMatches', matchesIdsToRemoveForOwners[ownerId]);
+    });
   });
 
   // ON DISCONNECT

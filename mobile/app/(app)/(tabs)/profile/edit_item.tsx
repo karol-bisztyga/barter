@@ -9,7 +9,7 @@ import {
   View,
 } from 'react-native';
 import AddButton from '../../components/AddButton';
-import { EditImageType, ItemBorderRadius, ItemData } from '../../types';
+import { EditImageType, ItemBorderRadius, ItemData, RemoveMatchData } from '../../types';
 import { useItemsContext } from '../../context/ItemsContext';
 import {
   MAX_ITEM_PICTURES,
@@ -22,7 +22,6 @@ import { useEditItemContext } from '../../context/EditItemContext';
 import { updateItem } from '../../db_utils/updateItem';
 import { addItem } from '../../db_utils/addItem';
 import { removeItem } from '../../db_utils/removeItem';
-import { useMatchContext } from '../../context/MatchContext';
 import { deleteItemImage } from '../../db_utils/deleteItemImage';
 import { uploadItemImage } from '../../db_utils/uploadItemImage';
 import { prepareFileToUpload } from '../../utils/storageUtils';
@@ -36,6 +35,7 @@ import { FILL_COLOR } from './components/items/editing_panels/constants';
 import { TorchIcon } from '../../utils/icons';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
+import { useSocketContext } from '../../context/SocketContext';
 
 const { width } = Dimensions.get('window');
 
@@ -46,13 +46,13 @@ const EditItem = () => {
   const { t } = useTranslation();
 
   const sessionContext = useAuth();
-  const matchContext = useMatchContext();
 
   const { usersItemId } = useItemsContext();
 
   const editItemContext = useEditItemContext();
   const userContext = useUserContext();
   const jokerContext = useJokerContext();
+  const socketContext = useSocketContext();
 
   const usersItem = userContext.findItemById(usersItemId);
 
@@ -316,13 +316,12 @@ const EditItem = () => {
         }
         setRemovingUtem(true);
         const newItems = [...userContext.items];
-        const result: { id: string }[] = await removeItem(sessionContext, usersItem.item.id);
+        const result: RemoveMatchData[] = await removeItem(sessionContext, usersItem.item.id);
         // update matches - removeItem returns all the removed matches' ids
-        const removedMatchesIds = result.map((item) => item.id);
-        const newMatches = [...matchContext.matches].filter(
-          (match) => !removedMatchesIds.includes(match.id)
-        );
-        matchContext.setMatches(newMatches);
+        // instead of updating matches right away, send through socket info to both owners and only then each of them can remove the match from the state
+        if (result.length) {
+          socketContext.sendRemoveMatch(result);
+        }
         //
         newItems.splice(usersItem.index, 1);
         userContext.setItems(newItems);

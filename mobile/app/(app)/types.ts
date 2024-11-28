@@ -80,3 +80,9 @@ export type ViewDimensions = {
   width: number;
   height: number;
 };
+
+export type RemoveMatchData = {
+  matchId: string;
+  owner1Id: string;
+  owner2Id: string;
+};

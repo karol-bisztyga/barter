@@ -11,3 +11,9 @@ export type ChatMessage = {
   userId?: string;
   dateCreated?: number;
 };
+
+export type RemoveMatchData = {
+  matchId: string;
+  owner1Id: string;
+  owner2Id: string;
+};

@@ -11,6 +11,8 @@ import { Flag2Icon, FlagIcon, SwordsShieldIcon } from '../../../utils/icons';
 import { useJokerContext } from '../../../context/JokerContext';
 import { useSettingsContext } from '../../../context/SettingsContext';
 import { useTranslation } from 'react-i18next';
+import { RemoveMatchData } from '../../../types';
+import { useSocketContext } from '../../../context/SocketContext';
 
 const MENU_ICON_SIZE = 28;
 
@@ -21,6 +23,7 @@ const ChatRightHeaderMenu = () => {
   const sessionContext = useSessionContext();
   const matchContext = useMatchContext();
   const settingsContext = useSettingsContext();
+  const socketContext = useSocketContext();
 
   const unmatchHandler = async () => {
     try {
@@ -45,10 +48,13 @@ const ChatRightHeaderMenu = () => {
         if (!matchContext.currentMatchId) {
           throw new Error('could not detemine current match');
         }
-        await unmatch(sessionContext, matchContext.currentMatchId);
-        matchContext.setMatches(
-          matchContext.matches.filter((m) => m.id !== matchContext.currentMatchId)
+        const result: RemoveMatchData[] = await unmatch(
+          sessionContext,
+          matchContext.currentMatchId
         );
+        if (result.length) {
+          socketContext.sendRemoveMatch(result);
+        }
 
         jokerContext.showSuccess(t('chats_unmatch_success'));
         router.back();

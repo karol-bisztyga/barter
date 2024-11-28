@@ -507,6 +507,14 @@ const insertHardcodedMatches = async () => {
       matching_item_id: 1,
       matched_item_id: 7,
     },
+    {
+      matching_item_id: 1,
+      matched_item_id: 8,
+    },
+    {
+      matching_item_id: 1,
+      matched_item_id: 9,
+    },
   ];
 
   try {

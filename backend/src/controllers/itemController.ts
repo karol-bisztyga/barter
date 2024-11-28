@@ -104,32 +104,58 @@ export const deleteItem = async (req: AuthRequest, res: Response) => {
         throw new Error('file name not found in url');
       }
       await storageHandler.deleteFile(bucketId, fileName);
-      await pool.query('DELETE FROM items_images WHERE item_id = $1 AND url = $2', [
+      await client.query('DELETE FROM items_images WHERE item_id = $1 AND url = $2', [
         itemId,
         itemImage.url,
       ]);
     }
-    // remove rest
-    const matchesIdsResult = await client.query(
-      'SELECT id FROM matches WHERE matching_item_id = $1 OR matched_item_id = $1',
+
+    // Fetch matches and owner IDs
+    const matchesAndOwnersIdsResult = await client.query(
+      `SELECT 
+         matches.id AS match_id,
+         item1.user_id AS owner1_id,
+         item2.user_id AS owner2_id
+       FROM 
+         matches
+       JOIN 
+         items AS item1 ON matches.matching_item_id = item1.id
+       JOIN 
+         items AS item2 ON matches.matched_item_id = item2.id
+       WHERE 
+         matches.matching_item_id = $1 OR matches.matched_item_id = $1`,
       [itemId]
     );
-    const matchesIds = matchesIdsResult.rows.map((row: Record<string, string>) => row.id);
-    if (matchesIds.length) {
-      await client.query(
-        `DELETE FROM messages WHERE match_id IN (${matchesIds.map((_: string, i: number) => `$${i + 1}`).join(', ')})`,
-        matchesIds
-      );
+
+    const matchIds = matchesAndOwnersIdsResult.rows.map(
+      (row: Record<string, string>) => row.match_id
+    );
+
+    // Delete messages associated with the matches
+    if (matchIds.length > 0) {
+      await client.query(`DELETE FROM messages WHERE match_id = ANY($1::int[])`, [matchIds]);
     }
-    updateMatchDateUpdated(client, dateNow, userId);
-    const matchesDeleteResult = await client.query(
-      'DELETE FROM matches WHERE matching_item_id = $1 OR matched_item_id = $1 RETURNING id',
-      [itemId]
-    );
+
+    // Update match date_updated for affected users
+    await updateMatchDateUpdated(client, dateNow, userId);
+
+    // Delete matches
+    await client.query(`DELETE FROM matches WHERE id = ANY($1::int[])`, [matchIds]);
+
+    // Delete likes and the item itself
     await client.query('DELETE FROM likes WHERE liked_id = $1', [itemId]);
     await client.query('DELETE FROM items WHERE id = $1', [itemId]);
+
     await client.query('COMMIT');
-    res.json(matchesDeleteResult.rows);
+    // Return matches and owner IDs
+    const parsedResult = matchesAndOwnersIdsResult.rows.map((row: Record<string, string>) => {
+      return {
+        matchId: row.match_id,
+        owner1Id: row.owner1_id,
+        owner2Id: row.owner2_id,
+      };
+    });
+    res.json(parsedResult);
   } catch (err) {
     await client.query('ROLLBACK');
     res.status(500).send({ message: 'Server error: ' + err });

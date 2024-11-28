@@ -64,7 +64,8 @@ const Chat = () => {
     socketContext.joinMatch(currentMatchId);
 
     return () => {
-      socketContext.leaveMatch();
+      socketContext.leaveMatch(currentMatchId);
+      matchContext.setCurrentMatchId(null);
     };
   }, []);
 
@@ -125,6 +126,9 @@ const Chat = () => {
         messages.at(-1)?.content !== t('chats_no_more_messages') &&
         messages.length > MESSAGES_PER_CHUNK
       ) {
+        newMessages.push(generateStatusMessage(t('chats_no_more_messages')));
+        setLoadMoreMessagesEnabled(false);
+      } else if (newMessages.length === 0) {
         newMessages.push(generateStatusMessage(t('chats_no_more_messages')));
         setLoadMoreMessagesEnabled(false);
       }
