@@ -28,7 +28,7 @@ const ChatItem = ({ id, myItem, theirItem, registerRenderedListItem }: ChatItemP
       style={styles.container}
       key={id}
       onLayout={() => {
-        registerRenderedListItem(`${myItem.id}-${theirItem.id}`);
+        registerRenderedListItem(id);
       }}
     >
       <View style={[styles.itemWrapper, styles.myItemWrapper]}>

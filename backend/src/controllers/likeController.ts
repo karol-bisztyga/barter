@@ -92,7 +92,12 @@ export const addLike = async (req: AuthRequest, res: Response) => {
     res.json({
       matchStatus: 'match',
       myItemsLikedByTargetItemOwner,
-      matchResult: matchResult.rows[0],
+      matchResult: {
+        matchId: matchResult.rows[0].id,
+        matchingItemId: matchResult.rows[0].matching_item_id,
+        matchedItemId: matchResult.rows[0].matched_item_id,
+        dateCreated: matchResult.rows[0].date_created,
+      },
     });
   } catch (err) {
     await client.query('ROLLBACK');

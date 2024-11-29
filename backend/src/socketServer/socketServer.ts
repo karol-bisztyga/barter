@@ -1,8 +1,15 @@
 import http from 'http';
 import { Server, Socket } from 'socket.io';
 import { verifyToken } from '../middlewares/authMiddleware';
-import { ChatMessage, RemoveMatchData } from './types';
-import { addNewMessage } from './databaseOperations';
+import {
+  ChatMessage,
+  RemoveMatchData,
+  AddMatchData,
+  ItemData,
+  UpdateMatchMatchingItemData,
+  UpdatedMatchMatchingItemData,
+} from './types';
+import { addNewMessage, getItemsDataByIds, updateMatchMatchingItem } from './databaseOperations';
 
 const socketsToUsers: Record<string, string> = {};
 const usersToSockets: Record<string, string> = {};
@@ -20,7 +27,7 @@ const unregisterUser = (socketId: string) => {
 };
 
 const sendError = (server: Server, socket: Socket, error: string) => {
-  console.error('error verifying token', error);
+  console.error(error);
   server.to(socket.id).emit('error', error);
   socket.disconnect();
 };
@@ -78,6 +85,48 @@ const onConnection = async (server: Server, socket: Socket) => {
     } catch (e) {
       sendError(server, socket, `error sending message: ${e}`);
     }
+  });
+
+  // ON ADD MATCH
+  socket.on('addMatch', async (data: AddMatchData) => {
+    try {
+      console.log('add match', data);
+      const { matchId, matchingItemId, matchedItemId } = data;
+      const itemsData: ItemData[] = await getItemsDataByIds([matchingItemId, matchedItemId]);
+      if (!itemsData[0].userId || !itemsData[1].userId) {
+        throw new Error('could not find user ids for items');
+      }
+      // send data to both items' owners
+      const ownersIds = [itemsData[0].userId, itemsData[1].userId];
+      ownersIds.forEach((ownerId) => {
+        if (!ownerId || !usersToSockets[ownerId]) {
+          return;
+        }
+        server.to(usersToSockets[ownerId]).emit('addMatch', {
+          id: matchId,
+          matchingItem: itemsData[0],
+          matchedItem: itemsData[1],
+        });
+      });
+    } catch (e) {
+      sendError(server, socket, `error adding a match: ${e}`);
+    }
+  });
+
+  // ON UPDATE MATCH
+  socket.on('updateMatch', async (data: UpdateMatchMatchingItemData) => {
+    const newItemsData = await updateMatchMatchingItem(data);
+    const ownersIds = newItemsData.owners;
+    ownersIds.forEach((ownerId) => {
+      if (!ownerId || !usersToSockets[ownerId]) {
+        return;
+      }
+      const dataToSend: UpdatedMatchMatchingItemData = {
+        matchId: data.matchId,
+        newMatchingItem: newItemsData.newMatchingItem,
+      };
+      server.to(usersToSockets[ownerId]).emit('updateMatch', dataToSend);
+    });
   });
 
   // ON REMOVE MATCHES

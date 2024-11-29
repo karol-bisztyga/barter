@@ -81,6 +81,22 @@ export type ViewDimensions = {
   height: number;
 };
 
+export type AddMatchData = {
+  matchId: string;
+  matchingItemId: string;
+  matchedItemId: string;
+};
+
+export type UpdateMatchMatchingItemData = {
+  matchId: string;
+  newMatchingItemId: string;
+};
+
+export type UpdatedMatchMatchingItemData = {
+  matchId: string;
+  newMatchingItem: ItemData;
+};
+
 export type RemoveMatchData = {
   matchId: string;
   owner1Id: string;

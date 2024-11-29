@@ -49,10 +49,10 @@ export default function Chats() {
   }, [renderedListItems, listItemHeight]);
 
   const renderListItem = useCallback(
-    (myItem: ItemData, theirItem: ItemData) => {
+    (matchId: string, myItem: ItemData, theirItem: ItemData) => {
       return (
         <ChatItem
-          id={`${myItem.id}-${theirItem.id}`}
+          id={`${matchId}-${myItem.id}-${theirItem.id}`}
           myItem={myItem}
           theirItem={theirItem}
           registerRenderedListItem={registerRenderedListItem}
@@ -119,7 +119,7 @@ export default function Chats() {
                   router.push('chats/chat');
                 }}
               >
-                {renderListItem(myItem, theirItem)}
+                {renderListItem(id, myItem, theirItem)}
               </TouchableOpacity>
             );
           }}

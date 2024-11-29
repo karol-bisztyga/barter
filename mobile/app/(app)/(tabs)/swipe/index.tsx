@@ -18,6 +18,7 @@ import { useSettingsContext } from '../../context/SettingsContext';
 import Reload from './components/Reload';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
+import { useSocketContext } from '../../context/SocketContext';
 
 const LOADED_ITEMS_CAPACITY = 5;
 // when there are less items loaded than this value, new items will be fetched
@@ -28,6 +29,7 @@ export default function Swipe() {
 
   const sessionContext = useAuth();
   const settingsContext = useSettingsContext();
+  const socketContext = useSocketContext();
 
   const [cards, setCards] = useState<ItemData[]>([]);
   const [activeCard, setActiveCard] = useState<ItemData | null>(null);
@@ -200,11 +202,18 @@ export default function Swipe() {
       lockGesture.value = false;
 
       if (sendLikeResult.matchStatus === 'match') {
-        itemsContext.setUsersItemId(sendLikeResult.matchResult.matching_item_id);
+        itemsContext.setUsersItemId(sendLikeResult.matchResult.matchingItemId);
         itemsContext.setOthersItem(swipedCard);
         itemsContext.setUsersItemsLikedByTargetItemOwner(
           sendLikeResult.myItemsLikedByTargetItemOwner
         );
+        const { matchId, matchingItemId, matchedItemId } = sendLikeResult.matchResult;
+        socketContext.sendAddMatch({
+          matchId,
+          matchingItemId,
+          matchedItemId,
+        });
+        itemsContext.setNewMatchId(matchId);
         router.push('swipe/match');
       }
     } catch (e) {

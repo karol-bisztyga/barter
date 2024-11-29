@@ -1,10 +1,9 @@
-import React, { useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { View, StyleSheet, Dimensions, Image, SafeAreaView } from 'react-native';
 import { router } from 'expo-router';
 import { ItemData } from '../../types';
 import { useItemsContext } from '../../context/ItemsContext';
 import { useUserContext } from '../../context/UserContext';
-import { updateMatchMatchingItem } from '../../db_utils/updateMatchMatchingItem';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 import TextWrapper from '../../genericComponents/TextWrapper';
@@ -14,41 +13,46 @@ import { FILL_COLOR } from '../profile/components/items/editing_panels/constants
 import { SWIPE_BASE_BACKGROUND_COLOR } from '../../constants';
 import { hexToRgbaString } from '../../utils/harmonicColors';
 import { useTranslation } from 'react-i18next';
-import { useAuth } from '../../hooks/useAuth';
+import { useSocketContext } from '../../context/SocketContext';
 
 const { width } = Dimensions.get('window');
 
 const Match = () => {
   const { t } = useTranslation();
 
-  const sessionContext = useAuth();
   const userContext = useUserContext();
   const itemsContext = useItemsContext();
   const jokerContext = useJokerContext();
+  const socketContext = useSocketContext();
 
-  const { othersItem, usersItemId, usersItemsLikedByTargetItemOwner } = itemsContext;
-
-  if (!usersItemId || !usersItemsLikedByTargetItemOwner.length || !othersItem) {
-    handleError(
-      t,
-      jokerContext,
-      ErrorType.CORRUPTED_SESSION,
-      `Match screen did not receive all required data: [${!!itemsContext.usersItemId}][${!!itemsContext.usersItemsLikedByTargetItemOwner.length}][${!!itemsContext.othersItem}]`
-    );
-    return null;
-  }
   const myDefaultItemId = useRef(itemsContext.usersItemId);
+
+  const { othersItem, usersItemId, usersItemsLikedByTargetItemOwner, newMatchId } = itemsContext;
 
   const usersItem: ItemData | undefined = userContext.findItemById(usersItemId)?.item;
 
-  if (!othersItem || !usersItem) {
-    handleError(
-      t,
-      jokerContext,
-      ErrorType.CORRUPTED_SESSION,
-      `at least on of the items has not been set`
-    );
-    router.back();
+  useEffect(() => {
+    if (!usersItemId || !usersItemsLikedByTargetItemOwner.length || !othersItem || !newMatchId) {
+      handleError(
+        t,
+        jokerContext,
+        ErrorType.CORRUPTED_SESSION,
+        `Match screen did not receive all required data: [${!!itemsContext.usersItemId}][${!!itemsContext.usersItemsLikedByTargetItemOwner.length}][${!!itemsContext.othersItem}][${!!newMatchId}]`
+      );
+      router.back();
+    }
+    if (!othersItem || !usersItem) {
+      handleError(
+        t,
+        jokerContext,
+        ErrorType.CORRUPTED_SESSION,
+        `at least on of the items has not been set`
+      );
+      router.back();
+    }
+  }, []);
+
+  if (!usersItem || !othersItem || !usersItemId) {
     return null;
   }
 
@@ -80,33 +84,43 @@ const Match = () => {
         </TextWrapper>
 
         <View style={styles.buttonsWrapper}>
-          <View style={styles.singleButtonWrapper}>
-            <ButtonWrapper
-              title={t('match_switch_my_item')}
-              onPress={() => {
-                router.push('swipe/switch_item');
-              }}
-              color={'red'}
-              fillColor={FILL_COLOR}
-            />
-          </View>
+          {usersItemsLikedByTargetItemOwner.length > 1 && (
+            <View style={styles.singleButtonWrapper}>
+              <ButtonWrapper
+                title={t('match_switch_my_item')}
+                onPress={() => {
+                  router.push('swipe/switch_item');
+                }}
+                color={'red'}
+                fillColor={FILL_COLOR}
+              />
+            </View>
+          )}
           <View style={styles.singleButtonWrapper}>
             <ButtonWrapper
               title={t('proceed')}
               fillColor={FILL_COLOR}
               onPress={async () => {
+                if (!newMatchId || !itemsContext.usersItemId) {
+                  handleError(
+                    t,
+                    jokerContext,
+                    ErrorType.UPDATE_MATCH,
+                    `Update match action did not receive all required data: [${!!newMatchId}][${!!itemsContext.usersItemId}]`
+                  );
+                  return;
+                }
                 // modify newly created match if the item was switched
                 if (
                   myDefaultItemId.current &&
                   myDefaultItemId.current !== itemsContext.usersItemId
                 ) {
                   try {
-                    await updateMatchMatchingItem(
-                      sessionContext,
-                      usersItemId,
-                      myDefaultItemId.current,
-                      othersItem.id
-                    );
+                    socketContext.sendUpdateMatch({
+                      matchId: newMatchId,
+                      newMatchingItemId: itemsContext.usersItemId,
+                    });
+                    itemsContext.setNewMatchId(null);
                   } catch (e) {
                     handleError(t, jokerContext, ErrorType.UPDATE_MATCH, `${e}`);
                     return;

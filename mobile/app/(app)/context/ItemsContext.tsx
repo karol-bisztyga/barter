@@ -14,6 +14,8 @@ interface ItemsContextState {
   setUsersItemsLikedByTargetItemOwner: React.Dispatch<React.SetStateAction<ItemData[]>>;
   othersItem: ItemData | null;
   setOthersItem: React.Dispatch<React.SetStateAction<ItemData | null>>;
+  newMatchId: string | null;
+  setNewMatchId: React.Dispatch<React.SetStateAction<string | null>>;
 
   lastReloadTime: number;
   setLastReloadTime: React.Dispatch<React.SetStateAction<number>>;
@@ -26,6 +28,8 @@ const initialState: ItemsContextState = {
   setUsersItemsLikedByTargetItemOwner: () => {},
   othersItem: null,
   setOthersItem: () => {},
+  newMatchId: null,
+  setNewMatchId: () => {},
   lastReloadTime: 0,
   setLastReloadTime: () => {},
 };
@@ -46,6 +50,7 @@ export const ItemsContextProvider: FC<{ children: ReactNode }> = ({ children }) 
   const [usersItemsLikedByTargetItemOwner, setUsersItemsLikedByTargetItemOwner] = useState<
     ItemData[]
   >([]);
+  const [newMatchId, setNewMatchId] = useState<string | null>(null);
 
   const [lastReloadTime, setLastReloadTime] = useState<number>(0);
 
@@ -58,6 +63,8 @@ export const ItemsContextProvider: FC<{ children: ReactNode }> = ({ children }) 
         setOthersItem,
         usersItemsLikedByTargetItemOwner,
         setUsersItemsLikedByTargetItemOwner,
+        newMatchId,
+        setNewMatchId,
 
         lastReloadTime,
         setLastReloadTime,
