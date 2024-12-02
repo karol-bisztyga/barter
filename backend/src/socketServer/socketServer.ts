@@ -9,7 +9,12 @@ import {
   UpdateMatchMatchingItemData,
   UpdatedMatchMatchingItemData,
 } from './types';
-import { addNewMessage, getItemsDataByIds, updateMatchMatchingItem } from './databaseOperations';
+import {
+  addNewMessage,
+  getItemsDataByIds,
+  getMatches,
+  updateMatchMatchingItem,
+} from './databaseOperations';
 
 const socketsToUsers: Record<string, string> = {};
 const usersToSockets: Record<string, string> = {};
@@ -42,6 +47,8 @@ const onConnection = async (server: Server, socket: Socket) => {
     const userId = verifyTokenResult.id;
 
     registerUser(userId, socket);
+    const matches = await getMatches(userId);
+    server.to(usersToSockets[userId]).emit('matches', matches);
   } catch (e) {
     sendError(server, socket, `${e}`);
     return;

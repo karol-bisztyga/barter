@@ -16,7 +16,6 @@ import {
 import { ErrorType, handleError } from '../utils/errorHandler';
 import { useJokerContext } from './JokerContext';
 import { useMatchContext } from './MatchContext';
-import { getUserMatches } from '../db_utils/getUserMatches';
 
 interface SocketContextState {
   connect: () => void;
@@ -135,15 +134,13 @@ export const SocketContextProvider: FC<{ children: ReactNode }> = ({ children })
     //   console.log(`+++++ ANY: ${eventName}`, args);
     // });
 
+    newSocket.on('matches', (matchesData: MatchData[]) => {
+      console.log('- matches received', matchesData);
+      matchContext.setMatches(matchesData);
+    });
+
     newSocket.on('connect', async () => {
       console.log('socket connected', newSocket.connected);
-      try {
-        const matchesResult = await getUserMatches(sessionContext, null);
-        matchContext.setMatches(matchesResult.matches);
-        matchContext.setLocalDateUpdated(matchesResult.dateUpdated);
-      } catch (e) {
-        handleError(t, jokerContext, ErrorType.LOAD_MATCHES, `${e}`);
-      }
     });
 
     newSocket.on('error', (e) => {

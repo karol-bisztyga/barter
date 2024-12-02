@@ -162,9 +162,6 @@ export const deleteUser = async (req: AuthRequest, res: Response) => {
         []
       );
     }
-    // matches_updates
-    console.log('deleting matches_updates');
-    await client.query(`DELETE FROM matches_updates WHERE user_id=$1`, [userId]);
     // matches
     if (usersMatchesIds.length) {
       console.log('deleting matches');

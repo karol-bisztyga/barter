@@ -2,13 +2,10 @@ import { Response } from 'express';
 import pool from '../db';
 import { AuthRequest } from '../middlewares/authMiddleware';
 import { getUserIdFromRequest } from '../utils';
-import { updateMatchDateUpdated } from './matchController';
 
 export const addLike = async (req: AuthRequest, res: Response) => {
   const { likedItemId, decision } = req.body;
   const client = await pool.connect();
-
-  const dateNow = Date.now();
 
   try {
     await client.query('BEGIN');
@@ -85,8 +82,6 @@ export const addLike = async (req: AuthRequest, res: Response) => {
       `,
       [myRandomItem.id, likedItemId]
     );
-
-    await updateMatchDateUpdated(client, dateNow, userId);
 
     await client.query('COMMIT');
     res.json({

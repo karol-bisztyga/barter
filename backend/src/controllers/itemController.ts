@@ -2,7 +2,6 @@ import { Response } from 'express';
 import pool from '../db';
 import { AuthRequest } from '../middlewares/authMiddleware';
 import { getUserIdFromRequest } from '../utils';
-import { updateMatchDateUpdated } from './matchController';
 import { MAX_ITEM_PICTURES } from '../constants';
 import { StorageHandler } from '../utils/storageUtils';
 import * as QueryString from 'qs';
@@ -86,8 +85,6 @@ export const updateItem = async (req: AuthRequest, res: Response) => {
 export const deleteItem = async (req: AuthRequest, res: Response) => {
   const itemId = req.params.id;
   const client = await pool.connect();
-  const dateNow = Date.now();
-  const userId = getUserIdFromRequest(req);
   try {
     await client.query('BEGIN');
     // remove images
@@ -135,9 +132,6 @@ export const deleteItem = async (req: AuthRequest, res: Response) => {
     if (matchIds.length > 0) {
       await client.query(`DELETE FROM messages WHERE match_id = ANY($1::int[])`, [matchIds]);
     }
-
-    // Update match date_updated for affected users
-    await updateMatchDateUpdated(client, dateNow, userId);
 
     // Delete matches
     await client.query(`DELETE FROM matches WHERE id = ANY($1::int[])`, [matchIds]);
