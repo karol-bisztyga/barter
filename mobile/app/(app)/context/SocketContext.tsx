@@ -12,6 +12,7 @@ import {
   AddMatchData,
   UpdateMatchMatchingItemData,
   UpdatedMatchMatchingItemData,
+  NotificationInMatchData,
 } from '../types';
 import { ErrorType, handleError } from '../utils/errorHandler';
 import { useJokerContext } from './JokerContext';
@@ -123,6 +124,21 @@ export const SocketContextProvider: FC<{ children: ReactNode }> = ({ children })
       });
     });
 
+    newSocket.on('notificationInMatch', (notificationInMatchData: NotificationInMatchData) => {
+      const { matchId, dateMatchNotificationUpdated } = notificationInMatchData;
+      matchContext.setMatches((prevMatches) => {
+        const newMatches = [...prevMatches];
+        for (let i = 0; i < newMatches.length; i++) {
+          const match = newMatches[i];
+          if (match.id === matchId) {
+            match.dateUpdated = dateMatchNotificationUpdated;
+            break;
+          }
+        }
+        return newMatches;
+      });
+    });
+
     newSocket.on('removeMatches', (matchesIds: string[]) => {
       matchContext.setMatches((prevMatches) => {
         const newMatches = prevMatches.filter((match) => !matchesIds.includes(match.id));
@@ -135,7 +151,6 @@ export const SocketContextProvider: FC<{ children: ReactNode }> = ({ children })
     // });
 
     newSocket.on('matches', (matchesData: MatchData[]) => {
-      console.log('- matches received', matchesData);
       matchContext.setMatches(matchesData);
     });
 

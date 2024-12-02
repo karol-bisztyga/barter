@@ -52,7 +52,7 @@ export default function Chats() {
     (matchId: string, myItem: ItemData, theirItem: ItemData) => {
       return (
         <ChatItem
-          id={`${matchId}-${myItem.id}-${theirItem.id}`}
+          id={matchId}
           myItem={myItem}
           theirItem={theirItem}
           registerRenderedListItem={registerRenderedListItem}

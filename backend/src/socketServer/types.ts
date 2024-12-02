@@ -12,6 +12,12 @@ export type ChatMessage = {
   dateCreated?: number;
 };
 
+export type AddNewMessageResult = ChatMessage & {
+  matchingUserId: string;
+  matchedUserId: string;
+  dateMatchNotificationUpdated: number;
+};
+
 export type ItemData = {
   id: string;
   name: string;

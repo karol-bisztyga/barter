@@ -25,9 +25,9 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
 import { useSocketContext } from '../../context/SocketContext';
 import { getMessages } from '../../db_utils/getMessages';
+import { updateMatchNotified } from '../../db_utils/updateMatchNotified';
 
 const INPUT_WRAPPER_HEIGHT = 70;
-const ITEMS_WRPPER_HEIGHT = 200;
 const MESSAGES_PER_CHUNK = 10;
 const SEND_MESSAGE_TIMEOUT = 3000;
 
@@ -46,7 +46,7 @@ const Chat = () => {
   const [sendingEnabled, setSendingEnabled] = useState(true);
 
   const keyboardHeight = useSharedValue(0);
-  const inputWrapperPosition = useSharedValue<number>(0);
+  // const inputWrapperPosition = useSharedValue<number>(0);
 
   const flatListRef = useRef<FlatList>(null);
 
@@ -96,6 +96,42 @@ const Chat = () => {
     };
   }, []);
 
+  // handle seen messages
+  const updateDateNotifiedWrapper = () => {
+    (async () => {
+      try {
+        await updateDateNotified();
+      } catch (e) {
+        handleError(t, jokerContext, ErrorType.UPDATE_MATCH, `${e}`);
+      }
+    })();
+  };
+
+  const updateDateNotified = async () => {
+    if (!currentMatchId) {
+      return;
+    }
+    const dateNotified = Date.now();
+
+    // update in db
+    // todo if you want to implement "seen" feature, you should use sockets here, and probably modify db a bit
+    await updateMatchNotified(sessionContext, currentMatchId, `${dateNotified}`);
+
+    // update locally
+    const updatedMatches = [...matchContext.matches];
+    for (const match of updatedMatches) {
+      if (match.id === currentMatchId) {
+        match.dateNotified = dateNotified;
+      }
+    }
+
+    matchContext.setMatches(updatedMatches);
+  };
+
+  useEffect(updateDateNotifiedWrapper, []);
+  useEffect(updateDateNotifiedWrapper, [messages]);
+  //
+
   // when the message comes from the socket
   useEffect(() => {
     if (!socketContext.messagesFromSocket.length) {
@@ -132,12 +168,6 @@ const Chat = () => {
     return () => {
       keyboardWillShowListener.remove();
       keyboardWillHideListener.remove();
-    };
-  }, [keyboardHeight]);
-
-  const messageListAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      height: inputWrapperPosition.value - ITEMS_WRPPER_HEIGHT,
     };
   }, [keyboardHeight]);
 
@@ -215,7 +245,7 @@ const Chat = () => {
     <SafeAreaView style={styles.container}>
       <View style={styles.scrollViewContent}>
         <ChatHeader />
-        <Animated.View style={[styles.messageList, messageListAnimatedStyle]}>
+        <Animated.View style={styles.messageList}>
           <FlatList
             ref={flatListRef}
             data={messages}
@@ -255,12 +285,7 @@ const Chat = () => {
             }}
           />
         </Animated.View>
-        <Animated.View
-          style={[styles.inputContainer, inputWrapperAnimatedStyle]}
-          onLayout={(e) => {
-            inputWrapperPosition.value = e.nativeEvent.layout.y;
-          }}
-        >
+        <Animated.View style={[styles.inputContainer, inputWrapperAnimatedStyle]}>
           <View style={styles.inputContainerInner}>
             <InputWrapper
               style={styles.input}
@@ -301,17 +326,13 @@ const styles = StyleSheet.create({
   messageList: {
     flex: 1,
     justifyContent: 'flex-end',
-    position: 'absolute',
-    top: 200,
-    width: '100%',
   },
   buttonWrapper: {
     width: 70,
     marginHorizontal: 4,
   },
   inputContainer: {
-    position: 'absolute',
-    width: '100%',
+    height: 70,
   },
   inputContainerInner: {
     flexDirection: 'row',

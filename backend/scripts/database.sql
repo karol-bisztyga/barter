@@ -57,7 +57,10 @@ CREATE TABLE matches (
     id SERIAL PRIMARY KEY,
     matching_item_id INTEGER REFERENCES items(id) NOT NULL,
     matched_item_id INTEGER REFERENCES items(id) NOT NULL,
-    date_created BIGINT DEFAULT (EXTRACT(EPOCH FROM NOW()) * 1000)::BIGINT
+    date_created BIGINT DEFAULT (EXTRACT(EPOCH FROM NOW()) * 1000)::BIGINT,
+    date_updated BIGINT DEFAULT (EXTRACT(EPOCH FROM NOW()) * 1000)::BIGINT,
+    date_matching_owner_notified BIGINT DEFAULT 0,
+    date_matched_owner_notified BIGINT DEFAULT 0
 );
 
 CREATE TABLE messages (

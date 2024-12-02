@@ -16,6 +16,11 @@ import { AddPictureContextProvider } from '../context/AddPictureContext';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth';
 import { useFont } from '../hooks/useFont';
+import { View } from 'react-native';
+import { useMatchContext } from '../context/MatchContext';
+import { NotificationIndicator } from './swipe/components/NotificationIndicator';
+
+const ICON_SIZE = 28;
 
 const getTabNameFromEvent = (eventName?: string): string | undefined => eventName?.split('-')[0];
 
@@ -25,6 +30,7 @@ export default function TabLayout() {
   useAuth();
   const jokerContext = useJokerContext();
   const settingsContext = useSettingsContext();
+  const matchContext = useMatchContext();
 
   const fontFamily = useFont();
 
@@ -87,7 +93,7 @@ export default function TabLayout() {
             title: t('tab_profile_title'),
             tabBarIcon: ({ color }) => {
               const Icon = routeName === 'profile' ? HelmetIcon : HelmetLinealIcon;
-              return <Icon width={28} height={28} fill={color} />;
+              return <Icon width={ICON_SIZE} height={ICON_SIZE} fill={color} />;
             },
           }}
         />
@@ -97,7 +103,7 @@ export default function TabLayout() {
             title: t('tab_swipe_title'),
             tabBarIcon: ({ color }) => {
               const Icon = routeName === 'swipe' ? TargetIcon : TargetLinealIcon;
-              return <Icon width={28} height={28} fill={color} />;
+              return <Icon width={ICON_SIZE} height={ICON_SIZE} fill={color} />;
             },
           }}
         />
@@ -107,7 +113,14 @@ export default function TabLayout() {
             title: t('tab_chats_title'),
             tabBarIcon: ({ color }) => {
               const Icon = routeName === 'chats' ? PaperIcon : PaperLinealIcon;
-              return <Icon width={28} height={28} fill={color} />;
+              const outdatedMatchesExist: boolean =
+                !!matchContext.matchesWithNotificationsIds.length;
+              return (
+                <View>
+                  <Icon width={ICON_SIZE} height={ICON_SIZE} fill={color} />
+                  {outdatedMatchesExist && <NotificationIndicator iconSize={ICON_SIZE} />}
+                </View>
+              );
             },
             /**
              * todo this is a fix for this case:

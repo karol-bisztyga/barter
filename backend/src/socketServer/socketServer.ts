@@ -8,6 +8,7 @@ import {
   ItemData,
   UpdateMatchMatchingItemData,
   UpdatedMatchMatchingItemData,
+  AddNewMessageResult,
 } from './types';
 import {
   addNewMessage,
@@ -18,6 +19,8 @@ import {
 
 const socketsToUsers: Record<string, string> = {};
 const usersToSockets: Record<string, string> = {};
+// match id to set of users in the chat
+const matchesChatRooms: Record<string, Set<string>> = {};
 
 const registerUser = (userId: string, socket: Socket) => {
   const socketId = socket.id;
@@ -29,6 +32,38 @@ const unregisterUser = (socketId: string) => {
   const userId = socketsToUsers[socketId];
   delete usersToSockets[userId];
   delete socketsToUsers[socketId];
+};
+
+const joinMatch = (userId: string, matchId: string) => {
+  if (!matchesChatRooms[matchId]) {
+    matchesChatRooms[matchId] = new Set([userId]);
+  } else {
+    matchesChatRooms[matchId].add(userId);
+  }
+};
+
+const leaveMatch = (userId: string, matchId: string) => {
+  if (matchesChatRooms[matchId]) {
+    matchesChatRooms[matchId].delete(userId);
+    if (matchesChatRooms[matchId].size === 0) {
+      delete matchesChatRooms[matchId];
+    }
+  } else {
+    console.error('user', userId, 'tried to leave non-existing match', matchId);
+  }
+};
+
+const getUsersMatch = (userId: string) => {
+  const matches = Object.keys(matchesChatRooms);
+  return matches.find((matchId) => matchesChatRooms[matchId].has(userId));
+};
+
+const leaveAnyMatch = (userId: string) => {
+  const usersMatch = getUsersMatch(userId);
+  if (!usersMatch) {
+    return;
+  }
+  leaveMatch(userId, usersMatch);
 };
 
 const sendError = (server: Server, socket: Socket, error: string) => {
@@ -57,6 +92,8 @@ const onConnection = async (server: Server, socket: Socket) => {
   // ON JOIN MATCH
   socket.on('joinMatch', async (matchId: string) => {
     // console.log('user', socketsToUsers[socket.id], 'joining match', matchId);
+    const userId = socketsToUsers[socket.id];
+    joinMatch(userId, matchId);
     socket.join(matchId);
   });
 
@@ -70,6 +107,8 @@ const onConnection = async (server: Server, socket: Socket) => {
     //   ', current matches matches',
     //   socket.rooms
     // );
+    const userId = socketsToUsers[socket.id];
+    leaveMatch(userId, matchId);
     socket.leave(matchId);
     // console.log(
     //   'user',
@@ -86,8 +125,25 @@ const onConnection = async (server: Server, socket: Socket) => {
     try {
       console.log('send message', matchId, chatMessage);
       // add to db
-      const newMessage: ChatMessage = await addNewMessage(matchId, chatMessage);
+      const newMessage: AddNewMessageResult = await addNewMessage(matchId, chatMessage);
       // then emit
+      const matchingUserMatch = getUsersMatch(newMessage.matchingUserId);
+      const matchedUserMatch = getUsersMatch(newMessage.matchedUserId);
+      if (!matchingUserMatch && !matchedUserMatch) {
+        throw new Error('both users seem to be out of this chat');
+      }
+      const { dateMatchNotificationUpdated } = newMessage;
+      if (!matchingUserMatch) {
+        server
+          .to(usersToSockets[newMessage.matchingUserId])
+          .emit('notificationInMatch', { matchId, dateMatchNotificationUpdated });
+      }
+      if (!matchedUserMatch) {
+        server
+          .to(usersToSockets[newMessage.matchedUserId])
+          .emit('notificationInMatch', { matchId, dateMatchNotificationUpdated });
+      }
+      // check if the user is in the chat
       server.to(matchId).emit('message', newMessage);
     } catch (e) {
       sendError(server, socket, `error sending message: ${e}`);
@@ -169,6 +225,7 @@ const onConnection = async (server: Server, socket: Socket) => {
   // ON DISCONNECT
   socket.on('disconnect', () => {
     console.log('User disconnected:', socket.id);
+    leaveAnyMatch(socketsToUsers[socket.id]);
     unregisterUser(socket.id);
   });
 };

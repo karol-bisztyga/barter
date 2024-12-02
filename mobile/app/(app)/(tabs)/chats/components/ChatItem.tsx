@@ -5,6 +5,8 @@ import { ItemData } from '../../../types';
 import ImageWrapper from '../../../genericComponents/ImageWrapper';
 import { ArrowsIcon } from '../../../utils/icons';
 import { useTranslation } from 'react-i18next';
+import { useMatchContext } from '../../../context/MatchContext';
+import { NotificationIndicator } from '../../swipe/components/NotificationIndicator';
 
 const { width } = Dimensions.get('window');
 
@@ -20,8 +22,12 @@ export type ChatItemProps = {
 const ChatItem = ({ id, myItem, theirItem, registerRenderedListItem }: ChatItemProps) => {
   const { t } = useTranslation();
 
+  const matchContext = useMatchContext();
+
   const myItemImage = myItem.images[0];
   const theirItemImage = theirItem.images[0];
+
+  const containsNotifications = matchContext.matchesWithNotificationsIds.includes(id);
 
   return (
     <View
@@ -64,6 +70,7 @@ const ChatItem = ({ id, myItem, theirItem, registerRenderedListItem }: ChatItemP
       <View style={styles.iconWrapper}>
         <ArrowsIcon width={ICON_SIZE} height={ICON_SIZE} />
       </View>
+      {containsNotifications && <NotificationIndicator iconSize={30} />}
     </View>
   );
 };

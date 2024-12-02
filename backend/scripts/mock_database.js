@@ -489,16 +489,16 @@ const insertHardcodedMatches = async () => {
       matched_item_id: 15,
     },
     {
-      matching_item_id: 2,
-      matched_item_id: 10,
+      matching_item_id: 10,
+      matched_item_id: 2,
     },
     {
       matching_item_id: 1,
       matched_item_id: 7,
     },
     {
-      matching_item_id: 1,
-      matched_item_id: 8,
+      matching_item_id: 8,
+      matched_item_id: 1,
     },
     {
       matching_item_id: 1,

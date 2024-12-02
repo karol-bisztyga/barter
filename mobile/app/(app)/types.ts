@@ -11,6 +11,8 @@ export type ItemData = {
 
 export type MatchData = {
   id: string;
+  dateNotified: number;
+  dateUpdated: number;
   matchingItem: ItemData;
   matchedItem: ItemData;
 };
@@ -95,6 +97,11 @@ export type UpdateMatchMatchingItemData = {
 export type UpdatedMatchMatchingItemData = {
   matchId: string;
   newMatchingItem: ItemData;
+};
+
+export type NotificationInMatchData = {
+  matchId: string;
+  dateMatchNotificationUpdated: number;
 };
 
 export type RemoveMatchData = {

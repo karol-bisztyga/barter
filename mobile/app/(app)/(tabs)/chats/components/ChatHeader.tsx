@@ -64,9 +64,6 @@ const ChatHeader = () => {
 
 const styles = StyleSheet.create({
   itemsWrapper: {
-    position: 'absolute',
-    top: 0,
-    width: '100%',
     height: 200,
     flexDirection: 'row',
     borderBottomWidth: 1,

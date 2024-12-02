@@ -1,17 +1,23 @@
 import pool from '../db';
-import { ChatMessage, ItemData, UpdateMatchMatchingItemData } from './types';
+import { AddNewMessageResult, ChatMessage, ItemData, UpdateMatchMatchingItemData } from './types';
 
 export const addNewMessage = async (
   matchId: string,
   message: ChatMessage
-): Promise<ChatMessage> => {
+): Promise<AddNewMessageResult> => {
   const { content, type, userId } = message;
-  // check if the match exists and if the user has access to it
+
+  // Check if the match exists and if the user has access to it, and fetch both user IDs
   const matchCheckResult = await pool.query(
-    `SELECT * FROM matches
-     JOIN items AS item1 ON matches.matching_item_id = item1.id
-     JOIN items AS item2 ON matches.matched_item_id = item2.id
-     WHERE matches.id = $1 AND (item1.user_id = $2 OR item2.user_id = $2)`,
+    `
+    SELECT 
+      item1.user_id AS matching_user_id,
+      item2.user_id AS matched_user_id
+    FROM matches
+    JOIN items AS item1 ON matches.matching_item_id = item1.id
+    JOIN items AS item2 ON matches.matched_item_id = item2.id
+    WHERE matches.id = $1 AND (item1.user_id = $2 OR item2.user_id = $2)
+    `,
     [matchId, userId]
   );
 
@@ -19,22 +25,39 @@ export const addNewMessage = async (
     throw new Error('Unauthorized or match not found');
   }
 
-  // insert the new message into the database
+  // Extract both user IDs
+  const { matching_user_id, matched_user_id } = matchCheckResult.rows[0];
+
+  // Insert the new message into the database
   const currentTimestamp = new Date().getTime();
 
   const insertMessageResult = await pool.query(
-    `INSERT INTO messages (sender_id, match_id, message_type, content, date_created)
-     VALUES ($1, $2, $3, $4, $5)
-     RETURNING *`,
+    `
+    INSERT INTO messages (sender_id, match_id, message_type, content, date_created)
+    VALUES ($1, $2, $3, $4, $5)
+    RETURNING *
+    `,
     [userId, matchId, type, content, currentTimestamp]
   );
 
+  // Update the match's last updated timestamp
+  await pool.query(
+    `
+    UPDATE matches SET date_updated = $1 WHERE id = $2
+    `,
+    [currentTimestamp, matchId]
+  );
+
+  // Prepare the response object
   const parsedResult = {
     id: insertMessageResult.rows[0].id,
     content: insertMessageResult.rows[0].content,
     type: insertMessageResult.rows[0].message_type,
     userId: insertMessageResult.rows[0].sender_id,
     dateCreated: insertMessageResult.rows[0].date_created,
+    matchingUserId: matching_user_id,
+    matchedUserId: matched_user_id,
+    dateMatchNotificationUpdated: currentTimestamp,
   };
 
   return parsedResult;
@@ -175,17 +198,22 @@ export const getMatches = async (userId: string) => {
       `
       SELECT
           matches.id AS id,
+          matches.date_matching_owner_notified AS date_matching_owner_notified,
+          matches.date_matched_owner_notified AS date_matched_owner_notified,
+          matches.date_updated AS date_updated,
 
           matching_item.id AS matching_item_id,
           matching_item.name AS matching_item_name,
           matching_item.description AS matching_item_description,
           matching_item_user.name AS matching_item_user_name,
+          matching_item_user.id AS matching_item_user_id,
           ARRAY_AGG(matching_item_images.url ORDER BY matching_item_images.id) AS matching_item_images,
           
           matched_item.id AS matched_item_id,
           matched_item.name AS matched_item_name,
           matched_item.description AS matched_item_description,
           matched_item_user.name AS matched_item_user_name,
+          matched_item_user.id AS matched_item_user_id,
           ARRAY_AGG(matched_item_images.url ORDER BY matched_item_images.id) AS matched_item_images
       FROM
           matches
@@ -209,14 +237,33 @@ export const getMatches = async (userId: string) => {
       OR
           matched_item_id IN (SELECT id FROM items WHERE user_id = $1)
       GROUP BY
-          matches.id, matching_item.id, matched_item.id, matching_item_user.name, matched_item_user.name
+          matches.id, matching_item.id, matched_item.id, matching_item_user.name, matched_item_user.name, matching_item_user.id, matched_item_user.id
       ORDER BY
           matches.date_created DESC`,
       [userId]
     );
     const parsedQueryResult = queryResult.rows.map((row) => {
+      let dateNotified = null;
+      if (row.matching_item_user_id === userId) {
+        dateNotified = row.date_matching_owner_notified;
+      } else if (row.matched_item_user_id === userId) {
+        dateNotified = row.date_matched_owner_notified;
+      }
+      if (dateNotified === null) {
+        throw new Error(
+          'current user does not seem to be a part of this match [match id: ' +
+            row.id +
+            '][matching_item_user.id: ' +
+            row.matching_item_user_id +
+            '][matched_item_user.id: ' +
+            row.matched_item_user_id +
+            ']'
+        );
+      }
       return {
         id: row.id,
+        dateNotified,
+        dateUpdated: row.date_updated,
         matchingItem: {
           id: row.matching_item_id,
           name: row.matching_item_name,
@@ -236,6 +283,7 @@ export const getMatches = async (userId: string) => {
 
     return parsedQueryResult;
   } catch (err) {
-    throw new Error(`Error getting matches for user: ${userId}`);
+    console.error(`Error getting matches for user: ${userId}`);
+    throw err;
   }
 };
