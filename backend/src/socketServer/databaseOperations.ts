@@ -45,7 +45,7 @@ export const getItemsDataByIds = async (itemsIds: string[]): Promise<ItemData[]>
     return [];
   }
 
-  const itemsIdsAsIntegers = itemsIds.map((id) => parseInt(id));
+  const itemsIdsAsIntegers = itemsIds.map((id) => parseInt(id, 10));
 
   const result = await pool.query(
     `
@@ -61,13 +61,13 @@ export const getItemsDataByIds = async (itemsIds: string[]): Promise<ItemData[]>
     LEFT JOIN items_images ON items.id = items_images.item_id
     LEFT JOIN users ON items.user_id = users.id
     WHERE items.id = ANY($1)
-    GROUP BY items.id, users.name, users.location_city, users.id;
+    GROUP BY items.id, users.name, users.location_city, users.id
+    ORDER BY array_position($1::int[], items.id)
   `,
     [itemsIdsAsIntegers]
   );
 
-  // Map the results into a record of item ID to ItemData
-  const parsedResult = result.rows.map((row) => ({
+  const parsedResult: ItemData[] = result.rows.map((row) => ({
     id: row.id,
     name: row.name,
     description: row.description,
