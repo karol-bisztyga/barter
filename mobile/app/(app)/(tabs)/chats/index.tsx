@@ -111,6 +111,9 @@ export default function Chats() {
             return (
               <TouchableOpacity
                 onPress={() => {
+                  if (matchContext.currentMatchId) {
+                    return;
+                  }
                   settingsContext.playSound('click');
                   itemsContext.setUsersItemId(myItem.id);
                   itemsContext.setOthersItem(theirItem);
