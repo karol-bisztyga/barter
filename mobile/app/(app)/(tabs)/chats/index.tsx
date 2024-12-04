@@ -96,10 +96,18 @@ export default function Chats() {
                 throw new Error(`both matching and matched item have been found in user's items`);
               }
               if (matchingItemFoundInUserItems) {
-                myItem = matchingItem;
+                const itemFromUserContext = userContext.findItemById(matchingItem.id);
+                if (!itemFromUserContext) {
+                  throw new Error(`matching item not found in user's items`);
+                }
+                myItem = itemFromUserContext.item;
                 theirItem = matchedItem;
               } else if (matchedItemFoundInUserItems) {
-                myItem = matchedItem;
+                const itemFromUserContext = userContext.findItemById(matchedItem.id);
+                if (!itemFromUserContext) {
+                  throw new Error(`matched item not found in user's items`);
+                }
+                myItem = itemFromUserContext.item;
                 theirItem = matchingItem;
               } else {
                 throw new Error(`neither matching nor matched item has been found in user's items`);
