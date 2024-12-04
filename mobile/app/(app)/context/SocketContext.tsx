@@ -1,10 +1,17 @@
-import React, { createContext, useState, ReactNode, FC, useContext, useEffect } from 'react';
+import React, {
+  createContext,
+  useState,
+  ReactNode,
+  FC,
+  useContext,
+  useEffect,
+  useRef,
+} from 'react';
 import { useSessionContext } from '../../SessionContext';
 import { useTranslation } from 'react-i18next';
 import { useUserContext } from './UserContext';
 import io, { Socket } from 'socket.io-client';
 import { getServerAddress } from '../utils/networkUtils';
-import { DefaultEventsMap } from '@socket.io/component-emitter';
 import {
   ChatMessage,
   RemoveMatchData,
@@ -66,12 +73,8 @@ export const SocketContextProvider: FC<{ children: ReactNode }> = ({ children })
   const jokerContext = useJokerContext();
   const matchContext = useMatchContext();
 
-  const [socket, setSocket] = useState<Socket<DefaultEventsMap, DefaultEventsMap> | null>(null);
+  const socketRef = useRef<Socket | null>(null);
   const [messagesFromSocket, setMessagesFromSocket] = useState<ChatMessage[]>([]);
-
-  const onError = (errorMessage: string) => {
-    handleError(t, jokerContext, ErrorType.SOCKET, errorMessage);
-  };
 
   useEffect(() => {
     return () => {
@@ -87,8 +90,64 @@ export const SocketContextProvider: FC<{ children: ReactNode }> = ({ children })
     }
   }, [sessionContext.session]);
 
+  const onMessage = (message: ChatMessage) => {
+    setMessagesFromSocket((messages) => [...messages, message]);
+  };
+
+  const onAddMatch = (matchData: MatchData) => {
+    matchContext.setMatches((prevMatches) => [matchData, ...prevMatches]);
+  };
+
+  const onUpdateMatch = (matchData: UpdatedMatchMatchingItemData) => {
+    matchContext.setMatches((prevMatches) => {
+      const newMatches = [...prevMatches];
+      for (let i = 0; i < newMatches.length; i++) {
+        const match = newMatches[i];
+        if (match.id === matchData.matchId) {
+          match.matchingItem = matchData.newMatchingItem;
+
+          break;
+        }
+      }
+      return newMatches;
+    });
+  };
+
+  const onNotificationInMatch = (notificationInMatchData: NotificationInMatchData) => {
+    const { matchId, dateMatchNotificationUpdated } = notificationInMatchData;
+    matchContext.setMatches((prevMatches) => {
+      const newMatches = [...prevMatches];
+      for (let i = 0; i < newMatches.length; i++) {
+        const match = newMatches[i];
+        if (match.id === matchId) {
+          match.dateUpdated = dateMatchNotificationUpdated;
+          break;
+        }
+      }
+      return newMatches;
+    });
+  };
+
+  const onRemoveMatches = (matchesIds: string[]) => {
+    matchContext.setMatches((prevMatches) => {
+      const newMatches = prevMatches.filter((match) => !matchesIds.includes(match.id));
+      return newMatches;
+    });
+  };
+
+  const onMatches = (matchesData: MatchData[]) => {
+    matchContext.setMatches(matchesData);
+  };
+
+  const onError = (e: Error) => {
+    if (e.name === 'TokenExpiredError') {
+      sessionContext.signOut();
+    }
+    handleError(t, jokerContext, ErrorType.SOCKET, `${e}`);
+  };
+
   const connect = () => {
-    if (!sessionContext.session || socket) {
+    if (!sessionContext.session || socketRef.current) {
       return;
     }
     const newSocket = io(getServerAddress(), {
@@ -99,127 +158,77 @@ export const SocketContextProvider: FC<{ children: ReactNode }> = ({ children })
         userId: userContext.data?.id,
       },
     });
-    setSocket(newSocket);
-
-    newSocket.on('message', (message: ChatMessage) => {
-      setMessagesFromSocket((messages) => [...messages, message]);
-    });
-
-    newSocket.on('addMatch', (matchData: MatchData) => {
-      matchContext.setMatches((prevMatches) => [matchData, ...prevMatches]);
-    });
-
-    newSocket.on('updateMatch', (matchData: UpdatedMatchMatchingItemData) => {
-      matchContext.setMatches((prevMatches) => {
-        const newMatches = [...prevMatches];
-        for (let i = 0; i < newMatches.length; i++) {
-          const match = newMatches[i];
-          if (match.id === matchData.matchId) {
-            match.matchingItem = matchData.newMatchingItem;
-
-            break;
-          }
-        }
-        return newMatches;
-      });
-    });
-
-    newSocket.on('notificationInMatch', (notificationInMatchData: NotificationInMatchData) => {
-      const { matchId, dateMatchNotificationUpdated } = notificationInMatchData;
-      matchContext.setMatches((prevMatches) => {
-        const newMatches = [...prevMatches];
-        for (let i = 0; i < newMatches.length; i++) {
-          const match = newMatches[i];
-          if (match.id === matchId) {
-            match.dateUpdated = dateMatchNotificationUpdated;
-            break;
-          }
-        }
-        return newMatches;
-      });
-    });
-
-    newSocket.on('removeMatches', (matchesIds: string[]) => {
-      matchContext.setMatches((prevMatches) => {
-        const newMatches = prevMatches.filter((match) => !matchesIds.includes(match.id));
-        return newMatches;
-      });
-    });
+    socketRef.current = newSocket;
 
     // newSocket.onAny((eventName, ...args) => {
     //   console.log(`+++++ ANY: ${eventName}`, args);
     // });
-
-    newSocket.on('matches', (matchesData: MatchData[]) => {
-      matchContext.setMatches(matchesData);
-    });
-
-    newSocket.on('connect', async () => {
+    newSocket.on('message', onMessage);
+    newSocket.on('addMatch', onAddMatch);
+    newSocket.on('updateMatch', onUpdateMatch);
+    newSocket.on('notificationInMatch', onNotificationInMatch);
+    newSocket.on('removeMatches', onRemoveMatches);
+    newSocket.on('matches', onMatches);
+    newSocket.on('connect', () => {
       console.log('socket connected', newSocket.connected);
     });
-
-    newSocket.on('error', (e) => {
-      if (e.name === 'TokenExpiredError') {
-        sessionContext.signOut();
-      }
-      onError(`${e}`);
-    });
+    newSocket.on('error', onError);
   };
 
   const disconnect = () => {
-    if (!socket) {
+    if (!socketRef.current) {
       return;
     }
-    socket.disconnect();
-    setSocket(null);
+    socketRef.current.disconnect();
+    socketRef.current = null;
   };
 
   const sendMessage = (matchId: string, message: ChatMessage) => {
-    if (!socket) {
+    if (!socketRef.current) {
       handleError(t, jokerContext, ErrorType.SOCKET_NOT_CONNECTED);
       return;
     }
-    socket.emit('message', matchId, message);
+    socketRef.current.emit('message', matchId, message);
   };
 
   const sendAddMatch = (data: AddMatchData) => {
-    if (!socket) {
+    if (!socketRef.current) {
       handleError(t, jokerContext, ErrorType.SOCKET_NOT_CONNECTED);
       return;
     }
-    socket.emit('addMatch', data);
+    socketRef.current.emit('addMatch', data);
   };
 
   const sendUpdateMatch = (data: UpdateMatchMatchingItemData) => {
-    if (!socket) {
+    if (!socketRef.current) {
       handleError(t, jokerContext, ErrorType.SOCKET_NOT_CONNECTED);
       return;
     }
-    socket.emit('updateMatch', data);
+    socketRef.current.emit('updateMatch', data);
   };
 
   const sendRemoveMatch = (data: RemoveMatchData[]) => {
-    if (!socket) {
+    if (!socketRef.current) {
       handleError(t, jokerContext, ErrorType.SOCKET_NOT_CONNECTED);
       return;
     }
-    socket.emit('removeMatches', data);
+    socketRef.current.emit('removeMatches', data);
   };
 
   const joinMatch = (matchId: string) => {
-    if (!socket) {
+    if (!socketRef.current) {
       handleError(t, jokerContext, ErrorType.SOCKET_NOT_CONNECTED);
       return;
     }
-    socket.emit('joinMatch', matchId);
+    socketRef.current.emit('joinMatch', matchId);
   };
 
   const leaveMatch = (matchId: string) => {
-    if (!socket) {
+    if (!socketRef.current) {
       handleError(t, jokerContext, ErrorType.SOCKET_NOT_CONNECTED);
       return;
     }
-    socket.emit('leaveMatch', matchId);
+    socketRef.current.emit('leaveMatch', matchId);
   };
 
   return (

@@ -16,9 +16,10 @@ import { AddPictureContextProvider } from '../context/AddPictureContext';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth';
 import { useFont } from '../hooks/useFont';
-import { View } from 'react-native';
 import { useMatchContext } from '../context/MatchContext';
+import { AppState, AppStateStatus, View } from 'react-native';
 import { NotificationIndicator } from './swipe/components/NotificationIndicator';
+import { useSocketContext } from '../context/SocketContext';
 
 const ICON_SIZE = 28;
 
@@ -31,15 +32,36 @@ export default function TabLayout() {
   const jokerContext = useJokerContext();
   const settingsContext = useSettingsContext();
   const matchContext = useMatchContext();
+  const socketContext = useSocketContext();
 
   const fontFamily = useFont();
 
   const [routeName, setRouteName] = useState<string>('swipe');
+  const [appState, setAppState] = useState(AppState.currentState);
 
   useEffect(() => {
     settingsContext.loadSettingsFromStorage();
     settingsContext.playBackgroundSound();
     jokerContext.showRandomGreeting();
+  }, []);
+
+  useEffect(() => {
+    // function to handle app state changes
+    const handleAppStateChange = (nextAppState: AppStateStatus) => {
+      // console.log('App state changed', appState, nextAppState);
+      if (appState !== 'inactive' && nextAppState === 'active') {
+        socketContext.connect();
+      } else if (nextAppState === 'background') {
+        socketContext.disconnect();
+      }
+      setAppState(nextAppState);
+    };
+
+    const subscription = AppState.addEventListener('change', handleAppStateChange);
+
+    return () => {
+      subscription.remove();
+    };
   }, []);
 
   return (
