@@ -9,11 +9,12 @@ import {
   UpdateMatchMatchingItemData,
   UpdatedMatchMatchingItemData,
   AddNewMessageResult,
+  MatchData,
 } from './types';
 import {
   addNewMessage,
-  getItemsDataByIds,
   getMatches,
+  getNewMatchData,
   updateMatchMatchingItem,
 } from './databaseOperations';
 
@@ -156,7 +157,8 @@ const onConnection = async (server: Server, socket: Socket) => {
     try {
       console.log('add match', data);
       const { matchId, matchingItemId, matchedItemId } = data;
-      const itemsData: ItemData[] = await getItemsDataByIds([matchingItemId, matchedItemId]);
+      const newMatchData: MatchData = await getNewMatchData(matchId, matchingItemId, matchedItemId);
+      const itemsData: ItemData[] = [newMatchData.matchingItem, newMatchData.matchedItem];
       if (!itemsData[0].userId || !itemsData[1].userId) {
         throw new Error('could not find user ids for items');
       }
@@ -170,6 +172,7 @@ const onConnection = async (server: Server, socket: Socket) => {
           id: matchId,
           matchingItem: itemsData[0],
           matchedItem: itemsData[1],
+          dateUpdated: newMatchData.dateUpdated,
         });
       });
     } catch (e) {

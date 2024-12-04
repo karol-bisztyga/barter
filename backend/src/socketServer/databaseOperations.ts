@@ -1,5 +1,11 @@
 import pool from '../db';
-import { AddNewMessageResult, ChatMessage, ItemData, UpdateMatchMatchingItemData } from './types';
+import {
+  AddNewMessageResult,
+  ChatMessage,
+  ItemData,
+  MatchData,
+  UpdateMatchMatchingItemData,
+} from './types';
 
 export const addNewMessage = async (
   matchId: string,
@@ -62,13 +68,12 @@ export const addNewMessage = async (
 
   return parsedResult;
 };
-
-export const getItemsDataByIds = async (itemsIds: string[]): Promise<ItemData[]> => {
-  if (itemsIds.length === 0) {
-    return [];
-  }
-
-  const itemsIdsAsIntegers = itemsIds.map((id) => parseInt(id, 10));
+export const getNewMatchData = async (
+  matchId: string,
+  matchingItemId: string,
+  matchedItemId: string
+): Promise<MatchData> => {
+  const itemsIdsAsIntegers = [parseInt(matchingItemId), parseInt(matchedItemId)];
 
   const result = await pool.query(
     `
@@ -79,18 +84,25 @@ export const getItemsDataByIds = async (itemsIds: string[]): Promise<ItemData[]>
       items.user_id AS userId,
       ARRAY_AGG(items_images.url) AS images,
       users.name AS userName,
-      users.location_city AS ownerLocationCity
-    FROM items
+      users.location_city AS ownerLocationCity,
+      matches.date_updated,
+      matches.date_matching_owner_notified,
+      matches.date_matched_owner_notified
+    FROM matches
+    JOIN items ON items.id IN (matches.matching_item_id, matches.matched_item_id)
     LEFT JOIN items_images ON items.id = items_images.item_id
     LEFT JOIN users ON items.user_id = users.id
-    WHERE items.id = ANY($1)
-    GROUP BY items.id, users.name, users.location_city, users.id
-    ORDER BY array_position($1::int[], items.id)
+    WHERE matches.id = $1 AND items.id = ANY($2)
+    GROUP BY items.id, users.name, users.location_city, users.id, matches.date_updated, matches.date_matching_owner_notified, matches.date_matched_owner_notified
+    ORDER BY array_position($2::int[], items.id)
   `,
-    [itemsIdsAsIntegers]
+    [matchId, itemsIdsAsIntegers]
   );
 
-  const parsedResult: ItemData[] = result.rows.map((row) => ({
+  if (result.rows.length !== 2) {
+    throw new Error('items not found');
+  }
+  const itemsData: ItemData[] = result.rows.map((row) => ({
     id: row.id,
     name: row.name,
     description: row.description,
@@ -100,7 +112,12 @@ export const getItemsDataByIds = async (itemsIds: string[]): Promise<ItemData[]>
     ownerLocationCity: row.ownerlocationcity,
   }));
 
-  return parsedResult;
+  return {
+    id: matchId,
+    matchingItem: itemsData[0],
+    matchedItem: itemsData[1],
+    dateUpdated: result.rows[0]?.date_updated || null,
+  };
 };
 
 export const updateMatchMatchingItem = async (

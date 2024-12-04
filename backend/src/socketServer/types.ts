@@ -33,6 +33,7 @@ export type MatchData = {
   id: string;
   matchingItem: ItemData;
   matchedItem: ItemData;
+  dateUpdated: number;
 };
 
 export type AddMatchData = {

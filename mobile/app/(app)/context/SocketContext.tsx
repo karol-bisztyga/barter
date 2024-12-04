@@ -95,6 +95,7 @@ export const SocketContextProvider: FC<{ children: ReactNode }> = ({ children })
   };
 
   const onAddMatch = (matchData: MatchData) => {
+    matchData.dateNotified = 0;
     matchContext.setMatches((prevMatches) => [matchData, ...prevMatches]);
   };
 
