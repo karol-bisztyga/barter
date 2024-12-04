@@ -123,22 +123,23 @@ const onConnection = async (server: Server, socket: Socket) => {
   // ON MESSAGE
   socket.on('message', async (matchId: string, chatMessage: ChatMessage) => {
     try {
+      const matchIdString = `${matchId}`;
       console.log('send message', matchId, chatMessage);
       // add to db
       const newMessage: AddNewMessageResult = await addNewMessage(matchId, chatMessage);
       // then emit
       const matchingUserMatch = getUsersMatch(newMessage.matchingUserId);
       const matchedUserMatch = getUsersMatch(newMessage.matchedUserId);
-      if (!matchingUserMatch && !matchedUserMatch) {
+      if (matchingUserMatch !== matchIdString && matchedUserMatch !== matchIdString) {
         throw new Error('both users seem to be out of this chat');
       }
       const { dateMatchNotificationUpdated } = newMessage;
-      if (!matchingUserMatch) {
+      if (matchingUserMatch !== matchIdString) {
         server
           .to(usersToSockets[newMessage.matchingUserId])
           .emit('notificationInMatch', { matchId, dateMatchNotificationUpdated });
       }
-      if (!matchedUserMatch) {
+      if (matchedUserMatch !== matchIdString) {
         server
           .to(usersToSockets[newMessage.matchedUserId])
           .emit('notificationInMatch', { matchId, dateMatchNotificationUpdated });
