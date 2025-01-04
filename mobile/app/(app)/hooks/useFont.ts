@@ -13,8 +13,8 @@ const getDefaultFont = () => {
 
 export const useFont = () => {
   const [loadedFonts] = useFonts({
-    MedievalSharp: require('../../../assets/fonts/MedievalSharp.ttf'),
+    CaudexRegular: require('../../../assets/fonts/Caudex/Caudex-Regular.ttf'),
   });
 
-  return loadedFonts ? 'MedievalSharp' : getDefaultFont();
+  return loadedFonts ? 'CaudexRegular' : getDefaultFont();
 };
