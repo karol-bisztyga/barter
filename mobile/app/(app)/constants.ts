@@ -18,6 +18,9 @@ export const SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY = hexToRgbaString(
   0.2
 );
 
+export const GOLD_COLOR_1 = '#AE875F';
+export const GOLD_COLOR_2 = '#F3D9C3';
+
 export const DEFAULT_SOUND_ON = false;
 export const DEFAULT_MUSIC_ON = false;
 

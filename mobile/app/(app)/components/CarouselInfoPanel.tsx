@@ -1,18 +1,23 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import TextWrapper from '../genericComponents/TextWrapper';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ItemData } from '../types';
 
 const CarouselInfoPanel = ({ itemData }: { itemData: ItemData }) => {
   return (
-    <LinearGradient style={styles.container} colors={['transparent', 'black']}>
+    <View style={styles.container}>
+      <LinearGradient
+        style={styles.container}
+        colors={['transparent', 'rgba(0, 0, 0, .5)', 'black']}
+        locations={[0, 0.3, 1]}
+      />
       <TextWrapper style={[styles.text, styles.itemName]}>{itemData.name}</TextWrapper>
       <TextWrapper style={[styles.text, styles.description]} numberOfLines={2} ellipsizeMode="tail">
         {itemData.description}
       </TextWrapper>
       <TextWrapper style={[styles.text, styles.itemOwnerName]}>{itemData.userName}</TextWrapper>
-    </LinearGradient>
+    </View>
   );
 };
 
@@ -23,15 +28,22 @@ const styles = StyleSheet.create({
     height: 100,
     bottom: 0,
     left: 0,
-    paddingLeft: 10,
     flexDirection: 'column',
   },
-  text: { color: 'white' },
+  gradient: {
+    position: 'absolute',
+    width: '100%',
+    height: 100,
+    bottom: 0,
+    left: 0,
+    flexDirection: 'column',
+  },
+  text: { color: 'white', textAlign: 'center' },
   itemName: {
-    fontSize: 25,
+    fontSize: 24,
   },
   itemOwnerName: {
-    fontSize: 10,
+    fontSize: 14,
     opacity: 0.7,
   },
   description: { fontSize: 12 },

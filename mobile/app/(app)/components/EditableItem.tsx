@@ -47,12 +47,7 @@ export default function EditableItem({
           },
         ]}
       >
-        <Carousel
-          itemData={itemData}
-          borderRadius={borderRadius}
-          pressEnabled={true}
-          onPress={onPress}
-        />
+        <Carousel itemData={itemData} pressEnabled={true} onPress={onPress} />
       </View>
       {showName && namePlacement === ItemNamePlacement.below && (
         <View style={styles.nameWrapper}>

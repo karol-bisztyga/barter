@@ -1,7 +1,11 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
+import { GOLD_COLOR_1, GOLD_COLOR_2 } from '../constants';
 
-export const INDICATOR_HEIGHT = 5;
+export const INDICATOR_HEIGHT = 2;
+const OFFSET = 8;
+const COLOR_ACTIVE = GOLD_COLOR_2;
+const COLOR_INACTIVE = GOLD_COLOR_1;
 
 const CarouselImageIndicators = ({
   images,
@@ -18,7 +22,10 @@ const CarouselImageIndicators = ({
         {images.map((_, index) => (
           <View
             key={index}
-            style={[styles.indicator, { backgroundColor: index === imageIndex ? 'white' : 'grey' }]}
+            style={[
+              styles.indicator,
+              { backgroundColor: index === imageIndex ? COLOR_ACTIVE : COLOR_INACTIVE },
+            ]}
           />
         ))}
       </View>
@@ -29,8 +36,9 @@ const CarouselImageIndicators = ({
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    width: '100%',
-    top: 0,
+    top: OFFSET,
+    left: OFFSET,
+    right: OFFSET,
     justifyContent: 'center',
     height: INDICATOR_HEIGHT * 2,
   },

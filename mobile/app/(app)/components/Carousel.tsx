@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
-import { ItemBorderRadius, ItemData } from '../types';
+import { ItemData } from '../types';
 import { useAssets } from 'expo-asset';
 import CarouselDistancePanel from './CarouselDistancePanel';
 import ImageWrapper from '../genericComponents/ImageWrapper';
@@ -9,7 +9,6 @@ import CarouselInfoPanel from './CarouselInfoPanel';
 
 const Carousel = ({
   itemData,
-  borderRadius = ItemBorderRadius['up-only'],
   imageIndicatorsVisible = true,
   pressEnabled = true,
   actionPanelVisible = false,
@@ -17,7 +16,6 @@ const Carousel = ({
   showInfo = true,
 }: {
   itemData: ItemData;
-  borderRadius?: ItemBorderRadius;
   imageIndicatorsVisible?: boolean;
   pressEnabled?: boolean;
   actionPanelVisible?: boolean;
@@ -56,9 +54,6 @@ const Carousel = ({
           styles.image,
           {
             opacity: loading ? 0 : 1,
-            borderTopLeftRadius: 8,
-            borderTopRightRadius: 8,
-            borderRadius: borderRadius === ItemBorderRadius['all'] ? 8 : 0,
           },
         ]}
         onLoadEnd={() => setLoading(false)}
@@ -115,7 +110,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     position: 'relative',
-    margin: 5,
+    margin: 2,
   },
   leftButton: {
     position: 'absolute',

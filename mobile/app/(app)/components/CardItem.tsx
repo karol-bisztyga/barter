@@ -1,44 +1,54 @@
 import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import Carousel from './Carousel';
-import { ItemData, ItemBorderRadius } from '../types';
-import { BookIcon } from '../utils/icons';
+import { ItemData } from '../types';
+import { Flag2Icon } from '../utils/icons';
+import { hexToRgbaString } from '../utils/harmonicColors';
+import { GOLD_COLOR_1 } from '../constants';
 
 type ItemProps = {
+  cardHeight: number;
   itemData: ItemData;
   onPressMore?: () => void;
 };
 
-export default function CardItem({ itemData, onPressMore = () => {} }: ItemProps) {
+const DETAILS_ICON_SIZE = 24;
+
+export default function CardItem({ itemData, onPressMore = () => {}, cardHeight }: ItemProps) {
   const InnerContents = () => (
     <View
       style={[
         styles.imageWrapper,
         {
-          borderRadius: 8,
           height: '100%',
         },
       ]}
     >
       <Carousel
         itemData={itemData}
-        borderRadius={ItemBorderRadius['all']}
         imageIndicatorsVisible={true}
         pressEnabled={true}
         actionPanelVisible={true}
       />
+      <View
+        style={[
+          {
+            ...StyleSheet.absoluteFillObject,
+          },
+          styles.innerBorder,
+        ]}
+      />
       <TouchableOpacity onPress={onPressMore}>
         <View
-          style={{
-            position: 'absolute',
-            bottom: 10,
-            right: 10,
-            backgroundColor: 'rgba(255, 255, 255, .3)',
-            borderRadius: 100,
-            padding: 8,
-          }}
+          style={[
+            styles.detailsIconWrapper,
+            {
+              // TODO this calculation is not perfect, but it's good enough for now
+              bottom: cardHeight - (DETAILS_ICON_SIZE + 16 + 2 + 8 + 2 + 8),
+            },
+          ]}
         >
-          <BookIcon width={30} height={30} color="white" />
+          <Flag2Icon width={DETAILS_ICON_SIZE} height={DETAILS_ICON_SIZE} color="white" />
         </View>
       </TouchableOpacity>
     </View>
@@ -58,8 +68,23 @@ export default function CardItem({ itemData, onPressMore = () => {} }: ItemProps
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
+  container: {},
+  innerBorder: {
+    left: 0,
+    top: 0,
+    margin: 4,
+    borderColor: GOLD_COLOR_1,
+    borderWidth: 2,
+    pointerEvents: 'none',
+  },
+  detailsIconWrapper: {
+    position: 'absolute',
+    right: 16,
+    backgroundColor: hexToRgbaString('#261C16', 0.65),
+    borderWidth: 1,
+    borderColor: GOLD_COLOR_1,
+    borderRadius: 100,
+    padding: 8,
   },
   imageWrapper: {},
   nameWrapper: {

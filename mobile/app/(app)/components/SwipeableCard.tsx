@@ -6,25 +6,23 @@ import Animated, {
   useSharedValue,
   withSpring,
   runOnJS,
-  useDerivedValue,
   withTiming,
   SharedValue,
   clamp,
   interpolate,
-  useAnimatedReaction,
   ReduceMotion,
 } from 'react-native-reanimated';
-import { ItemData, SwipeCallbacks, SwipeDirection } from '../types';
+import { ItemData, SwipeCallbacks } from '../types';
 import { useUserContext } from '../context/UserContext';
 import CardItem from './CardItem';
-import SwipeBackgroundAnimation from './SwipeBackgroundAnimation';
 import { PaperIcon, SandGlassIcon, TorchIcon } from '../utils/icons';
 import { useJokerContext } from '../context/JokerContext';
-import { generateHarmonicColor, TargetColor } from '../utils/harmonicColors';
-import { SWIPE_BASE_BACKGROUND_COLOR } from '../constants';
+import { hexToRgbaString } from '../utils/harmonicColors';
+import { GOLD_COLOR_1, GOLD_COLOR_2 } from '../constants';
 import Constants from 'expo-constants';
 import { BottomTabBarHeightContext } from '@react-navigation/bottom-tabs';
 import { useSettingsContext } from '../context/SettingsContext';
+import { LinearGradient } from 'expo-linear-gradient';
 
 const { width, height } = Dimensions.get('window');
 const SWIPE_THRESHOLD_HORIZONTAL = 0.25 * width;
@@ -32,20 +30,13 @@ export const SWIPE_THRESHOLD_VERTICAL = 0.25 * height;
 // this treshold says if the the horizontal swipe can be performed
 // if the left/right swipe goes beyond that treshold vertically it will not be performed
 export const SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL = 50;
-const MAX_RADIUS = 30;
 const END_ANIMATION_DURATION = 200;
-const DECIDE_ICON_SIZE = 100;
+const DECIDE_ICON_WRAPPER_SIZE = 95;
+const DECIDE_ICON_SIZE = 44;
 
-const CARD_DIMENSIONS = {
+export const CARD_DIMENSIONS = {
   width: width - 36, // ratio 2
-  height: (3 / 2) * (width - 36), // ratio 3};
-};
-
-const DECISION_COLORS = {
-  LEFT: generateHarmonicColor(SWIPE_BASE_BACKGROUND_COLOR, TargetColor.RED),
-  RIGHT: generateHarmonicColor(SWIPE_BASE_BACKGROUND_COLOR, TargetColor.GREEN),
-  BOTTOM: generateHarmonicColor(SWIPE_BASE_BACKGROUND_COLOR, TargetColor.YELLOW),
-  NONE: '',
+  height: (3 / 2) * (width - 36), // ratio 3;
 };
 
 const SwipeableCard = ({
@@ -66,12 +57,8 @@ const SwipeableCard = ({
   const translateX = useSharedValue(0);
   const translateY = useSharedValue(0);
   const dragging = useSharedValue(false);
-  const swipeDirection = useSharedValue<SwipeDirection | null>(null);
 
   const rotate = useSharedValue('0deg');
-
-  const forceControlsScale = useSharedValue(1);
-  const forceControlsOpacity = useSharedValue(1);
 
   const cardOpacity = useSharedValue(0);
 
@@ -161,7 +148,12 @@ const SwipeableCard = ({
     })
     .onEnd(() => {
       dragging.value = false;
+      const horizontalModifier = Math.abs(translateX.value);
       if (translateY.value > SWIPE_THRESHOLD_VERTICAL) {
+        if (horizontalModifier > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL * 2) {
+          getBackToStartingPosition();
+          return;
+        }
         runOnJS(settingsContext.playSound)('whooshLo');
         translateY.value = withTiming(height * 2, { duration: END_ANIMATION_DURATION }, () => {
           runOnJS(swipeCallbacks.onSwipeDown)();
@@ -176,6 +168,10 @@ const SwipeableCard = ({
         return;
       }
       if (translateY.value > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
+        getBackToStartingPosition();
+        return;
+      }
+      if (translateY.value < -(SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL * 2)) {
         getBackToStartingPosition();
         return;
       }
@@ -196,67 +192,6 @@ const SwipeableCard = ({
       }
     });
 
-  useAnimatedReaction(
-    () => {
-      if (!dragging.value) {
-        return null;
-      }
-      if (translateY.value > SWIPE_THRESHOLD_VERTICAL) {
-        return SwipeDirection.DOWN;
-      }
-      // if (translateY.value > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
-      //   return null;
-      // }
-      if (Math.abs(translateX.value) < SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
-        return null;
-      }
-      if (translateX.value > 0) {
-        return SwipeDirection.RIGHT;
-      }
-      return SwipeDirection.LEFT;
-    },
-    (prepared, previous) => {
-      if (prepared === previous) {
-        return;
-      }
-      swipeDirection.value = prepared;
-    }
-  );
-
-  const shadowColor = useDerivedValue(() => {
-    switch (swipeDirection.value) {
-      case SwipeDirection.DOWN:
-        return DECISION_COLORS.BOTTOM;
-      case SwipeDirection.LEFT:
-        return DECISION_COLORS.LEFT;
-      case SwipeDirection.RIGHT:
-        return DECISION_COLORS.RIGHT;
-      case null:
-        return DECISION_COLORS.NONE;
-    }
-  });
-
-  const shadowRadius = useDerivedValue(() => {
-    const tx = Math.abs(translateX.value);
-    const ty = translateY.value;
-
-    switch (shadowColor.value) {
-      case DECISION_COLORS.BOTTOM:
-        if (ty > SWIPE_THRESHOLD_VERTICAL) {
-          return MAX_RADIUS;
-        }
-        return (ty / SWIPE_THRESHOLD_VERTICAL) * MAX_RADIUS;
-      case DECISION_COLORS.RIGHT:
-      case DECISION_COLORS.LEFT:
-        if (tx > SWIPE_THRESHOLD_HORIZONTAL) {
-          return MAX_RADIUS;
-        }
-        return (tx / SWIPE_THRESHOLD_HORIZONTAL) * MAX_RADIUS;
-      default:
-        return 1;
-    }
-  });
-
   const cardAnimatedStyle = useAnimatedStyle(() => {
     return {
       transform: [
@@ -264,16 +199,15 @@ const SwipeableCard = ({
         { translateY: translateY.value },
         { rotate: rotate.value },
       ],
-      shadowRadius: dragging.value ? shadowRadius.value : 1,
-      shadowColor: shadowColor.value,
     };
   });
 
   const decideIconLeftAnimatedStyle = useAnimatedStyle(() => {
-    // calculate scale
+    const absTranslateY = Math.abs(translateY.value);
     let scaleModifierImportant = 0;
-    if (translateY.value > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
-      scaleModifierImportant = (translateY.value - SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) / 100;
+
+    if (absTranslateY > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
+      scaleModifierImportant = (absTranslateY - SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) / 100;
     }
 
     let scale = 1;
@@ -283,42 +217,23 @@ const SwipeableCard = ({
       scale = 1 - clamp(translateX.value / 100, 0, 0.5);
     }
 
-    if (translateY.value > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
+    if (absTranslateY > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
       scale = clamp(scale - scaleModifierImportant, 0.5, 2);
     }
 
-    // calculate translateX
-    let tx = 0;
-    if (translateX.value < 0) {
-      tx = clamp(-translateX.value, 0, DECIDE_ICON_SIZE / 2);
-    } else {
-      tx = -translateX.value;
-    }
-    if (translateY.value > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
-      tx = clamp(
-        -(translateX.value + translateY.value - SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL),
-        -DECIDE_ICON_SIZE,
-        DECIDE_ICON_SIZE / 2
-      );
-    }
+    const tx = interpolate(scale, [0.5, 1, 2], [-DECIDE_ICON_SIZE * 2.1, 0, DECIDE_ICON_SIZE / 2]);
 
     return {
-      transform: [
-        {
-          scale,
-        },
-        {
-          translateX: tx,
-        },
-      ],
+      transform: [{ scale }, { translateX: tx }],
     };
   });
 
   const decideIconRightAnimatedStyle = useAnimatedStyle(() => {
-    // calculate scale
+    const absTranslateY = Math.abs(translateY.value);
     let scaleModifierImportant = 0;
-    if (translateY.value > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
-      scaleModifierImportant = (translateY.value - SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) / 100;
+
+    if (absTranslateY > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
+      scaleModifierImportant = (absTranslateY - SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) / 100;
     }
 
     let scale = 1;
@@ -328,51 +243,32 @@ const SwipeableCard = ({
       scale = 1 - clamp(-translateX.value / 100, 0, 0.5);
     }
 
-    if (translateY.value > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
+    if (absTranslateY > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
       scale = clamp(scale - scaleModifierImportant, 0.5, 2);
     }
 
-    // calculate translateX
-    let tx = 0;
-    if (translateX.value > 0) {
-      tx = clamp(-translateX.value, -DECIDE_ICON_SIZE / 2, 0);
-    } else {
-      tx = -translateX.value;
-    }
-    if (translateY.value > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
-      tx = clamp(
-        tx + translateY.value - SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL,
-        -DECIDE_ICON_SIZE / 2,
-        DECIDE_ICON_SIZE
-      );
-    }
+    const tx = interpolate(scale, [0.5, 1, 2], [DECIDE_ICON_SIZE * 2.1, 0, -DECIDE_ICON_SIZE / 2]);
 
     return {
-      transform: [
-        {
-          scale,
-        },
-        {
-          translateX: tx,
-        },
-      ],
+      transform: [{ scale }, { translateX: tx }],
     };
   });
 
   const decideIconBottomAnimatedStyle = useAnimatedStyle(() => {
     let scale = 1;
+    let ty = 0;
+
     if (translateY.value > 0) {
       scale = interpolate(translateY.value, [0, SWIPE_THRESHOLD_VERTICAL], [1, 1.5]);
     }
     scale = clamp(scale, 1, 1.5);
 
-    let ty = 0;
     if (translateY.value > 0) {
-      ty = interpolate(translateY.value, [0, SWIPE_THRESHOLD_VERTICAL], [0, -DECIDE_ICON_SIZE / 8]);
+      ty = interpolate(translateY.value, [0, SWIPE_THRESHOLD_VERTICAL], [0, -DECIDE_ICON_SIZE]);
     } else {
       ty = -translateY.value;
     }
-    ty = clamp(ty, (-DECIDE_ICON_SIZE / 8) * 3, DECIDE_ICON_SIZE);
+    ty = clamp(ty + Math.abs(translateX.value), -DECIDE_ICON_SIZE, DECIDE_ICON_SIZE * 4);
 
     return {
       transform: [
@@ -383,13 +279,6 @@ const SwipeableCard = ({
           translateY: ty,
         },
       ],
-    };
-  });
-
-  const forcedControlsParametersAnimatedStyle = useAnimatedStyle(() => {
-    return {
-      opacity: forceControlsOpacity.value,
-      transform: [{ scale: forceControlsScale.value }],
     };
   });
 
@@ -406,25 +295,38 @@ const SwipeableCard = ({
     resetPositionAfterSwipe();
   }, [itemData]);
 
+  const cardMarginTop = (height - statusBarHeight - tabBarHeight - CARD_DIMENSIONS.height) / 2;
+
   return (
     <Animated.View style={[styles.container, opacityAnimatedStyle]}>
-      <SwipeBackgroundAnimation
+      {/* <SwipeBackgroundAnimation
         swipeDirection={swipeDirection}
         cardTranslateX={translateX}
         cardTranslateY={translateY}
-      />
+      /> */}
       {/* card */}
       <GestureDetector gesture={gesture}>
         <Animated.View
           style={[
             styles.itemWrapper,
             {
-              marginTop: (height - statusBarHeight - tabBarHeight - CARD_DIMENSIONS.height) / 2,
+              marginTop: cardMarginTop,
             },
             cardAnimatedStyle,
           ]}
         >
-          <CardItem itemData={itemData} onPressMore={onPressMore} />
+          <LinearGradient
+            // Define colors and their stops
+            colors={[GOLD_COLOR_1, GOLD_COLOR_2, GOLD_COLOR_1]}
+            locations={[0, 0.47, 1]}
+            style={styles.cardBorderGradient}
+          >
+            <CardItem
+              itemData={itemData}
+              onPressMore={onPressMore}
+              cardHeight={CARD_DIMENSIONS.height}
+            />
+          </LinearGradient>
         </Animated.View>
       </GestureDetector>
       {/* left icon */}
@@ -432,12 +334,11 @@ const SwipeableCard = ({
         style={[
           styles.decideIconWrapper,
           {
-            top: wrapperHeight / 2 - DECIDE_ICON_SIZE / 2,
+            top: wrapperHeight / 2 - DECIDE_ICON_WRAPPER_SIZE / 2,
           },
           styles.decideIconWrapperLeft,
           decideIconLeftAnimatedStyle,
           opacityAnimatedStyle,
-          forcedControlsParametersAnimatedStyle,
         ]}
       >
         <TorchIcon width={DECIDE_ICON_SIZE} height={DECIDE_ICON_SIZE} style={styles.decideIcon} />
@@ -447,12 +348,11 @@ const SwipeableCard = ({
         style={[
           styles.decideIconWrapper,
           {
-            top: wrapperHeight / 2 - DECIDE_ICON_SIZE / 2,
+            top: wrapperHeight / 2 - DECIDE_ICON_WRAPPER_SIZE / 2,
           },
           styles.decideIconWrapperRight,
           decideIconRightAnimatedStyle,
           opacityAnimatedStyle,
-          forcedControlsParametersAnimatedStyle,
         ]}
       >
         <PaperIcon width={DECIDE_ICON_SIZE} height={DECIDE_ICON_SIZE} style={styles.decideIcon} />
@@ -462,12 +362,11 @@ const SwipeableCard = ({
         style={[
           styles.decideIconWrapper,
           {
-            bottom: -DECIDE_ICON_SIZE / 2,
+            top: cardMarginTop + CARD_DIMENSIONS.height - DECIDE_ICON_WRAPPER_SIZE / 2,
           },
           styles.decideIconWrapperBottom,
           decideIconBottomAnimatedStyle,
           opacityAnimatedStyle,
-          forcedControlsParametersAnimatedStyle,
           {
             marginRight: wrapperWidth / 2,
           },
@@ -492,8 +391,7 @@ const styles = StyleSheet.create({
   itemWrapper: {
     width: CARD_DIMENSIONS.width,
     height: CARD_DIMENSIONS.height,
-    backgroundColor: 'black',
-    borderRadius: 5,
+    backgroundColor: 'white',
     position: 'absolute',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,
@@ -501,13 +399,20 @@ const styles = StyleSheet.create({
     elevation: 30,
     marginHorizontal: 18,
   },
+  cardBorderGradient: {
+    width: '100%',
+    height: '100%',
+  },
   decideIconWrapper: {
     position: 'absolute',
     borderRadius: 100,
     alignItems: 'center',
     justifyContent: 'center',
-    width: DECIDE_ICON_SIZE,
-    height: DECIDE_ICON_SIZE,
+    width: DECIDE_ICON_WRAPPER_SIZE,
+    height: DECIDE_ICON_WRAPPER_SIZE,
+    borderWidth: 1,
+    borderColor: GOLD_COLOR_2,
+    backgroundColor: hexToRgbaString('#261C16', 0.65),
   },
   decideIcon: {
     color: 'black',
@@ -518,15 +423,14 @@ const styles = StyleSheet.create({
   },
   decideIconWrapperLeft: {
     marginLeft: 20,
-    left: -(DECIDE_ICON_SIZE + 20) / 2,
+    left: -DECIDE_ICON_WRAPPER_SIZE / 2,
   },
   decideIconWrapperRight: {
     marginRight: 20,
-    right: -(DECIDE_ICON_SIZE + 20) / 2,
+    right: -DECIDE_ICON_WRAPPER_SIZE / 2,
   },
   decideIconWrapperBottom: {
-    marginBottom: 20,
-    right: -DECIDE_ICON_SIZE / 2,
+    right: -DECIDE_ICON_WRAPPER_SIZE / 2,
   },
 });
 
