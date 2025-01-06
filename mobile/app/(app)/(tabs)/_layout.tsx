@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { Tabs } from 'expo-router';
 import { ErrorType, handleError } from '../utils/errorHandler';
-import { FONT_COLOR, SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY } from '../constants';
 import {
-  HelmetIcon,
-  HelmetLinealIcon,
-  PaperIcon,
-  PaperLinealIcon,
-  TargetIcon,
-  TargetLinealIcon,
-} from '../utils/icons';
+  GOLD_COLOR_1,
+  GOLD_COLOR_3,
+  TAB_BAR_BACKGROUND_COLOR,
+  TAB_BAR_FONT_COLOR,
+} from '../constants';
+import { HelmetIcon, PaperIcon, TargetIcon } from '../utils/icons';
 import { useJokerContext } from '../context/JokerContext';
 import { useSettingsContext } from '../context/SettingsContext';
 import { AddPictureContextProvider } from '../context/AddPictureContext';
@@ -17,7 +15,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from '../hooks/useAuth';
 import { useFont } from '../hooks/useFont';
 import { useMatchContext } from '../context/MatchContext';
-import { AppState, AppStateStatus, View } from 'react-native';
+import { AppState, AppStateStatus, StyleSheet, View } from 'react-native';
 import { NotificationIndicator } from './swipe/components/NotificationIndicator';
 import { useSocketContext } from '../context/SocketContext';
 
@@ -69,16 +67,22 @@ export default function TabLayout() {
       <Tabs
         initialRouteName="swipe"
         screenOptions={{
-          tabBarActiveTintColor: FONT_COLOR,
-          tabBarInactiveTintColor: 'rgba(0, 0, 0, .3)',
+          tabBarActiveTintColor: 'black',
+          tabBarInactiveTintColor: 'black',
           headerShown: false,
-          tabBarActiveBackgroundColor: SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY,
-          tabBarInactiveBackgroundColor: SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY,
+          tabBarActiveBackgroundColor: TAB_BAR_BACKGROUND_COLOR,
+          tabBarInactiveBackgroundColor: TAB_BAR_BACKGROUND_COLOR,
           tabBarStyle: {
-            backgroundColor: SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY,
-            shadowColor: 'transparent',
+            backgroundColor: TAB_BAR_BACKGROUND_COLOR,
+            height: 97,
+            alignItems: 'center',
+            justifyContent: 'center',
+            borderTopWidth: 0,
+            shadowColor: GOLD_COLOR_1,
+            shadowOpacity: 0.5,
+            shadowRadius: 12,
           },
-          tabBarLabelStyle: { fontFamily },
+          tabBarLabelStyle: { fontFamily, color: TAB_BAR_FONT_COLOR, fontSize: 12 },
         }}
         screenListeners={{
           tabPress: (e) => {
@@ -114,8 +118,18 @@ export default function TabLayout() {
           options={{
             title: t('tab_profile_title'),
             tabBarIcon: ({ color }) => {
-              const Icon = routeName === 'profile' ? HelmetIcon : HelmetLinealIcon;
-              return <Icon width={ICON_SIZE} height={ICON_SIZE} fill={color} />;
+              const isTabActive = routeName === 'profile';
+              return (
+                <View style={styles.iconWrapper}>
+                  {isTabActive && <View style={styles.activeIndicator} />}
+                  <HelmetIcon
+                    width={ICON_SIZE}
+                    height={ICON_SIZE}
+                    fill={color}
+                    style={isTabActive ? styles.shadowStyle : {}}
+                  />
+                </View>
+              );
             },
           }}
         />
@@ -124,8 +138,18 @@ export default function TabLayout() {
           options={{
             title: t('tab_swipe_title'),
             tabBarIcon: ({ color }) => {
-              const Icon = routeName === 'swipe' ? TargetIcon : TargetLinealIcon;
-              return <Icon width={ICON_SIZE} height={ICON_SIZE} fill={color} />;
+              const isTabActive = routeName === 'swipe';
+              return (
+                <View style={styles.iconWrapper}>
+                  {isTabActive && <View style={styles.activeIndicator} />}
+                  <TargetIcon
+                    width={ICON_SIZE}
+                    height={ICON_SIZE}
+                    fill={color}
+                    style={isTabActive ? styles.shadowStyle : {}}
+                  />
+                </View>
+              );
             },
           }}
         />
@@ -134,12 +158,18 @@ export default function TabLayout() {
           options={{
             title: t('tab_chats_title'),
             tabBarIcon: ({ color }) => {
-              const Icon = routeName === 'chats' ? PaperIcon : PaperLinealIcon;
+              const isTabActive = routeName === 'chats';
               const outdatedMatchesExist: boolean =
                 !!matchContext.matchesWithNotificationsIds.length;
               return (
-                <View>
-                  <Icon width={ICON_SIZE} height={ICON_SIZE} fill={color} />
+                <View style={styles.iconWrapper}>
+                  {isTabActive && <View style={styles.activeIndicator} />}
+                  <PaperIcon
+                    width={ICON_SIZE}
+                    height={ICON_SIZE}
+                    fill={color}
+                    style={isTabActive ? styles.shadowStyle : {}}
+                  />
                   {outdatedMatchesExist && <NotificationIndicator iconSize={ICON_SIZE} />}
                 </View>
               );
@@ -159,3 +189,27 @@ export default function TabLayout() {
     </AddPictureContextProvider>
   );
 }
+
+const styles = StyleSheet.create({
+  shadowStyle: {
+    shadowColor: 'white',
+    shadowOpacity: 0.5,
+    shadowRadius: 12,
+  },
+  iconWrapper: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  activeIndicator: {
+    position: 'absolute',
+    top: 0,
+    width: ICON_SIZE,
+    height: 2,
+    backgroundColor: GOLD_COLOR_3,
+    shadowColor: GOLD_COLOR_3,
+    shadowOpacity: 1,
+    shadowRadius: 3,
+    shadowOffset: { width: 0, height: 2 },
+  },
+});
