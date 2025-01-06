@@ -1,15 +1,15 @@
 import React from 'react';
 import { Stack } from 'expo-router';
 import { headerBackButtonOptions } from '../../utils/reusableStuff';
-import { SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY } from '../../constants';
+import { SWIPE_BASE_BACKGROUND_COLOR } from '../../constants';
 
 export default function Layout() {
   return (
     <Stack
       screenOptions={{
         headerShown: false,
-        headerStyle: { backgroundColor: SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY },
-        contentStyle: { backgroundColor: SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY },
+        headerStyle: { backgroundColor: SWIPE_BASE_BACKGROUND_COLOR },
+        contentStyle: { backgroundColor: SWIPE_BASE_BACKGROUND_COLOR },
         animation: 'none',
         headerShadowVisible: false,
       }}
