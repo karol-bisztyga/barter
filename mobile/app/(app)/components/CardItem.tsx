@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import Carousel from './Carousel';
 import { ItemData } from '../types';
-import { Flag2Icon } from '../utils/icons';
+import { BookIcon } from '../utils/icons';
 import { hexToRgbaString } from '../utils/harmonicColors';
 import { GOLD_COLOR_1 } from '../constants';
 
@@ -48,7 +48,7 @@ export default function CardItem({ itemData, onPressMore = () => {}, cardHeight 
             },
           ]}
         >
-          <Flag2Icon width={DETAILS_ICON_SIZE} height={DETAILS_ICON_SIZE} color="white" />
+          <BookIcon width={DETAILS_ICON_SIZE} height={DETAILS_ICON_SIZE} color="white" />
         </View>
       </TouchableOpacity>
     </View>
