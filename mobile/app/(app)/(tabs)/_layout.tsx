@@ -20,6 +20,11 @@ import { NotificationIndicator } from './swipe/components/NotificationIndicator'
 import { useSocketContext } from '../context/SocketContext';
 
 const ICON_SIZE = 28;
+const TAB_SHADOW_COLOR = '#5A75D4';
+
+const ActiveIndicator = () => {
+  return <View style={styles.activeIndicator} />;
+};
 
 const getTabNameFromEvent = (eventName?: string): string | undefined => eventName?.split('-')[0];
 
@@ -121,7 +126,7 @@ export default function TabLayout() {
               const isTabActive = routeName === 'profile';
               return (
                 <View style={styles.iconWrapper}>
-                  {isTabActive && <View style={styles.activeIndicator} />}
+                  {isTabActive && <ActiveIndicator />}
                   <HelmetIcon
                     width={ICON_SIZE}
                     height={ICON_SIZE}
@@ -141,7 +146,7 @@ export default function TabLayout() {
               const isTabActive = routeName === 'swipe';
               return (
                 <View style={styles.iconWrapper}>
-                  {isTabActive && <View style={styles.activeIndicator} />}
+                  {isTabActive && <ActiveIndicator />}
                   <TargetIcon
                     width={ICON_SIZE}
                     height={ICON_SIZE}
@@ -163,7 +168,7 @@ export default function TabLayout() {
                 !!matchContext.matchesWithNotificationsIds.length;
               return (
                 <View style={styles.iconWrapper}>
-                  {isTabActive && <View style={styles.activeIndicator} />}
+                  {isTabActive && <ActiveIndicator />}
                   <PaperIcon
                     width={ICON_SIZE}
                     height={ICON_SIZE}
@@ -192,9 +197,10 @@ export default function TabLayout() {
 
 const styles = StyleSheet.create({
   shadowStyle: {
-    shadowColor: 'white',
-    shadowOpacity: 0.5,
-    shadowRadius: 12,
+    shadowColor: TAB_SHADOW_COLOR,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
   },
   iconWrapper: {
     flex: 1,

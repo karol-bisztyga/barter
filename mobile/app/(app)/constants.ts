@@ -18,8 +18,13 @@ export const SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY = hexToRgbaString(
   0.2
 );
 
+export const TAB_BAR_BACKGROUND_COLOR = '#1D1816';
+export const TAB_BAR_FONT_COLOR = 'white';
+
 export const GOLD_COLOR_1 = '#AE875F';
 export const GOLD_COLOR_2 = '#F3D9C3';
+export const GOLD_COLOR_3 = '#FFC477';
+export const GOLD_COLOR_4 = '#DEB184';
 
 export const DEFAULT_SOUND_ON = false;
 export const DEFAULT_MUSIC_ON = false;

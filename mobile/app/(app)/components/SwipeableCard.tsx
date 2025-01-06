@@ -35,7 +35,7 @@ const DECIDE_ICON_WRAPPER_SIZE = 95;
 const DECIDE_ICON_SIZE = 44;
 
 export const CARD_DIMENSIONS = {
-  width: width - 36, // ratio 2
+  width: width - 40, // ratio 2
   height: (3 / 2) * (width - 36), // ratio 3;
 };
 
@@ -311,6 +311,7 @@ const SwipeableCard = ({
             styles.itemWrapper,
             {
               marginTop: cardMarginTop,
+              marginHorizontal: (width - CARD_DIMENSIONS.width) / 2,
             },
             cardAnimatedStyle,
           ]}
@@ -397,7 +398,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 20,
     elevation: 30,
-    marginHorizontal: 18,
   },
   cardBorderGradient: {
     width: '100%',

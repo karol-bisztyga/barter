@@ -1,14 +1,15 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { generateHarmonicColor, TargetColor } from '../../../utils/harmonicColors';
-import { SWIPE_BASE_BACKGROUND_COLOR } from '../../../constants';
+import { Flag3Icon } from '../../../utils/icons';
+
+const ICON_SIZE = 24;
 
 type NotificationIndicatorProps = {
   iconSize: number;
 };
 
 export const NotificationIndicator = ({ iconSize }: NotificationIndicatorProps) => {
-  const notificationIndicatorSize = iconSize / 2;
+  const notificationIndicatorSize = iconSize / 3;
   return (
     <View
       style={[
@@ -21,16 +22,7 @@ export const NotificationIndicator = ({ iconSize }: NotificationIndicatorProps) 
         },
       ]}
     >
-      <View
-        style={[
-          styles.inner,
-          {
-            width: notificationIndicatorSize / 2,
-            height: notificationIndicatorSize / 2,
-            borderRadius: notificationIndicatorSize,
-          },
-        ]}
-      />
+      <Flag3Icon width={ICON_SIZE} height={ICON_SIZE} />
     </View>
   );
 };
@@ -38,14 +30,8 @@ export const NotificationIndicator = ({ iconSize }: NotificationIndicatorProps) 
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    top: 0,
-    backgroundColor: generateHarmonicColor(SWIPE_BASE_BACKGROUND_COLOR, TargetColor.RED),
+    top: 10,
     justifyContent: 'center',
     alignItems: 'center',
-    opacity: 0.5,
-  },
-  inner: {
-    position: 'absolute',
-    backgroundColor: 'red',
   },
 });

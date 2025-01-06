@@ -1,4 +1,4 @@
-import { JokerIcon } from '../utils/icons';
+import { Joker2Icon } from '../utils/icons';
 import { Dimensions, StyleSheet, TouchableOpacity } from 'react-native';
 import Constants from 'expo-constants';
 import React, { useEffect, useState } from 'react';
@@ -13,10 +13,11 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import { useSettingsContext } from '../context/SettingsContext';
+import { GOLD_COLOR_1, GOLD_COLOR_4 } from '../constants';
 
 const { width } = Dimensions.get('window');
 
-const JOKER_SIZE = 50;
+const JOKER_SIZE = 52;
 const TOP_OFFSET = Constants.statusBarHeight + 4;
 const HORIZONTAL_OFFSET = 50;
 const FORCE_LEFT_OR_RIGHT_POSITION = false;
@@ -230,8 +231,8 @@ const Joker = () => {
       activeOpacity={1}
     >
       <GestureDetector gesture={gesture}>
-        <Animated.View style={[styles.joker, animatedStyle]}>
-          <JokerIcon width={JOKER_SIZE} height={JOKER_SIZE} />
+        <Animated.View style={[styles.jokerWrapper, animatedStyle]}>
+          <Joker2Icon width={JOKER_SIZE} height={JOKER_SIZE} style={styles.jokerIcon} />
         </Animated.View>
       </GestureDetector>
 
@@ -252,9 +253,26 @@ const styles = StyleSheet.create({
     right: 0,
     width: '100%',
   },
-  joker: {
+  jokerWrapper: {
     position: 'absolute',
     top: TOP_OFFSET,
+    backgroundColor: 'black',
+    borderWidth: 1,
+    borderColor: GOLD_COLOR_1,
+    width: JOKER_SIZE,
+    height: JOKER_SIZE,
+    borderRadius: JOKER_SIZE / 2,
+
+    shadowColor: GOLD_COLOR_4,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 8,
+  },
+  jokerIcon: {
+    width: JOKER_SIZE,
+    height: JOKER_SIZE,
+    bottom: 11,
+    left: -1,
   },
 });
 

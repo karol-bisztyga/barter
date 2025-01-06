@@ -12,8 +12,10 @@ const CarouselInfoPanel = ({ itemData }: { itemData: ItemData }) => {
         colors={['transparent', 'rgba(0, 0, 0, .5)', 'black']}
         locations={[0, 0.3, 1]}
       />
-      <TextWrapper style={[styles.text, styles.itemName]}>{itemData.name}</TextWrapper>
-      <TextWrapper style={[styles.text, styles.description]} numberOfLines={2} ellipsizeMode="tail">
+      <TextWrapper style={[styles.text, styles.itemName]} numberOfLines={1} ellipsizeMode="tail">
+        {itemData.name}
+      </TextWrapper>
+      <TextWrapper style={[styles.text, styles.description]} numberOfLines={1} ellipsizeMode="tail">
         {itemData.description}
       </TextWrapper>
       <TextWrapper style={[styles.text, styles.itemOwnerName]}>{itemData.userName}</TextWrapper>
@@ -41,12 +43,13 @@ const styles = StyleSheet.create({
   text: { color: 'white', textAlign: 'center' },
   itemName: {
     fontSize: 24,
+    paddingHorizontal: 16,
   },
   itemOwnerName: {
     fontSize: 14,
     opacity: 0.7,
   },
-  description: { fontSize: 12 },
+  description: { fontSize: 14, paddingHorizontal: 16 },
 });
 
 export default CarouselInfoPanel;

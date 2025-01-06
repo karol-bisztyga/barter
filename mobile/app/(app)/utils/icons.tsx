@@ -13,10 +13,12 @@ import Feather2Icon from '../../../assets/icons/medieval_pack_2/007-feather.svg'
 import ArrowsIcon from '../../../assets/icons/medieval_pack/046-arrows-1.svg';
 import FlagIcon from '../../../assets/icons/medieval_pack/029-flag-2.svg';
 import Flag2Icon from '../../../assets/icons/medieval_pack_2/010-flag.svg';
+import Flag3Icon from '../../../assets/icons/medieval_pack/030-flag-1.svg';
 import SwordsShieldIcon from '../../../assets/icons/medieval_pack/011-shield-2.svg';
 import BookIcon from '../../../assets/icons/medieval_pack/039-book.svg';
 import LisIcon from '../../../assets/icons/medieval_pack/020-lis.svg';
 import JokerIcon from '../../../assets/icons/medieval_pack/022-joker.svg';
+import Joker2Icon from '../../../assets/icons/new_designs/036-jester.svg';
 import SandGlassIcon from '../../../assets/icons/sandglass.svg';
 import SpearIcon from '../../../assets/icons/medieval_pack_2/050-spear.svg';
 import MandolinIcon from '../../../assets/icons/medieval_pack_2/042-mandolin.svg';
@@ -40,10 +42,12 @@ export {
   ArrowsIcon,
   FlagIcon,
   Flag2Icon,
+  Flag3Icon,
   SwordsShieldIcon,
   BookIcon,
   LisIcon,
   JokerIcon,
+  Joker2Icon,
   SandGlassIcon,
   SpearIcon,
   MandolinIcon,
