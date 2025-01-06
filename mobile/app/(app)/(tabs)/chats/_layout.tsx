@@ -10,7 +10,7 @@ export default function Layout() {
   const matchContext = useMatchContext();
   return (
     <>
-      <Background tile="sword" forceFullScreen />
+      <Background tile="main" forceFullScreen />
       <Stack
         screenOptions={{
           headerShown: false,

@@ -42,7 +42,7 @@ const Reload = ({ onPress }: ReloadProps) => {
 
   return (
     <View style={styles.container}>
-      <Background tile="sword" forceFullScreen />
+      <Background tile="main" forceFullScreen />
       <TextWrapper style={styles.label}>{t('reload')}</TextWrapper>
       <TouchableOpacity onPress={handleReload}>
         <CannonIcon width={ICON_SIZE} height={ICON_SIZE} />

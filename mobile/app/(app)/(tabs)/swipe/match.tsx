@@ -58,7 +58,7 @@ const Match = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <Background tile="sword" forceFullScreen />
+      <Background tile="main" forceFullScreen />
       <TextWrapper style={styles.matchedLabel}>{t('match_items_matched')}</TextWrapper>
       <View style={styles.imagesWrapper}>
         {/* Left Image */}

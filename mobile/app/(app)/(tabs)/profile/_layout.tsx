@@ -24,7 +24,7 @@ function Layout() {
 
   return (
     <>
-      <Background tile="sword" />
+      <Background tile="main" />
       <Stack
         screenOptions={{
           headerShown: false,

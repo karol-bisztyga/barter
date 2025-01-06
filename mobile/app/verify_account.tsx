@@ -60,7 +60,7 @@ export default function Register() {
 
   return (
     <View style={styles.container}>
-      <Background tile="sword" />
+      <Background tile="main" />
       {error ? (
         <View style={styles.errorWrapper}>
           <TextWrapper key={error} style={styles.errorText}>

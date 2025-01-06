@@ -27,7 +27,7 @@ export default function Onboarding() {
 
   return (
     <View style={styles.container}>
-      <Background tile="sword" />
+      <Background tile="main" />
       <TextWrapper style={styles.content}>{t('onboarding_stage_' + stage)}</TextWrapper>
       {/* TODO add descriptive images for certain stages */}
       <ButtonWrapper

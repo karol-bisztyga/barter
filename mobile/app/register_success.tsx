@@ -13,7 +13,7 @@ export default function Register() {
 
   return (
     <View style={styles.container}>
-      <Background tile="sword" />
+      <Background tile="main" />
       <View style={styles.labelsWrapper}>
         <TextWrapper style={styles.label}>{t('register_successful_title')}</TextWrapper>
         <TextWrapper style={styles.label}>{t('register_successful_subtitle')}</TextWrapper>

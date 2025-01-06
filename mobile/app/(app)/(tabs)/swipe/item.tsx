@@ -32,7 +32,7 @@ const ItemModal = () => {
 
   return (
     <>
-      <Background tile="sword" forceFullScreen />
+      <Background tile="main" forceFullScreen />
       <Item itemData={item} showFull={true} showDescription={false} showName={false} />
     </>
   );

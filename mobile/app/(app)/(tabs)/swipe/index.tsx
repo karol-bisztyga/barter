@@ -275,7 +275,7 @@ export default function Swipe() {
 
   return (
     <GestureHandlerRootView>
-      <Background tile="sword" opacity={0.3} />
+      <Background tile="main" />
       <SafeAreaView style={styles.container}>
         <View style={styles.container}>
           {/* todo this was showing all the time in prod so for now just removed it but it should be handled properly */}

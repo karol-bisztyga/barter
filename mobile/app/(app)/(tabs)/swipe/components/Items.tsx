@@ -26,7 +26,7 @@ const Items = () => {
 
   return (
     <View style={styles.container}>
-      <Background tile="sword" />
+      <Background tile="main" />
       {items.map((item: ItemData, index: number) => {
         const borderWidth = itemsContext.usersItemId === item.id ? 5 : 0;
         return (

@@ -71,7 +71,7 @@ export default function Register() {
 
   return (
     <View style={styles.container}>
-      <Background tile="sword" />
+      <Background tile="main" />
       <View style={styles.inputContainer}>
         <View style={styles.inputWrapper}>
           <InputWrapper

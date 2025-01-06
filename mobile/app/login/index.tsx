@@ -57,7 +57,7 @@ export default function Login() {
   }
   return (
     <View style={styles.container}>
-      <Background tile="sword" />
+      <Background tile="main" />
       {loading && <Loader />}
       <SingInForm loading={loading} />
     </View>
