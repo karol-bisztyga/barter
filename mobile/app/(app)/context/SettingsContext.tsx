@@ -136,9 +136,6 @@ export const SettingsContextProvider: FC<{ children: ReactNode }> = ({ children 
     i18n.changeLanguage(language);
   }, [language]);
 
-  // load language
-  useEffect(() => {}, []);
-
   // load and unload sounds
   useEffect(() => {
     // pre-load all one shot sounds
