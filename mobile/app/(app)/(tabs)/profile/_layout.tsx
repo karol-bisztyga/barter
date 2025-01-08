@@ -4,7 +4,7 @@ import { headerBackButtonOptions } from '../../utils/reusableStuff';
 import { Alert } from 'react-native';
 import { EditItemContextProvider, useEditItemContext } from '../../context/EditItemContext';
 import { useAddPictureContext } from '../../context/AddPictureContext';
-import { SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY } from '../../constants';
+import { SWIPE_BASE_BACKGROUND_COLOR } from '../../constants';
 import Background from '../../components/Background';
 import { useTranslation } from 'react-i18next';
 
@@ -28,8 +28,7 @@ function Layout() {
       <Stack
         screenOptions={{
           headerShown: false,
-          headerStyle: { backgroundColor: SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY },
-          contentStyle: { backgroundColor: SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY },
+          contentStyle: { backgroundColor: SWIPE_BASE_BACKGROUND_COLOR },
           animation: 'none',
           headerShadowVisible: false,
         }}

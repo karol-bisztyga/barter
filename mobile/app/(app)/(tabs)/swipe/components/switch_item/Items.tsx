@@ -48,8 +48,8 @@ const Items = () => {
               style={styles.imageWrapper}
               onPress={() => {
                 settingsContext.playSound('click');
-                if (itemsContext.usersItemId === item.id) {
-                  return;
+                if (itemsContext.usersItemId !== item.id) {
+                  router.back();
                 }
                 itemsContext.setUsersItemId(item.id);
                 setItemChanged(true);
