@@ -9,9 +9,9 @@ import {
   hexToRgbaString,
   TargetColor,
 } from '../../../../utils/harmonicColors';
-import { GOLD_COLOR_1, GOLD_COLOR_2, SWIPE_BASE_BACKGROUND_COLOR } from '../../../../constants';
+import { SWIPE_BASE_BACKGROUND_COLOR } from '../../../../constants';
 import { router } from 'expo-router';
-import { LinearGradient } from 'expo-linear-gradient';
+import { GoldGradient } from '../../../../genericComponents/GoldGradient';
 
 const IMAGE_SIZE = 164;
 const BORDER_SIZE = 2;
@@ -55,11 +55,7 @@ const Items = () => {
                 setItemChanged(true);
               }}
             >
-              <LinearGradient
-                colors={[GOLD_COLOR_1, GOLD_COLOR_2, GOLD_COLOR_1]}
-                locations={[0, 0.47, 1]}
-                style={styles.gradient}
-              />
+              <GoldGradient />
               <Image source={{ uri: item.images[0] }} style={styles.image} />
             </TouchableOpacity>
             <TextWrapper style={styles.labelName} numberOfLines={1} ellipsizeMode="tail">
@@ -96,11 +92,6 @@ const styles = StyleSheet.create({
   imageWrapper: {
     width: IMAGE_SIZE + BORDER_SIZE * 2,
     height: IMAGE_SIZE + BORDER_SIZE * 2,
-  },
-  gradient: {
-    width: '100%',
-    height: '100%',
-    position: 'absolute',
   },
   image: {
     position: 'absolute',

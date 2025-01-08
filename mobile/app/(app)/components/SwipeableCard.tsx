@@ -18,11 +18,11 @@ import CardItem from './CardItem';
 import { PaperIcon, SandGlassIcon, TorchIcon } from '../utils/icons';
 import { useJokerContext } from '../context/JokerContext';
 import { hexToRgbaString } from '../utils/harmonicColors';
-import { GOLD_COLOR_1, GOLD_COLOR_2 } from '../constants';
+import { GOLD_COLOR_2 } from '../constants';
 import Constants from 'expo-constants';
 import { BottomTabBarHeightContext } from '@react-navigation/bottom-tabs';
 import { useSettingsContext } from '../context/SettingsContext';
-import { LinearGradient } from 'expo-linear-gradient';
+import { GoldGradient } from '../genericComponents/GoldGradient';
 
 const { width, height } = Dimensions.get('window');
 const SWIPE_THRESHOLD_HORIZONTAL = 0.25 * width;
@@ -316,18 +316,13 @@ const SwipeableCard = ({
             cardAnimatedStyle,
           ]}
         >
-          <LinearGradient
-            // Define colors and their stops
-            colors={[GOLD_COLOR_1, GOLD_COLOR_2, GOLD_COLOR_1]}
-            locations={[0, 0.47, 1]}
-            style={styles.cardBorderGradient}
-          >
+          <GoldGradient>
             <CardItem
               itemData={itemData}
               onPressMore={onPressMore}
               cardHeight={CARD_DIMENSIONS.height}
             />
-          </LinearGradient>
+          </GoldGradient>
         </Animated.View>
       </GestureDetector>
       {/* left icon */}
@@ -398,11 +393,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 1,
     shadowRadius: 20,
     elevation: 30,
-  },
-  cardBorderGradient: {
-    width: '100%',
-    height: '100%',
-    position: 'absolute',
   },
   decideIconWrapper: {
     position: 'absolute',

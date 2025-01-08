@@ -1,11 +1,12 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { BLACK_COLOR, GOLD_COLOR_1, GOLD_COLOR_2, RED_COLOR } from '../constants';
+import { BLACK_COLOR, RED_COLOR } from '../constants';
 import { useSettingsContext } from '../context/SettingsContext';
 import { useFont } from '../hooks/useFont';
 import TextWrapper from './TextWrapper';
 import { LinearGradient } from 'expo-linear-gradient';
 import { hexToRgbaString } from '../utils/harmonicColors';
+import { GoldGradient } from './GoldGradient';
 
 export const BUTTON_HEIGHT = 56;
 export const FALLBACK_BACKGROUND_COLOR = '#432c26';
@@ -46,11 +47,7 @@ const ButtonWrapper = ({ title, onPress, mode, marginTop = 0, disabled }: MyButt
       }}
     >
       <View>
-        <LinearGradient
-          colors={[GOLD_COLOR_1, GOLD_COLOR_2, GOLD_COLOR_1]}
-          locations={[0, 0.47, 1]}
-          style={styles.gradient}
-        />
+        <GoldGradient />
         <View
           style={{
             margin: 1,
@@ -68,11 +65,7 @@ const ButtonWrapper = ({ title, onPress, mode, marginTop = 0, disabled }: MyButt
               margin: 4,
             }}
           >
-            <LinearGradient
-              colors={[GOLD_COLOR_1, GOLD_COLOR_2, GOLD_COLOR_1]}
-              locations={[0, 0.47, 1]}
-              style={styles.gradient}
-            />
+            <GoldGradient />
             <View
               style={{
                 margin: 1,

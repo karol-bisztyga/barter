@@ -1,9 +1,9 @@
 import React from 'react';
 import { StyleSheet, TextInput, TextInputProps, View } from 'react-native';
-import { FONT_COLOR, GOLD_COLOR_1, GOLD_COLOR_2 } from '../constants';
+import { BLACK_COLOR } from '../constants';
 import { useFont } from '../hooks/useFont';
-import { LinearGradient } from 'expo-linear-gradient';
 import { hexToRgbaString } from '../utils/harmonicColors';
+import { GoldGradient } from './GoldGradient';
 
 interface InputWrapperProps extends TextInputProps {
   fillColor: string;
@@ -15,11 +15,7 @@ const InputWrapper = React.forwardRef<TextInput, InputWrapperProps>(({ ...props 
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={[GOLD_COLOR_1, GOLD_COLOR_2, GOLD_COLOR_1]}
-        locations={[0, 0.47, 1]}
-        style={styles.gradient}
-      />
+      <GoldGradient />
       <View style={styles.inputWrapper}>
         <TextInput
           ref={ref}
@@ -39,10 +35,9 @@ const styles = StyleSheet.create({
   input: {
     paddingVertical: 16,
     paddingHorizontal: 12,
-    color: FONT_COLOR,
+    color: BLACK_COLOR,
     fontSize: 20,
   },
-  gradient: { width: '100%', height: '100%', position: 'absolute' },
   inputWrapper: {
     backgroundColor: hexToRgbaString('#FFFFFF', 0.45),
     marginHorizontal: 1,
