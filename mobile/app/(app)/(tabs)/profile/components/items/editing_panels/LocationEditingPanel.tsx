@@ -14,11 +14,15 @@ import Animated, {
   useAnimatedStyle,
 } from 'react-native-reanimated';
 import * as Location from 'expo-location';
-import ButtonWrapper, { BUTTON_HEIGHT } from '../../../../../genericComponents/ButtonWrapper';
-import { cityNameFromLocation } from '../../../../../utils/reusableStuff';
+import ButtonWrapper from '../../../../../genericComponents/ButtonWrapper';
+import {
+  capitalizeFirstLetterOfEveryWord,
+  cityNameFromLocation,
+} from '../../../../../utils/reusableStuff';
 import { useJokerContext } from '../../../../../context/JokerContext';
 import { EDITING_PANEL_HEIGHT, SECTION_BACKGROUND } from './constants';
 import { useTranslation } from 'react-i18next';
+import { BLACK_COLOR, BROWN_COLOR_4 } from '../../../../../constants';
 
 export type LocationEditingPanelProps = {
   initialValue: string;
@@ -127,13 +131,19 @@ const LocationEditingPanel = ({
       <View style={styles.editingInputWrapper}>
         <InputWrapper
           style={styles.editingInput}
-          placeholder={editingValue}
+          value={editingValue}
           editable={false}
           fillColor={SECTION_BACKGROUND}
         />
       </View>
       <View style={styles.updateButtonWrapper}>
-        <ButtonWrapper title={t('locate')} onPress={update} fillColor={SECTION_BACKGROUND} />
+        <ButtonWrapper
+          title={capitalizeFirstLetterOfEveryWord(t('locate'))}
+          onPress={update}
+          mode="red"
+          frameMode="single"
+          marginTop={12}
+        />
       </View>
     </Animated.View>
   );
@@ -144,20 +154,28 @@ const styles = StyleSheet.create({
     width: '100%',
     overflow: 'hidden',
     flexDirection: 'row',
-    backgroundColor: SECTION_BACKGROUND,
+    borderColor: BROWN_COLOR_4,
+    borderBottomWidth: 1,
   },
   editingInputWrapper: {
     flex: 3,
     height: 52,
-    marginVertical: 8,
-    marginHorizontal: 4,
+    marginLeft: 20,
+    marginRight: 10,
+    marginTop: 16,
   },
-  editingInput: {},
+  editingInput: {
+    color: BLACK_COLOR,
+    fontSize: 14,
+    paddingVertical: 14,
+  },
   updateButtonWrapper: {
     flex: 1,
-    marginVertical: 12,
-    height: BUTTON_HEIGHT,
-    marginRight: 4,
+    marginTop: 14,
+    marginRight: 20,
+    height: 48,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
 });
 

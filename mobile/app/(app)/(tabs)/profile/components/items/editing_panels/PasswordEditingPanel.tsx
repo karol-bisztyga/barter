@@ -17,8 +17,8 @@ import { changePassword } from '../../../../../db_utils/changePassword';
 import { useJokerContext } from '../../../../../context/JokerContext';
 import { EDITING_PANEL_HEIGHT, SECTION_BACKGROUND } from './constants';
 import { useTranslation } from 'react-i18next';
-
-const HEIGHT = EDITING_PANEL_HEIGHT * 2.5;
+import { BLACK_COLOR, BROWN_COLOR_4 } from '../../../../../constants';
+import { capitalizeFirstLetterOfEveryWord } from '../../../../../utils/reusableStuff';
 
 export type FieldEditingPanelProps = {
   editing: SharedValue<number>;
@@ -80,7 +80,7 @@ const FieldEditingPanel = ({ editing, setEditingId }: FieldEditingPanelProps) =>
       <View style={styles.editingInputWrapper}>
         <InputWrapper
           style={styles.editingInput}
-          placeholder={t('profile_old_password')}
+          placeholder={capitalizeFirstLetterOfEveryWord(t('profile_old_password'))}
           value={currentPassword}
           onChangeText={setCurrentPassword}
           secureTextEntry={true}
@@ -88,7 +88,7 @@ const FieldEditingPanel = ({ editing, setEditingId }: FieldEditingPanelProps) =>
         />
         <InputWrapper
           style={styles.editingInput}
-          placeholder={t('profile_new_password')}
+          placeholder={capitalizeFirstLetterOfEveryWord(t('profile_new_password'))}
           value={newPassword}
           onChangeText={setNewPassword}
           secureTextEntry={true}
@@ -96,10 +96,11 @@ const FieldEditingPanel = ({ editing, setEditingId }: FieldEditingPanelProps) =>
         />
         <View style={styles.updateButtonWrapper}>
           <ButtonWrapper
-            title={t('update')}
+            title={capitalizeFirstLetterOfEveryWord(t('update'))}
             onPress={handlePasswordChange}
             disabled={!validateValue()}
-            fillColor={SECTION_BACKGROUND}
+            mode="red"
+            frameMode="single"
           />
         </View>
       </View>
@@ -112,16 +113,22 @@ const styles = StyleSheet.create({
     width: '100%',
     overflow: 'hidden',
     flexDirection: 'row',
-    backgroundColor: SECTION_BACKGROUND,
+    borderColor: BROWN_COLOR_4,
+    borderBottomWidth: 1,
   },
   editingInputWrapper: {
-    flex: 1,
-    height: HEIGHT,
-    gap: 8,
-    flexDirection: 'column',
-    margin: 8,
+    flex: 3,
+    height: 52,
+    marginLeft: 20,
+    marginRight: 10,
+    marginTop: 16,
+    gap: 12,
   },
-  editingInput: {},
+  editingInput: {
+    color: BLACK_COLOR,
+    fontSize: 14,
+    paddingVertical: 14,
+  },
   updateButtonWrapper: {
     flex: 1,
   },

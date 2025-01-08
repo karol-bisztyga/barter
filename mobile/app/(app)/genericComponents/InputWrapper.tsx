@@ -3,7 +3,7 @@ import { StyleSheet, TextInput, TextInputProps, View } from 'react-native';
 import { BLACK_COLOR } from '../constants';
 import { useFont } from '../hooks/useFont';
 import { hexToRgbaString } from '../utils/harmonicColors';
-import { GoldGradient } from './GoldGradient';
+import { GoldGradient } from './gradients/GoldGradient';
 
 interface InputWrapperProps extends TextInputProps {
   fillColor: string;
@@ -15,12 +15,17 @@ const InputWrapper = React.forwardRef<TextInput, InputWrapperProps>(({ ...props 
 
   return (
     <View style={styles.container}>
-      <GoldGradient />
+      <GoldGradient style={{ opacity: 0.25 }} />
       <View style={styles.inputWrapper}>
         <TextInput
           ref={ref}
           {...props}
-          style={[props['style'] ? props['style'] : {}, styles.input, { fontFamily }]}
+          style={[
+            styles.input,
+            { fontFamily: fontFamily.regular },
+            props['style'] ? props['style'] : {},
+          ]}
+          placeholderTextColor={hexToRgbaString(BLACK_COLOR, 0.6)}
         />
       </View>
     </View>
@@ -29,7 +34,6 @@ const InputWrapper = React.forwardRef<TextInput, InputWrapperProps>(({ ...props 
 
 const styles = StyleSheet.create({
   container: {
-    marginVertical: 8,
     width: '100%',
   },
   input: {

@@ -7,8 +7,8 @@ import LinkItem from './items/LinkItem';
 import { router } from 'expo-router';
 import EditableItem, { EditingPanelType } from './items/EditableItem';
 import { useJokerContext } from '../../../context/JokerContext';
-import { SECTION_BACKGROUND } from './items/editing_panels/constants';
 import { useTranslation } from 'react-i18next';
+import { TAB_BAR_BACKGROUND_COLOR } from '../../../constants';
 
 const AccountDetails = ({
   editingId,
@@ -109,21 +109,8 @@ const AccountDetails = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: SECTION_BACKGROUND,
-    marginRight: 16,
-    marginLeft: 16,
-    borderRadius: 16,
-    overflow: 'hidden',
-  },
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-    position: 'absolute',
-  },
-  imageStyle: {
-    resizeMode: 'repeat',
-    opacity: 0.5,
+    backgroundColor: TAB_BAR_BACKGROUND_COLOR,
+    marginHorizontal: 20,
   },
 });
 

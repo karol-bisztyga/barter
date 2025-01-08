@@ -7,12 +7,10 @@ import LinkItem from './items/LinkItem';
 import ToggleItem from './items/ToggleItem';
 import { MandolinIcon, TrumpetIcon } from '../../../utils/icons';
 import { useSettingsContext } from '../../../context/SettingsContext';
-import Background from '../../../components/Background';
-import { SECTION_BACKGROUND } from './items/editing_panels/constants';
 import { useTranslation } from 'react-i18next';
 import { SelectConfig } from './items/editing_panels/SelectEditingPanel';
 import { useJokerContext } from '../../../context/JokerContext';
-import { LANGUAGES } from '../../../constants';
+import { LANGUAGES, TAB_BAR_BACKGROUND_COLOR } from '../../../constants';
 import { getIconForLanguage } from '../../../utils/reusableStuff';
 
 const Settings = ({
@@ -57,7 +55,6 @@ const Settings = ({
 
   return (
     <View style={styles.container}>
-      <Background tile="stone" />
       <ToggleItem
         id="settings-music"
         isLast={false}
@@ -141,11 +138,8 @@ const Settings = ({
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: SECTION_BACKGROUND,
-    marginRight: 16,
-    marginLeft: 16,
-    borderRadius: 16,
-    overflow: 'hidden',
+    backgroundColor: TAB_BAR_BACKGROUND_COLOR,
+    marginHorizontal: 20,
   },
 });
 

@@ -4,6 +4,10 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import ImageWrapper from '../../../../genericComponents/ImageWrapper';
 import TextWrapper from '../../../../genericComponents/TextWrapper';
 import { useSettingsContext } from '../../../../context/SettingsContext';
+import { ARROW_ICON_SIZE } from './editing_panels/constants';
+import { BROWN_COLOR_4, GOLD_COLOR_3 } from '../../../../constants';
+import { useFont } from '../../../../hooks/useFont';
+import { capitalizeFirstLetterOfEveryWord } from '../../../../utils/reusableStuff';
 
 export type LinkItemProps = {
   name: string;
@@ -15,6 +19,8 @@ export type LinkItemProps = {
 
 const LinkItem = ({ name, id, isLast, onPress, imageUrl }: LinkItemProps) => {
   const settingsContext = useSettingsContext();
+
+  const fontFamily = useFont();
 
   return (
     <TouchableOpacity
@@ -35,11 +41,15 @@ const LinkItem = ({ name, id, isLast, onPress, imageUrl }: LinkItemProps) => {
           <ImageWrapper uri={imageUrl || ''} style={styles.image} />
         </View>
       )}
-      <TextWrapper style={styles.itemTitle} ellipsizeMode="tail" numberOfLines={1}>
-        {name}
+      <TextWrapper
+        style={[styles.itemTitle, { fontFamily: fontFamily.italic }]}
+        ellipsizeMode="tail"
+        numberOfLines={1}
+      >
+        {capitalizeFirstLetterOfEveryWord(name)}
       </TextWrapper>
       <View style={styles.itemArrowWrapper}>
-        <FontAwesome size={18} style={styles.itemArrow} name="chevron-right" />
+        <FontAwesome size={ARROW_ICON_SIZE} style={styles.itemArrow} name="chevron-right" />
       </View>
     </TouchableOpacity>
   );
@@ -48,30 +58,31 @@ const LinkItem = ({ name, id, isLast, onPress, imageUrl }: LinkItemProps) => {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    height: 60,
-    borderColor: '#E0E0E0',
+    height: 66,
+    borderColor: BROWN_COLOR_4,
     alignSelf: 'flex-start',
   },
   itemTitle: {
-    flex: 5,
     fontSize: 18,
-    lineHeight: 60,
-    marginLeft: 16,
+    lineHeight: 26,
+    margin: 20,
   },
   itemArrowWrapper: {
     flex: 1,
     textAlign: 'right',
-    height: 60,
-    lineHeight: 60,
+    height: '100%',
+    lineHeight: 23,
     width: 16,
-    marginHorizontal: 8,
+    marginLeft: 6,
     alignItems: 'flex-end',
     justifyContent: 'center',
+    marginRight: 20,
   },
   itemArrow: {
-    width: 16,
-    height: 16,
+    width: ARROW_ICON_SIZE,
+    height: ARROW_ICON_SIZE,
     textAlign: 'center',
+    color: GOLD_COLOR_3,
   },
   imageWrapper: {
     flex: 1,

@@ -11,9 +11,14 @@ const getDefaultFont = () => {
   return '';
 };
 
-export type FontStyle = 'regular' | 'bold' | 'italic' | 'boldItalic';
+export type FontFamily = {
+  regular: string;
+  bold: string;
+  italic: string;
+  boldItalic: string;
+};
 
-export const useFont = (fontStyle: FontStyle = 'regular') => {
+export const useFont = (): FontFamily => {
   const [loadedFonts] = useFonts({
     MedievalSharp: require('../../../assets/fonts/MedievalSharp.ttf'),
     CaudexRegular: require('../../../assets/fonts/Caudex/Caudex-Regular.ttf'),
@@ -23,18 +28,18 @@ export const useFont = (fontStyle: FontStyle = 'regular') => {
   });
 
   if (!loadedFonts) {
-    return getDefaultFont();
+    return {
+      regular: getDefaultFont(),
+      bold: getDefaultFont(),
+      italic: getDefaultFont(),
+      boldItalic: getDefaultFont(),
+    };
   }
-  switch (fontStyle) {
-    case 'regular':
-      return 'CaudexRegular';
-    case 'bold':
-      return 'CaudexBold';
-    case 'italic':
-      return 'CaudexItalic';
-    case 'boldItalic':
-      return 'CaudexBoldItalic';
-    default:
-      return getDefaultFont();
-  }
+
+  return {
+    regular: 'CaudexRegular',
+    bold: 'CaudexBold',
+    italic: 'CaudexItalic',
+    boldItalic: 'CaudexBoldItalic',
+  };
 };

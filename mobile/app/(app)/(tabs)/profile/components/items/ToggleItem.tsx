@@ -2,6 +2,9 @@ import React from 'react';
 import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { SvgProps } from 'react-native-svg';
 import { SpearIcon } from '../../../../utils/icons';
+import { BROWN_COLOR_4 } from '../../../../constants';
+
+const ICON_SIZE = 42;
 
 export type ToggleItemProps = {
   id: string;
@@ -31,10 +34,10 @@ const ToggleItem = ({ id, isLast, onPress, Icon, disabled }: ToggleItemProps) =>
               opacity: disabled ? 0.3 : 1,
             },
           ]}
-          width={48}
-          height={48}
+          width={ICON_SIZE}
+          height={ICON_SIZE}
         />
-        {disabled && <SpearIcon style={styles.icon} width={48} height={48} />}
+        {disabled && <SpearIcon style={styles.icon} width={ICON_SIZE} height={ICON_SIZE} />}
       </View>
     </TouchableOpacity>
   );
@@ -43,8 +46,8 @@ const ToggleItem = ({ id, isLast, onPress, Icon, disabled }: ToggleItemProps) =>
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    height: 60,
-    borderColor: '#E0E0E0',
+    height: 66,
+    borderColor: BROWN_COLOR_4,
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',

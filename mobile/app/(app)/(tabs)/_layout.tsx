@@ -87,7 +87,11 @@ export default function TabLayout() {
             shadowOpacity: 0.5,
             shadowRadius: 12,
           },
-          tabBarLabelStyle: { fontFamily, color: TAB_BAR_FONT_COLOR, fontSize: 12 },
+          tabBarLabelStyle: {
+            fontFamily: fontFamily.regular,
+            color: TAB_BAR_FONT_COLOR,
+            fontSize: 12,
+          },
         }}
         screenListeners={{
           tabPress: (e) => {

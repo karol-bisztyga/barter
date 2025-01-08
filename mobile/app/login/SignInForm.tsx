@@ -28,7 +28,7 @@ export const SingInForm = ({ loading }: { loading: boolean }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const boldItalicFontFamily = useFont('boldItalic');
+  const fontFamily = useFont();
 
   const formValid = () => validateEmail(email) && validatePassword(password);
 
@@ -60,30 +60,32 @@ export const SingInForm = ({ loading }: { loading: boolean }) => {
     >
       <View style={styles.formWrapper}>
         <Background tile="paper" />
-        <TextWrapper style={[styles.label, { fontFamily: boldItalicFontFamily }]}>
+        <TextWrapper style={[styles.label, { fontFamily: fontFamily.boldItalic }]}>
           {capitalizeFirstLetterOfEveryWord(t('email'))}
         </TextWrapper>
-
-        <InputWrapper
-          placeholder={capitalizeFirstLetterOfEveryWord(t('email'))}
-          value={email}
-          onChangeText={setEmail}
-          autoCapitalize="none"
-          fillColor={SECTION_BACKGROUND}
-        />
-
-        <TextWrapper style={[styles.label, { fontFamily: boldItalicFontFamily }]}>
+        <View style={{ marginVertical: 8 }}>
+          <InputWrapper
+            placeholder={capitalizeFirstLetterOfEveryWord(t('email'))}
+            value={email}
+            onChangeText={setEmail}
+            autoCapitalize="none"
+            fillColor={SECTION_BACKGROUND}
+          />
+        </View>
+        <TextWrapper style={[styles.label, { fontFamily: fontFamily.boldItalic }]}>
           {capitalizeFirstLetterOfEveryWord(t('password'))}
         </TextWrapper>
 
-        <InputWrapper
-          placeholder={capitalizeFirstLetterOfEveryWord(t('password'))}
-          value={password}
-          secureTextEntry={true}
-          onChangeText={setPassword}
-          autoCapitalize="none"
-          fillColor={SECTION_BACKGROUND}
-        />
+        <View style={{ marginVertical: 8 }}>
+          <InputWrapper
+            placeholder={capitalizeFirstLetterOfEveryWord(t('password'))}
+            value={password}
+            secureTextEntry={true}
+            onChangeText={setPassword}
+            autoCapitalize="none"
+            fillColor={SECTION_BACKGROUND}
+          />
+        </View>
 
         <ButtonWrapper
           title={t('sign_in')}
@@ -105,8 +107,8 @@ export const SingInForm = ({ loading }: { loading: boolean }) => {
         />
       </View>
       <Settings />
-      {/* TODO remove buttons below */}
-      {/* {sampleUsers.map((user, index) => {
+      {/* TODO remove buttons below * /}
+      {sampleUsers.map((user, index) => {
         if (index > 2) {
           return null;
         }
@@ -117,11 +119,11 @@ export const SingInForm = ({ loading }: { loading: boolean }) => {
             onPress={async () => {
               await hadnleSignIn(user.email, user.password);
             }}
-            marginTop={4}
+            marginTop={8}
             mode="black"
           />
         );
-      })} */}
+      })}
       {/* TODO remove buttons above */}
     </View>
   );

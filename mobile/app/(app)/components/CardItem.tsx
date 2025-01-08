@@ -4,7 +4,7 @@ import Carousel from './Carousel';
 import { ItemData } from '../types';
 import { BookIcon } from '../utils/icons';
 import { hexToRgbaString } from '../utils/harmonicColors';
-import { GOLD_COLOR_1 } from '../constants';
+import { BROWN_COLOR_3, GOLD_COLOR_1 } from '../constants';
 
 type ItemProps = {
   cardHeight: number;
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   detailsIconWrapper: {
     position: 'absolute',
     right: 16,
-    backgroundColor: hexToRgbaString('#261C16', 0.65),
+    backgroundColor: hexToRgbaString(BROWN_COLOR_3, 0.65),
     borderWidth: 1,
     borderColor: GOLD_COLOR_1,
     borderRadius: 100,

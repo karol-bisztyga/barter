@@ -23,7 +23,7 @@ const TextWrapper = ({ ...props }: TextWrapperProps) => {
   const defaultFontFamily = useFont();
   let fontFamily = extractFontFamily(props['style']);
   if (!fontFamily) {
-    fontFamily = defaultFontFamily;
+    fontFamily = defaultFontFamily.regular;
   }
 
   return (

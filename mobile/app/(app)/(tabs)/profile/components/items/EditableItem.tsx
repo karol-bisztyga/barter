@@ -15,8 +15,12 @@ import FieldEditingPanel from './editing_panels/FieldEditingPanel';
 import LocationEditingPanel from './editing_panels/LocationEditingPanel';
 import SelectEditingPanel, { SelectConfig } from './editing_panels/SelectEditingPanel';
 import PasswordEditingPanel from './editing_panels/PasswordEditingPanel';
-import { FONT_COLOR } from '../../../../constants';
+import { BROWN_COLOR_4, GOLD_COLOR_3 } from '../../../../constants';
 import { useTranslation } from 'react-i18next';
+import { useFont } from '../../../../hooks/useFont';
+import { useSettingsContext } from '../../../../context/SettingsContext';
+import { ARROW_ICON_SIZE } from './editing_panels/constants';
+import { capitalizeFirstLetterOfEveryWord } from '../../../../utils/reusableStuff';
 
 export type EditingPanelType = 'field' | 'location' | 'select' | 'password';
 
@@ -47,12 +51,16 @@ const EditableItem = ({
 }: EditableItemProps) => {
   const { t } = useTranslation();
 
+  const settingsContext = useSettingsContext();
+
   const [value, setValue] = useState(initialValue);
   const [editingValue, setEditingValue] = useState(value);
   const [pageY, setPageY] = useState(0);
   const viewRef = useRef<View>(null);
 
   const editing = useSharedValue(0);
+
+  const fontFamily = useFont();
 
   const formatItemName = (name: string) => {
     if (name === 'userLocationCity') {
@@ -91,6 +99,7 @@ const EditableItem = ({
 
   const toggleEdit = () => {
     if (!editable) {
+      settingsContext.playSound('click');
       return;
     }
     if (editing.value !== 0 && editing.value !== 1) {
@@ -178,17 +187,28 @@ const EditableItem = ({
         ]}
         key={id}
         onLongPress={async () => {
+          if (!value) {
+            return;
+          }
           await Clipboard.setStringAsync(value);
           Alert.alert(t('copied_to_clipboard'), value);
         }}
         onPress={toggleEdit}
       >
-        <TextWrapper style={styles.itemTitle}>{formatItemName(displayName)}</TextWrapper>
-        <TextWrapper style={[styles.itemValue]}>{label}</TextWrapper>
-        <View style={[styles.itemArrowWrapper, { opacity: editable ? 1 : 0 }]}>
-          <Animated.View style={rotationAnimatedStyle}>
-            <FontAwesome size={18} style={styles.itemArrow} name="chevron-right" />
-          </Animated.View>
+        <TextWrapper style={[styles.itemTitle, { fontFamily: fontFamily.italic }]}>
+          {capitalizeFirstLetterOfEveryWord(formatItemName(displayName))}
+        </TextWrapper>
+        <View style={styles.itemValueWrapper}>
+          <TextWrapper style={[styles.itemValue, { fontFamily: fontFamily.bold }]}>
+            {label}
+          </TextWrapper>
+          {editable && (
+            <View style={styles.itemArrowWrapper}>
+              <Animated.View style={rotationAnimatedStyle}>
+                <FontAwesome size={ARROW_ICON_SIZE} style={styles.itemArrow} name="chevron-right" />
+              </Animated.View>
+            </View>
+          )}
         </View>
       </TouchableOpacity>
 
@@ -200,35 +220,42 @@ const EditableItem = ({
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    height: 60,
-    borderColor: '#E0E0E0',
+    height: 66,
+    borderColor: BROWN_COLOR_4,
     alignSelf: 'flex-start',
   },
   itemTitle: {
     fontSize: 18,
-    lineHeight: 60,
-    marginLeft: 10,
+    lineHeight: 26,
+    margin: 20,
+  },
+  itemValueWrapper: {
+    flex: 1,
+    alignItems: 'center',
+    marginRight: 20,
+    flexDirection: 'row',
   },
   itemValue: {
     flex: 1,
-    fontSize: 18,
-    lineHeight: 60,
+    fontSize: 16,
+    lineHeight: 23,
     textAlign: 'right',
+    color: GOLD_COLOR_3,
   },
   itemArrowWrapper: {
     textAlign: 'right',
-    height: 60,
-    lineHeight: 60,
+    height: '100%',
+    lineHeight: 23,
     width: 16,
-    marginHorizontal: 8,
+    marginLeft: 6,
     alignItems: 'center',
     justifyContent: 'center',
   },
   itemArrow: {
-    width: 16,
-    height: 16,
+    width: ARROW_ICON_SIZE,
+    height: ARROW_ICON_SIZE,
     textAlign: 'center',
-    color: FONT_COLOR,
+    color: GOLD_COLOR_3,
   },
 });
 

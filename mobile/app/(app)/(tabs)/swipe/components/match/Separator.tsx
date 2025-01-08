@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { GoldGradient } from '../../../../genericComponents/GoldGradient';
+import { GoldGradient } from '../../../../genericComponents/gradients/GoldGradient';
 
 const SQUARE_SIZE = 16;
 const SQUARE_STROKE_WIDTH = 2;

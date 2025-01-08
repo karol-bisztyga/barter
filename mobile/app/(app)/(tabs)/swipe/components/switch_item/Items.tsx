@@ -11,7 +11,7 @@ import {
 } from '../../../../utils/harmonicColors';
 import { SWIPE_BASE_BACKGROUND_COLOR } from '../../../../constants';
 import { router } from 'expo-router';
-import { GoldGradient } from '../../../../genericComponents/GoldGradient';
+import { GoldGradient } from '../../../../genericComponents/gradients/GoldGradient';
 
 const IMAGE_SIZE = 164;
 const BORDER_SIZE = 2;

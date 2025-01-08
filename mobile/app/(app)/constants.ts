@@ -26,6 +26,8 @@ export const BLACK_COLOR = '#1D1816';
 
 export const BROWN_COLOR_1 = '#41342A';
 export const BROWN_COLOR_2 = '#432012';
+export const BROWN_COLOR_3 = '#261C16';
+export const BROWN_COLOR_4 = '#453626';
 
 export const GOLD_COLOR_1 = '#AE875F';
 export const GOLD_COLOR_2 = '#F3D9C3';

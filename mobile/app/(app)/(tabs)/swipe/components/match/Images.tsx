@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, View, Image } from 'react-native';
-import { GoldGradient } from '../../../../genericComponents/GoldGradient';
+import { GoldGradient } from '../../../../genericComponents/gradients/GoldGradient';
 
 const IMAGE_SIZE = 164;
 const BORDER_SIZE = 2;

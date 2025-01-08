@@ -3,21 +3,11 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { MandolinIcon, SpearIcon, TrumpetIcon } from '../(app)/utils/icons';
 import { useSettingsContext } from '../(app)/context/SettingsContext';
 import { getIconForLanguage } from '../(app)/utils/reusableStuff';
-import { BROWN_COLOR_2, GOLD_COLOR_1 } from '../(app)/constants';
-import { LinearGradient } from 'expo-linear-gradient';
+import { GOLD_COLOR_1 } from '../(app)/constants';
+import { BrownGradient } from '../(app)/genericComponents/gradients/BrownGradient';
 
 const ICON_WRAPPER_SIZE = 64;
 const ICON_SIZE = 36;
-
-const Gradient = () => {
-  return (
-    <LinearGradient
-      colors={['#000', BROWN_COLOR_2, '#000']}
-      locations={[0, 0.38, 1]}
-      style={styles.gradient}
-    />
-  );
-};
 
 const Settings = () => {
   const settingsContext = useSettingsContext();
@@ -46,7 +36,7 @@ const Settings = () => {
     <View style={styles.container}>
       <View style={styles.iconContainer}>
         <TouchableOpacity style={styles.iconWrapper} onPress={toggleMusic}>
-          <Gradient />
+          <BrownGradient style={styles.gradient} />
           <MandolinIcon
             style={[
               styles.icon,
@@ -65,7 +55,7 @@ const Settings = () => {
 
       <View style={styles.iconContainer}>
         <TouchableOpacity style={styles.iconWrapper} onPress={toggleSound}>
-          <Gradient />
+          <BrownGradient style={styles.gradient} />
           <TrumpetIcon
             style={[
               styles.icon,
@@ -85,7 +75,7 @@ const Settings = () => {
       {LanguageIcon && (
         <View style={styles.iconContainer}>
           <TouchableOpacity style={styles.iconWrapper} onPress={toggleLanguage}>
-            <Gradient />
+            <BrownGradient style={styles.gradient} />
             <LanguageIcon style={styles.icon} width={ICON_SIZE} height={ICON_SIZE} />
           </TouchableOpacity>
         </View>
@@ -118,9 +108,6 @@ const styles = StyleSheet.create({
     margin: 8,
   },
   gradient: {
-    width: '100%',
-    height: '100%',
-    position: 'absolute',
     borderRadius: ICON_WRAPPER_SIZE,
     opacity: 0.4,
   },

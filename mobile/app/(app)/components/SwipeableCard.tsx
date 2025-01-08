@@ -18,11 +18,11 @@ import CardItem from './CardItem';
 import { PaperIcon, SandGlassIcon, TorchIcon } from '../utils/icons';
 import { useJokerContext } from '../context/JokerContext';
 import { hexToRgbaString } from '../utils/harmonicColors';
-import { GOLD_COLOR_2 } from '../constants';
+import { BROWN_COLOR_3, GOLD_COLOR_2 } from '../constants';
 import Constants from 'expo-constants';
 import { BottomTabBarHeightContext } from '@react-navigation/bottom-tabs';
 import { useSettingsContext } from '../context/SettingsContext';
-import { GoldGradient } from '../genericComponents/GoldGradient';
+import { GoldGradient } from '../genericComponents/gradients/GoldGradient';
 
 const { width, height } = Dimensions.get('window');
 const SWIPE_THRESHOLD_HORIZONTAL = 0.25 * width;
@@ -403,7 +403,7 @@ const styles = StyleSheet.create({
     height: DECIDE_ICON_WRAPPER_SIZE,
     borderWidth: 1,
     borderColor: GOLD_COLOR_2,
-    backgroundColor: hexToRgbaString('#261C16', 0.65),
+    backgroundColor: hexToRgbaString(BROWN_COLOR_3, 0.65),
   },
   decideIcon: {
     color: 'black',

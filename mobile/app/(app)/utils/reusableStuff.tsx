@@ -143,3 +143,28 @@ export const capitalizeFirstLetterOfEveryWord = (text: string) =>
     .split(' ')
     .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
     .join(' ');
+
+// spread is not supported in react native
+export const convertFigmaShadowToReactNative = ({
+  x,
+  y,
+  blur,
+  // spread,
+  color,
+  opacity,
+}: {
+  x: number;
+  y: number;
+  blur: number;
+  // spread: number;
+  color: string;
+  opacity: number;
+}) => {
+  return {
+    shadowColor: color,
+    shadowOffset: { width: x, height: y },
+    shadowOpacity: opacity, // Convert percentage to decimal
+    shadowRadius: blur, // Blur maps directly to shadowRadius
+    elevation: Math.max(y, blur / 2), // Approximation for Android shadow
+  };
+};

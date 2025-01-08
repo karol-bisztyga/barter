@@ -6,12 +6,13 @@ import { useFont } from '../hooks/useFont';
 import TextWrapper from './TextWrapper';
 import { LinearGradient } from 'expo-linear-gradient';
 import { hexToRgbaString } from '../utils/harmonicColors';
-import { GoldGradient } from './GoldGradient';
+import { GoldGradient } from './gradients/GoldGradient';
 
 export const BUTTON_HEIGHT = 56;
 export const FALLBACK_BACKGROUND_COLOR = '#432c26';
 
 export type ButtonWrapperMode = 'black' | 'red';
+export type FrameMode = 'single' | 'double';
 
 type MyButtonProps = {
   title: string;
@@ -19,9 +20,17 @@ type MyButtonProps = {
   mode: ButtonWrapperMode;
   marginTop?: number;
   disabled?: boolean;
+  frameMode?: FrameMode;
 };
 
-const ButtonWrapper = ({ title, onPress, mode, marginTop = 0, disabled }: MyButtonProps) => {
+const ButtonWrapper = ({
+  title,
+  onPress,
+  mode,
+  marginTop = 0,
+  disabled,
+  frameMode = 'double',
+}: MyButtonProps) => {
   const settingsContext = useSettingsContext();
 
   const fontFamily = useFont();
@@ -62,10 +71,10 @@ const ButtonWrapper = ({ title, onPress, mode, marginTop = 0, disabled }: MyButt
           />
           <View
             style={{
-              margin: 4,
+              margin: frameMode === 'double' ? 4 : 0,
             }}
           >
-            <GoldGradient />
+            {frameMode === 'double' && <GoldGradient />}
             <View
               style={{
                 margin: 1,
@@ -78,7 +87,9 @@ const ButtonWrapper = ({ title, onPress, mode, marginTop = 0, disabled }: MyButt
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
               />
-              <TextWrapper style={[styles.label, { fontFamily }]}>{title}</TextWrapper>
+              <TextWrapper style={[styles.label, { fontFamily: fontFamily.regular }]}>
+                {title}
+              </TextWrapper>
             </View>
           </View>
         </View>

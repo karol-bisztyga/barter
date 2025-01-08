@@ -2,12 +2,10 @@ import React from 'react';
 import { View, StyleSheet } from 'react-native';
 import { ItemData } from '../../../types';
 import { router } from 'expo-router';
-import { MAX_ITEMS_SLOTS } from '../../../constants';
+import { MAX_ITEMS_SLOTS, TAB_BAR_BACKGROUND_COLOR } from '../../../constants';
 import { useItemsContext } from '../../../context/ItemsContext';
 import { useUserContext } from '../../../context/UserContext';
 import LinkItem from './items/LinkItem';
-import Background from '../../../components/Background';
-import { SECTION_BACKGROUND } from './items/editing_panels/constants';
 import { useTranslation } from 'react-i18next';
 
 const MyItems = () => {
@@ -18,7 +16,6 @@ const MyItems = () => {
 
   return (
     <View style={styles.container}>
-      <Background tile="stone" />
       {userContext.items.map((item: ItemData, index: number) => {
         return (
           <LinkItem
@@ -51,11 +48,8 @@ const MyItems = () => {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: SECTION_BACKGROUND,
-    marginRight: 16,
-    marginLeft: 16,
-    borderRadius: 16,
-    overflow: 'hidden',
+    backgroundColor: TAB_BAR_BACKGROUND_COLOR,
+    marginHorizontal: 20,
   },
 });
 

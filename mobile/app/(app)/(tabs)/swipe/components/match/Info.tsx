@@ -28,7 +28,7 @@ export const Info = () => {
 
   const usersItem: ItemData | undefined = userContext.findItemById(usersItemId)?.item;
 
-  const fontItalic = useFont('italic');
+  const fontFamily = useFont();
 
   const handleProceed = async () => {
     if (!newMatchId || !itemsContext.usersItemId) {
@@ -68,7 +68,7 @@ export const Info = () => {
         style={[
           styles.infoLabel,
           {
-            fontFamily: fontItalic,
+            fontFamily: fontFamily.italic,
           },
         ]}
       >
@@ -85,7 +85,7 @@ export const Info = () => {
         style={[
           styles.infoLabel,
           {
-            fontFamily: fontItalic,
+            fontFamily: fontFamily.italic,
           },
         ]}
       >
