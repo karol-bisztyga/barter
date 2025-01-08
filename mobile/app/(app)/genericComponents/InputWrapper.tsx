@@ -1,10 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, ImageBackground, TextInput, TextInputProps, View } from 'react-native';
-import Svg, { Path } from 'react-native-svg';
-import { FONT_COLOR, FONT_COLOR_DISABLED } from '../constants';
-import { useAssets } from 'expo-asset';
-import { DimensionsType, generatePaths } from './utils';
+import React from 'react';
+import { StyleSheet, TextInput, TextInputProps, View } from 'react-native';
+import { FONT_COLOR, GOLD_COLOR_1, GOLD_COLOR_2 } from '../constants';
 import { useFont } from '../hooks/useFont';
+import { LinearGradient } from 'expo-linear-gradient';
+import { hexToRgbaString } from '../utils/harmonicColors';
 
 interface InputWrapperProps extends TextInputProps {
   fillColor: string;
@@ -12,82 +11,42 @@ interface InputWrapperProps extends TextInputProps {
 }
 
 const InputWrapper = React.forwardRef<TextInput, InputWrapperProps>(({ ...props }, ref) => {
-  const [dimensions, setDimensions] = useState<DimensionsType | null>(null);
-  const [paths, setPaths] = useState<string[]>([]);
-
-  const [assets] = useAssets([require('../../../assets/backgrounds/paper.jpg')]);
-
   const fontFamily = useFont();
 
-  useEffect(() => {
-    if (!dimensions || (!dimensions.height && !dimensions.width) || paths.length) {
-      return;
-    }
-    setPaths(generatePaths(dimensions));
-  }, [dimensions]);
-
   return (
-    <View
-      style={styles.container}
-      onLayout={(e) => {
-        setDimensions({ width: e.nativeEvent.layout.width, height: e.nativeEvent.layout.height });
-      }}
-    >
-      {assets && assets.length && (
-        <ImageBackground
-          source={{ uri: assets[0].uri }}
-          style={styles.background}
-          imageStyle={styles.imageStyle}
-        >
-          <Svg height="100%" width="100%" style={styles.svgOverlay}>
-            {paths.map((path, index) => (
-              <Path key={index} d={path} fill={props.fillColor} />
-            ))}
-          </Svg>
-        </ImageBackground>
-      )}
-      {dimensions && (
+    <View style={styles.container}>
+      <LinearGradient
+        colors={[GOLD_COLOR_1, GOLD_COLOR_2, GOLD_COLOR_1]}
+        locations={[0, 0.47, 1]}
+        style={styles.gradient}
+      />
+      <View style={styles.inputWrapper}>
         <TextInput
           ref={ref}
           {...props}
           style={[props['style'] ? props['style'] : {}, styles.input, { fontFamily }]}
-          placeholderTextColor={FONT_COLOR_DISABLED}
         />
-      )}
+      </View>
     </View>
   );
 });
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
+    marginVertical: 8,
     width: '100%',
-    height: '100%',
-    backgroundColor: '#ce9e68',
-  },
-  background: {
-    flex: 1,
-  },
-  imageStyle: {
-    resizeMode: 'repeat',
-  },
-  svgOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
   },
   input: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
-    padding: 5,
-    paddingHorizontal: 15,
+    paddingVertical: 16,
+    paddingHorizontal: 12,
     color: FONT_COLOR,
     fontSize: 20,
+  },
+  gradient: { width: '100%', height: '100%', position: 'absolute' },
+  inputWrapper: {
+    backgroundColor: hexToRgbaString('#FFFFFF', 0.45),
+    marginHorizontal: 1,
+    marginVertical: 1,
   },
 });
 

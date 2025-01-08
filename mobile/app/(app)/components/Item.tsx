@@ -67,7 +67,6 @@ export default function Item({
       >
         <Carousel
           itemData={itemData}
-          borderRadius={borderRadius}
           imageIndicatorsVisible={carouselOptions.dotsVisible}
           pressEnabled={carouselOptions.pressEnabled}
           actionPanelVisible={carouselOptions.actionPanelVisible}

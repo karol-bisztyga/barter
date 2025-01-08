@@ -402,6 +402,7 @@ const styles = StyleSheet.create({
   cardBorderGradient: {
     width: '100%',
     height: '100%',
+    position: 'absolute',
   },
   decideIconWrapper: {
     position: 'absolute',

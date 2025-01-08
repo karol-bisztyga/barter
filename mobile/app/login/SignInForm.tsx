@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 
 import { useSessionContext } from '../SessionContext';
@@ -13,6 +13,9 @@ import { useTranslation } from 'react-i18next';
 import { SECTION_BACKGROUND } from '../(app)/(tabs)/profile/components/items/editing_panels/constants';
 import Settings from './Settings';
 import { validateEmail, validatePassword } from '../(app)/utils/validators';
+import Background from '../(app)/components/Background';
+import { useFont } from '../(app)/hooks/useFont';
+import { capitalizeFirstLetterOfEveryWord } from '../(app)/utils/reusableStuff';
 
 export const SingInForm = ({ loading }: { loading: boolean }) => {
   const { t } = useTranslation();
@@ -24,6 +27,8 @@ export const SingInForm = ({ loading }: { loading: boolean }) => {
   // todo remove default values
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const boldItalicFontFamily = useFont('boldItalic');
 
   const formValid = () => validateEmail(email) && validatePassword(password);
 
@@ -40,6 +45,10 @@ export const SingInForm = ({ loading }: { loading: boolean }) => {
     }
   };
 
+  useEffect(() => {
+    sessionContext.setAuthError('');
+  }, []);
+
   return (
     <View
       style={[
@@ -49,47 +58,53 @@ export const SingInForm = ({ loading }: { loading: boolean }) => {
         },
       ]}
     >
-      <View style={styles.inputWrapper}>
+      <View style={styles.formWrapper}>
+        <Background tile="paper" />
+        <TextWrapper style={[styles.label, { fontFamily: boldItalicFontFamily }]}>
+          {capitalizeFirstLetterOfEveryWord(t('email'))}
+        </TextWrapper>
+
         <InputWrapper
-          placeholder={t('email')}
+          placeholder={capitalizeFirstLetterOfEveryWord(t('email'))}
           value={email}
           onChangeText={setEmail}
           autoCapitalize="none"
           fillColor={SECTION_BACKGROUND}
         />
-      </View>
-      <View style={styles.inputWrapper}>
+
+        <TextWrapper style={[styles.label, { fontFamily: boldItalicFontFamily }]}>
+          {capitalizeFirstLetterOfEveryWord(t('password'))}
+        </TextWrapper>
+
         <InputWrapper
-          autoCapitalize="none"
-          placeholder={t('password')}
-          secureTextEntry={true}
+          placeholder={capitalizeFirstLetterOfEveryWord(t('password'))}
           value={password}
+          secureTextEntry={true}
           onChangeText={setPassword}
+          autoCapitalize="none"
           fillColor={SECTION_BACKGROUND}
         />
+
+        <ButtonWrapper
+          title={t('sign_in')}
+          disabled={!formValid()}
+          onPress={async () => {
+            await hadnleSignIn(email, password);
+          }}
+          mode="red"
+          marginTop={8}
+        />
+
+        <ButtonWrapper
+          title={t('register')}
+          onPress={() => {
+            router.replace('/register');
+          }}
+          mode="black"
+          marginTop={8}
+        />
       </View>
-      {sessionContext.authError && (
-        <View style={styles.errorWrapper}>
-          <TextWrapper key={sessionContext.authError} style={styles.errorText}>
-            {sessionContext.authError}
-          </TextWrapper>
-        </View>
-      )}
-      <ButtonWrapper
-        title={t('sign_in')}
-        disabled={!formValid()}
-        onPress={async () => {
-          await hadnleSignIn(email, password);
-        }}
-        fillColor={SECTION_BACKGROUND}
-      />
-      <ButtonWrapper
-        title={t('register')}
-        onPress={() => {
-          router.replace('/register');
-        }}
-        fillColor={SECTION_BACKGROUND}
-      />
+      <Settings />
       {/* TODO remove buttons below */}
       {/* {sampleUsers.map((user, index) => {
         if (index > 2) {
@@ -102,25 +117,22 @@ export const SingInForm = ({ loading }: { loading: boolean }) => {
             onPress={async () => {
               await hadnleSignIn(user.email, user.password);
             }}
-            fillColor={SECTION_BACKGROUND}
+            marginTop={4}
+            mode="black"
           />
         );
       })} */}
       {/* TODO remove buttons above */}
-      <Settings />
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    flexDirection: 'column',
-    padding: 12,
-    position: 'absolute',
-    width: '100%',
-    gap: 8,
+    marginHorizontal: 20,
   },
+  formWrapper: { overflow: 'hidden', padding: 20 },
+  label: { fontSize: 14 },
   inputWrapper: {
     height: 40,
   },

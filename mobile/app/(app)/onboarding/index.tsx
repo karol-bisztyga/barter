@@ -35,14 +35,14 @@ export default function Onboarding() {
         onPress={() => {
           setStage(stage + 1);
         }}
-        fillColor="white"
+        mode="black"
       />
       <ButtonWrapper
         title={t('onboarding_skip')}
         onPress={() => {
           router.replace('/swipe');
         }}
-        fillColor="white"
+        mode="black"
       />
     </View>
   );

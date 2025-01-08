@@ -8,7 +8,6 @@ import { useUserContext } from '../(app)/context/UserContext';
 import * as SecureStore from 'expo-secure-store';
 
 import { STORAGE_SESSION_KEY } from '../constants';
-import { BACKGROUND_COLOR } from '../(app)/constants';
 import Background from '../(app)/components/Background';
 import { SingInForm } from './SignInForm';
 
@@ -68,8 +67,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: BACKGROUND_COLOR,
   },
   loaderWrapper: {
     position: 'absolute',

@@ -2,41 +2,48 @@ import React from 'react';
 import { useAssets } from 'expo-asset';
 import { Dimensions, ImageBackground, StyleSheet, View } from 'react-native';
 import { hexToRgbaString } from '../utils/harmonicColors';
+import { BROWN_COLOR_1, GOLD_COLOR_1 } from '../constants';
 
-export type BackgroundTile = 'stone' | 'main';
+export type BackgroundTile = 'main' | 'paper';
+
+type BackgroundConfig = {
+  assetIndex: number;
+  backgroundColor: string;
+  imageOpacity: number;
+};
 
 type BackgroundProps = {
   tile: BackgroundTile;
-  opacity?: number;
   style?: object;
   forceFullScreen?: boolean;
 };
 
 const { height } = Dimensions.get('window');
 
-const Background = ({ tile, style = {}, opacity = 0.2, forceFullScreen }: BackgroundProps) => {
+const Background = ({ tile, style = {}, forceFullScreen }: BackgroundProps) => {
   const [assets, error] = useAssets([
     require('../../../assets/backgrounds/main_background.png'),
-    require('../../../assets/backgrounds/stone.jpg'),
+    require('../../../assets/backgrounds/paper3.jpg'),
   ]);
 
-  const getAssetIndexForBackgroundTile = (backgroundTile: BackgroundTile) => {
+  const getConfigForTile = (backgroundTile: BackgroundTile): BackgroundConfig | null => {
     switch (backgroundTile) {
       case 'main':
-        return 0;
-      case 'stone':
-        return 1;
+        return {
+          assetIndex: 0,
+          backgroundColor: hexToRgbaString(BROWN_COLOR_1, 0.7),
+          imageOpacity: 0.1,
+        };
+      case 'paper':
+        return {
+          assetIndex: 1,
+          backgroundColor: hexToRgbaString(GOLD_COLOR_1, 0.3),
+          imageOpacity: 0.8,
+        };
       default:
-        // might as well not throw here and just don't render the background
-        // handleError(
-        //   t,
-        //   jokerContext,
-        //   ErrorType.INVALID_BACKGROUND_TILE,
-        //   `Invalid background tile ${backgroundTile}`
-        // );
-        // for now console.error is enough
         console.error(`Invalid background tile: ${backgroundTile}`);
     }
+    return null;
   };
 
   if (error) {
@@ -46,26 +53,19 @@ const Background = ({ tile, style = {}, opacity = 0.2, forceFullScreen }: Backgr
     return null;
   }
 
-  const backgroundTileIndex = getAssetIndexForBackgroundTile(tile);
+  const config: BackgroundConfig | null = getConfigForTile(tile);
 
-  if (backgroundTileIndex === undefined) {
+  if (config === null) {
     return null;
   }
 
-  if (tile === 'main') {
-    opacity = 0.1;
-  }
+  const { assetIndex, backgroundColor, imageOpacity } = config;
 
   return (
-    <View style={styles.wrapper}>
+    <View style={[styles.wrapper, { height: forceFullScreen ? height : '100%', backgroundColor }]}>
       <ImageBackground
-        source={{ uri: assets[backgroundTileIndex].uri }}
-        style={[
-          styles.background,
-          { opacity, height: forceFullScreen ? height : '100%' },
-          styles.mainBackground,
-          style,
-        ]}
+        source={{ uri: assets[assetIndex].uri }}
+        style={[styles.background, { opacity: imageOpacity }, styles.mainBackground, style]}
         imageStyle={styles.imageStyle}
       />
     </View>
@@ -77,10 +77,11 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: '100%',
     height: '100%',
-    backgroundColor: hexToRgbaString('#41342A', 0.7),
   },
   background: {
     position: 'absolute',
+    width: '100%',
+    height: '100%',
   },
   mainBackground: {
     width: 4032,

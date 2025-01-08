@@ -9,7 +9,7 @@ export const PROFILE_PICTURE_SIZE_LIMIT = 2 * 1024 * 1024;
 
 // colors
 export const BACKGROUND_COLOR = '#FFFFFF';
-export const FONT_COLOR = '#000000';
+export const FONT_COLOR = '#FFFFFF';
 export const FONT_COLOR_DISABLED = '#2F4F4F';
 
 export const SWIPE_BASE_BACKGROUND_COLOR = '#000000';
@@ -20,6 +20,12 @@ export const SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY = hexToRgbaString(
 
 export const TAB_BAR_BACKGROUND_COLOR = '#1D1816';
 export const TAB_BAR_FONT_COLOR = 'white';
+
+export const RED_COLOR = '#4A1313';
+export const BLACK_COLOR = '#1D1816';
+
+export const BROWN_COLOR_1 = '#41342A';
+export const BROWN_COLOR_2 = '#432012';
 
 export const GOLD_COLOR_1 = '#AE875F';
 export const GOLD_COLOR_2 = '#F3D9C3';

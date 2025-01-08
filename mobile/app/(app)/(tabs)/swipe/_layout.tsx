@@ -8,7 +8,6 @@ export default function Layout() {
     <Stack
       screenOptions={{
         headerShown: false,
-        headerStyle: { backgroundColor: SWIPE_BASE_BACKGROUND_COLOR },
         contentStyle: { backgroundColor: SWIPE_BASE_BACKGROUND_COLOR },
         animation: 'none',
         headerShadowVisible: false,

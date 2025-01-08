@@ -1,165 +1,113 @@
-import React, { useEffect, useRef, useState } from 'react';
-import {
-  ColorValue,
-  ImageBackground,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { BACKGROUND_COLOR } from '../constants';
-import { DimensionsType, generatePaths } from './utils';
-import { useAssets } from 'expo-asset';
-import Svg, { Path } from 'react-native-svg';
+import React from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { BLACK_COLOR, GOLD_COLOR_1, GOLD_COLOR_2, RED_COLOR } from '../constants';
 import { useSettingsContext } from '../context/SettingsContext';
 import { useFont } from '../hooks/useFont';
+import TextWrapper from './TextWrapper';
+import { LinearGradient } from 'expo-linear-gradient';
+import { hexToRgbaString } from '../utils/harmonicColors';
 
-export const BUTTON_HEIGHT = 40;
+export const BUTTON_HEIGHT = 56;
 export const FALLBACK_BACKGROUND_COLOR = '#432c26';
+
+export type ButtonWrapperMode = 'black' | 'red';
 
 type MyButtonProps = {
   title: string;
-  icon?: keyof typeof FontAwesome.glyphMap;
   onPress: (() => void) | (() => Promise<void>);
+  mode: ButtonWrapperMode;
+  marginTop?: number;
   disabled?: boolean;
-  color?: ColorValue;
-  fillColor: string;
 };
 
-const ButtonWrapper = ({ title, icon, onPress, disabled, color, fillColor }: MyButtonProps) => {
+const ButtonWrapper = ({ title, onPress, mode, marginTop = 0, disabled }: MyButtonProps) => {
   const settingsContext = useSettingsContext();
-
-  const [dimensions, setDimensions] = useState<DimensionsType>({
-    width: 0,
-    height: 0,
-  });
-  const [paths, setPaths] = useState<string[]>([]);
-  const borderRadiusRef = useRef<number>(Math.floor(Math.random() * 4 + 4));
-
-  const [assets, error] = useAssets([require('../../../assets/backgrounds/wood.jpg')]);
 
   const fontFamily = useFont();
 
-  useEffect(() => {
-    if (error) {
-      console.error(`Error loading assets ${error}`);
+  const getFillColor = () => {
+    switch (mode) {
+      case 'black':
+        return BLACK_COLOR;
+      case 'red':
+        return RED_COLOR;
     }
-  }, [error]);
-
-  useEffect(() => {
-    if (!dimensions || (!dimensions.height && !dimensions.width) || paths.length) {
-      return;
-    }
-    setPaths(generatePaths(dimensions));
-  }, [dimensions]);
-
-  const textStyle = {
-    color: color ? color : BACKGROUND_COLOR,
   };
 
+  const fillColor = getFillColor();
+
   return (
-    <View
-      style={[styles.container, { borderRadius: borderRadiusRef.current }]}
-      onLayout={(e) => {
-        setDimensions({ width: e.nativeEvent.layout.width, height: e.nativeEvent.layout.height });
+    <TouchableOpacity
+      style={[styles.container, { marginTop, opacity: disabled ? 0.5 : 1 }]}
+      disabled={disabled}
+      onPress={() => {
+        settingsContext.playSound('click');
+        onPress();
       }}
     >
-      <TouchableOpacity
-        activeOpacity={0.8}
-        onPress={() => {
-          settingsContext.playSound('click');
-          onPress();
-        }}
-        style={[styles.button, icon ? styles.buttonWithIcon : styles.buttonWithoutIcon]}
-        disabled={disabled}
-      >
-        {assets && assets.length && (
-          <ImageBackground
-            source={{ uri: assets[0].uri }}
-            style={styles.background}
-            imageStyle={styles.imageStyle}
+      <View>
+        <LinearGradient
+          colors={[GOLD_COLOR_1, GOLD_COLOR_2, GOLD_COLOR_1]}
+          locations={[0, 0.47, 1]}
+          style={styles.gradient}
+        />
+        <View
+          style={{
+            margin: 1,
+          }}
+        >
+          <LinearGradient
+            colors={[fillColor, hexToRgbaString(fillColor, 0.5), fillColor]}
+            locations={[0, 0.47, 1]}
+            style={styles.gradient}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 0 }}
+          />
+          <View
+            style={{
+              margin: 4,
+            }}
           >
-            <Svg height="100%" width="100%" style={styles.svgOverlay}>
-              {paths.map((path, index) => (
-                <Path key={index} d={path} fill={fillColor} />
-              ))}
-            </Svg>
-          </ImageBackground>
-        )}
-        <View style={styles.labelWrapper}>
-          {icon && <FontAwesome size={30} name={icon} style={[styles.icon, textStyle]} />}
-          <Text
-            style={[
-              styles.label,
-              icon ? styles.labelWithIcon : styles.labelWithoutIcon,
-              textStyle,
-              {
-                fontFamily,
-                opacity: disabled ? 0.5 : 1,
-              },
-            ]}
-          >
-            {title}
-          </Text>
+            <LinearGradient
+              colors={[GOLD_COLOR_1, GOLD_COLOR_2, GOLD_COLOR_1]}
+              locations={[0, 0.47, 1]}
+              style={styles.gradient}
+            />
+            <View
+              style={{
+                margin: 1,
+              }}
+            >
+              <LinearGradient
+                colors={[fillColor, hexToRgbaString(fillColor, 0.6), fillColor]}
+                locations={[0, 0.47, 1]}
+                style={styles.gradient}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 0 }}
+              />
+              <TextWrapper style={[styles.label, { fontFamily }]}>{title}</TextWrapper>
+            </View>
+          </View>
         </View>
-      </TouchableOpacity>
-    </View>
+      </View>
+    </TouchableOpacity>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    backgroundColor: FALLBACK_BACKGROUND_COLOR,
-    overflow: 'hidden',
-  },
-  button: {
     height: BUTTON_HEIGHT,
     overflow: 'hidden',
-  },
-  buttonWithIcon: {
-    flexDirection: 'row',
-  },
-  buttonWithoutIcon: {},
-  background: {
-    flex: 1,
-    width: '100%',
-    height: '100%',
-  },
-  imageStyle: {
-    resizeMode: 'repeat',
-  },
-  svgOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  labelWrapper: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: '100%',
-    height: '100%',
   },
   label: {
-    lineHeight: BUTTON_HEIGHT,
-    height: BUTTON_HEIGHT,
-    fontSize: 20,
-  },
-  labelWithoutIcon: {
+    marginTop: 12,
+    marginBottom: 9,
+    fontSize: 18,
     textAlign: 'center',
+    color: 'white',
   },
-  labelWithIcon: {
-    margin: 5,
-    marginLeft: 20,
-  },
-  icon: {
-    width: 30,
-    textAlign: 'center',
-  },
+  gradient: { width: '100%', height: '100%', position: 'absolute' },
 });
 
 export default ButtonWrapper;

@@ -1,11 +1,12 @@
 import React from 'react';
-import { TouchableOpacity } from 'react-native';
+import { TouchableOpacity, View } from 'react-native';
 import { router } from 'expo-router';
 import { XMLParser } from 'fast-xml-parser';
 import { UserData } from '../types';
 import { LisIcon, PolandFlagIcon, UkraineFlagIcon, UnitedKingdomFlagIcon } from './icons';
 import { useSettingsContext } from '../context/SettingsContext';
 import { SvgProps } from 'react-native-svg';
+import Background from '../components/Background';
 
 export const headerBackButtonOptions = (
   beforeCallback?: () => Promise<boolean>,
@@ -17,6 +18,11 @@ export const headerBackButtonOptions = (
     headerShown: true,
     headerTitle: () => <></>,
     headerBackVisible: false,
+    headerBackground: () => (
+      <View style={{ backgroundColor: 'black', width: '100%', height: '100%' }}>
+        <Background tile="main" />
+      </View>
+    ),
     headerLeft: () => (
       <TouchableOpacity
         onPress={async () => {
@@ -130,3 +136,10 @@ export const getIconForLanguage = (language: string): React.FC<SvgProps> | null 
   }
   return null;
 };
+
+export const capitalizeFirstLetterOfEveryWord = (text: string) =>
+  text
+    .toLowerCase()
+    .split(' ')
+    .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
+    .join(' ');
