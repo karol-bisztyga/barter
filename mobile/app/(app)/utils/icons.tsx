@@ -27,6 +27,7 @@ import TrumpetIcon from '../../../assets/icons/medieval_pack_2/020-trumpet.svg';
 import CannonIcon from '../../../assets/icons/medieval_pack_2/030-cannon.svg';
 import AlchemyIcon from '../../../assets/icons/medieval_pack/050-alchemy.svg';
 import BarrelIcon from '../../../assets/icons/medieval_pack/042-barrel.svg';
+import SwordsIcon from '../../../assets/icons/new_designs/006-cross_swords.svg';
 
 import PolandFlagIcon from '../../../assets/icons/flags/poland.svg';
 import UnitedKingdomFlagIcon from '../../../assets/icons/flags/united-kingdom.svg';
@@ -63,4 +64,5 @@ export {
   PolandFlagIcon,
   UnitedKingdomFlagIcon,
   UkraineFlagIcon,
+  SwordsIcon,
 };

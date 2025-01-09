@@ -1,16 +1,18 @@
 import React from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import TextWrapper from '../../../genericComponents/TextWrapper';
 import { ItemData } from '../../../types';
 import ImageWrapper from '../../../genericComponents/ImageWrapper';
-import { ArrowsIcon } from '../../../utils/icons';
 import { useTranslation } from 'react-i18next';
 import { useMatchContext } from '../../../context/MatchContext';
 import { NotificationIndicator } from '../../swipe/components/NotificationIndicator';
+import { GOLD_COLOR_1 } from '../../../constants';
+import { hexToRgbaString } from '../../../utils/harmonicColors';
+import { useFont } from '../../../hooks/useFont';
+import Background from '../../../components/Background';
+import { Separator } from './Separator';
 
-const { width } = Dimensions.get('window');
-
-const ICON_SIZE = 16;
+const IMAGE_SIZE = 35;
 
 export type ChatItemProps = {
   id: string;
@@ -23,6 +25,8 @@ const ChatItem = ({ id, myItem, theirItem, registerRenderedListItem }: ChatItemP
   const { t } = useTranslation();
 
   const matchContext = useMatchContext();
+
+  const fontFamily = useFont();
 
   const myItemImage = myItem.images[0];
   const theirItemImage = theirItem.images[0];
@@ -37,60 +41,65 @@ const ChatItem = ({ id, myItem, theirItem, registerRenderedListItem }: ChatItemP
         registerRenderedListItem(id);
       }}
     >
-      <View style={[styles.itemWrapper, styles.myItemWrapper]}>
-        {myItemImage && (
-          <View style={styles.imageWrapper}>
-            <ImageWrapper uri={myItemImage} style={styles.image} />
-          </View>
-        )}
-        <TextWrapper style={styles.itemTitle} ellipsizeMode="tail" numberOfLines={1}>
-          {myItem.name}
-        </TextWrapper>
-        <TextWrapper
-          style={[styles.itemOwnerWrapper, { lineHeight: 60 }]}
-          ellipsizeMode="tail"
-          numberOfLines={1}
-        >
-          {t('you')}
-        </TextWrapper>
+      <View style={styles.wrapper}>
+        <Background tile="paper" style={{ opacity: 0.8 }} />
+        <View style={[styles.itemWrapper, styles.myItemWrapper]}>
+          {myItemImage && (
+            <View style={styles.imageWrapper}>
+              <ImageWrapper uri={myItemImage} style={styles.image} />
+            </View>
+          )}
+          <TextWrapper
+            style={[styles.itemTitle, { fontFamily: fontFamily.bold }]}
+            ellipsizeMode="tail"
+            numberOfLines={1}
+          >
+            {myItem.name}
+          </TextWrapper>
+          <TextWrapper
+            style={[styles.itemOwnerWrapper, { lineHeight: 60 }]}
+            ellipsizeMode="tail"
+            numberOfLines={1}
+          >
+            {t('you')}
+          </TextWrapper>
+        </View>
+        <Separator />
+        <View style={[styles.itemWrapper, styles.theirItemWrapper]}>
+          {theirItemImage && (
+            <View style={styles.imageWrapper}>
+              <ImageWrapper uri={theirItemImage} style={styles.image} />
+            </View>
+          )}
+          <TextWrapper style={styles.itemTitle} ellipsizeMode="tail" numberOfLines={1}>
+            {theirItem.name}
+          </TextWrapper>
+          <TextWrapper style={styles.itemOwnerWrapper} ellipsizeMode="tail" numberOfLines={1}>
+            {theirItem.userName}
+          </TextWrapper>
+        </View>
       </View>
-      <View style={[styles.itemWrapper, styles.theirItemWrapper]}>
-        {theirItemImage && (
-          <View style={styles.imageWrapper}>
-            <ImageWrapper uri={theirItemImage} style={styles.image} />
-          </View>
-        )}
-        <TextWrapper style={styles.itemTitle} ellipsizeMode="tail" numberOfLines={1}>
-          {theirItem.name}
-        </TextWrapper>
-        <TextWrapper style={styles.itemOwnerWrapper} ellipsizeMode="tail" numberOfLines={1}>
-          {theirItem.userName}
-        </TextWrapper>
-      </View>
-      <View style={styles.iconWrapper}>
-        <ArrowsIcon width={ICON_SIZE} height={ICON_SIZE} />
-      </View>
-      {containsNotifications && <NotificationIndicator iconSize={30} />}
+      {containsNotifications && <NotificationIndicator iconSize={30} mode="chat-list" />}
     </View>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
-    flexDirection: 'column',
-    margin: 16,
+    marginHorizontal: 20,
+    marginVertical: 9,
+    backgroundColor: hexToRgbaString(GOLD_COLOR_1, 0.3),
+    borderRadius: 4,
+  },
+  wrapper: {
+    overflow: 'hidden',
+    flex: 1,
+    borderRadius: 4,
   },
   itemWrapper: {
-    borderRadius: 16,
     flexDirection: 'row',
-    height: 60,
-    borderColor: '#E0E0E0',
-    alignSelf: 'flex-start',
-    backgroundColor: '#F5F5F5',
   },
   myItemWrapper: {
-    borderColor: '#E0E0E0',
-    borderBottomWidth: 1,
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
   },
@@ -100,34 +109,24 @@ const styles = StyleSheet.create({
   },
   itemTitle: {
     flex: 5,
-    fontSize: 20,
+    fontSize: 16,
     lineHeight: 60,
-    marginLeft: 16,
   },
   itemOwnerWrapper: {
     flex: 2,
-    fontSize: 16,
+    fontSize: 12,
     textAlign: 'right',
     marginRight: 8,
     lineHeight: 60,
   },
   imageWrapper: {
-    flex: 1,
-    width: 30,
     justifyContent: 'center',
-    alignItems: 'center',
+    marginHorizontal: 14,
   },
   image: {
-    width: 30,
-    height: 30,
-    borderRadius: 30,
-  },
-  iconWrapper: {
-    height: ICON_SIZE,
-    width: ICON_SIZE,
-    position: 'absolute',
-    top: 120 / 2 - ICON_SIZE / 2,
-    left: width / 2 - ICON_SIZE / 2,
+    width: IMAGE_SIZE,
+    height: IMAGE_SIZE,
+    borderRadius: IMAGE_SIZE,
   },
 });
 

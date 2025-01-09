@@ -13,6 +13,9 @@ import ChatItem from './components/ChatItem';
 import { useJokerContext } from '../../context/JokerContext';
 import { useSettingsContext } from '../../context/SettingsContext';
 import { useTranslation } from 'react-i18next';
+import { capitalizeFirstLetterOfEveryWord } from '../../utils/reusableStuff';
+import { PRESSABLE_ACTIVE_OPACITY } from '../../constants';
+import Background from '../../components/Background';
 
 const ITEMS_PER_SCREEN = 4;
 
@@ -63,80 +66,88 @@ export default function Chats() {
   );
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View
-        style={styles.container}
-        onLayout={(event) => {
-          const { height } = event.nativeEvent.layout;
-          setListItemHeight((height - SEPARATOR_HEIGHT * ITEMS_PER_SCREEN) / ITEMS_PER_SCREEN);
-        }}
-      >
-        <View style={[styles.loader, { opacity: listRendered ? 0 : 1 }]}>
-          <ActivityIndicator size="large" />
-        </View>
-        {matchContext.matches.length === 0 && listRendered && (
-          <View style={styles.noChatsWrapper}>
-            <TextWrapper style={styles.noChatsLabel}>{t('chats_no_chats')}</TextWrapper>
-          </View>
-        )}
-        <FlatList
-          style={{ opacity: listRendered ? 1 : 0 }}
-          data={matchContext.matches}
-          renderItem={({ item }) => {
-            const { matchingItem, matchedItem, id } = item;
-            // recognize which item is mine matching or matched and pass it properly to the list item
-            const matchingItemFoundInUserItems =
-              userContext.items.map((item) => item.id).indexOf(matchingItem.id) !== -1;
-            const matchedItemFoundInUserItems =
-              userContext.items.map((item) => item.id).indexOf(matchedItem.id) !== -1;
-            let myItem: ItemData;
-            let theirItem: ItemData;
-            try {
-              if (matchingItemFoundInUserItems && matchedItemFoundInUserItems) {
-                throw new Error(`both matching and matched item have been found in user's items`);
-              }
-              if (matchingItemFoundInUserItems) {
-                const itemFromUserContext = userContext.findItemById(matchingItem.id);
-                if (!itemFromUserContext) {
-                  throw new Error(`matching item not found in user's items`);
-                }
-                myItem = itemFromUserContext.item;
-                theirItem = matchedItem;
-              } else if (matchedItemFoundInUserItems) {
-                const itemFromUserContext = userContext.findItemById(matchedItem.id);
-                if (!itemFromUserContext) {
-                  throw new Error(`matched item not found in user's items`);
-                }
-                myItem = itemFromUserContext.item;
-                theirItem = matchingItem;
-              } else {
-                throw new Error(`neither matching nor matched item has been found in user's items`);
-              }
-            } catch (e) {
-              handleError(t, jokerContext, ErrorType.LOAD_MATCHES, `${e}`);
-              return null;
-            }
-            return (
-              <TouchableOpacity
-                onPress={() => {
-                  if (matchContext.currentMatchId) {
-                    return;
-                  }
-                  settingsContext.playSound('click');
-                  itemsContext.setUsersItemId(myItem.id);
-                  itemsContext.setOthersItem(theirItem);
-                  matchContext.setCurrentMatchId(id);
-                  // pass match id to chat screen so we can use it in socket communication
-                  router.push('chats/chat');
-                }}
-              >
-                {renderListItem(id, myItem, theirItem)}
-              </TouchableOpacity>
-            );
+    <View style={styles.container}>
+      <Background tile="main" />
+      <SafeAreaView style={styles.container} edges={['top', 'right', 'left']}>
+        <View
+          style={styles.container}
+          onLayout={(event) => {
+            const { height } = event.nativeEvent.layout;
+            setListItemHeight((height - SEPARATOR_HEIGHT * ITEMS_PER_SCREEN) / ITEMS_PER_SCREEN);
           }}
-        />
-      </View>
-    </SafeAreaView>
+        >
+          <View style={[styles.loader, { opacity: listRendered ? 0 : 1 }]}>
+            <ActivityIndicator size="large" />
+          </View>
+          {matchContext.matches.length === 0 && listRendered && (
+            <View style={styles.noChatsWrapper}>
+              <TextWrapper style={styles.noChatsLabel}>
+                {capitalizeFirstLetterOfEveryWord(t('chats_no_chats'))}
+              </TextWrapper>
+            </View>
+          )}
+          <FlatList
+            style={{ opacity: listRendered ? 1 : 0 }}
+            data={matchContext.matches}
+            renderItem={({ item }) => {
+              const { matchingItem, matchedItem, id } = item;
+              // recognize which item is mine matching or matched and pass it properly to the list item
+              const matchingItemFoundInUserItems =
+                userContext.items.map((item) => item.id).indexOf(matchingItem.id) !== -1;
+              const matchedItemFoundInUserItems =
+                userContext.items.map((item) => item.id).indexOf(matchedItem.id) !== -1;
+              let myItem: ItemData;
+              let theirItem: ItemData;
+              try {
+                if (matchingItemFoundInUserItems && matchedItemFoundInUserItems) {
+                  throw new Error(`both matching and matched item have been found in user's items`);
+                }
+                if (matchingItemFoundInUserItems) {
+                  const itemFromUserContext = userContext.findItemById(matchingItem.id);
+                  if (!itemFromUserContext) {
+                    throw new Error(`matching item not found in user's items`);
+                  }
+                  myItem = itemFromUserContext.item;
+                  theirItem = matchedItem;
+                } else if (matchedItemFoundInUserItems) {
+                  const itemFromUserContext = userContext.findItemById(matchedItem.id);
+                  if (!itemFromUserContext) {
+                    throw new Error(`matched item not found in user's items`);
+                  }
+                  myItem = itemFromUserContext.item;
+                  theirItem = matchingItem;
+                } else {
+                  throw new Error(
+                    `neither matching nor matched item has been found in user's items`
+                  );
+                }
+              } catch (e) {
+                handleError(t, jokerContext, ErrorType.LOAD_MATCHES, `${e}`);
+                return null;
+              }
+              return (
+                <TouchableOpacity
+                  onPress={() => {
+                    if (matchContext.currentMatchId) {
+                      return;
+                    }
+                    settingsContext.playSound('click');
+                    itemsContext.setUsersItemId(myItem.id);
+                    itemsContext.setOthersItem(theirItem);
+                    matchContext.setCurrentMatchId(id);
+                    // pass match id to chat screen so we can use it in socket communication
+                    router.push('chats/chat');
+                  }}
+                  activeOpacity={PRESSABLE_ACTIVE_OPACITY}
+                >
+                  {renderListItem(id, myItem, theirItem)}
+                </TouchableOpacity>
+              );
+            }}
+          />
+        </View>
+      </SafeAreaView>
+    </View>
   );
 }
 
@@ -146,28 +157,6 @@ const styles = StyleSheet.create({
   },
   text: {
     fontSize: 24,
-  },
-  itemsWrapper: {
-    height: 100,
-    padding: 10,
-  },
-  itemWrapper: {
-    flex: 1,
-    flexDirection: 'row',
-  },
-  matchingItem: {
-    flex: 1,
-  },
-  iconWrapper: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  icon: {
-    fontSize: 50,
-  },
-  matchedItem: {
-    flex: 1,
   },
   loader: {
     position: 'absolute',
@@ -180,9 +169,10 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 50,
     alignItems: 'center',
+    backgroundColor: 'red',
   },
   noChatsLabel: {
-    fontSize: 14,
+    fontSize: 24,
     textAlign: 'center',
     fontStyle: 'italic',
     opacity: 0.5,

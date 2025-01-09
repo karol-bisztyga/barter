@@ -179,7 +179,9 @@ export default function TabLayout() {
                     fill={color}
                     style={isTabActive ? styles.shadowStyle : {}}
                   />
-                  {outdatedMatchesExist && <NotificationIndicator iconSize={ICON_SIZE} />}
+                  {outdatedMatchesExist && (
+                    <NotificationIndicator iconSize={ICON_SIZE} mode="tabbar" />
+                  )}
                 </View>
               );
             },

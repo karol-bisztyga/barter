@@ -1,20 +1,15 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-import { GoldGradient } from '../../../../genericComponents/gradients/GoldGradient';
-import { SvgProps } from 'react-native-svg';
+import { GoldGradient } from '../../../genericComponents/gradients/GoldGradient';
+import { SwordsIcon } from '../../../utils/icons';
 
-const SQUARE_SIZE = 16;
+const SQUARE_SIZE = 24;
 const SQUARE_STROKE_WIDTH = 2;
 const ICON_SIZE = 24;
 
-type SeparatorProps = {
-  marginTop: number;
-  Icon?: React.FC<SvgProps>;
-};
-
-export const Separator = ({ marginTop, Icon }: SeparatorProps) => {
+export const Separator = () => {
   return (
-    <View style={[styles.container, { marginTop: marginTop + 11 }]}>
+    <View style={styles.container}>
       <View style={styles.line}>
         <GoldGradient />
 
@@ -22,7 +17,7 @@ export const Separator = ({ marginTop, Icon }: SeparatorProps) => {
           <GoldGradient />
           <View style={styles.squareFill} />
         </View>
-        {Icon && <Icon width={ICON_SIZE} height={ICON_SIZE} style={styles.icon} />}
+        <SwordsIcon width={ICON_SIZE} height={ICON_SIZE} style={styles.icon} />
       </View>
     </View>
   );
@@ -32,11 +27,12 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     alignItems: 'center',
+    marginVertical: 2,
   },
   line: {
     height: 2,
     alignItems: 'center',
-    width: 185,
+    marginHorizontal: 14,
   },
   squareBorder: {
     width: SQUARE_SIZE,
@@ -46,7 +42,7 @@ const styles = StyleSheet.create({
   },
   icon: {
     position: 'absolute',
-    top: -ICON_SIZE / 2,
+    top: -ICON_SIZE / 2 + 1,
   },
   squareFill: {
     position: 'absolute',

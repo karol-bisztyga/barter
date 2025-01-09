@@ -46,7 +46,7 @@ export default function Profile() {
   }, [editingId]);
 
   return (
-    <View style={{}}>
+    <View>
       <Background tile="main" />
       <KeyboardAwareScrollView ref={scrollViewRef} showsVerticalScrollIndicator={false}>
         <ProfilePicture />
