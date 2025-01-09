@@ -41,3 +41,5 @@ export const LANGUAGES = ['language_english', 'language_polish', 'language_ukrai
 export const DEFAULT_LANGUAGE = 'language_polish';
 
 export const RELOAD_CARDS_MINIMAL_INTERVAL = 1000 * 60 * 3;
+
+export const PRESSABLE_ACTIVE_OPACITY = 0.6;

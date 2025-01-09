@@ -46,6 +46,7 @@ const styles = StyleSheet.create({
     backgroundColor: hexToRgbaString('#FFFFFF', 0.45),
     marginHorizontal: 1,
     marginVertical: 1,
+    overflow: 'hidden',
   },
 });
 

@@ -1,17 +1,17 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { useSessionContext } from '../../../../SessionContext';
+import { useSessionContext } from '../../../../../SessionContext';
 import { router } from 'expo-router';
-import EditableItem from './items/EditableItem';
-import LinkItem from './items/LinkItem';
-import ToggleItem from './items/ToggleItem';
-import { MandolinIcon, TrumpetIcon } from '../../../utils/icons';
-import { useSettingsContext } from '../../../context/SettingsContext';
+import EditableItem from '../items/EditableItem';
+import LinkItem from '../items/LinkItem';
+import ToggleItem from '../items/ToggleItem';
+import { MandolinIcon, TrumpetIcon } from '../../../../utils/icons';
+import { useSettingsContext } from '../../../../context/SettingsContext';
 import { useTranslation } from 'react-i18next';
-import { SelectConfig } from './items/editing_panels/SelectEditingPanel';
-import { useJokerContext } from '../../../context/JokerContext';
-import { LANGUAGES, TAB_BAR_BACKGROUND_COLOR } from '../../../constants';
-import { getIconForLanguage } from '../../../utils/reusableStuff';
+import { SelectConfig } from '../items/editing_panels/SelectEditingPanel';
+import { useJokerContext } from '../../../../context/JokerContext';
+import { LANGUAGES, TAB_BAR_BACKGROUND_COLOR } from '../../../../constants';
+import { getIconForLanguage } from '../../../../utils/reusableStuff';
 
 const Settings = ({
   editingId,

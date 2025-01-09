@@ -1,15 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  ActivityIndicator,
-  Alert,
-  Dimensions,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import AddButton from '../../components/AddButton';
-import { EditImageType, ItemBorderRadius, ItemData, RemoveMatchData } from '../../types';
+import { ActivityIndicator, Alert, Dimensions, ScrollView, StyleSheet, View } from 'react-native';
+import { EditImageType, ItemData, RemoveMatchData } from '../../types';
 import { useItemsContext } from '../../context/ItemsContext';
 import {
   MAX_ITEM_PICTURES,
@@ -26,16 +17,18 @@ import { deleteItemImage } from '../../db_utils/deleteItemImage';
 import { uploadItemImage } from '../../db_utils/uploadItemImage';
 import { prepareFileToUpload } from '../../utils/storageUtils';
 import { ErrorType, handleError } from '../../utils/errorHandler';
-import ImageWrapper from '../../genericComponents/ImageWrapper';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
 import InputWrapper from '../../genericComponents/InputWrapper';
 import TextWrapper from '../../genericComponents/TextWrapper';
 import { useJokerContext } from '../../context/JokerContext';
 import { FILL_COLOR } from './components/items/editing_panels/constants';
-import { TorchIcon } from '../../utils/icons';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
 import { useSocketContext } from '../../context/SocketContext';
+import Background from '../../components/Background';
+import { capitalizeFirstLetterOfEveryWord } from '../../utils/reusableStuff';
+import { Picture } from './components/edit_item/Picture';
+import { BottomButtons } from './components/edit_item/BottomButtons';
 
 const { width } = Dimensions.get('window');
 
@@ -338,10 +331,11 @@ const EditItem = () => {
 
   return (
     <View style={styles.container}>
+      <Background tile="main" />
       <ScrollView ref={scrollRef}>
         <View style={[styles.nameInputWrapper, styles.margins]}>
           <InputWrapper
-            placeholder={t('profile_name_title')}
+            placeholder={capitalizeFirstLetterOfEveryWord(t('profile_name_title'))}
             value={name}
             onChangeText={setName}
             fillColor={SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY}
@@ -349,19 +343,20 @@ const EditItem = () => {
         </View>
         <View style={[styles.descriptionInputWrapper, styles.margins]}>
           <InputWrapper
-            placeholder={t('profile_description_title')}
+            placeholder={capitalizeFirstLetterOfEveryWord(t('profile_description_title'))}
             multiline={true}
             value={description}
             onChangeText={setDescription}
             fillColor={SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY}
+            style={styles.descriptionInput}
           />
         </View>
-        <View style={[styles.addButtonWrapper, styles.margins]}>
+        <View style={styles.margins}>
           <ButtonWrapper
-            title={t('save')}
+            title={capitalizeFirstLetterOfEveryWord(t('save'))}
             disabled={!validateForm() || !checkIfItemEdited()}
             onPress={save}
-            fillColor={FILL_COLOR}
+            mode="black"
           />
         </View>
 
@@ -370,29 +365,22 @@ const EditItem = () => {
             <ActivityIndicator size="large" />
           </View>
         )}
-        <TextWrapper style={styles.sectionTitle}>{t('profile_pictures_title')}</TextWrapper>
+        <TextWrapper style={styles.picturesTitle}>
+          {capitalizeFirstLetterOfEveryWord(t('profile_pictures_title'))}
+        </TextWrapper>
         <View style={styles.imageSlotsWrapper}>
           {pictures.map((picture, index) => {
             const isCurrentImageBeingRemoved = removingImage === index;
+            const removingDisabled = pictures.length <= 1;
             return (
-              <View style={styles.imageSlot} key={index}>
-                <ImageWrapper
-                  uri={picture}
-                  style={[styles.imageSlot, { opacity: isCurrentImageBeingRemoved ? 0.3 : 1 }]}
-                />
-                {isCurrentImageBeingRemoved && (
-                  <ActivityIndicator size="large" style={styles.imageRemoveLoader} />
-                )}
-                {pictures.length > 1 && (
-                  <TouchableOpacity
-                    style={styles.removeImageWrapper}
-                    activeOpacity={1}
-                    onPress={() => removePicture(index)}
-                  >
-                    <TorchIcon width={30} height={30} />
-                  </TouchableOpacity>
-                )}
-              </View>
+              <Picture
+                key={index}
+                index={index}
+                uri={picture}
+                removePicture={removePicture}
+                removingDisabled={removingDisabled}
+                isBeingRemoved={isCurrentImageBeingRemoved}
+              />
             );
           })}
           {uploadingImage && (
@@ -400,34 +388,22 @@ const EditItem = () => {
               <ActivityIndicator size="large" />
             </View>
           )}
-          {!uploadingImage && pictures.length < MAX_ITEM_PICTURES && (
-            <View style={styles.imageSlot}>
-              <AddButton onPress={addImage} borderRadius={ItemBorderRadius.all} />
-            </View>
-          )}
+          <BottomButtons
+            addImage={addImage}
+            removeImage={removeItemPress}
+            addImageDisabled={uploadingImage || pictures.length >= MAX_ITEM_PICTURES}
+          />
         </View>
-        <View style={styles.addButton}>
-          {usersItemId && (
-            <View style={[styles.nameInputWrapper, styles.margins]}>
-              <ButtonWrapper
-                color="red"
-                title={t('profile_remove_item_title')}
-                onPress={removeItemPress}
-                fillColor={FILL_COLOR}
-              />
-            </View>
-          )}
-          {removingItem && (
-            <View
-              style={styles.loaderWrapper}
-              onLayout={() => {
-                scrollRef.current?.scrollToEnd({ animated: true });
-              }}
-            >
-              <ActivityIndicator size="large" />
-            </View>
-          )}
-        </View>
+        {removingItem && (
+          <View
+            style={[styles.loaderWrapper, { marginTop: 0 }]}
+            onLayout={() => {
+              scrollRef.current?.scrollToEnd({ animated: true });
+            }}
+          >
+            <ActivityIndicator size="large" />
+          </View>
+        )}
       </ScrollView>
     </View>
   );
@@ -436,11 +412,12 @@ const EditItem = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    overflow: 'hidden',
   },
-  sectionTitle: {
-    margin: 10,
-    padding: 10,
-    fontSize: 30,
+  picturesTitle: {
+    fontSize: 22,
+    marginTop: 24,
+    marginHorizontal: 12,
   },
   margins: {
     marginVertical: 8,
@@ -452,7 +429,9 @@ const styles = StyleSheet.create({
   descriptionInputWrapper: {
     height: 200,
   },
-  addButtonWrapper: {},
+  descriptionInput: {
+    height: '100%',
+  },
   imageSlotsWrapper: {
     flexDirection: 'column',
     justifyContent: 'center',
@@ -490,6 +469,7 @@ const styles = StyleSheet.create({
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+    marginVertical: 20,
   },
   imageRemoveLoader: {
     position: 'absolute',

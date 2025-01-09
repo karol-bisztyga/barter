@@ -8,6 +8,10 @@ import { ARROW_ICON_SIZE } from './editing_panels/constants';
 import { BROWN_COLOR_4, GOLD_COLOR_3 } from '../../../../constants';
 import { useFont } from '../../../../hooks/useFont';
 import { capitalizeFirstLetterOfEveryWord } from '../../../../utils/reusableStuff';
+import { GoldGradient } from '../../../../genericComponents/gradients/GoldGradient';
+
+const IMAGE_WRAPPER_SIZE = 60;
+const IMAGE_SIZE = 36;
 
 export type LinkItemProps = {
   name: string;
@@ -15,12 +19,26 @@ export type LinkItemProps = {
   isLast: boolean;
   onPress: () => void;
   imageUrl?: string;
+  automaticallyCapitablizeFirstLetters?: boolean;
 };
 
-const LinkItem = ({ name, id, isLast, onPress, imageUrl }: LinkItemProps) => {
+const LinkItem = ({
+  name,
+  id,
+  isLast,
+  onPress,
+  imageUrl,
+  automaticallyCapitablizeFirstLetters = true,
+}: LinkItemProps) => {
   const settingsContext = useSettingsContext();
 
+  const [textContainerMaxWidth, setTextContainerMaxWidth] = React.useState<number | null>(null);
+
   const fontFamily = useFont();
+
+  const nameFormatted = automaticallyCapitablizeFirstLetters
+    ? capitalizeFirstLetterOfEveryWord(name)
+    : name;
 
   return (
     <TouchableOpacity
@@ -35,18 +53,30 @@ const LinkItem = ({ name, id, isLast, onPress, imageUrl }: LinkItemProps) => {
         settingsContext.playSound('click');
         onPress();
       }}
+      onLayout={(event) => {
+        const { width } = event.nativeEvent.layout;
+        // calculate max width for the text container
+        // 42 is for the arrow container (width + margins)
+        setTextContainerMaxWidth(width - IMAGE_WRAPPER_SIZE - 42 - 30);
+      }}
     >
       {imageUrl && (
-        <View style={styles.imageWrapper}>
-          <ImageWrapper uri={imageUrl || ''} style={styles.image} />
+        <View style={styles.imageContainer}>
+          <View style={styles.imageWrapper}>
+            <GoldGradient />
+            <ImageWrapper uri={imageUrl || ''} style={styles.image} />
+          </View>
         </View>
       )}
       <TextWrapper
-        style={[styles.itemTitle, { fontFamily: fontFamily.italic }]}
+        style={[
+          styles.itemTitle,
+          { fontFamily: fontFamily.italic, maxWidth: textContainerMaxWidth },
+        ]}
         ellipsizeMode="tail"
         numberOfLines={1}
       >
-        {capitalizeFirstLetterOfEveryWord(name)}
+        {nameFormatted}
       </TextWrapper>
       <View style={styles.itemArrowWrapper}>
         <FontAwesome size={ARROW_ICON_SIZE} style={styles.itemArrow} name="chevron-right" />
@@ -84,16 +114,22 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     color: GOLD_COLOR_3,
   },
-  imageWrapper: {
-    flex: 1,
-    width: 60,
+  imageContainer: {
+    width: IMAGE_WRAPPER_SIZE,
     justifyContent: 'center',
     alignItems: 'center',
   },
+  imageWrapper: {
+    width: IMAGE_SIZE,
+    height: IMAGE_SIZE,
+    borderRadius: IMAGE_SIZE,
+    overflow: 'hidden',
+  },
   image: {
-    width: 30,
-    height: 30,
-    borderRadius: 30,
+    width: IMAGE_SIZE - 2,
+    height: IMAGE_SIZE - 2,
+    margin: 1,
+    borderRadius: IMAGE_SIZE,
   },
 });
 

@@ -15,7 +15,7 @@ import Animated, {
 import { ItemData, SwipeCallbacks } from '../types';
 import { useUserContext } from '../context/UserContext';
 import CardItem from './CardItem';
-import { PaperIcon, SandGlassIcon, TorchIcon } from '../utils/icons';
+import { PaperIcon, SandGlassIcon, Torch2Icon } from '../utils/icons';
 import { useJokerContext } from '../context/JokerContext';
 import { hexToRgbaString } from '../utils/harmonicColors';
 import { BROWN_COLOR_3, GOLD_COLOR_2 } from '../constants';
@@ -337,7 +337,7 @@ const SwipeableCard = ({
           opacityAnimatedStyle,
         ]}
       >
-        <TorchIcon width={DECIDE_ICON_SIZE} height={DECIDE_ICON_SIZE} style={styles.decideIcon} />
+        <Torch2Icon width={DECIDE_ICON_SIZE} height={DECIDE_ICON_SIZE} style={styles.decideIcon} />
       </Animated.View>
       {/* right icon */}
       <Animated.View

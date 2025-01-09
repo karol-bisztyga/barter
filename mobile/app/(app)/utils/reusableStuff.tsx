@@ -1,19 +1,17 @@
 import React from 'react';
-import { TouchableOpacity, View } from 'react-native';
-import { router } from 'expo-router';
+import { View } from 'react-native';
 import { XMLParser } from 'fast-xml-parser';
 import { UserData } from '../types';
 import { LisIcon, PolandFlagIcon, UkraineFlagIcon, UnitedKingdomFlagIcon } from './icons';
-import { useSettingsContext } from '../context/SettingsContext';
 import { SvgProps } from 'react-native-svg';
 import Background from '../components/Background';
+import { IconButton } from '../genericComponents/IconButton';
+import { router } from 'expo-router';
 
 export const headerBackButtonOptions = (
   beforeCallback?: () => Promise<boolean>,
   disabled: boolean = false
 ) => {
-  const settingsContext = useSettingsContext();
-
   return {
     headerShown: true,
     headerTitle: () => <></>,
@@ -24,30 +22,18 @@ export const headerBackButtonOptions = (
       </View>
     ),
     headerLeft: () => (
-      <TouchableOpacity
-        onPress={async () => {
-          if (beforeCallback && !(await beforeCallback())) {
-            return;
-          }
-          if (disabled) {
-            return;
-          }
-          settingsContext.playSound('click');
+      <IconButton
+        Icon={LisIcon}
+        onPress={() => {
           router.back();
         }}
         disabled={disabled}
+        beforeCallback={beforeCallback}
         style={{
-          opacity: disabled ? 0.2 : 1,
+          transform: [{ rotate: '-90deg' }],
+          marginTop: -8,
         }}
-      >
-        <LisIcon
-          width={28}
-          height={28}
-          style={{
-            transform: [{ rotate: '-90deg' }],
-          }}
-        />
-      </TouchableOpacity>
+      />
     ),
   };
 };

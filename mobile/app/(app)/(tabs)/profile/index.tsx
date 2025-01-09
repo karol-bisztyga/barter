@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
-import Settings from './components/Settings';
+import Settings from './components/index/Settings';
 import TextWrapper from '../../genericComponents/TextWrapper';
-import AccountDetails from './components/AccountDetails';
-import MyItems from './components/MyItems';
+import AccountDetails from './components/index/AccountDetails';
+import MyItems from './components/index/MyItems';
 import { useSettingsContext } from '../../context/SettingsContext';
 import Background from '../../components/Background';
-import ProfilePicture from './components/ProfilePicture';
+import ProfilePicture from './components/index/ProfilePicture';
 import { useTranslation } from 'react-i18next';
 import { capitalizeFirstLetterOfEveryWord } from '../../utils/reusableStuff';
 

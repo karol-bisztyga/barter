@@ -237,11 +237,7 @@ const Joker = () => {
       </GestureDetector>
 
       {currentMessage && (
-        <JokerDialogue
-          currentMessage={currentMessage}
-          onPressDialogue={onPressDialogue}
-          displayedText={displayedText}
-        />
+        <JokerDialogue onPressDialogue={onPressDialogue} displayedText={displayedText} />
       )}
     </TouchableOpacity>
   );

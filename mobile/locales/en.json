@@ -116,6 +116,7 @@
 
   "reload_card_wait": "The cannon is overheated at the moment, we have to hold for a bit",
 
+  "add_new_image": "Add new image",
   "new_image": "New image",
   "km_away": "{{distance}} km away",
   "add_item": "Add item",

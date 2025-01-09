@@ -1,16 +1,16 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import ImageWrapper from '../../../genericComponents/ImageWrapper';
-import { FeatherIcon } from '../../../utils/icons';
-import { hexToRgbaString } from '../../../utils/harmonicColors';
-import { BROWN_COLOR_3, GOLD_COLOR_1, GOLD_COLOR_2 } from '../../../constants';
-import { convertFigmaShadowToReactNative } from '../../../utils/reusableStuff';
-import { useUserContext } from '../../../context/UserContext';
-import { useEditItemContext } from '../../../context/EditItemContext';
-import { useSettingsContext } from '../../../context/SettingsContext';
+import ImageWrapper from '../../../../genericComponents/ImageWrapper';
+import { FeatherIcon } from '../../../../utils/icons';
+import { hexToRgbaString } from '../../../../utils/harmonicColors';
+import { BROWN_COLOR_3, GOLD_COLOR_1, GOLD_COLOR_2 } from '../../../../constants';
+import { convertFigmaShadowToReactNative } from '../../../../utils/reusableStuff';
+import { useUserContext } from '../../../../context/UserContext';
+import { useEditItemContext } from '../../../../context/EditItemContext';
+import { useSettingsContext } from '../../../../context/SettingsContext';
 import { router } from 'expo-router';
-import { EditImageType } from '../../../types';
-import { BrownGradient } from '../../../genericComponents/gradients/BrownGradient';
+import { EditImageType } from '../../../../types';
+import { BrownGradient } from '../../../../genericComponents/gradients/BrownGradient';
 
 export const PROFILE_PICTURE_SIZE = 193;
 const CHANGE_ICON_SIZE = 28;

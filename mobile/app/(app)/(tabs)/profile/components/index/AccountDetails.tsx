@@ -1,14 +1,14 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { UserData } from '../../../types';
-import { useUserContext } from '../../../context/UserContext';
-import { ErrorType, handleError } from '../../../utils/errorHandler';
-import LinkItem from './items/LinkItem';
+import { UserData } from '../../../../types';
+import { useUserContext } from '../../../../context/UserContext';
+import { ErrorType, handleError } from '../../../../utils/errorHandler';
+import LinkItem from '../items/LinkItem';
 import { router } from 'expo-router';
-import EditableItem, { EditingPanelType } from './items/EditableItem';
-import { useJokerContext } from '../../../context/JokerContext';
+import EditableItem, { EditingPanelType } from '../items/EditableItem';
+import { useJokerContext } from '../../../../context/JokerContext';
 import { useTranslation } from 'react-i18next';
-import { TAB_BAR_BACKGROUND_COLOR } from '../../../constants';
+import { TAB_BAR_BACKGROUND_COLOR } from '../../../../constants';
 
 const AccountDetails = ({
   editingId,

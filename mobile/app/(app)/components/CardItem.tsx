@@ -1,10 +1,11 @@
 import React from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, StyleSheet } from 'react-native';
 import Carousel from './Carousel';
 import { ItemData } from '../types';
 import { BookIcon } from '../utils/icons';
 import { hexToRgbaString } from '../utils/harmonicColors';
 import { BROWN_COLOR_3, GOLD_COLOR_1 } from '../constants';
+import { IconButton } from '../genericComponents/IconButton';
 
 type ItemProps = {
   cardHeight: number;
@@ -38,19 +39,15 @@ export default function CardItem({ itemData, onPressMore = () => {}, cardHeight 
           styles.innerBorder,
         ]}
       />
-      <TouchableOpacity onPress={onPressMore}>
-        <View
-          style={[
-            styles.detailsIconWrapper,
-            {
-              // TODO this calculation is not perfect, but it's good enough for now
-              bottom: cardHeight - (DETAILS_ICON_SIZE + 16 + 2 + 8 + 2 + 8),
-            },
-          ]}
-        >
-          <BookIcon width={DETAILS_ICON_SIZE} height={DETAILS_ICON_SIZE} color="white" />
-        </View>
-      </TouchableOpacity>
+      <IconButton
+        Icon={BookIcon}
+        style={{
+          ...styles.detailsIconWrapper,
+          // TODO this calculation is not perfect, but it's good enough for now
+          bottom: cardHeight - (DETAILS_ICON_SIZE + 40),
+        }}
+        onPress={onPressMore}
+      />
     </View>
   );
   return (

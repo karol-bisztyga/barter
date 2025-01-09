@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { BLACK_COLOR, RED_COLOR } from '../constants';
+import { BLACK_COLOR, PRESSABLE_ACTIVE_OPACITY, RED_COLOR } from '../constants';
 import { useSettingsContext } from '../context/SettingsContext';
 import { useFont } from '../hooks/useFont';
 import TextWrapper from './TextWrapper';
@@ -54,6 +54,7 @@ const ButtonWrapper = ({
         settingsContext.playSound('click');
         onPress();
       }}
+      activeOpacity={PRESSABLE_ACTIVE_OPACITY}
     >
       <View>
         <GoldGradient />

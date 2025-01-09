@@ -7,6 +7,7 @@ import HelmetLinealIcon from '../../../assets/icons/medieval_pack/025-helmet-1-l
 import TargetLinealIcon from '../../../assets/icons/medieval_pack/006-target-lineal.svg';
 
 import TorchIcon from '../../../assets/icons/medieval_pack/005-torch.svg';
+import Torch2Icon from '../../../assets/icons/new_designs/024-torch.svg';
 import ShieldIcon from '../../../assets/icons/medieval_pack/013-shield.svg';
 import FeatherIcon from '../../../assets/icons/medieval_pack/032-feather.svg';
 import Feather2Icon from '../../../assets/icons/medieval_pack_2/007-feather.svg';
@@ -33,6 +34,7 @@ import UkraineFlagIcon from '../../../assets/icons/flags/ukraine.svg';
 
 export {
   TorchIcon,
+  Torch2Icon,
   ShieldIcon,
   PaperIcon,
   TargetIcon,
