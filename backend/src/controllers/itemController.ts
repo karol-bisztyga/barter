@@ -298,6 +298,17 @@ export const deleteImage = async (req: AuthRequest, res: Response) => {
     if (!fileName) {
       throw new Error('file name not found in url');
     }
+
+    // check if this image can be deleted - if it's the only one image for the given item, abort deletion
+    const currentCountResponse = await pool.query(
+      'SELECT COUNT(*) FROM items_images WHERE item_id = $1',
+      [itemId]
+    );
+    const { count } = currentCountResponse.rows[0];
+    if (count <= 1) {
+      throw new Error('Cannot delete the last image for the item');
+    }
+
     await storageHandler.deleteFile(bucketId, fileName);
     await pool.query('DELETE FROM items_images WHERE item_id = $1 AND url = $2', [
       itemId,
