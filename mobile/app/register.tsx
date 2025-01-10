@@ -6,7 +6,6 @@ import { router } from 'expo-router';
 import { validateEmail, validatePassword, validatePasswords } from './(app)/utils/validators';
 import { executeQuery } from './(app)/db_utils/executeQuery';
 import ButtonWrapper from './(app)/genericComponents/ButtonWrapper';
-import { BACKGROUND_COLOR } from './(app)/constants';
 import InputWrapper from './(app)/genericComponents/InputWrapper';
 import TextWrapper from './(app)/genericComponents/TextWrapper';
 import { useTranslation } from 'react-i18next';
@@ -113,7 +112,7 @@ export default function Register() {
           title={t('confirm')}
           disabled={!formValid()}
           onPress={register}
-          fillColor={SECTION_BACKGROUND}
+          mode="black"
         />
         <ButtonWrapper
           title={t('cancel')}
@@ -121,7 +120,7 @@ export default function Register() {
           onPress={async () => {
             router.replace('/login');
           }}
-          fillColor={SECTION_BACKGROUND}
+          mode="black"
         />
         {loading && (
           <View style={styles.loaderWrapper}>
@@ -138,7 +137,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: BACKGROUND_COLOR,
+    backgroundColor: 'black',
   },
   inputContainer: {
     flex: 1,
@@ -149,7 +148,6 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   inputWrapper: {
-    backgroundColor: 'red',
     height: 40,
   },
   errorWrapper: {

@@ -16,6 +16,8 @@ import { validateEmail, validatePassword } from '../(app)/utils/validators';
 import Background from '../(app)/components/Background';
 import { useFont } from '../(app)/hooks/useFont';
 import { capitalizeFirstLetterOfEveryWord } from '../(app)/utils/reusableStuff';
+import { ErrorBox } from '../ErrorBox';
+import { translateError } from '../(app)/utils/errorHandler';
 
 export const SingInForm = ({ loading }: { loading: boolean }) => {
   const { t } = useTranslation();
@@ -58,6 +60,7 @@ export const SingInForm = ({ loading }: { loading: boolean }) => {
         },
       ]}
     >
+      <ErrorBox message={translateError(t, sessionContext.authError)} />
       <View style={styles.formWrapper}>
         <Background tile="paper" />
         <TextWrapper style={[styles.label, { fontFamily: fontFamily.boldItalic }]}>
