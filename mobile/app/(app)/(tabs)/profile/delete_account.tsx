@@ -12,6 +12,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { useTranslation } from 'react-i18next';
 import { SWIPE_BASE_BACKGROUND_COLOR } from '../../constants';
 import { hexToRgbaString } from '../../utils/harmonicColors';
+import Background from '../../components/Background';
 
 export default function DeleteAccount() {
   const { t } = useTranslation();
@@ -38,6 +39,7 @@ export default function DeleteAccount() {
 
   return (
     <View style={styles.container}>
+      <Background tile="main" />
       <View style={styles.labelsWrapper}>
         <TextWrapper style={styles.label}>{t('profile_delete_account_label_1')}</TextWrapper>
         <TextWrapper style={styles.label}>{t('profile_delete_account_label_2')}</TextWrapper>
@@ -57,7 +59,7 @@ export default function DeleteAccount() {
           title={t('delete')}
           disabled={value !== t('delete')}
           onPress={handleDelete}
-          fillColor={hexToRgbaString(SWIPE_BASE_BACKGROUND_COLOR, 0.4)}
+          mode="red"
         />
       </View>
     </View>
@@ -68,13 +70,13 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
+    overflow: 'hidden',
   },
   labelsWrapper: {
     flex: 1,
     justifyContent: 'flex-end',
   },
   inputsWrapper: {
-    height: 60,
     padding: 10,
   },
   buttonsWrapper: {
