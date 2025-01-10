@@ -14,9 +14,17 @@ type IconButtonProps = {
   beforeCallback?: () => Promise<boolean>;
   disabled?: boolean;
   style?: ViewStyle;
+  iconRotateDeg?: number;
 };
 
-export const IconButton = ({ Icon, onPress, beforeCallback, disabled, style }: IconButtonProps) => {
+export const IconButton = ({
+  Icon,
+  onPress,
+  beforeCallback,
+  disabled,
+  style,
+  iconRotateDeg = 0,
+}: IconButtonProps) => {
   const settingsContext = useSettingsContext();
 
   return (
@@ -25,7 +33,7 @@ export const IconButton = ({ Icon, onPress, beforeCallback, disabled, style }: I
         if (beforeCallback && !(await beforeCallback())) {
           return;
         }
-        if (disabled) {
+        if (disabled || !onPress) {
           return;
         }
         settingsContext.playSound('click');
@@ -42,7 +50,13 @@ export const IconButton = ({ Icon, onPress, beforeCallback, disabled, style }: I
       activeOpacity={PRESSABLE_ACTIVE_OPACITY}
     >
       <BrownGradient style={styles.gradient} />
-      <Icon width={28} height={28} />
+      <Icon
+        width={28}
+        height={28}
+        style={{
+          transform: [{ rotate: `${iconRotateDeg}deg` }],
+        }}
+      />
     </TouchableOpacity>
   );
 };

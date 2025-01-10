@@ -13,6 +13,7 @@ import { useSettingsContext } from '../../../context/SettingsContext';
 import { useTranslation } from 'react-i18next';
 import { RemoveMatchData } from '../../../types';
 import { useSocketContext } from '../../../context/SocketContext';
+import { IconButton } from '../../../genericComponents/IconButton';
 
 const MENU_ICON_SIZE = 28;
 
@@ -77,7 +78,13 @@ const ChatRightHeaderMenu = () => {
             settingsContext.playSound('click');
           }}
         >
-          <Flag2Icon width={MENU_ICON_SIZE} height={MENU_ICON_SIZE} />
+          <IconButton
+            Icon={Flag2Icon}
+            style={{
+              marginTop: -8,
+            }}
+            disabled={true}
+          />
         </MenuTrigger>
         <MenuOptions customStyles={{ optionsContainer: styles.optionsContainer }}>
           <MenuOption onSelect={unmatchHandler} style={styles.menuItemWrapper}>

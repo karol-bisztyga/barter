@@ -30,9 +30,9 @@ export const headerBackButtonOptions = (
         disabled={disabled}
         beforeCallback={beforeCallback}
         style={{
-          transform: [{ rotate: '-90deg' }],
           marginTop: -8,
         }}
+        iconRotateDeg={-90}
       />
     ),
   };

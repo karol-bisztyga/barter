@@ -7,6 +7,7 @@ import {
   Platform,
   FlatList,
   ActivityIndicator,
+  Dimensions,
 } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { ChatMessage } from '../../types';
@@ -26,10 +27,14 @@ import { useAuth } from '../../hooks/useAuth';
 import { useSocketContext } from '../../context/SocketContext';
 import { getMessages } from '../../db_utils/getMessages';
 import { updateMatchNotified } from '../../db_utils/updateMatchNotified';
+import Background from '../../components/Background';
 
 const INPUT_WRAPPER_HEIGHT = 70;
 const MESSAGES_PER_CHUNK = 10;
 const SEND_MESSAGE_TIMEOUT = 3000;
+const SEND_BUTTON_WIDTH = 84;
+
+const { width } = Dimensions.get('window');
 
 const Chat = () => {
   const { t } = useTranslation();
@@ -243,6 +248,7 @@ const Chat = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Background tile="main" />
       <View style={styles.scrollViewContent}>
         <ChatHeader />
         <Animated.View style={styles.messageList}>
@@ -286,7 +292,7 @@ const Chat = () => {
           />
         </Animated.View>
         <Animated.View style={[styles.inputContainer, inputWrapperAnimatedStyle]}>
-          <View style={styles.inputContainerInner}>
+          <View style={[styles.inputContainerInner, { width: width - 40 - SEND_BUTTON_WIDTH - 8 }]}>
             <InputWrapper
               style={styles.input}
               placeholder={t('chats_type_a_message')}
@@ -295,14 +301,14 @@ const Chat = () => {
               onChangeText={setNewMessage}
               fillColor={FILL_COLOR}
             />
-            <View style={styles.buttonWrapper}>
-              <ButtonWrapper
-                title={t('send')}
-                disabled={newMessage.length === 0 || !sendingEnabled}
-                onPress={sendMessage}
-                fillColor={FILL_COLOR}
-              />
-            </View>
+          </View>
+          <View style={styles.buttonWrapper}>
+            <ButtonWrapper
+              title={t('send')}
+              disabled={newMessage.length === 0 || !sendingEnabled}
+              onPress={sendMessage}
+              mode="black"
+            />
           </View>
         </Animated.View>
       </View>
@@ -318,6 +324,7 @@ const Chat = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    overflow: 'hidden',
   },
   scrollViewContent: {
     flexGrow: 1,
@@ -327,21 +334,19 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'flex-end',
   },
-  buttonWrapper: {
-    width: 70,
-    marginHorizontal: 4,
-  },
   inputContainer: {
-    height: 70,
+    flexDirection: 'row',
+    padding: 20,
   },
   inputContainerInner: {
     flexDirection: 'row',
-    alignItems: 'center',
-    height: INPUT_WRAPPER_HEIGHT,
-    padding: 10,
   },
-  input: {
-    flex: 1,
+  input: {},
+  buttonWrapper: {
+    width: SEND_BUTTON_WIDTH,
+    marginLeft: 8,
+    marginRight: 0,
+    justifyContent: 'center',
   },
   messageLoaderWrapper: {
     margin: 20,

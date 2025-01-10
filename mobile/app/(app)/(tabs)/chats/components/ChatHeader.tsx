@@ -1,15 +1,19 @@
 import React from 'react';
-import { ItemBorderRadius } from '../../../types';
-import { StyleSheet, View } from 'react-native';
-import Item from '../../../components/Item';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { router } from 'expo-router';
 import { useUserContext } from '../../../context/UserContext';
 import { useItemsContext } from '../../../context/ItemsContext';
 import { ErrorType, handleError } from '../../../utils/errorHandler';
-import { ArrowsIcon } from '../../../utils/icons';
 import { useJokerContext } from '../../../context/JokerContext';
 import { useSettingsContext } from '../../../context/SettingsContext';
 import { useTranslation } from 'react-i18next';
+import { GoldGradient } from '../../../genericComponents/gradients/GoldGradient';
+import ImageWrapper from '../../../genericComponents/ImageWrapper';
+import { GOLD_COLOR_1, PRESSABLE_ACTIVE_OPACITY } from '../../../constants';
+import { SeparatorVertical } from './SeparatorVertical';
+
+const IMAGE_SIZE = 128;
+const IMAGE_BORDER_SIZE = 2;
 
 const ChatHeader = () => {
   const { t } = useTranslation();
@@ -29,34 +33,32 @@ const ChatHeader = () => {
 
   return (
     <View style={styles.itemsWrapper}>
-      <View style={styles.imageWrapper}>
-        <Item
-          itemData={usersItem.item}
-          carouselOptions={{ dotsVisible: false }}
-          showDescription={false}
-          showName={false}
-          borderRadius={ItemBorderRadius.all}
+      <View style={styles.imageContainer}>
+        <TouchableOpacity
+          style={styles.imageWrapper}
+          activeOpacity={PRESSABLE_ACTIVE_OPACITY}
           onPress={() => {
             settingsContext.playSound('click');
             router.push({ pathname: 'chats/item', params: { whosItem: 'self' } });
           }}
-        />
+        >
+          <GoldGradient />
+          <ImageWrapper style={styles.image} uri={usersItem.item.images[0]} />
+        </TouchableOpacity>
       </View>
-      <View style={styles.iconWrapper}>
-        <ArrowsIcon width={28} height={28} />
-      </View>
-      <View style={styles.imageWrapper}>
-        <Item
-          itemData={othersItem}
-          carouselOptions={{ dotsVisible: false }}
-          showDescription={false}
-          showName={false}
-          borderRadius={ItemBorderRadius.all}
+      <SeparatorVertical />
+      <View style={styles.imageContainer}>
+        <TouchableOpacity
+          style={styles.imageWrapper}
+          activeOpacity={PRESSABLE_ACTIVE_OPACITY}
           onPress={() => {
             settingsContext.playSound('click');
             router.push({ pathname: 'chats/item', params: { whosItem: 'other' } });
           }}
-        />
+        >
+          <GoldGradient />
+          <ImageWrapper style={styles.image} uri={othersItem.images[0]} />
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -64,10 +66,10 @@ const ChatHeader = () => {
 
 const styles = StyleSheet.create({
   itemsWrapper: {
-    height: 200,
     flexDirection: 'row',
     borderBottomWidth: 1,
-    borderColor: 'gray',
+    borderColor: GOLD_COLOR_1,
+    paddingVertical: 24,
   },
   iconWrapper: {
     flex: 1,
@@ -75,14 +77,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     margin: 10,
   },
-  imageWrapper: {
+  imageContainer: {
     flex: 4,
     margin: 4,
-    borderRadius: 16,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  imageWrapper: {
+    width: IMAGE_SIZE,
+    height: IMAGE_SIZE,
   },
   image: {
-    flex: 1,
-    borderRadius: 16,
+    margin: IMAGE_BORDER_SIZE,
+    width: IMAGE_SIZE - IMAGE_BORDER_SIZE * 2,
+    height: IMAGE_SIZE - IMAGE_BORDER_SIZE * 2,
   },
 });
 

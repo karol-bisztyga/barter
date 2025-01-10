@@ -6,14 +6,24 @@ import { ErrorType, handleError } from '../../../utils/errorHandler';
 import TextWrapper from '../../../genericComponents/TextWrapper';
 import { useJokerContext } from '../../../context/JokerContext';
 import { useTranslation } from 'react-i18next';
+import { BLACK_COLOR, GOLD_COLOR_3, RED_COLOR } from '../../../constants';
+import { useFont } from '../../../hooks/useFont';
 
 const { width } = Dimensions.get('window');
+
+type Config = {
+  fontFamily: string;
+  wrapperStyle: object;
+  textStyle: object;
+};
 
 export default function ChatMessageComponent({ message }: { message: ChatMessage }) {
   const { t } = useTranslation();
 
   const userContext = useUserContext();
   const jokerContext = useJokerContext();
+
+  const fontFamily = useFont();
 
   if (!userContext.data?.id) {
     handleError(
@@ -25,15 +35,38 @@ export default function ChatMessageComponent({ message }: { message: ChatMessage
     return null;
   }
 
-  const accordingStyle =
-    message.type === 'status'
-      ? styles.statusMesssage
-      : message.userId === userContext.data?.id
-        ? styles.myMessage
-        : styles.theirMessage;
+  const getConfigForMessageType = (): Config => {
+    switch (message.type) {
+      case 'status':
+        return {
+          fontFamily: fontFamily.italic,
+          wrapperStyle: styles.statusMesssageWrapper,
+          textStyle: styles.statusMesssage,
+        };
+      case 'message':
+        return {
+          fontFamily: fontFamily.regular,
+          wrapperStyle:
+            message.userId === userContext.data?.id
+              ? styles.myMessageWrapper
+              : styles.theirMessageWrapper,
+          textStyle:
+            message.userId === userContext.data?.id ? styles.myMessage : styles.theirMessage,
+        };
+    }
+  };
+
+  const config: Config = getConfigForMessageType();
+
   return (
-    <View style={[styles.message, accordingStyle]}>
-      <TextWrapper style={{ fontStyle: message.type === 'status' ? 'italic' : 'normal' }}>
+    <View style={[styles.messageWrapper, config.wrapperStyle]}>
+      <TextWrapper
+        style={[
+          styles.message,
+          { fontFamily: message.type === 'status' ? fontFamily.italic : fontFamily.regular },
+          config.textStyle,
+        ]}
+      >
         {message.content}
       </TextWrapper>
     </View>
@@ -41,7 +74,7 @@ export default function ChatMessageComponent({ message }: { message: ChatMessage
 }
 
 const styles = StyleSheet.create({
-  message: {
+  messageWrapper: {
     margin: 10,
     marginBottom: 5,
     marginTop: 5,
@@ -49,24 +82,35 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 20,
     borderTopRightRadius: 20,
   },
-  myMessage: {
+  myMessageWrapper: {
     alignSelf: 'flex-end',
     marginLeft: width / 3,
     borderBottomLeftRadius: 20,
-    backgroundColor: '#7573d9',
+    backgroundColor: RED_COLOR,
   },
-  theirMessage: {
+  theirMessageWrapper: {
     alignSelf: 'flex-start',
     marginRight: width / 3,
-    backgroundColor: '#a6aebd',
+    backgroundColor: GOLD_COLOR_3,
     borderBottomRightRadius: 20,
   },
-  statusMesssage: {
+  statusMesssageWrapper: {
     alignSelf: 'center',
-    backgroundColor: '#e5e5e5',
+    backgroundColor: 'rgba(255,255,255,.5)',
     borderRadius: 20,
-    opacity: 0.5,
     paddingRight: 20,
     paddingLeft: 20,
+  },
+  message: {
+    fontSize: 16,
+  },
+  statusMesssage: {
+    color: BLACK_COLOR,
+  },
+  myMessage: {
+    color: 'white',
+  },
+  theirMessage: {
+    color: BLACK_COLOR,
   },
 });

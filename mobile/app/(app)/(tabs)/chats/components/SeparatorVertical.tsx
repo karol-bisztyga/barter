@@ -8,12 +8,11 @@ const SQUARE_SIZE = 24;
 const SQUARE_STROKE_WIDTH = 2;
 const ICON_SIZE = 24;
 
-export const Separator = () => {
+export const SeparatorVertical = () => {
   return (
     <View style={styles.container}>
       <View style={styles.line}>
         <GoldGradient />
-
         <View style={styles.squareBorder}>
           <GoldGradient />
           <View style={styles.squareFill} />
@@ -41,24 +40,22 @@ export const Separator = () => {
 
 const styles = StyleSheet.create({
   container: {
-    width: '100%',
     alignItems: 'center',
-    marginVertical: 2,
+    flex: 1,
   },
   line: {
-    height: 2,
+    flex: 1,
+    width: 2,
     alignItems: 'center',
-    marginHorizontal: 14,
+    justifyContent: 'center',
   },
   squareBorder: {
     width: SQUARE_SIZE,
     height: SQUARE_SIZE,
     transform: [{ rotate: '45deg' }],
-    top: -SQUARE_SIZE / 2 + 1,
   },
   icon: {
     position: 'absolute',
-    top: -ICON_SIZE / 2 + 1,
   },
   squareFill: {
     position: 'absolute',

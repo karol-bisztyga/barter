@@ -45,7 +45,7 @@ export const getMessages = async (req: Request, res: Response) => {
     const messageResultParsed = messagesResult.rows.map((message) => ({
       id: message.id,
       userId: message.sender_id,
-      messageType: message.message_type,
+      type: message.message_type,
       content: message.content,
       dateCreated: message.date_created,
     }));
