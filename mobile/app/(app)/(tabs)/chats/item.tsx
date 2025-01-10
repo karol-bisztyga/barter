@@ -7,6 +7,7 @@ import { useUserContext } from '../../context/UserContext';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import { useJokerContext } from '../../context/JokerContext';
 import { useTranslation } from 'react-i18next';
+import Background from '../../components/Background';
 
 const ItemScreen = () => {
   const { t } = useTranslation();
@@ -29,7 +30,12 @@ const ItemScreen = () => {
     return null;
   }
 
-  return <Item itemData={item} showFull={true} showDescription={false} showName={false} />;
+  return (
+    <>
+      <Background tile="main" forceFullScreen />
+      <Item itemData={item} showFull={true} showDescription={false} showName={false} />
+    </>
+  );
 };
 
 export default ItemScreen;

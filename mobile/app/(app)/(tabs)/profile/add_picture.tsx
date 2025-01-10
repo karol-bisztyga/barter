@@ -1,12 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {
-  ActivityIndicator,
-  Dimensions,
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Image, StyleSheet, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { EditImageType, UserData } from '../../types';
 import { router } from 'expo-router';
@@ -14,28 +7,24 @@ import { useUserContext } from '../../context/UserContext';
 import { useEditItemContext } from '../../context/EditItemContext';
 import { uploadProfilePicture } from '../../db_utils/uploadProfilePicture';
 import { useSessionContext } from '../../../SessionContext';
-import {
-  PROFILE_PICTURE_SIZE_LIMIT,
-  SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY,
-} from '../../constants';
+import { PROFILE_PICTURE_SIZE_LIMIT } from '../../constants';
 import { manipulateAsync, SaveFormat } from 'expo-image-manipulator';
 import { getInfoAsync } from 'expo-file-system';
-import { formatBytes } from '../../utils/reusableStuff';
+import { capitalizeFirstLetterOfEveryWord, formatBytes } from '../../utils/reusableStuff';
 import { prepareFileToUpload } from '../../utils/storageUtils';
 import { ErrorType, handleError } from '../../utils/errorHandler';
 import ImageWrapper from '../../genericComponents/ImageWrapper';
 import { useAddPictureContext } from '../../context/AddPictureContext';
 import ButtonWrapper from '../../genericComponents/ButtonWrapper';
-import TextWrapper from '../../genericComponents/TextWrapper';
 import { useJokerContext } from '../../context/JokerContext';
-import { BarrelIcon, Feather2Icon } from '../../utils/icons';
 import { useTranslation } from 'react-i18next';
-
-const { width } = Dimensions.get('window');
+import Background from '../../components/Background';
+import { GoldGradient } from '../../genericComponents/gradients/GoldGradient';
 
 type ImageDimensions = { width: number; height: number };
 
-const ICON_SIZE = 50;
+const IMAGE_SIZE = 245;
+const IMAGE_BORDER_SIZE = 2;
 
 const AddPicture = () => {
   const { t } = useTranslation();
@@ -194,41 +183,47 @@ const AddPicture = () => {
 
   return (
     <View style={styles.container}>
-      <TouchableOpacity
-        activeOpacity={1}
-        style={styles.iconWrapper}
-        onPress={() => {
-          router.push('profile/camera');
-        }}
-      >
-        <Feather2Icon width={ICON_SIZE} height={ICON_SIZE} />
-        <TextWrapper style={styles.label}>{t('profile_take_a_new_picture')}</TextWrapper>
-      </TouchableOpacity>
-      <TouchableOpacity
-        activeOpacity={1}
-        style={styles.iconWrapper}
-        onPress={() => {
-          pickImage();
-        }}
-      >
-        <BarrelIcon width={ICON_SIZE} height={ICON_SIZE} />
-        <TextWrapper style={styles.label}>{t('profile_load_image_from_disk')}</TextWrapper>
-      </TouchableOpacity>
+      <Background tile="main" />
+      <View style={styles.buttonWrapper}>
+        <ButtonWrapper
+          mode="black"
+          onPress={() => {
+            router.push('profile/camera');
+          }}
+          title={capitalizeFirstLetterOfEveryWord(t('profile_take_a_new_picture'))}
+        />
+      </View>
+      <View style={styles.buttonWrapper}>
+        <ButtonWrapper
+          mode="black"
+          onPress={() => {
+            pickImage();
+          }}
+          title={capitalizeFirstLetterOfEveryWord(t('profile_load_image_from_disk'))}
+        />
+      </View>
       {addPictureContext.image && (
-        <View style={styles.imageWrapper}>
-          <ImageWrapper style={styles.image} uri={addPictureContext.image} />
-          <ButtonWrapper
-            title={t('add')}
-            onPress={confirm}
-            disabled={loading || !!error}
-            fillColor={SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY}
-          />
+        <>
+          <View style={styles.imageContainer}>
+            <View style={styles.imageWrapper}>
+              <GoldGradient />
+              <ImageWrapper style={styles.image} uri={addPictureContext.image} />
+            </View>
+          </View>
+          <View style={styles.buttonWrapper}>
+            <ButtonWrapper
+              title={t('add')}
+              onPress={confirm}
+              disabled={loading || !!error}
+              mode="black"
+            />
+          </View>
           {loading && (
             <View style={styles.loaderWrapper}>
               <ActivityIndicator size="large" />
             </View>
           )}
-        </View>
+        </>
       )}
     </View>
   );
@@ -237,27 +232,29 @@ const AddPicture = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    overflow: 'hidden',
+    paddingTop: 10,
   },
   label: {
     fontSize: 20,
   },
-  iconWrapper: {
-    height: width / 4,
-    borderWidth: 1,
-    borderRadius: 20,
-    justifyContent: 'center',
+  buttonWrapper: {
+    marginHorizontal: 20,
+    marginVertical: 10,
+  },
+  imageContainer: {
+    width: '100%',
     alignItems: 'center',
-    margin: 30,
   },
   imageWrapper: {
-    flex: 1,
     margin: 30,
-    borderRadius: 20,
+    width: IMAGE_SIZE + IMAGE_BORDER_SIZE * 2,
+    height: IMAGE_SIZE + IMAGE_BORDER_SIZE * 2,
   },
   image: {
-    flex: 1,
-    margin: 10,
-    borderRadius: 20,
+    margin: 2,
+    width: IMAGE_SIZE,
+    height: IMAGE_SIZE,
   },
   warningText: {
     color: 'orange',
@@ -265,9 +262,7 @@ const styles = StyleSheet.create({
     fontStyle: 'italic',
   },
   loaderWrapper: {
-    width: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
+    margin: 20,
   },
 });
 
