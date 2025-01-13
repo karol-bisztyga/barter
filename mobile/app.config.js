@@ -67,8 +67,6 @@ export default ({ config }) => ({
         'expo-font',
         {
           fonts: [
-            'assets/fonts/Schoolbell.ttf',
-            'assets/fonts/MedievalSharp.ttf',
             'assets/fonts/Caudex/Caudex-Regular.ttf',
             'assets/fonts/Caudex/Caudex-Bold.ttf',
             'assets/fonts/Caudex/Caudex-BoldItalic.ttf',

@@ -16,7 +16,6 @@ export const ONE_SHOT_SOUNDS: Record<string, AVPlaybackSource> = {
   click: require('../../../assets/sounds/one_shot/click.wav'),
   coinBagHit: require('../../../assets/sounds/one_shot/coin_bag_hit.wav'),
   coinBagShake: require('../../../assets/sounds/one_shot/coin_bag_shake.mp3'),
-  stone: require('../../../assets/sounds/one_shot/stone.wav'),
   sword: require('../../../assets/sounds/one_shot/sword.mp3'),
   whooshHi: require('../../../assets/sounds/one_shot/whoosh_hi.wav'),
   whooshLo: require('../../../assets/sounds/one_shot/whoosh_lo.wav'),

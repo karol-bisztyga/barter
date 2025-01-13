@@ -23,7 +23,7 @@ const { height } = Dimensions.get('window');
 const Background = ({ tile, style = {}, forceFullScreen }: BackgroundProps) => {
   const [assets, error] = useAssets([
     require('../../../assets/backgrounds/main_background.png'),
-    require('../../../assets/backgrounds/paper3.jpg'),
+    require('../../../assets/backgrounds/paper.jpg'),
   ]);
 
   const getConfigForTile = (backgroundTile: BackgroundTile): BackgroundConfig | null => {

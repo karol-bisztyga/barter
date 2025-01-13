@@ -31,7 +31,7 @@ export const JokerDialogue = ({ displayedText, onPressDialogue }: JokerDialogueP
 
   const jokerContext = useJokerContext();
 
-  const [assets, error] = useAssets([require('../../../assets/backgrounds/paper3.jpg')]);
+  const [assets, error] = useAssets([require('../../../assets/backgrounds/paper.jpg')]);
 
   const [backgroundImageLoaded, setBackgroundImageLoaded] = React.useState(false);
 

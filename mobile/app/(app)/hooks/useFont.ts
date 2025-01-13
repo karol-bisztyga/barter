@@ -20,7 +20,6 @@ export type FontFamily = {
 
 export const useFont = (): FontFamily => {
   const [loadedFonts] = useFonts({
-    MedievalSharp: require('../../../assets/fonts/MedievalSharp.ttf'),
     CaudexRegular: require('../../../assets/fonts/Caudex/Caudex-Regular.ttf'),
     CaudexBold: require('../../../assets/fonts/Caudex/Caudex-Bold.ttf'),
     CaudexItalic: require('../../../assets/fonts/Caudex/Caudex-Italic.ttf'),
