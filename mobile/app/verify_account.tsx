@@ -13,6 +13,8 @@ import { useJokerContext } from './(app)/context/JokerContext';
 import { useTranslation } from 'react-i18next';
 import Background from './(app)/components/Background';
 import { SECTION_BACKGROUND } from './(app)/(tabs)/profile/components/items/editing_panels/constants';
+import { ErrorBox } from './ErrorBox';
+import { translateError } from './(app)/utils/errorHandler';
 
 export default function Register() {
   const { t } = useTranslation();
@@ -61,53 +63,41 @@ export default function Register() {
   return (
     <View style={styles.container}>
       <Background tile="main" />
-      {error ? (
-        <View style={styles.errorWrapper}>
-          <TextWrapper key={error} style={styles.errorText}>
-            {error}
-          </TextWrapper>
+      <View style={styles.errorContainer}>
+        <ErrorBox message={translateError(t, error)} />
+      </View>
+      <View style={styles.innerContainer}>
+        <Background tile="paper" />
+        <View style={styles.labelsWrapper}>
+          <TextWrapper style={styles.label}>{t('verify_account_title')}</TextWrapper>
+          <TextWrapper style={styles.label}>{t('verify_account_subtitle_1')}</TextWrapper>
+          <TextWrapper style={styles.label}>{t('verify_account_subtitle_2')}</TextWrapper>
+        </View>
+        <View style={styles.inputsWrapper}>
+          <InputWrapper
+            placeholder={t('verify_account_code')}
+            value={verificationCode}
+            onChangeText={setVerificationCode}
+            fillColor={SECTION_BACKGROUND}
+          />
+        </View>
+        <View style={styles.buttonsWrapper}>
+          <ButtonWrapper
+            title={t('confirm')}
+            disabled={!verificationCodeValid()}
+            onPress={verify}
+            mode="black"
+          />
           <ButtonWrapper
             title={t('back')}
             onPress={() => {
               sessionContext.signOut();
               router.replace('/login');
             }}
-            fillColor={SECTION_BACKGROUND}
+            mode="red"
           />
         </View>
-      ) : (
-        <>
-          <View style={styles.labelsWrapper}>
-            <TextWrapper style={styles.label}>{t('verify_account_title')}</TextWrapper>
-            <TextWrapper style={styles.label}>{t('verify_account_subtitle_1')}</TextWrapper>
-            <TextWrapper style={styles.label}>{t('verify_account_subtitle_2')}</TextWrapper>
-          </View>
-          <View style={styles.inputsWrapper}>
-            <InputWrapper
-              placeholder={t('verify_account_code')}
-              value={verificationCode}
-              onChangeText={setVerificationCode}
-              fillColor={SECTION_BACKGROUND}
-            />
-          </View>
-          <View style={styles.buttonsWrapper}>
-            <ButtonWrapper
-              title={t('confirm')}
-              disabled={!verificationCodeValid()}
-              onPress={verify}
-              fillColor={SECTION_BACKGROUND}
-            />
-            <ButtonWrapper
-              title={t('back')}
-              onPress={() => {
-                sessionContext.signOut();
-                router.replace('/login');
-              }}
-              fillColor={SECTION_BACKGROUND}
-            />
-          </View>
-        </>
-      )}
+      </View>
     </View>
   );
 }
@@ -116,37 +106,32 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
+    backgroundColor: 'black',
+    justifyContent: 'center',
+  },
+  innerContainer: {
+    flexDirection: 'column',
+    padding: 10,
+    gap: 8,
+    overflow: 'hidden',
+    marginHorizontal: 20,
+  },
+  errorContainer: {
+    marginHorizontal: 20,
   },
   labelsWrapper: {
-    flex: 1,
     justifyContent: 'flex-end',
   },
   inputsWrapper: {
-    height: 60,
-    padding: 10,
+    marginVertical: 8,
   },
   buttonsWrapper: {
-    flex: 1,
     gap: 12,
-    padding: 12,
+    marginTop: 8,
   },
   label: {
     margin: 5,
     textAlign: 'center',
     fontSize: 20,
-  },
-  errorWrapper: {
-    flex: 1,
-    padding: 10,
-    width: '100%',
-    height: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  errorText: {
-    color: 'red',
-    textAlign: 'center',
-    fontSize: 20,
-    margin: 12,
   },
 });

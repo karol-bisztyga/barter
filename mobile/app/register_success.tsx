@@ -1,12 +1,10 @@
 import React from 'react';
 import { StyleSheet, View } from 'react-native';
-
 import { router } from 'expo-router';
 import ButtonWrapper from './(app)/genericComponents/ButtonWrapper';
 import TextWrapper from './(app)/genericComponents/TextWrapper';
 import { useTranslation } from 'react-i18next';
 import Background from './(app)/components/Background';
-import { SECTION_BACKGROUND } from './(app)/(tabs)/profile/components/items/editing_panels/constants';
 
 export default function Register() {
   const { t } = useTranslation();
@@ -24,7 +22,7 @@ export default function Register() {
           onPress={() => {
             router.replace('/login');
           }}
-          fillColor={SECTION_BACKGROUND}
+          mode="black"
         />
       </View>
     </View>
@@ -35,6 +33,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
+    backgroundColor: 'black',
   },
   labelsWrapper: {
     flex: 1,

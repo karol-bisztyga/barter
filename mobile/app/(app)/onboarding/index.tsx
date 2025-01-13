@@ -6,6 +6,7 @@ import TextWrapper from '../genericComponents/TextWrapper';
 import Background from '../components/Background';
 import { useAuth } from '../hooks/useAuth';
 import { useTranslation } from 'react-i18next';
+import { capitalizeFirstLetterOfEveryWord } from '../utils/reusableStuff';
 
 const MAX_STAGE = 9;
 
@@ -25,25 +26,46 @@ export default function Onboarding() {
     return null;
   }
 
+  const getFontSizeForStage = () => {
+    if (stage === 1) {
+      return 32;
+    }
+    if (stage === MAX_STAGE) {
+      return 32;
+    }
+    return 24;
+  };
+
   return (
     <View style={styles.container}>
       <Background tile="main" />
-      <TextWrapper style={styles.content}>{t('onboarding_stage_' + stage)}</TextWrapper>
+      <TextWrapper
+        style={[
+          styles.content,
+          {
+            fontSize: getFontSizeForStage(),
+          },
+        ]}
+      >
+        {t('onboarding_stage_' + stage)}
+      </TextWrapper>
       {/* TODO add descriptive images for certain stages */}
-      <ButtonWrapper
-        title={t('proceed')}
-        onPress={() => {
-          setStage(stage + 1);
-        }}
-        mode="black"
-      />
-      <ButtonWrapper
-        title={t('onboarding_skip')}
-        onPress={() => {
-          router.replace('/swipe');
-        }}
-        mode="black"
-      />
+      <View style={styles.buttonsWrapper}>
+        <ButtonWrapper
+          title={capitalizeFirstLetterOfEveryWord(t('proceed'))}
+          onPress={() => {
+            setStage(stage + 1);
+          }}
+          mode="black"
+        />
+        <ButtonWrapper
+          title={capitalizeFirstLetterOfEveryWord(t('onboarding_skip'))}
+          onPress={() => {
+            router.replace('/swipe');
+          }}
+          mode="red"
+        />
+      </View>
     </View>
   );
 }
@@ -52,13 +74,15 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
-    gap: 8,
-    paddingHorizontal: 8,
+    backgroundColor: 'black',
   },
   content: {
-    fontSize: 30,
+    fontSize: 24,
     textAlign: 'center',
-    marginVertical: 8,
+    margin: 20,
+  },
+  buttonsWrapper: {
+    marginHorizontal: 20,
+    gap: 8,
   },
 });

@@ -1,42 +1,24 @@
 import React, { useEffect } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
-
+import { StyleSheet, View } from 'react-native';
 import { useSessionContext } from '../SessionContext';
 import { useState } from 'react';
 import { Redirect } from 'expo-router';
 import { useUserContext } from '../(app)/context/UserContext';
 import * as SecureStore from 'expo-secure-store';
-
 import { STORAGE_SESSION_KEY } from '../constants';
 import Background from '../(app)/components/Background';
 import { SingInForm } from './SignInForm';
 
-export const Loader = () => {
-  return (
-    <View style={styles.loaderWrapper}>
-      <ActivityIndicator size="large" />
-    </View>
-  );
-};
-
 export default function Login() {
   const userContext = useUserContext();
   const sessionContext = useSessionContext();
-  const [checkingSession, setCheckingSession] = useState(true);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (checkingSession) {
-      return;
-    }
-    setLoading(false);
-  }, [checkingSession]);
 
   useEffect(() => {
     try {
       const storageStr = SecureStore.getItem(STORAGE_SESSION_KEY);
       if (!storageStr) {
-        setCheckingSession(false);
+        setLoading(false);
         return;
       }
       const storageParsed = JSON.parse(storageStr);
@@ -45,7 +27,7 @@ export default function Login() {
         sessionContext.setSession(session);
         userContext.setData(JSON.parse(userData));
       }
-      setCheckingSession(false);
+      setLoading(false);
     } catch (e) {
       sessionContext.setAuthError('session seemed to be malformed, please log in again');
     }
@@ -57,7 +39,6 @@ export default function Login() {
   return (
     <View style={styles.container}>
       <Background tile="main" />
-      {loading && <Loader />}
       <SingInForm loading={loading} />
     </View>
   );
@@ -68,13 +49,5 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     backgroundColor: 'black',
-  },
-  loaderWrapper: {
-    position: 'absolute',
-    width: '100%',
-    height: '100%',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 1,
   },
 });

@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import ButtonWrapper from '../../../../genericComponents/ButtonWrapper';
 import { capitalizeFirstLetterOfEveryWord } from '../../../../utils/reusableStuff';
 import { useTranslation } from 'react-i18next';
+import { useItemsContext } from '../../../../context/ItemsContext';
 
 type BottomButtonsProps = {
   addImage: () => void;
@@ -13,6 +14,8 @@ type BottomButtonsProps = {
 
 export const BottomButtons = ({ addImage, removeImage, addImageDisabled }: BottomButtonsProps) => {
   const { t } = useTranslation();
+
+  const itemsContext = useItemsContext();
 
   return (
     <View style={styles.container}>
@@ -25,13 +28,15 @@ export const BottomButtons = ({ addImage, removeImage, addImageDisabled }: Botto
             disabled={addImageDisabled}
           />
         </View>
-        <View style={styles.buttonWrapper}>
-          <ButtonWrapper
-            mode="red"
-            onPress={removeImage}
-            title={capitalizeFirstLetterOfEveryWord(t('profile_remove_item_title'))}
-          />
-        </View>
+        {itemsContext.usersItemId && (
+          <View style={styles.buttonWrapper}>
+            <ButtonWrapper
+              mode="red"
+              onPress={removeImage}
+              title={capitalizeFirstLetterOfEveryWord(t('profile_remove_item_title'))}
+            />
+          </View>
+        )}
       </View>
     </View>
   );

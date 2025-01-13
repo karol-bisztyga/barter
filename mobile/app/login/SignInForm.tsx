@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 
 import { useSessionContext } from '../SessionContext';
 import { useState } from 'react';
@@ -66,7 +66,7 @@ export const SingInForm = ({ loading }: { loading: boolean }) => {
         <TextWrapper style={[styles.label, { fontFamily: fontFamily.boldItalic }]}>
           {capitalizeFirstLetterOfEveryWord(t('email'))}
         </TextWrapper>
-        <View style={{ marginVertical: 8 }}>
+        <View style={styles.inputWrapper}>
           <InputWrapper
             placeholder={capitalizeFirstLetterOfEveryWord(t('email'))}
             value={email}
@@ -79,7 +79,7 @@ export const SingInForm = ({ loading }: { loading: boolean }) => {
           {capitalizeFirstLetterOfEveryWord(t('password'))}
         </TextWrapper>
 
-        <View style={{ marginVertical: 8 }}>
+        <View style={styles.inputWrapper}>
           <InputWrapper
             placeholder={capitalizeFirstLetterOfEveryWord(t('password'))}
             value={password}
@@ -110,6 +110,11 @@ export const SingInForm = ({ loading }: { loading: boolean }) => {
         />
       </View>
       <Settings />
+      {loading && (
+        <View style={styles.loaderWrapper}>
+          <ActivityIndicator size="large" />
+        </View>
+      )}
       {/* TODO remove buttons below * /}
       {sampleUsers.map((user, index) => {
         if (index > 2) {
@@ -138,9 +143,7 @@ const styles = StyleSheet.create({
   },
   formWrapper: { overflow: 'hidden', padding: 20 },
   label: { fontSize: 14 },
-  inputWrapper: {
-    height: 40,
-  },
+  inputWrapper: { marginVertical: 8 },
   errorWrapper: {
     opacity: 0.6,
     width: '100%',
@@ -150,5 +153,10 @@ const styles = StyleSheet.create({
     color: 'red',
     textAlign: 'center',
     fontStyle: 'italic',
+  },
+  loaderWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 20,
   },
 });

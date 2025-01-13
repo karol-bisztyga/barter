@@ -11,6 +11,9 @@ import TextWrapper from './(app)/genericComponents/TextWrapper';
 import { useTranslation } from 'react-i18next';
 import Background from './(app)/components/Background';
 import { SECTION_BACKGROUND } from './(app)/(tabs)/profile/components/items/editing_panels/constants';
+import { useFont } from './(app)/hooks/useFont';
+import { capitalizeFirstLetterOfEveryWord } from './(app)/utils/reusableStuff';
+import { ErrorBox } from './ErrorBox';
 
 const ERROR_MESSAGES = {
   INVALID_EMAIL: 'error_email_invalid',
@@ -26,6 +29,8 @@ export default function Register() {
   const [password, setPassword] = useState('');
   const [passwordRepeat, setPasswordRepeat] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const fontFamily = useFont();
 
   const formValid = () => {
     if (!email || !password || !passwordRepeat) {
@@ -71,7 +76,14 @@ export default function Register() {
   return (
     <View style={styles.container}>
       <Background tile="main" />
+      <View style={styles.errorContainer}>
+        <ErrorBox message={error} />
+      </View>
       <View style={styles.inputContainer}>
+        <Background tile="paper" />
+        <TextWrapper style={[styles.label, { fontFamily: fontFamily.boldItalic }]}>
+          {capitalizeFirstLetterOfEveryWord(t('email'))}
+        </TextWrapper>
         <View style={styles.inputWrapper}>
           <InputWrapper
             placeholder={t('email')}
@@ -81,6 +93,9 @@ export default function Register() {
             fillColor={SECTION_BACKGROUND}
           />
         </View>
+        <TextWrapper style={[styles.label, { fontFamily: fontFamily.boldItalic }]}>
+          {capitalizeFirstLetterOfEveryWord(t('password'))}
+        </TextWrapper>
         <View style={styles.inputWrapper}>
           <InputWrapper
             placeholder={t('password')}
@@ -91,9 +106,12 @@ export default function Register() {
             fillColor={SECTION_BACKGROUND}
           />
         </View>
+        <TextWrapper style={[styles.label, { fontFamily: fontFamily.boldItalic }]}>
+          {capitalizeFirstLetterOfEveryWord(t('repeat_password'))}
+        </TextWrapper>
         <View style={styles.inputWrapper}>
           <InputWrapper
-            placeholder={t('repeat_password')}
+            placeholder={capitalizeFirstLetterOfEveryWord(t('repeat_password'))}
             secureTextEntry={true}
             value={passwordRepeat}
             onChangeText={setPasswordRepeat}
@@ -101,13 +119,6 @@ export default function Register() {
             fillColor={SECTION_BACKGROUND}
           />
         </View>
-        {error && (
-          <View style={styles.errorWrapper}>
-            <TextWrapper key={error} style={styles.errorText}>
-              {error}
-            </TextWrapper>
-          </View>
-        )}
         <ButtonWrapper
           title={t('confirm')}
           disabled={!formValid()}
@@ -122,12 +133,12 @@ export default function Register() {
           }}
           mode="black"
         />
-        {loading && (
-          <View style={styles.loaderWrapper}>
-            <ActivityIndicator size="large" />
-          </View>
-        )}
       </View>
+      {loading && (
+        <View style={styles.loaderWrapper}>
+          <ActivityIndicator size="large" />
+        </View>
+      )}
     </View>
   );
 }
@@ -136,33 +147,23 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: 'black',
   },
+  errorContainer: {
+    marginHorizontal: 20,
+  },
   inputContainer: {
-    flex: 1,
     flexDirection: 'column',
     padding: 10,
-    position: 'absolute',
-    width: '100%',
     gap: 8,
+    overflow: 'hidden',
+    marginHorizontal: 20,
   },
-  inputWrapper: {
-    height: 40,
-  },
-  errorWrapper: {
-    opacity: 0.6,
-    width: '100%',
-    padding: 10,
-  },
-  errorText: {
-    color: 'red',
-    textAlign: 'center',
-    fontStyle: 'italic',
-  },
+  label: { fontSize: 14 },
+  inputWrapper: { marginVertical: 8 },
   loaderWrapper: {
-    width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+    marginTop: 20,
   },
 });

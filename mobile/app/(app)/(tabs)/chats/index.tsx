@@ -169,7 +169,6 @@ const styles = StyleSheet.create({
     flex: 1,
     marginTop: 50,
     alignItems: 'center',
-    backgroundColor: 'red',
   },
   noChatsLabel: {
     fontSize: 24,

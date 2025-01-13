@@ -24,7 +24,7 @@ export default function Profile() {
 
   useEffect(() => {
     if (editingIdInitialized) {
-      settingsContext.playSound('stone');
+      settingsContext.playSound('click');
     } else {
       setEditingIdInitialized(true);
     }
