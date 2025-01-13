@@ -333,7 +333,7 @@ const EditItem = () => {
     <View style={styles.container}>
       <Background tile="main" />
       <ScrollView ref={scrollRef}>
-        <View style={[styles.nameInputWrapper, styles.margins]}>
+        <View style={styles.margins}>
           <InputWrapper
             placeholder={capitalizeFirstLetterOfEveryWord(t('profile_name_title'))}
             value={name}
@@ -349,6 +349,7 @@ const EditItem = () => {
             onChangeText={setDescription}
             fillColor={SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY}
             style={styles.descriptionInput}
+            textAlignVertical="top"
           />
         </View>
         <View style={styles.margins}>
@@ -422,9 +423,6 @@ const styles = StyleSheet.create({
   margins: {
     marginVertical: 8,
     marginHorizontal: 12,
-  },
-  nameInputWrapper: {
-    height: 52,
   },
   descriptionInputWrapper: {
     height: 200,

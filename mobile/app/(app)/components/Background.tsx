@@ -22,7 +22,7 @@ const { height } = Dimensions.get('window');
 
 const Background = ({ tile, style = {}, forceFullScreen }: BackgroundProps) => {
   const [assets, error] = useAssets([
-    require('../../../assets/backgrounds/main_background.png'),
+    require('../../../assets/backgrounds/main_background.jpg'),
     require('../../../assets/backgrounds/paper.jpg'),
   ]);
 
@@ -84,14 +84,12 @@ const styles = StyleSheet.create({
     height: '100%',
   },
   mainBackground: {
-    width: 4032,
-    height: 2688,
-    top: -45,
-    left: -202,
+    width: 1920,
+    height: 1080,
+    top: 0,
+    left: 0,
   },
-  imageStyle: {
-    resizeMode: 'repeat',
-  },
+  imageStyle: {},
 });
 
 export default Background;

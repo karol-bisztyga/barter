@@ -1,5 +1,5 @@
-import React, { useContext, useEffect } from 'react';
-import { StyleSheet, Dimensions, Platform, StatusBar } from 'react-native';
+import React, { useEffect } from 'react';
+import { StyleSheet, Dimensions } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import Animated, {
   useAnimatedStyle,
@@ -19,10 +19,9 @@ import { PaperIcon, SandGlassIcon, Torch2Icon } from '../utils/icons';
 import { useJokerContext } from '../context/JokerContext';
 import { hexToRgbaString } from '../utils/harmonicColors';
 import { BROWN_COLOR_3, GOLD_COLOR_2 } from '../constants';
-import Constants from 'expo-constants';
-import { BottomTabBarHeightContext } from '@react-navigation/bottom-tabs';
 import { useSettingsContext } from '../context/SettingsContext';
 import { GoldGradient } from '../genericComponents/gradients/GoldGradient';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const { width, height } = Dimensions.get('window');
 const SWIPE_THRESHOLD_HORIZONTAL = 0.25 * width;
@@ -61,13 +60,10 @@ const SwipeableCard = ({
   const rotate = useSharedValue('0deg');
 
   const cardOpacity = useSharedValue(0);
+  const insets = useSafeAreaInsets();
 
-  const statusBarHeight =
-    Platform.select({
-      ios: Constants.statusBarHeight, // Height on iOS
-      android: StatusBar.currentHeight, // Height on Android
-    }) || 0;
-  const tabBarHeight = useContext(BottomTabBarHeightContext) || 0;
+  const statusBarHeight = insets.top;
+  const tabBarHeight = insets.bottom;
 
   const wrapperHeight = height - statusBarHeight - tabBarHeight;
   const wrapperWidth = width;

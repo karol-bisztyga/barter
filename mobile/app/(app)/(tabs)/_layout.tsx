@@ -18,9 +18,11 @@ import { useMatchContext } from '../context/MatchContext';
 import { AppState, AppStateStatus, StyleSheet, View } from 'react-native';
 import { NotificationIndicator } from './swipe/components/NotificationIndicator';
 import { useSocketContext } from '../context/SocketContext';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const ICON_SIZE = 28;
 const TAB_SHADOW_COLOR = '#5A75D4';
+const TAB_BAR_HEIGHT = 65;
 
 const ActiveIndicator = () => {
   return <View style={styles.activeIndicator} />;
@@ -36,6 +38,7 @@ export default function TabLayout() {
   const settingsContext = useSettingsContext();
   const matchContext = useMatchContext();
   const socketContext = useSocketContext();
+  const insets = useSafeAreaInsets();
 
   const fontFamily = useFont();
 
@@ -79,7 +82,7 @@ export default function TabLayout() {
           tabBarInactiveBackgroundColor: TAB_BAR_BACKGROUND_COLOR,
           tabBarStyle: {
             backgroundColor: TAB_BAR_BACKGROUND_COLOR,
-            height: 97,
+            height: TAB_BAR_HEIGHT + insets.bottom,
             alignItems: 'center',
             justifyContent: 'center',
             borderTopWidth: 0,

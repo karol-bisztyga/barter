@@ -141,9 +141,7 @@ export const SocketContextProvider: FC<{ children: ReactNode }> = ({ children })
   };
 
   const onError = (e: Error) => {
-    if (e.name === 'TokenExpiredError') {
-      sessionContext.signOut();
-    }
+    sessionContext.signOut();
     handleError(t, jokerContext, ErrorType.SOCKET, `${e}`);
   };
 

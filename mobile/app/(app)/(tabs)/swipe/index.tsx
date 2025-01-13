@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { ActivityIndicator, SafeAreaView, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { useSharedValue } from 'react-native-reanimated';
 import SwipeableCard from '../../components/SwipeableCard';
@@ -276,41 +276,37 @@ export default function Swipe() {
   return (
     <GestureHandlerRootView>
       <Background tile="main" />
-      <SafeAreaView style={styles.container}>
-        <View style={styles.container}>
-          {/* todo this was showing all the time in prod so for now just removed it but it should be handled properly */}
-          {/* {cards.length === 0 && !loading && (
+      <View style={styles.container}>
+        {/* todo this was showing all the time in prod so for now just removed it but it should be handled properly */}
+        {/* {cards.length === 0 && !loading && (
             <View style={styles.noCardsWrapper}>
               <TextWrapper style={styles.noCardsLabel}>No more cards</TextWrapper>
             </View>
           )} */}
-          {activeCard && (
-            <SwipeableCard
-              itemData={activeCard}
-              swipeCallbacks={{
-                onSwipeRight: handleSwipeRight,
-                onSwipeLeft: handleSwipeLeft,
-                onSwipeDown: handleSwipeDown,
-              }}
-              lockGesture={lockGesture}
-              onPressMore={pressMore}
-            />
-          )}
-        </View>
+        {activeCard && (
+          <SwipeableCard
+            itemData={activeCard}
+            swipeCallbacks={{
+              onSwipeRight: handleSwipeRight,
+              onSwipeLeft: handleSwipeLeft,
+              onSwipeDown: handleSwipeDown,
+            }}
+            lockGesture={lockGesture}
+            onPressMore={pressMore}
+          />
+        )}
         {loading && (
           <View style={styles.loader}>
             <ActivityIndicator size="large" />
           </View>
         )}
-      </SafeAreaView>
+      </View>
     </GestureHandlerRootView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  },
+  container: {},
   noCardsWrapper: {
     flex: 1,
     marginTop: 50,

@@ -10,6 +10,10 @@ import { useJokerContext } from '../../context/JokerContext';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
 import { SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY } from '../../constants';
+import Background from '../../components/Background';
+import TextWrapper from '../../genericComponents/TextWrapper';
+import { useFont } from '../../hooks/useFont';
+import { capitalizeFirstLetterOfEveryWord } from '../../utils/reusableStuff';
 
 const SendReportModal = () => {
   const { t } = useTranslation();
@@ -17,6 +21,8 @@ const SendReportModal = () => {
   const sessionContext = useAuth();
   const itemsContext = useItemsContext();
   const jokerContext = useJokerContext();
+
+  const fontFamily = useFont();
 
   const [report, setReport] = useState('');
 
@@ -35,21 +41,25 @@ const SendReportModal = () => {
 
   return (
     <View style={styles.container}>
+      <Background tile="main" />
       <View style={styles.inputContainer}>
-        <InputWrapper
-          multiline={true}
-          placeholder={t('send_report_reason')}
-          secureTextEntry={true}
-          value={report}
-          onChangeText={setReport}
-          style={styles.input}
-          fillColor={SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY}
-        />
+        <Background tile="paper" />
+        <TextWrapper style={[styles.label, { fontFamily: fontFamily.boldItalic }]}>
+          {capitalizeFirstLetterOfEveryWord(t('send_report_reason'))}
+        </TextWrapper>
+        <View style={styles.inputWrapper}>
+          <InputWrapper
+            placeholder={capitalizeFirstLetterOfEveryWord(t('send_report_reason'))}
+            value={report}
+            onChangeText={setReport}
+            fillColor={SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY}
+          />
+        </View>
         <ButtonWrapper
-          title={t('chats_send_report')}
+          title={capitalizeFirstLetterOfEveryWord(t('chats_send_report'))}
           disabled={report.length < 10}
           onPress={sendReport}
-          fillColor={SWIPE_BASE_BACKGROUND_COLOR_WITH_OPACITY}
+          mode="black"
         />
       </View>
     </View>
@@ -60,19 +70,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    alignItems: 'center',
+    backgroundColor: 'black',
   },
   inputContainer: {
     flexDirection: 'column',
-    padding: 12,
-    position: 'absolute',
-    width: '100%',
-    height: 200,
-    gap: 12,
+    padding: 10,
+    gap: 8,
+    overflow: 'hidden',
+    marginHorizontal: 20,
   },
-  input: {
-    textAlignVertical: 'top',
-  },
+  label: { fontSize: 14 },
+  inputWrapper: { marginVertical: 8 },
 });
 
 export default SendReportModal;
