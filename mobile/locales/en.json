@@ -88,9 +88,9 @@
   "error_update_onboarding": "Update onboarding error",
   "error_location_permission_denied": "Permission to access location was denied, you may need to enable location services in settings",
   "error_match_not_exist": "Match does not exist",
-  "error_email_invalid": "email invalid",
-  "error_password_invalid": "password invalid, it must be at least 8 characters",
-  "error_passwords_do_not_match": "passwords do not match",
+  "error_email_invalid": "Email invalid",
+  "error_password_invalid": "Password invalid, it must be at least 8 characters",
+  "error_passwords_do_not_match": "Passwords do not match",
 
   "backend_error_email_invalid": "Email invalid",
   "backend_error_server_error": "Server error: ",
