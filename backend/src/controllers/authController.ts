@@ -44,7 +44,7 @@ export const register = async (req: Request, res: Response) => {
     console.log(
       `register successful, sending email with verification code [${verificationCode}] to ${email}`
     );
-    const emailResponse = await sendVerificationEmail(email, verificationCode);
+    const emailResponse = sendVerificationEmail(email, verificationCode);
     console.log('email sent', emailResponse);
     res.status(201).json(result.rows[0]);
   } catch (err) {
