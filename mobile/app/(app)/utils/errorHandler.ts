@@ -95,6 +95,8 @@ export enum ErrorType {
   IMAGE_TOO_BIG,
   PREPARE_FILE,
   MATCH_NOT_EXIST,
+  ERROR_GET_ITEMS,
+  PLAY_SOUND,
 }
 
 export const getMessageForErrorType = (t: TFunction, type: ErrorType) => {
@@ -191,6 +193,10 @@ export const getMessageForErrorType = (t: TFunction, type: ErrorType) => {
       return t('error_scale_image');
     case ErrorType.MATCH_NOT_EXIST:
       return t('error_match_not_exist');
+    case ErrorType.ERROR_GET_ITEMS:
+      return t('error_get_items');
+    case ErrorType.PLAY_SOUND:
+      return t('error_play_sound');
     default:
       return t('error_unknown');
   }

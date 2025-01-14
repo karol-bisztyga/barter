@@ -91,6 +91,8 @@
   "error_email_invalid": "Email invalid",
   "error_password_invalid": "Password invalid, it must be at least 8 characters",
   "error_passwords_do_not_match": "Passwords do not match",
+  "error_get_items": "Get items error",
+  "error_play_sound": "Play sound error",
 
   "backend_error_email_invalid": "Email invalid",
   "backend_error_server_error": "Server error: ",

@@ -31,7 +31,9 @@ export const JokerDialogue = ({ displayedText, onPressDialogue }: JokerDialogueP
 
   const jokerContext = useJokerContext();
 
-  const [assets, error] = useAssets([require('../../../assets/backgrounds/paper.jpg')]);
+  const [assets, error] = useAssets([
+    require('../../../assets/backgrounds/paper_original_vertical.jpg'),
+  ]);
 
   const [backgroundImageLoaded, setBackgroundImageLoaded] = React.useState(false);
 
@@ -90,17 +92,18 @@ const styles = StyleSheet.create({
     position: 'absolute',
     left: 0,
     top: 0,
-    width: '100%',
-    height: '100%',
+    width: 1080,
+    height: 1920,
     opacity: 1,
   },
   backgroundImageResizeStyle: {
-    resizeMode: 'repeat',
+    resizeMode: 'cover',
   },
   textWrapper: {
     padding: 20,
     fontSize: 18,
-    color: 'black',
+    lineHeight: 24,
+    color: 'white',
     borderWidth: 2,
     borderRadius: 8,
     borderColor: TAB_BAR_BACKGROUND_COLOR,

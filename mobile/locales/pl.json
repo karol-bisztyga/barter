@@ -91,6 +91,8 @@
   "error_email_invalid": "Nieprawidłowy adres e-mail",
   "error_password_incorrect": "Nieprawidłowe hasło, musi zawierać co najmniej 8 znaków",
   "error_passwords_do_not_match": "Hasła nie pasują",
+  "error_get_items": "Błąd pobierania przedmiotów",
+  "error_play_sound": "Błąd odtwarzania dźwięku",
 
   "backend_error_email_invalid": "niepoprawny email",
   "backend_error_server_error": "błąd serwera: ",

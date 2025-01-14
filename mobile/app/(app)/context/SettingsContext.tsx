@@ -4,6 +4,8 @@ import * as SecureStore from 'expo-secure-store';
 import { STORAGE_SETTINGS_KEY } from '../../constants';
 import { DEFAULT_LANGUAGE, DEFAULT_MUSIC_ON, DEFAULT_SOUND_ON } from '../constants';
 import { useTranslation } from 'react-i18next';
+import { ErrorType, handleError } from '../utils/errorHandler';
+import { useJokerContext } from './JokerContext';
 
 export const BACKGROUND_SOUNDS: Record<string, AVPlaybackSource> = {
   marketplace: require('../../../assets/sounds/background/marketplace.wav'),
@@ -85,6 +87,8 @@ export const useSettingsContext = () => {
 };
 
 export const SettingsContextProvider: FC<{ children: ReactNode }> = ({ children }) => {
+  const { t } = useTranslation();
+  const jokerContext = useJokerContext();
   // for background sounds
   const [backgroundSound, setBackgroundSound] = useState<keyof typeof BACKGROUND_SOUNDS | null>(
     null
@@ -265,19 +269,26 @@ export const SettingsContextProvider: FC<{ children: ReactNode }> = ({ children 
     if (!soundObject) {
       return;
     }
-    const currentStatus = await soundObject.getStatusAsync();
-    if (currentStatus.isLoaded && currentStatus.isPlaying) {
-      await soundObject.stopAsync();
-    }
-
-    soundObject.setOnPlaybackStatusUpdate(async (updatedStatus: AVPlaybackStatus) => {
-      if (updatedStatus.isLoaded && updatedStatus.didJustFinish) {
-        // had to add explicit stop because it was looping on android
-        await soundObject.stopAsync();
-        await soundObject.setPositionAsync(0);
+    try {
+      const currentStatus = await soundObject.getStatusAsync();
+      if (!currentStatus) {
+        return;
       }
-    });
-    await soundObject.playAsync();
+      if (currentStatus.isLoaded && currentStatus.isPlaying) {
+        await soundObject.stopAsync();
+      }
+
+      soundObject.setOnPlaybackStatusUpdate(async (updatedStatus: AVPlaybackStatus) => {
+        if (updatedStatus.isLoaded && updatedStatus.didJustFinish) {
+          // had to add explicit stop because it was looping on android
+          await soundObject.stopAsync();
+          await soundObject.setPositionAsync(0);
+        }
+      });
+      await soundObject.playAsync();
+    } catch (e) {
+      handleError(t, jokerContext, ErrorType.PLAY_SOUND, `${e}`, '', false);
+    }
   };
 
   // for background sounds

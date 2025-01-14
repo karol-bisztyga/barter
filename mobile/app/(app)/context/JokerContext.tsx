@@ -1,5 +1,6 @@
 import React, { createContext, useState, ReactNode, FC, useContext } from 'react';
 import { useTranslation } from 'react-i18next';
+import { JOKER_MAX_MESSAGE_LENGTH } from '../constants';
 
 export enum AlertType {
   ERROR = 'error',
@@ -56,6 +57,9 @@ export const JokerContextProvider: FC<{ children: ReactNode }> = ({ children }) 
 
   const pushAlert = (alert: JokerAlert) => {
     const lastAlert = alerts.at(-1);
+    if (alert.message.length > JOKER_MAX_MESSAGE_LENGTH) {
+      alert.message = alert.message.slice(0, JOKER_MAX_MESSAGE_LENGTH) + '...';
+    }
     if (lastAlert) {
       if (
         alert.type === lastAlert.type &&

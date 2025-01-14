@@ -158,21 +158,25 @@ export default function Swipe() {
       return;
     }
     setLoading(true);
-    const itemsLoaded = await getItemsForCards(
-      sessionContext,
-      cards.map((card) => card.id),
-      LOADED_ITEMS_CAPACITY
-    );
-    if (!itemsLoaded.length) {
-      setEmptyCardsResponseReceived(true);
-    } else {
-      const newActiveCard = itemsLoaded.pop();
-      if (!newActiveCard) {
-        setActiveCard(null);
-        return;
+    try {
+      const itemsLoaded = await getItemsForCards(
+        sessionContext,
+        cards.map((card) => card.id),
+        LOADED_ITEMS_CAPACITY
+      );
+      if (!itemsLoaded || !itemsLoaded.length) {
+        setEmptyCardsResponseReceived(true);
+      } else {
+        const newActiveCard = itemsLoaded.pop();
+        if (!newActiveCard) {
+          setActiveCard(null);
+          return;
+        }
+        setActiveCard(newActiveCard);
+        setCards(itemsLoaded);
       }
-      setActiveCard(newActiveCard);
-      setCards(itemsLoaded);
+    } catch (e) {
+      handleError(t, jokerContext, ErrorType.ERROR_GET_ITEMS, `${e}`);
     }
     setLoading(false);
   };
