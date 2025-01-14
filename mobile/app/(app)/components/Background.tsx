@@ -18,12 +18,12 @@ type BackgroundProps = {
   forceFullScreen?: boolean;
 };
 
-const { height } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 const Background = ({ tile, style = {}, forceFullScreen }: BackgroundProps) => {
   const [assets, error] = useAssets([
     require('../../../assets/backgrounds/main_background.jpg'),
-    require('../../../assets/backgrounds/paper.jpg'),
+    require('../../../assets/backgrounds/paper_original.jpg'),
   ]);
 
   const getConfigForTile = (backgroundTile: BackgroundTile): BackgroundConfig | null => {
@@ -65,7 +65,7 @@ const Background = ({ tile, style = {}, forceFullScreen }: BackgroundProps) => {
     <View style={[styles.wrapper, { height: forceFullScreen ? height : '100%', backgroundColor }]}>
       <ImageBackground
         source={{ uri: assets[assetIndex].uri }}
-        style={[styles.background, { opacity: imageOpacity }, styles.mainBackground, style]}
+        style={[styles.background, { opacity: imageOpacity }, style]}
         imageStyle={styles.imageStyle}
       />
     </View>
@@ -80,16 +80,12 @@ const styles = StyleSheet.create({
   },
   background: {
     position: 'absolute',
-    width: '100%',
-    height: '100%',
+    width,
+    height,
   },
-  mainBackground: {
-    width: 1920,
-    height: 1080,
-    top: 0,
-    left: 0,
+  imageStyle: {
+    resizeMode: 'cover',
   },
-  imageStyle: {},
 });
 
 export default Background;

@@ -141,9 +141,16 @@ const styles = StyleSheet.create({
   container: {
     marginHorizontal: 20,
   },
-  formWrapper: { overflow: 'hidden', padding: 20 },
-  label: { fontSize: 14 },
-  inputWrapper: { marginVertical: 8 },
+  formWrapper: {
+    overflow: 'hidden',
+    padding: 20,
+  },
+  label: {
+    fontSize: 14,
+  },
+  inputWrapper: {
+    marginVertical: 8,
+  },
   errorWrapper: {
     opacity: 0.6,
     width: '100%',
