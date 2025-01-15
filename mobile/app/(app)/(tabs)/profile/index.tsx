@@ -77,7 +77,8 @@ export default function Profile() {
 const styles = StyleSheet.create({
   titleWrapper: {
     marginHorizontal: 20,
-    marginVertical: 12,
+    marginTop: 32,
+    marginBottom: 8,
   },
   title: {
     fontSize: 22,

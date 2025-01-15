@@ -59,7 +59,7 @@ const ProfilePicture = () => {
 const styles = StyleSheet.create({
   container: {
     marginTop: 147,
-    marginBottom: 63,
+    marginBottom: 43,
     width: '100%',
     alignItems: 'center',
   },
