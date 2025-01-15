@@ -9,6 +9,7 @@ import { BROWN_COLOR_4, GOLD_COLOR_3 } from '../../../../constants';
 import { useFont } from '../../../../hooks/useFont';
 import { capitalizeFirstLetterOfEveryWord } from '../../../../utils/reusableStuff';
 import { GoldGradient } from '../../../../genericComponents/gradients/GoldGradient';
+import { ITEM_HEIGHT } from './constants';
 
 const IMAGE_WRAPPER_SIZE = 60;
 const IMAGE_SIZE = 36;
@@ -88,13 +89,13 @@ const LinkItem = ({
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    height: 66,
+    height: ITEM_HEIGHT,
     borderColor: BROWN_COLOR_4,
     alignSelf: 'flex-start',
   },
   itemTitle: {
     fontSize: 18,
-    lineHeight: 26,
+    lineHeight: 36,
     margin: 20,
   },
   itemArrowWrapper: {

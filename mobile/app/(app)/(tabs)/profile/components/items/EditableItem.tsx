@@ -21,6 +21,7 @@ import { useFont } from '../../../../hooks/useFont';
 import { useSettingsContext } from '../../../../context/SettingsContext';
 import { ARROW_ICON_SIZE } from './editing_panels/constants';
 import { capitalizeFirstLetterOfEveryWord } from '../../../../utils/reusableStuff';
+import { ITEM_HEIGHT } from './constants';
 
 export type EditingPanelType = 'field' | 'location' | 'select' | 'password';
 
@@ -220,13 +221,13 @@ const EditableItem = ({
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    height: 66,
+    height: ITEM_HEIGHT,
     borderColor: BROWN_COLOR_4,
     alignSelf: 'flex-start',
   },
   itemTitle: {
     fontSize: 18,
-    lineHeight: 26,
+    lineHeight: 36,
     margin: 20,
   },
   itemValueWrapper: {

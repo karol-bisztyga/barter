@@ -3,6 +3,7 @@ import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import { SvgProps } from 'react-native-svg';
 import { SpearIcon } from '../../../../utils/icons';
 import { BROWN_COLOR_4 } from '../../../../constants';
+import { ITEM_HEIGHT } from './constants';
 
 const ICON_SIZE = 42;
 
@@ -46,7 +47,7 @@ const ToggleItem = ({ id, isLast, onPress, Icon, disabled }: ToggleItemProps) =>
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    height: 66,
+    height: ITEM_HEIGHT,
     borderColor: BROWN_COLOR_4,
     width: '100%',
     justifyContent: 'center',
