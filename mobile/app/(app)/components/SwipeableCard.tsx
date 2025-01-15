@@ -167,10 +167,6 @@ const SwipeableCard = ({
         getBackToStartingPosition();
         return;
       }
-      if (translateY.value < -(SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL * 2)) {
-        getBackToStartingPosition();
-        return;
-      }
       if (translateX.value > SWIPE_THRESHOLD_HORIZONTAL) {
         lockGesture.value = true;
         runOnJS(settingsContext.playSound)('writing');
@@ -199,11 +195,10 @@ const SwipeableCard = ({
   });
 
   const decideIconLeftAnimatedStyle = useAnimatedStyle(() => {
-    const absTranslateY = Math.abs(translateY.value);
     let scaleModifierImportant = 0;
 
-    if (absTranslateY > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
-      scaleModifierImportant = (absTranslateY - SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) / 100;
+    if (translateY.value > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
+      scaleModifierImportant = (translateY.value - SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) / 100;
     }
 
     let scale = 1;
@@ -213,7 +208,7 @@ const SwipeableCard = ({
       scale = 1 - clamp(translateX.value / 100, 0, 0.5);
     }
 
-    if (absTranslateY > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
+    if (translateY.value > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
       scale = clamp(scale - scaleModifierImportant, 0.5, 2);
     }
 
@@ -225,11 +220,10 @@ const SwipeableCard = ({
   });
 
   const decideIconRightAnimatedStyle = useAnimatedStyle(() => {
-    const absTranslateY = Math.abs(translateY.value);
     let scaleModifierImportant = 0;
 
-    if (absTranslateY > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
-      scaleModifierImportant = (absTranslateY - SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) / 100;
+    if (translateY.value > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
+      scaleModifierImportant = (translateY.value - SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) / 100;
     }
 
     let scale = 1;
@@ -239,7 +233,7 @@ const SwipeableCard = ({
       scale = 1 - clamp(-translateX.value / 100, 0, 0.5);
     }
 
-    if (absTranslateY > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
+    if (translateY.value > SWIPE_THRESHOLD_VERTICAL_FOR_HORIZONTAL) {
       scale = clamp(scale - scaleModifierImportant, 0.5, 2);
     }
 
