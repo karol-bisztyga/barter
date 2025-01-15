@@ -1,5 +1,6 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
+import { WHITE_COLOR } from '../constants';
 
 const CarouselDots = ({
   images,
@@ -16,7 +17,7 @@ const CarouselDots = ({
         {images.map((_, index) => (
           <View
             key={index}
-            style={[styles.dot, { backgroundColor: index === imageIndex ? 'white' : 'grey' }]}
+            style={[styles.dot, { backgroundColor: index === imageIndex ? WHITE_COLOR : 'grey' }]}
           />
         ))}
       </View>

@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import { hexToRgbaString } from '../utils/harmonicColors';
 import { useAssets } from 'expo-asset';
 import { ErrorType, handleError } from '../utils/errorHandler';
-import { TAB_BAR_BACKGROUND_COLOR } from '../constants';
+import { TAB_BAR_BACKGROUND_COLOR, WHITE_COLOR } from '../constants';
 
 const JOKER_SIZE = 50;
 const TOP_OFFSET = Constants.statusBarHeight + 4;
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
     padding: 20,
     fontSize: 18,
     lineHeight: 24,
-    color: 'white',
+    color: WHITE_COLOR,
     borderWidth: 2,
     borderRadius: 8,
     borderColor: TAB_BAR_BACKGROUND_COLOR,

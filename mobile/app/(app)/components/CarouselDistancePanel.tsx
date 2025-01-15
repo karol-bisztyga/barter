@@ -3,6 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import TextWrapper from '../genericComponents/TextWrapper';
 import { ItemData } from '../types';
 import { useTranslation } from 'react-i18next';
+import { WHITE_COLOR } from '../constants';
 
 const CarouselDistancePanel = ({ itemData }: { itemData: ItemData }) => {
   const { t } = useTranslation();
@@ -50,7 +51,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0, 0.7)',
   },
   label: {
-    color: 'white',
+    color: WHITE_COLOR,
   },
 });
 

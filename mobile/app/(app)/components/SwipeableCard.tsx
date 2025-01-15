@@ -18,7 +18,7 @@ import CardItem from './CardItem';
 import { PaperIcon, SandGlassIcon, Torch2Icon } from '../utils/icons';
 import { useJokerContext } from '../context/JokerContext';
 import { hexToRgbaString } from '../utils/harmonicColors';
-import { BROWN_COLOR_3, GOLD_COLOR_2 } from '../constants';
+import { BROWN_COLOR_3, GOLD_COLOR_2, WHITE_COLOR } from '../constants';
 import { useSettingsContext } from '../context/SettingsContext';
 import { GoldGradient } from '../genericComponents/gradients/GoldGradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -383,7 +383,7 @@ const styles = StyleSheet.create({
   itemWrapper: {
     width: CARD_DIMENSIONS.width,
     height: CARD_DIMENSIONS.height,
-    backgroundColor: 'white',
+    backgroundColor: WHITE_COLOR,
     position: 'absolute',
     shadowOffset: { width: 0, height: 0 },
     shadowOpacity: 1,

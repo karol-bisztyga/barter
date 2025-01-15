@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, TouchableOpacity, View } from 'react-native';
-import { BLACK_COLOR, PRESSABLE_ACTIVE_OPACITY, RED_COLOR } from '../constants';
+import { BLACK_COLOR, PRESSABLE_ACTIVE_OPACITY, RED_COLOR, WHITE_COLOR } from '../constants';
 import { useSettingsContext } from '../context/SettingsContext';
 import { useFont } from '../hooks/useFont';
 import TextWrapper from './TextWrapper';
@@ -110,9 +110,13 @@ const styles = StyleSheet.create({
     marginBottom: 9,
     fontSize: 18,
     textAlign: 'center',
-    color: 'white',
+    color: WHITE_COLOR,
   },
-  gradient: { width: '100%', height: '100%', position: 'absolute' },
+  gradient: {
+    width: '100%',
+    height: '100%',
+    position: 'absolute',
+  },
 });
 
 export default ButtonWrapper;

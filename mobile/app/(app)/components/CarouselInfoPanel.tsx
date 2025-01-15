@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 import TextWrapper from '../genericComponents/TextWrapper';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ItemData } from '../types';
+import { WHITE_COLOR } from '../constants';
 
 const CarouselInfoPanel = ({ itemData }: { itemData: ItemData }) => {
   return (
@@ -40,7 +41,10 @@ const styles = StyleSheet.create({
     left: 0,
     flexDirection: 'column',
   },
-  text: { color: 'white', textAlign: 'center' },
+  text: {
+    color: WHITE_COLOR,
+    textAlign: 'center',
+  },
   itemName: {
     fontSize: 24,
     paddingHorizontal: 16,

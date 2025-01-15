@@ -14,7 +14,7 @@ import { useTranslation } from 'react-i18next';
 import { RemoveMatchData } from '../../../types';
 import { useSocketContext } from '../../../context/SocketContext';
 import { IconButtonWithoutEvents } from '../../../genericComponents/IconButtonWithoutEvents';
-import { BLACK_COLOR, RED_COLOR } from '../../../constants';
+import { BLACK_COLOR, RED_COLOR, WHITE_COLOR } from '../../../constants';
 import { GoldGradient } from '../../../genericComponents/gradients/GoldGradient';
 import { LinearGradient } from 'expo-linear-gradient';
 import { hexToRgbaString } from '../../../utils/harmonicColors';
@@ -155,7 +155,7 @@ const styles = StyleSheet.create({
     height: 30,
     lineHeight: 30,
     marginLeft: 12,
-    color: 'white',
+    color: WHITE_COLOR,
   },
   iconButton: {
     marginTop: -8,

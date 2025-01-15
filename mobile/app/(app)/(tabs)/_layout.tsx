@@ -1,12 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Tabs } from 'expo-router';
 import { ErrorType, handleError } from '../utils/errorHandler';
-import {
-  GOLD_COLOR_1,
-  GOLD_COLOR_3,
-  TAB_BAR_BACKGROUND_COLOR,
-  TAB_BAR_FONT_COLOR,
-} from '../constants';
+import { GOLD_COLOR_1, GOLD_COLOR_3, TAB_BAR_BACKGROUND_COLOR, WHITE_COLOR } from '../constants';
 import { HelmetIcon, PaperIcon, TargetIcon } from '../utils/icons';
 import { useJokerContext } from '../context/JokerContext';
 import { useSettingsContext } from '../context/SettingsContext';
@@ -92,7 +87,7 @@ export default function TabLayout() {
           },
           tabBarLabelStyle: {
             fontFamily: fontFamily.regular,
-            color: TAB_BAR_FONT_COLOR,
+            color: WHITE_COLOR,
             fontSize: 12,
           },
         }}

@@ -6,6 +6,7 @@ import { ErrorType, handleError } from '../../../../utils/errorHandler';
 import { useJokerContext } from '../../../../context/JokerContext';
 import { useTranslation } from 'react-i18next';
 import { BUTTON_SIZE } from './constants';
+import { WHITE_COLOR } from '../../../../constants';
 
 const { width } = Dimensions.get('window');
 
@@ -105,6 +106,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   toggleCameraFacingIcon: {
-    color: 'white',
+    color: WHITE_COLOR,
   },
 });
