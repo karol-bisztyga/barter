@@ -11,6 +11,7 @@ import { hexToRgbaString } from '../../../utils/harmonicColors';
 import { useFont } from '../../../hooks/useFont';
 import Background from '../../../components/Background';
 import { Separator } from './Separator';
+import { GoldGradient } from '../../../genericComponents/gradients/GoldGradient';
 
 const IMAGE_SIZE = 35;
 
@@ -45,8 +46,11 @@ const ChatItem = ({ id, myItem, theirItem, registerRenderedListItem }: ChatItemP
         <Background tile="paper" style={{ opacity: 0.8 }} />
         <View style={[styles.itemWrapper, styles.myItemWrapper]}>
           {myItemImage && (
-            <View style={styles.imageWrapper}>
-              <ImageWrapper uri={myItemImage} style={styles.image} />
+            <View style={styles.imageContainer}>
+              <View style={styles.imageWrapper}>
+                <GoldGradient />
+                <ImageWrapper uri={myItemImage} style={styles.image} />
+              </View>
             </View>
           )}
           <TextWrapper
@@ -67,8 +71,11 @@ const ChatItem = ({ id, myItem, theirItem, registerRenderedListItem }: ChatItemP
         <Separator />
         <View style={[styles.itemWrapper, styles.theirItemWrapper]}>
           {theirItemImage && (
-            <View style={styles.imageWrapper}>
-              <ImageWrapper uri={theirItemImage} style={styles.image} />
+            <View style={styles.imageContainer}>
+              <View style={styles.imageWrapper}>
+                <GoldGradient />
+                <ImageWrapper uri={theirItemImage} style={styles.image} />
+              </View>
             </View>
           )}
           <TextWrapper
@@ -125,13 +132,20 @@ const styles = StyleSheet.create({
     lineHeight: 60,
     color: BLACK_COLOR,
   },
-  imageWrapper: {
+  imageContainer: {
     justifyContent: 'center',
     marginHorizontal: 14,
   },
-  image: {
+  imageWrapper: {
     width: IMAGE_SIZE,
     height: IMAGE_SIZE,
+    borderRadius: IMAGE_SIZE,
+    overflow: 'hidden',
+  },
+  image: {
+    margin: 1,
+    width: IMAGE_SIZE - 2,
+    height: IMAGE_SIZE - 2,
     borderRadius: IMAGE_SIZE,
   },
 });
