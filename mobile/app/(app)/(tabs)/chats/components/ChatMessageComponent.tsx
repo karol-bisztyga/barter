@@ -6,8 +6,9 @@ import { ErrorType, handleError } from '../../../utils/errorHandler';
 import TextWrapper from '../../../genericComponents/TextWrapper';
 import { useJokerContext } from '../../../context/JokerContext';
 import { useTranslation } from 'react-i18next';
-import { BLACK_COLOR, GOLD_COLOR_3, RED_COLOR } from '../../../constants';
+import { BLACK_COLOR, GOLD_COLOR_3, RED_COLOR, WHITE_COLOR } from '../../../constants';
 import { useFont } from '../../../hooks/useFont';
+import { hexToRgbaString } from '../../../utils/harmonicColors';
 
 const { width } = Dimensions.get('window');
 
@@ -96,7 +97,7 @@ const styles = StyleSheet.create({
   },
   statusMesssageWrapper: {
     alignSelf: 'center',
-    backgroundColor: 'rgba(255,255,255,.5)',
+    // backgroundColor: 'rgba(255,255,255,.5)',
     borderRadius: 20,
     paddingRight: 20,
     paddingLeft: 20,
@@ -105,10 +106,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
   statusMesssage: {
-    color: BLACK_COLOR,
+    color: hexToRgbaString(WHITE_COLOR, 0.5),
   },
   myMessage: {
-    color: 'white',
+    color: WHITE_COLOR,
   },
   theirMessage: {
     color: BLACK_COLOR,

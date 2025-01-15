@@ -25,6 +25,7 @@ export const TAB_BAR_FONT_COLOR = 'white';
 
 export const RED_COLOR = '#4A1313';
 export const BLACK_COLOR = '#1D1816';
+export const WHITE_COLOR = '#FFFFFF';
 
 export const BROWN_COLOR_1 = '#41342A';
 export const BROWN_COLOR_2 = '#432012';
