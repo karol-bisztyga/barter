@@ -17,7 +17,7 @@ import { deleteItemImage } from '../../db_utils/deleteItemImage';
 import { uploadItemImage } from '../../db_utils/uploadItemImage';
 import { prepareFileToUpload } from '../../utils/storageUtils';
 import { ErrorType, handleError } from '../../utils/errorHandler';
-import ButtonWrapper from '../../genericComponents/ButtonWrapper';
+import ButtonWrapper, { BUTTON_HEIGHT } from '../../genericComponents/ButtonWrapper';
 import InputWrapper from '../../genericComponents/InputWrapper';
 import TextWrapper from '../../genericComponents/TextWrapper';
 import { useJokerContext } from '../../context/JokerContext';
@@ -34,6 +34,7 @@ const { width } = Dimensions.get('window');
 
 const IMAGE_SIZE = (width * 3) / 4;
 const REMOVE_IMAGE_ICON_SIZE = 50;
+const BOTTOM_SHEET_HEIGHT = BUTTON_HEIGHT;
 
 const EditItem = () => {
   const { t } = useTranslation();
@@ -352,20 +353,6 @@ const EditItem = () => {
             textAlignVertical="top"
           />
         </View>
-        <View style={styles.margins}>
-          <ButtonWrapper
-            title={capitalizeFirstLetterOfEveryWord(t('save'))}
-            disabled={!validateForm() || !checkIfItemEdited()}
-            onPress={save}
-            mode="black"
-          />
-        </View>
-
-        {updatingItemData && (
-          <View style={styles.loaderWrapper}>
-            <ActivityIndicator size="large" />
-          </View>
-        )}
         <TextWrapper style={styles.picturesTitle}>
           {capitalizeFirstLetterOfEveryWord(t('profile_pictures_title'))}
         </TextWrapper>
@@ -406,6 +393,20 @@ const EditItem = () => {
           </View>
         )}
       </ScrollView>
+      <View style={styles.bottomSheetSpace} />
+      <View style={styles.bottomSheetContainer}>
+        <ButtonWrapper
+          title={capitalizeFirstLetterOfEveryWord(t('save'))}
+          disabled={!validateForm() || !checkIfItemEdited()}
+          onPress={save}
+          mode="black"
+        />
+      </View>
+      {updatingItemData && (
+        <View style={styles.loaderWrapper}>
+          <ActivityIndicator size="large" />
+        </View>
+      )}
     </View>
   );
 };
@@ -465,9 +466,11 @@ const styles = StyleSheet.create({
   },
   loaderWrapper: {
     width: '100%',
+    height: '100%',
     justifyContent: 'center',
     alignItems: 'center',
-    marginVertical: 20,
+    position: 'absolute',
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   imageRemoveLoader: {
     position: 'absolute',
@@ -475,6 +478,19 @@ const styles = StyleSheet.create({
     height: 100,
     top: IMAGE_SIZE / 2 - 50,
     left: IMAGE_SIZE / 2 - 50,
+  },
+  bottomSheetContainer: {
+    position: 'absolute',
+    left: 0,
+    bottom: 0,
+    width: '100%',
+    height: BOTTOM_SHEET_HEIGHT + 8 * 2,
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+  },
+  bottomSheetSpace: {
+    width: '100%',
+    height: BOTTOM_SHEET_HEIGHT + 8 * 2,
   },
 });
 
