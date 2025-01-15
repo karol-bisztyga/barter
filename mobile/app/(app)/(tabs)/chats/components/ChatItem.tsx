@@ -6,7 +6,7 @@ import ImageWrapper from '../../../genericComponents/ImageWrapper';
 import { useTranslation } from 'react-i18next';
 import { useMatchContext } from '../../../context/MatchContext';
 import { NotificationIndicator } from '../../swipe/components/NotificationIndicator';
-import { GOLD_COLOR_1 } from '../../../constants';
+import { BLACK_COLOR, GOLD_COLOR_1 } from '../../../constants';
 import { hexToRgbaString } from '../../../utils/harmonicColors';
 import { useFont } from '../../../hooks/useFont';
 import Background from '../../../components/Background';
@@ -71,7 +71,11 @@ const ChatItem = ({ id, myItem, theirItem, registerRenderedListItem }: ChatItemP
               <ImageWrapper uri={theirItemImage} style={styles.image} />
             </View>
           )}
-          <TextWrapper style={styles.itemTitle} ellipsizeMode="tail" numberOfLines={1}>
+          <TextWrapper
+            style={[styles.itemTitle, { fontFamily: fontFamily.bold }]}
+            ellipsizeMode="tail"
+            numberOfLines={1}
+          >
             {theirItem.name}
           </TextWrapper>
           <TextWrapper style={styles.itemOwnerWrapper} ellipsizeMode="tail" numberOfLines={1}>
@@ -111,6 +115,7 @@ const styles = StyleSheet.create({
     flex: 5,
     fontSize: 16,
     lineHeight: 60,
+    color: BLACK_COLOR,
   },
   itemOwnerWrapper: {
     flex: 2,
@@ -118,6 +123,7 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     marginRight: 8,
     lineHeight: 60,
+    color: BLACK_COLOR,
   },
   imageWrapper: {
     justifyContent: 'center',
