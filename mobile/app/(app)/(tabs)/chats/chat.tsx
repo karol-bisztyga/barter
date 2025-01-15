@@ -18,7 +18,7 @@ import { useItemsContext } from '../../context/ItemsContext';
 import { useUserContext } from '../../context/UserContext';
 import { useMatchContext } from '../../context/MatchContext';
 import { ErrorType, handleError } from '../../utils/errorHandler';
-import ButtonWrapper from '../../genericComponents/ButtonWrapper';
+import ButtonWrapper, { BUTTON_HEIGHT } from '../../genericComponents/ButtonWrapper';
 import InputWrapper from '../../genericComponents/InputWrapper';
 import { useJokerContext } from '../../context/JokerContext';
 import { FILL_COLOR } from '../profile/components/items/editing_panels/constants';
@@ -340,6 +340,7 @@ const styles = StyleSheet.create({
   },
   inputContainerInner: {
     flexDirection: 'row',
+    height: BUTTON_HEIGHT,
   },
   input: {},
   buttonWrapper: {
