@@ -182,52 +182,56 @@ export const SocketContextProvider: FC<{ children: ReactNode }> = ({ children })
     socketRef.current = null;
   };
 
-  const sendMessage = (matchId: string, message: ChatMessage) => {
-    if (!socketRef.current) {
-      handleError(t, jokerContext, ErrorType.SOCKET_NOT_CONNECTED);
+  const handleSocketReconnection = (callback: (socket: Socket) => void) => {
+    if (socketRef.current) {
+      callback(socketRef.current);
       return;
     }
-    socketRef.current.emit('message', matchId, message);
+
+    handleError(t, jokerContext, ErrorType.SOCKET_NOT_CONNECTED);
+    connect();
+    if (socketRef.current) {
+      jokerContext.showSuccess(t('socket_reconnected'));
+      callback(socketRef.current);
+      return;
+    }
+    handleError(t, jokerContext, ErrorType.SOCKET_NOT_CONNECTED_RETRY_FAILED);
+  };
+
+  const sendMessage = (matchId: string, message: ChatMessage) => {
+    handleSocketReconnection((socket: Socket) => {
+      socket.emit('message', matchId, message);
+    });
   };
 
   const sendAddMatch = (data: AddMatchData) => {
-    if (!socketRef.current) {
-      handleError(t, jokerContext, ErrorType.SOCKET_NOT_CONNECTED);
-      return;
-    }
-    socketRef.current.emit('addMatch', data);
+    handleSocketReconnection((socket: Socket) => {
+      socket.emit('addMatch', data);
+    });
   };
 
   const sendUpdateMatch = (data: UpdateMatchMatchingItemData) => {
-    if (!socketRef.current) {
-      handleError(t, jokerContext, ErrorType.SOCKET_NOT_CONNECTED);
-      return;
-    }
-    socketRef.current.emit('updateMatch', data);
+    handleSocketReconnection((socket: Socket) => {
+      socket.emit('updateMatch', data);
+    });
   };
 
   const sendRemoveMatch = (data: RemoveMatchData[]) => {
-    if (!socketRef.current) {
-      handleError(t, jokerContext, ErrorType.SOCKET_NOT_CONNECTED);
-      return;
-    }
-    socketRef.current.emit('removeMatches', data);
+    handleSocketReconnection((socket: Socket) => {
+      socket.emit('removeMatches', data);
+    });
   };
 
   const joinMatch = (matchId: string) => {
-    if (!socketRef.current) {
-      handleError(t, jokerContext, ErrorType.SOCKET_NOT_CONNECTED);
-      return;
-    }
-    socketRef.current.emit('joinMatch', matchId);
+    handleSocketReconnection((socket: Socket) => {
+      socket.emit('joinMatch', matchId);
+    });
   };
 
   const leaveMatch = (matchId: string) => {
-    if (!socketRef.current) {
-      handleError(t, jokerContext, ErrorType.SOCKET_NOT_CONNECTED);
-      return;
-    }
-    socketRef.current.emit('leaveMatch', matchId);
+    handleSocketReconnection((socket: Socket) => {
+      socket.emit('leaveMatch', matchId);
+    });
   };
 
   return (
