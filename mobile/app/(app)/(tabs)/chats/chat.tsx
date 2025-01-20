@@ -8,6 +8,7 @@ import {
   FlatList,
   ActivityIndicator,
   Dimensions,
+  KeyboardAvoidingView,
 } from 'react-native';
 import Animated, { useSharedValue, useAnimatedStyle, withTiming } from 'react-native-reanimated';
 import { ChatMessage } from '../../types';
@@ -29,7 +30,6 @@ import { getMessages } from '../../db_utils/getMessages';
 import { updateMatchNotified } from '../../db_utils/updateMatchNotified';
 import Background from '../../components/Background';
 
-const INPUT_WRAPPER_HEIGHT = 70;
 const MESSAGES_PER_CHUNK = 10;
 const SEND_MESSAGE_TIMEOUT = 3000;
 const SEND_BUTTON_WIDTH = 84;
@@ -49,9 +49,11 @@ const Chat = () => {
   const [newMessage, setNewMessage] = useState('');
   const [loadingMessages, setLoadingMessages] = useState(false);
   const [sendingEnabled, setSendingEnabled] = useState(true);
+  const [inputContainerHeight, setInputContainerHeight] = useState(0);
+  const [headerMaxHeight, setHeaderMaxHeight] = useState(0);
 
   const keyboardHeight = useSharedValue(0);
-  // const inputWrapperPosition = useSharedValue<number>(0);
+  const currentHeaderHeight = useSharedValue(0);
 
   const flatListRef = useRef<FlatList>(null);
 
@@ -154,37 +156,31 @@ const Chat = () => {
   };
 
   useEffect(() => {
-    const keyboardWillShowListener = Keyboard.addListener(
+    const showListener = Keyboard.addListener(
       Platform.OS === 'ios' ? 'keyboardWillShow' : 'keyboardDidShow',
       (event) => {
+        const duration = event.duration / 5;
         keyboardHeight.value = withTiming(event.endCoordinates.height, {
-          duration: event.duration / 5,
+          duration,
         });
+        currentHeaderHeight.value = withTiming(0, { duration });
       }
     );
 
-    const keyboardWillHideListener = Keyboard.addListener(
+    const hideListener = Keyboard.addListener(
       Platform.OS === 'ios' ? 'keyboardWillHide' : 'keyboardDidHide',
       (event) => {
-        keyboardHeight.value = withTiming(0, { duration: event.duration / 5 });
+        const duration = event.duration / 5;
+        keyboardHeight.value = withTiming(0, { duration });
+        currentHeaderHeight.value = withTiming(headerMaxHeight, { duration });
       }
     );
 
     return () => {
-      keyboardWillShowListener.remove();
-      keyboardWillHideListener.remove();
+      showListener.remove();
+      hideListener.remove();
     };
-  }, [keyboardHeight]);
-
-  const inputWrapperAnimatedStyle = useAnimatedStyle(() => {
-    let bottom: number = 0;
-    if (Platform.OS === 'ios') {
-      bottom = keyboardHeight.value ? keyboardHeight.value - INPUT_WRAPPER_HEIGHT : 0;
-    }
-    return {
-      bottom,
-    };
-  }, [keyboardHeight]);
+  }, [headerMaxHeight]);
 
   const scrollMessagesToNewest = () => {
     flatListRef?.current?.scrollToIndex({ index: 0, animated: false });
@@ -246,84 +242,125 @@ const Chat = () => {
     }, SEND_MESSAGE_TIMEOUT);
   };
 
+  const headerStyle = useAnimatedStyle(() => {
+    if (!headerMaxHeight) {
+      return {};
+    }
+    return {
+      height: currentHeaderHeight.value,
+    };
+  });
+
+  useEffect(() => {
+    if (!headerMaxHeight) {
+      return;
+    }
+    currentHeaderHeight.value = headerMaxHeight;
+  }, [headerMaxHeight]);
+
   return (
-    <SafeAreaView style={styles.container}>
-      <Background tile="main" />
-      <View style={styles.scrollViewContent}>
-        <ChatHeader />
-        <Animated.View style={styles.messageList}>
-          <FlatList
-            ref={flatListRef}
-            data={messages}
-            inverted={true}
-            showsHorizontalScrollIndicator={false}
-            showsVerticalScrollIndicator={false}
-            maintainVisibleContentPosition={{
-              minIndexForVisible: 0,
-              autoscrollToTopThreshold: 0,
-            }}
-            onContentSizeChange={() => {
-              if (messages.length === 0 || initialScrollPerformed) {
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior="padding"
+      keyboardVerticalOffset={inputContainerHeight + 16}
+    >
+      <SafeAreaView style={styles.container}>
+        <Background tile="main" />
+        <View style={styles.scrollViewContent}>
+          <Animated.View
+            style={[styles.headerContainer, headerStyle]}
+            onLayout={(e) => {
+              if (headerMaxHeight) {
                 return;
               }
-              scrollMessagesToNewest();
-              setInitialScrollPerformed(true);
+              setHeaderMaxHeight(e.nativeEvent.layout.height);
             }}
-            renderItem={({ item }) => <ChatMessageComponent message={item} />}
-            keyExtractor={(message: ChatMessage) =>
-              message.id || `${message.type}-${message.content}`
-            }
-            onEndReached={() => {
-              if (!loadingMessages) {
-                loadMoreMessages();
+          >
+            <ChatHeader />
+          </Animated.View>
+          <Animated.View style={[styles.messageList]}>
+            <FlatList
+              ref={flatListRef}
+              data={messages}
+              inverted={true}
+              showsHorizontalScrollIndicator={false}
+              showsVerticalScrollIndicator={false}
+              maintainVisibleContentPosition={{
+                minIndexForVisible: 0,
+                autoscrollToTopThreshold: 0,
+              }}
+              onContentSizeChange={() => {
+                if (messages.length === 0 || initialScrollPerformed) {
+                  return;
+                }
+                scrollMessagesToNewest();
+                setInitialScrollPerformed(true);
+              }}
+              renderItem={({ item }) => <ChatMessageComponent message={item} />}
+              keyExtractor={(message: ChatMessage) =>
+                message.id || `${message.type}-${message.content}`
               }
-            }}
-            onEndReachedThreshold={0.1}
-            ListFooterComponent={() => {
-              if (messages.length) {
-                return null;
-              }
-              return (
-                <View style={styles.messageLoaderWrapper}>
-                  <ActivityIndicator size="large" />
-                </View>
-              );
-            }}
-          />
-        </Animated.View>
-        <Animated.View style={[styles.inputContainer, inputWrapperAnimatedStyle]}>
-          <View style={[styles.inputContainerInner, { width: width - 40 - SEND_BUTTON_WIDTH - 8 }]}>
-            <InputWrapper
-              style={styles.input}
-              placeholder={t('chats_type_a_message')}
-              blurOnSubmit={false}
-              value={newMessage}
-              onChangeText={setNewMessage}
-              fillColor={FILL_COLOR}
+              onEndReached={() => {
+                if (!loadingMessages) {
+                  loadMoreMessages();
+                }
+              }}
+              onEndReachedThreshold={0.1}
+              ListFooterComponent={() => {
+                if (messages.length) {
+                  return null;
+                }
+                return (
+                  <View style={styles.messageLoaderWrapper}>
+                    <ActivityIndicator size="large" />
+                  </View>
+                );
+              }}
             />
-          </View>
-          <View style={styles.buttonWrapper}>
-            <ButtonWrapper
-              title={t('send')}
-              disabled={newMessage.length === 0 || !sendingEnabled}
-              onPress={sendMessage}
-              mode="black"
-            />
-          </View>
-        </Animated.View>
-      </View>
-      {matchContext.unmatching && (
-        <View style={styles.unmatchLoaderWrapper}>
-          <ActivityIndicator size="large" />
+          </Animated.View>
+          <Animated.View
+            style={[styles.inputContainer]}
+            onLayout={(e) => {
+              setInputContainerHeight(e.nativeEvent.layout.height);
+            }}
+          >
+            <View
+              style={[styles.inputContainerInner, { width: width - 40 - SEND_BUTTON_WIDTH - 8 }]}
+            >
+              <InputWrapper
+                style={styles.input}
+                placeholder={t('chats_type_a_message')}
+                blurOnSubmit={false}
+                value={newMessage}
+                onChangeText={setNewMessage}
+                fillColor={FILL_COLOR}
+              />
+            </View>
+            <View style={styles.buttonWrapper}>
+              <ButtonWrapper
+                title={t('send')}
+                disabled={newMessage.length === 0 || !sendingEnabled}
+                onPress={sendMessage}
+                mode="black"
+              />
+            </View>
+          </Animated.View>
         </View>
-      )}
-    </SafeAreaView>
+        {matchContext.unmatching && (
+          <View style={styles.unmatchLoaderWrapper}>
+            <ActivityIndicator size="large" />
+          </View>
+        )}
+      </SafeAreaView>
+    </KeyboardAvoidingView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  headerContainer: {
     overflow: 'hidden',
   },
   scrollViewContent: {
@@ -336,7 +373,8 @@ const styles = StyleSheet.create({
   },
   inputContainer: {
     flexDirection: 'row',
-    padding: 20,
+    paddingHorizontal: 20,
+    paddingVertical: 8,
   },
   inputContainerInner: {
     flexDirection: 'row',
