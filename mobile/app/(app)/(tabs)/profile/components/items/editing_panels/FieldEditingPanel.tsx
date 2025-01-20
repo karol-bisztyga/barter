@@ -117,7 +117,7 @@ const FieldEditingPanel = ({
           title={capitalizeFirstLetterOfEveryWord(t('save'))}
           onPress={update}
           disabled={!validateValue()}
-          mode="red"
+          mode="black"
           frameMode="single"
           marginTop={12}
         />

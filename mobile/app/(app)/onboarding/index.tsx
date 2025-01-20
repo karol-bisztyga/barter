@@ -63,7 +63,7 @@ export default function Onboarding() {
           onPress={() => {
             router.replace('/swipe');
           }}
-          mode="red"
+          mode="black"
         />
       </View>
     </View>

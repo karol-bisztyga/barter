@@ -99,7 +99,7 @@ const FieldEditingPanel = ({ editing, setEditingId }: FieldEditingPanelProps) =>
             title={capitalizeFirstLetterOfEveryWord(t('update'))}
             onPress={handlePasswordChange}
             disabled={!validateValue()}
-            mode="red"
+            mode="black"
             frameMode="single"
           />
         </View>

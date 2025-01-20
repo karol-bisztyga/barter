@@ -96,7 +96,7 @@ export const SingInForm = ({ loading }: { loading: boolean }) => {
           onPress={async () => {
             await hadnleSignIn(email, password);
           }}
-          mode="red"
+          mode="black"
           marginTop={8}
         />
 

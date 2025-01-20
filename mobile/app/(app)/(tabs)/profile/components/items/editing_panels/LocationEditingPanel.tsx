@@ -140,7 +140,7 @@ const LocationEditingPanel = ({
         <ButtonWrapper
           title={capitalizeFirstLetterOfEveryWord(t('locate'))}
           onPress={update}
-          mode="red"
+          mode="black"
           frameMode="single"
           marginTop={12}
         />
