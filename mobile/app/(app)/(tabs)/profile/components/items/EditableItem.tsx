@@ -92,7 +92,7 @@ const EditableItem = ({
     return {
       transform: [
         {
-          rotate: `${interpolate(editing.value, [0, 1], [0, 90])}deg`,
+          rotate: `${interpolate(editing.value, [0, 1], [0, 180])}deg`,
         },
       ],
     };
@@ -206,7 +206,7 @@ const EditableItem = ({
           {editable && (
             <View style={styles.itemArrowWrapper}>
               <Animated.View style={rotationAnimatedStyle}>
-                <FontAwesome size={ARROW_ICON_SIZE} style={styles.itemArrow} name="chevron-right" />
+                <FontAwesome size={ARROW_ICON_SIZE} style={styles.itemArrow} name="chevron-up" />
               </Animated.View>
             </View>
           )}
