@@ -206,7 +206,7 @@ const EditableItem = ({
           {editable && (
             <View style={styles.itemArrowWrapper}>
               <Animated.View style={rotationAnimatedStyle}>
-                <FontAwesome size={ARROW_ICON_SIZE} style={styles.itemArrow} name="chevron-up" />
+                <FontAwesome size={ARROW_ICON_SIZE} style={styles.itemArrow} name="chevron-down" />
               </Animated.View>
             </View>
           )}
