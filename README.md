@@ -2,7 +2,7 @@
 
 ## What it is ℹ️
 
-A Tinder-style mobile app for cash-free exchanges. Upload your items, swipe through others', and when there’s a match — set up a trade!
+A Tinder-style mobile app with a medieval feeling for cash-free exchanges. Upload your items, swipe through others', and when there’s a match — set up a trade!
 
 ## Stack 🛠️
 
