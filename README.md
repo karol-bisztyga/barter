@@ -1,4 +1,4 @@
-# Barter 🔄
+# Barter 🤝
 
 ## What it is ℹ️
 
