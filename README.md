@@ -1,4 +1,4 @@
-# Barter
+# Barter 🔄
 
 ## What it is ℹ️
 
@@ -46,6 +46,12 @@ npx expo start
 ```
 
 ## Previews 🎬
+
+### Jester 🃏
+
+#### Playing With Jester
+
+<img src="media/jester.gif" alt="Demo" width="200"/>
 
 ### Profile Tab 👤
 
